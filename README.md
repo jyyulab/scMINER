@@ -12,6 +12,7 @@ scMINER is a toolbox for single-cell analysis based on mutual information. This 
 To start using the package on St. Jude research cluster (by default), set the Phoenix app and the following two environment variables:
 
 <code>export PYTHON_PATH=[path_to_target_python3]</code>
+</br>
 <code>export scMINER_PATH=[path_to_root_directory_of_scMINER]</code>
 
 ## Run MIE
