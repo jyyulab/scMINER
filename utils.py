@@ -276,7 +276,7 @@ def cc(tmp_dir, n_clusters, project_name, common_name, transformation, out_dir, 
 			if re_trans == 'True' and max_dim > 0:
 				hdf = pd.HDFStore(out_file)
 				Y = hdf[transformation]
-				perplexity = np.min([1200, np.max(cclust.groupby(['label']).size())])
+				perplexity = np.min([120, np.max(cclust.groupby(['label']).size())])
 				tsne(None, Y, max_dim, out_dir, out_file_name, None, transformation + '-tsne', perplexity, 'False')
 				Y_tsne = pd.HDFStore(out_file)[transformation + '-tsne']
 				hdf.close()

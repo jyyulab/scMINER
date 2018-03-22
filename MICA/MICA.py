@@ -27,7 +27,7 @@ def setup(args):
 		parser.add_argument('--k', type=int, default=[2], nargs='+', help='Number of clusters to divide the dataset to (default: [2])')
 		parser.add_argument('--transformation', default='MDS', help='Transformation method used for dimension reduction [MDS | PCA | LPL | LPCA] (default: MDS)')
 		parser.add_argument('--hclust', default='False', help='Whether apply hierarchical clustering or not (default: False')
-		parser.add_argument('--retransformation', default='False', help='Whether apply re-transformation for final visualization or not (default: False)')
+		parser.add_argument('--retransformation', default='True', help='Whether apply re-transformation for final visualization or not (default: True)')
 		parser.add_argument('outdir', help='Output directory')
 		parser.add_argument('outfilename', help='Common name used for all outputs')
 		parser.add_argument('--host', default='LSF', help='Computation host of the jobs [LOCAL | LSF] (default: LSF)')
