@@ -182,7 +182,7 @@ def scatter2(fig_num, data, out_dir, out_file_name, marker_size=20, marker='o'):
 	plt.savefig(out_dir + out_file_name + '_clust_k' + str(len(lab)) + '.pdf', bbox_inches='tight')
 
 def tsne(fig_num, data, max_dim, out_dir, out_file_name, tag, key, perplexity=30, plot='True'):
-	tsne_ = manifold.TSNE(n_components=2, n_iter=5000, learning_rate=200, perplexity=perplexity, random_state=10)
+	tsne_ = manifold.TSNE(n_components=2, n_iter=5000, learning_rate=200, perplexity=perplexity, random_state=10, early_exaggeration=12.0)
 	Y_tsne = tsne_.fit_transform(data.iloc[:,0:max_dim])
 	pd.DataFrame(data=Y_tsne, index=data.index, columns=['X','Y']).to_hdf(out_dir + out_file_name + '_clust.h5', key)
 	if plot == 'True':
@@ -276,9 +276,11 @@ def cc(tmp_dir, n_clusters, project_name, common_name, transformation, out_dir, 
 			if re_trans == 'True' and max_dim > 0:
 				hdf = pd.HDFStore(out_file)
 				Y = hdf[transformation]
-				perplexity = np.min([120, np.max(cclust.groupby(['label']).size())])
+				hdf.close()
+				perplexity = np.min([1200, np.max(cclust.groupby(['label']).size())])
 				tsne(None, Y, max_dim, out_dir, out_file_name, None, transformation + '-tsne', perplexity, 'False')
-				Y_tsne = pd.HDFStore(out_file)[transformation + '-tsne']
+				hdf = pd.HDFStore(out_file)
+				Y_tsne = hdf[transformation + '-tsne']
 				hdf.close()
 			else:
 				hdf = pd.HDFStore(out_file)
@@ -293,7 +295,7 @@ def cc(tmp_dir, n_clusters, project_name, common_name, transformation, out_dir, 
 				hdf.close()
 			mi_file = tmp_dir + project_name + '_mi.h5'
 			if os.path.exists(mi_file):
-				hdf = pd.HDFStore(mi_file, 'r')
+				hdf = pd.HDFStore(mi_file)
 				mi = 1 - hdf['norm_mi']
 				mi.to_hdf(out_file, 'norm_mi')
 				hdf.close()
