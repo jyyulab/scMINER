@@ -138,7 +138,7 @@ def cclust(args, paths):
 		path_tmp = paths[2][i] + '.tmp/'
 		if not os.path.exists(path_tmp):
 			exit()
-		script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Cclust.py ' + ' ' + str(fig_num) + ' ' + paths[2][i] + args.outfilename + '_clust.h5 ' + path_tmp + ' ' + str(args.k[i]) + ' ' + args.outfilename + ' kmeans.h5.tmp ' + args.transformation.lower() + ' ' + paths[2][i] + ' ' + args.outfilename + ' ' + str(args.max_dim) + ' ' + args.retransformation + ' ' 
+		script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Cclust.py ' + ' ' + str(fig_num) + ' ' + paths[2][i] + args.outfilename + '_clust.h5 ' + path_tmp + ' ' + str(args.k[i]) + ' ' + args.project_name + ' kmeans.h5.tmp ' + args.transformation.lower() + ' ' + paths[2][i] + ' ' + args.outfilename + ' ' + str(args.max_dim) + ' ' + args.retransformation + ' ' 
 		out_5 = open(paths[3][i] + '05_CClust_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'w')
 		out_5.write(script + '\n')
 		out_5.close()
