@@ -97,35 +97,35 @@ def kmeans(args, paths):
 		out_4 = open(paths[3][i] + '04_Kmeans_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'w')
 		iterations = args.bootstrap*(args.max_dim - args.min_dim + 1)
 		for j in range(iterations):
-			script = 'cp ' + paths[2][i] + args.project_name + '_clust.h5 ' + path_tmp + args.project_name + '_clust.h5.tmp.' + str(j) + ' '
+			script = 'cp ' + paths[2][i] + args.outfilename + '_clust.h5 ' + path_tmp + args.outfilename + '_clust.h5.tmp.' + str(j) + ' '
 			out_3.write(script + '\n')
 			if args.transformation == 'LPCA':
-				script = 'cp ' + paths[2][i] + args.project_name + '_clust.h5 ' + path_tmp + args.project_name + '_clust.h5.tmp.' + str(iterations + j) + ' '
+				script = 'cp ' + paths[2][i] + args.outfilename + '_clust.h5 ' + path_tmp + args.outfilename + '_clust.h5.tmp.' + str(iterations + j) + ' '
 				out_3.write(script + '\n')
 		for j in range(args.bootstrap):
 			dim = args.max_dim - args.min_dim + 1
 			for k in range(dim):
 				if args.transformation == 'MDS':
-					script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Kmeans.py ' + ' ' + path_tmp + args.project_name + '_clust.h5.tmp.' + str(j * dim + k) + ' mds ' + str(args.k[i]) + ' ' + str(k + args.min_dim) + ' ' + path_tmp + ' ' + args.project_name + '_kmeans.h5.tmp.' + str(j * dim + k) + ' '
+					script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Kmeans.py ' + ' ' + path_tmp + args.outfilename + '_clust.h5.tmp.' + str(j * dim + k) + ' mds ' + str(args.k[i]) + ' ' + str(k + args.min_dim) + ' ' + path_tmp + ' ' + args.outfilename + '_kmeans.h5.tmp.' + str(j * dim + k) + ' '
 					if args.host == 'LOCAL':
 						script += '&'
 					out_4.write(script + '\n')
 				elif args.transformation == 'PCA':
-					script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Kmeans.py ' + ' ' + path_tmp + args.project_name + '_clust.h5.tmp.' + str(j * dim + k) + ' pca ' + str(args.k[i]) + ' ' + str(k + args.min_dim) + ' ' + path_tmp + ' ' + args.project_name + '_kmeans.h5.tmp.' + str(j * dim + k) + ' '
+					script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Kmeans.py ' + ' ' + path_tmp + args.outfilename + '_clust.h5.tmp.' + str(j * dim + k) + ' pca ' + str(args.k[i]) + ' ' + str(k + args.min_dim) + ' ' + path_tmp + ' ' + args.outfilename + '_kmeans.h5.tmp.' + str(j * dim + k) + ' '
 					if args.host == 'LOCAL':
 						script += '&'
 					out_4.write(script + '\n')
 				elif args.transformation == 'LPL':
-					script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Kmeans.py ' + ' ' + path_tmp + args.project_name + '_clust.h5.tmp.' + str(j * dim + k) + ' lpl ' + str(args.k[i]) + ' ' + str(k + args.min_dim) + ' ' + path_tmp + ' ' + args.project_name + '_kmeans.h5.tmp.' + str(j * dim + k) + ' '
+					script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Kmeans.py ' + ' ' + path_tmp + args.outfilename + '_clust.h5.tmp.' + str(j * dim + k) + ' lpl ' + str(args.k[i]) + ' ' + str(k + args.min_dim) + ' ' + path_tmp + ' ' + args.outfilename + '_kmeans.h5.tmp.' + str(j * dim + k) + ' '
 					if args.host == 'LOCAL':
 						script += '&'
 					out_4.write(script + '\n')
 				elif args.transformation == 'LPCA':
-					script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Kmeans.py ' + ' ' + path_tmp + args.project_name + '_clust.h5.tmp.' + str(j * dim + k) + ' pca ' + str(args.k[i]) + ' ' + str(k + args.min_dim) + ' ' + path_tmp + ' ' + args.project_name + '_kmeans.h5.tmp.' + str(j * dim + k) + ' '
+					script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Kmeans.py ' + ' ' + path_tmp + args.outfilename + '_clust.h5.tmp.' + str(j * dim + k) + ' pca ' + str(args.k[i]) + ' ' + str(k + args.min_dim) + ' ' + path_tmp + ' ' + args.outfilename + '_kmeans.h5.tmp.' + str(j * dim + k) + ' '
 					if args.host == 'LOCAL':
 						script += '&'
 					out_4.write(script + '\n')
-					script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Kmeans.py ' + ' ' + path_tmp + args.project_name + '_clust.h5.tmp.' + str(iterations + j * dim + k) + ' lpl ' + str(args.k[i]) + ' ' + str(k + args.min_dim) + ' ' + path_tmp + ' ' + args.project_name + '_kmeans.h5.tmp.' + str(iterations + j * dim + k) + ' '
+					script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Kmeans.py ' + ' ' + path_tmp + args.outfilename + '_clust.h5.tmp.' + str(iterations + j * dim + k) + ' lpl ' + str(args.k[i]) + ' ' + str(k + args.min_dim) + ' ' + path_tmp + ' ' + args.outfilename + '_kmeans.h5.tmp.' + str(iterations + j * dim + k) + ' '
 					if args.host == 'LOCAL':
 						script += '&'
 					out_4.write(script + '\n')
@@ -138,7 +138,7 @@ def cclust(args, paths):
 		path_tmp = paths[2][i] + '.tmp/'
 		if not os.path.exists(path_tmp):
 			exit()
-		script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Cclust.py ' + ' ' + str(fig_num) + ' ' + paths[2][i] + args.project_name + '_clust.h5 ' + path_tmp + ' ' + str(args.k[i]) + ' ' + args.project_name + ' kmeans.h5.tmp ' + args.transformation.lower() + ' ' + paths[2][i] + ' ' + args.outfilename + ' ' + str(args.max_dim) + ' ' + args.retransformation + ' ' 
+		script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Cclust.py ' + ' ' + str(fig_num) + ' ' + paths[2][i] + args.outfilename + '_clust.h5 ' + path_tmp + ' ' + str(args.k[i]) + ' ' + args.outfilename + ' kmeans.h5.tmp ' + args.transformation.lower() + ' ' + paths[2][i] + ' ' + args.outfilename + ' ' + str(args.max_dim) + ' ' + args.retransformation + ' ' 
 		out_5 = open(paths[3][i] + '05_CClust_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'w')
 		out_5.write(script + '\n')
 		out_5.close()
