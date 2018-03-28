@@ -301,7 +301,11 @@ def cc(tmp_dir, n_clusters, project_name, common_name, transformation, out_dir, 
 				hdf.close()
 		cclust.to_hdf(out_file, 'cclust')
 		mem.to_hdf(out_file, 'membership')
-		shutil.rmtree(tmp_dir)
+		#shutil.rmtree(tmp_dir)
+		hdf = pd.HDFStore(out_file)
+		hdf['cclust'].loc[:, ['X', 'Y', 'label']].to_csv(tmp_dir + out_file_name + '.ggplot.txt', sep='\t')
+		hdf.close()
+
 
 def plot(fig_num, in_file, out_dir, out_file_name, hclust='False'):
 	hdf = pd.HDFStore(in_file)

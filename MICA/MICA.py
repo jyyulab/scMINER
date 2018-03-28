@@ -31,7 +31,7 @@ def setup(args):
 		parser.add_argument('outdir', help='Output directory')
 		parser.add_argument('outfilename', help='Common name used for all outputs')
 		parser.add_argument('--host', default='LSF', help='Computation host of the jobs [LOCAL | LSF] (default: LSF)')
-		parser.add_argument('--resource', type=int, nargs='+', default=[2000]*5, help='Memory allocation for each individual step in clustering pipeline (default: 2GB)')
+		parser.add_argument('--resource', type=int, nargs='+', default=[2000]*6, help='Memory allocation for each individual step in clustering pipeline (default: 2GB)')
 		parser.add_argument('--queue', default='compbio', help='Queue name for job allocation')
 	args_ = parser.parse_args(args[1:])
 	return args_
@@ -144,6 +144,17 @@ def cclust(args, paths):
 		out_5.close()
 		fig_num += 3
 
+def ggplot(args, paths):
+	for i in range(len(paths[2])):
+		path_tmp = paths[2][i] + '.tmp/'
+		if not os.path.exists(path_tmp):
+			exit()
+		script = 'Rscript ' + scMINER_PATH + 'MICA/ggplot.cc.r ' + ' ' + path_tmp + args.outfilename + '.ggplot.txt 1 5 ' + args.outfilename + ' ' + paths[2][i] + args.outfilename + '_clust_k' + str(args.k[i]) + '.rplot.pdf '
+		out_6 = open(paths[3][i] + '06_GGplot_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'w')
+		out_6.write(script + '\n')
+		out_6.close()
+
+
 def clust(args, paths):
 	for i in range(len(paths[3])):
 		out_0 = open(paths[3][i] + '00_Clust_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'w')
@@ -159,6 +170,8 @@ def clust(args, paths):
 			out_0.write(script)
 			script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MICA_CClust -q ' + args.queue + ' -M ' + str(args.resource[4]) + ' -i ' + paths[3][i] + '05_CClust_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh -oo ' + paths[1][i] + args.project_name + '_MICA_Cclust.%J.%I.out -eo ' + paths[1][i] + args.project_name + '_MICA_Cclust.%J.%I.err \n'
 			out_0.write(script)
+			script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MICA_GGplot -q ' + args.queue + ' -M ' + str(args.resource[5]) + ' -i ' + paths[3][i] + '06_GGplot_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh -oo ' + paths[1][i] + args.project_name + '_MICA_Ggplot.%J.%I.out -eo ' + paths[1][i] + args.project_name + '_MICA_Ggplot.%J.%I.err \n'
+			out_0.write(script)
 		elif args.host == 'LOCAL':
 			if args.hclust == 'True':
 				script = 'sh ' + paths[3][i] + '01_Hclust_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh >> ' + paths[1][i] + args.project_name + '_MICA_Hclust.out \n'
@@ -172,10 +185,12 @@ def clust(args, paths):
 			out_0.write('jobs=$(ps -ef | grep \"' + args.project_name + '_' + args.transformation + '_' + str(args.k[i]) + '\" | grep Kmeans.py -c)\n')
 			out_0.write('while [ $jobs -gt 0 ]\ndo\n\tsleep 30\n\tjobs=$(ps -ef | grep \"' + args.project_name + '_' + args.transformation + '_' + str(args.k[i]) + '\" | grep Kmeans.py -c)\ndone\n')
 			script = 'sh ' + paths[3][i] + '05_CClust_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh >> ' + paths[1][i] + args.project_name + '_MICA_Cclust.out \n'
+			out_0.write(script)			
+			script = 'sh ' + paths[3][i] + '06_GGplot_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh >> ' + paths[1][i] + args.project_name + '_MICA_Ggplot.out \n'
 			out_0.write(script)
-			out_0.write('jobs=$(ps -ef | grep \"' + args.project_name + '_' + args.transformation + '_' + str(args.k[i]) + '\" | grep Cclust.py -c)\n')
-			out_0.write('while [ $jobs -gt 0 ]\ndo\n\tsleep 30\n\tjobs=$(ps -ef | grep \"' + args.project_name + '_' + args.transformation + '_' + str(args.k[i]) + '\" | grep Cclust.py -c)\ndone\n')
-		#out_0.write('rm -rf ' + paths[2][i] + '.tmp/ \n')
+			out_0.write('jobs=$(ps -ef | grep \"' + args.project_name + '_' + args.transformation + '_' + str(args.k[i]) + '\" | grep ggplot.cc.r -c)\n')
+			out_0.write('while [ $jobs -gt 0 ]\ndo\n\tsleep 30\n\tjobs=$(ps -ef | grep \"' + args.project_name + '_' + args.transformation + '_' + str(args.k[i]) + '\" | grep ggplot.cc.r -c)\ndone\n')
+		out_0.write('rm -rf ' + paths[2][i] + '.tmp/ \n')
 		out_0.close()
 
 def run(args):
@@ -187,6 +202,7 @@ def run(args):
 		transform(args_, paths)
 		kmeans(args_, paths)
 		cclust(args_, paths)
+		ggplot(args_, paths)
 		clust(args_, paths)
 		for i in range(len(paths[3])):
 			if args_.host == 'LSF':
