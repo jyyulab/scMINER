@@ -9,11 +9,33 @@ scMINER is a toolbox for single-cell analysis based on mutual information. This 
 
 ## Starting Point
 
-To start using the package on St. Jude research cluster (by default), set the Phoenix app and the following two environment variables:
+To start using the package on St. Jude research cluster (by default), follow the below steps:
+
+### Phoenix Setup
+
+In St. Jude's Research Cluster, Phoenix is accessible via:
+
+<code>setcbenv prod</code></br>
+<code>set official</code></br>
+<code>cbload phoenix</code>
+
+And the following two environment variables for scMINER:
+
+### Setup scMINER
+
+Set the two environment variables as follows:
 
 <code>export PYTHON_PATH=[path_to_target_python3]</code>
 </br>
 <code>export scMINER_PATH=[path_to_root_directory_of_scMINER]</code>
+
+### Setup R
+
+To generate R plot load R module as follows:
+
+<code>module load R/3.4.0</code>
+
+To use the package in a regular machine, just follow Setup scMINER section and make sure to have R and requirement Python packages installed and when running any command set the --host option to LOCAL.
 
 ## Run MIE
 
