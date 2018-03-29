@@ -146,10 +146,7 @@ def cclust(args, paths):
 
 def ggplot(args, paths):
 	for i in range(len(paths[2])):
-		path_tmp = paths[2][i] + '.tmp/'
-		if not os.path.exists(path_tmp):
-			exit()
-		script = 'Rscript ' + scMINER_PATH + 'MICA/ggplot.cc.r ' + ' ' + path_tmp + args.outfilename + '.ggplot.txt 1 5 ' + args.outfilename + ' ' + paths[2][i] + args.outfilename + '_clust_k' + str(args.k[i]) + '.rplot.pdf '
+		script = 'Rscript ' + scMINER_PATH + 'MICA/ggplot.cc.r ' + ' ' + paths[2][i] + args.outfilename + '.ggplot.txt 1 5 ' + args.outfilename + ' ' + paths[2][i] + args.outfilename + '_clust_k' + str(args.k[i]) + '.rplot.pdf '
 		out_6 = open(paths[3][i] + '06_GGplot_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'w')
 		out_6.write(script + '\n')
 		out_6.close()
@@ -193,6 +190,101 @@ def clust(args, paths):
 		out_0.write('rm -rf ' + paths[2][i] + '.tmp/ \n')
 		out_0.close()
 
+def reduce(args, paths):
+	path_tmp = args.outdir + '.tmp/'
+	if not os.path.exists(path_tmp):
+		os.mkdir(path_tmp)
+	out_1 = open(path_tmp + '01_Hclust_' + args.project_name + '_' + args.transformation.lower() + '.sh', 'w')
+	out_2 = open(path_tmp + '02_Transform_' + args.project_name + '_' + args.transformation.lower() + '.sh', 'w')
+	out_3 = open(path_tmp + '03_Share_' + args.project_name + '_' + args.transformation.lower() + '.sh', 'w')
+	out_4 = open(path_tmp + '04_Prep_' + args.project_name + '_' + args.transformation.lower() + '.sh', 'w')
+	out_5 = open(path_tmp + '05_Kmeans_' + args.project_name + '_' + args.transformation.lower() + '.sh', 'w')
+	out_6 = open(path_tmp + '06_CClust_' + args.project_name + '_' + args.transformation.lower() + '.sh', 'w')
+	out_7 = open(path_tmp + '07_GGplot_' + args.project_name + '_' + args.transformation.lower() + '.sh', 'w')
+	out_8 = open(path_tmp + '08_Clean_' + args.project_name + '_' + args.transformation.lower() + '.sh', 'w')
+	for i in range(len(paths[3])):
+		with open(paths[3][i] + '01_Hclust_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'r') as f1:
+			out_1.write(f1.read())
+		if i == 0:
+			with open(paths[3][i] + '02_Transform_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'r') as f2:
+				out_2.write(f2.read())
+		else:
+			script = 'cp ' + paths[2][0] + args.outfilename + '_clust.h5 ' + paths[2][i] + '\n'
+			out_3.write(script)
+			if args.transformation != 'LPCA':
+				script = 'cp ' + paths[2][0] + args.outfilename + '_' + args.transformation.lower() + '.pdf ' + paths[2][i] + '\n'
+				out_3.write(script)
+			else:
+				script = 'cp ' + paths[2][0] + args.outfilename + '_pca.pdf ' + paths[2][i] + '\n'
+				out_3.write(script)
+				script = 'cp ' + paths[2][0] + args.outfilename + '_lpl.pdf ' + paths[2][i] + '\n'
+				out_3.write(script)
+		with open(paths[3][i] + '03_Prep_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'r') as f3:
+			out_4.write(f3.read())
+		with open(paths[3][i] + '04_Kmeans_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'r') as f4:
+			out_5.write(f4.read())
+		with open(paths[3][i] + '05_CClust_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'r') as f5:
+			out_6.write(f5.read())
+		with open(paths[3][i] + '06_GGplot_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'r') as f6:
+			out_7.write(f6.read())
+		out_8.write('rm -rf ' + paths[2][i] + '.tmp/ \n')	
+	out_1.close()
+	out_2.close()
+	out_3.close()
+	out_4.close()
+	out_5.close()
+	out_6.close()
+	out_7.close()
+	out_8.close()
+
+def reduce_clust(args, paths):
+	path_tmp = args.outdir + '.tmp/'
+	path_tmp_log = path_tmp + '.log/'
+	if not os.path.exists(path_tmp):
+		exit()
+	if not os.path.exists(path_tmp_log):
+		os.mkdir(path_tmp_log)
+	out_0 = open(path_tmp + '00_Clust_' + args.project_name + '_' + args.transformation.lower() + '.sh', 'w')
+	if args.host == 'LSF':
+		if args.hclust == 'True':
+			script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MICA_HClust -q ' + args.queue + ' -M ' + str(args.resource[0]) + ' -i ' + path_tmp + '01_Hclust_' + args.project_name + '_' + args.transformation.lower() + '.sh -oo ' + path_tmp_log + args.project_name + '_MICA_Hclust.%J.%I.out -eo ' + path_tmp_log + args.project_name + '_MICA_Hclust.%J.%I.err \n'
+			out_0.write(script)
+		script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MICA_Transform.0 -q ' + args.queue + ' -M ' + str(args.resource[1]) + ' -i ' + path_tmp + '02_Transform_' + args.project_name + '_' + args.transformation.lower() + '.sh -oo ' + path_tmp_log + args.project_name + '_MICA_Transform.0.%J.%I.out -eo ' + path_tmp_log + args.project_name + '_MICA_Transform.0.%J.%I.err \n'
+		out_0.write(script)
+		script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MICA_Transform.1 -q ' + args.queue + ' -M ' + str(args.resource[1]) + ' -i ' + path_tmp + '03_Share_' + args.project_name + '_' + args.transformation.lower() + '.sh -oo ' + path_tmp_log + args.project_name + '_MICA_Transform.1.%J.%I.out -eo ' + path_tmp_log + args.project_name + '_MICA_Transform.0.%J.%I.err \n'
+		out_0.write(script)
+		script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MICA_Kmeans.0 -q ' + args.queue + ' -M ' + str(args.resource[2]) + ' -i ' + path_tmp + '04_Prep_' + args.project_name + '_' + args.transformation.lower() + '.sh -oo ' + path_tmp_log + args.project_name + '_MICA_Kmeans.0.%J.%I.out -eo ' + path_tmp_log + args.project_name + '_MICA_Kmeans.0.%J.%I.err \n'
+		out_0.write(script)
+		script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MICA_Kmeans.1 -q ' + args.queue + ' -M ' + str(args.resource[3]) + ' -i ' + path_tmp + '05_Kmeans_' + args.project_name + '_' + args.transformation.lower() + '.sh -oo ' + path_tmp_log + args.project_name + '_MICA_Kmeans.1.%J.%I.out -eo ' + path_tmp_log + args.project_name + '_MICA_Kmeans.1.%J.%I.err \n'
+		out_0.write(script)
+		script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MICA_CClust -q ' + args.queue + ' -M ' + str(args.resource[4]) + ' -i ' + path_tmp + '06_CClust_' + args.project_name + '_' + args.transformation.lower() + '.sh -oo ' + path_tmp_log + args.project_name + '_MICA_Cclust.%J.%I.out -eo ' + path_tmp_log + args.project_name + '_MICA_Cclust.%J.%I.err \n'
+		out_0.write(script)
+		script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MICA_GGplot -q ' + args.queue + ' -M ' + str(args.resource[5]) + ' -i ' + path_tmp + '07_GGplot_' + args.project_name + '_' + args.transformation.lower() + '.sh -oo ' + path_tmp_log + args.project_name + '_MICA_Ggplot.%J.%I.out -eo ' + path_tmp_log + args.project_name + '_MICA_Ggplot.%J.%I.err \n'
+		out_0.write(script)
+		script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MICA_Clean -q ' + args.queue + ' -M ' + str(args.resource[5]) + ' -i ' + path_tmp + '08_Clean_' + args.project_name + '_' + args.transformation.lower() + '.sh -oo ' + path_tmp_log + args.project_name + '_MICA_Clean.%J.%I.out -eo ' + path_tmp_log + args.project_name + '_MICA_Clean.%J.%I.err \n'
+		out_0.write(script)
+	elif args.host == 'LOCAL':
+		if args.hclust == 'True':
+			script = 'sh ' + path_tmp + '01_Hclust_' + args.project_name + '_' + args.transformation.lower() + '.sh >> ' + path_tmp_log + args.project_name + '_MICA_Hclust.out \n'
+			out_0.write(script)
+		script = 'sh ' + path_tmp + '02_Transform_' + args.project_name + '_' + args.transformation.lower() + '.sh >> ' + path_tmp_log + args.project_name + '_MICA_Transform.0.out \n'
+		out_0.write(script)
+		script = 'sh ' + path_tmp + '03_Share_' + args.project_name + '_' + args.transformation.lower() + '.sh >> ' + path_tmp_log + args.project_name + '_MICA_Transform.1.out \n'
+		out_0.write(script)
+		script = 'sh ' + path_tmp + '04_Prep_' + args.project_name + '_' + args.transformation.lower() + '.sh >> ' + path_tmp_log + args.project_name + '_MICA_Kmeans.0.out \n'
+		out_0.write(script)
+		script = 'sh ' + path_tmp + '05_Kmeans_' + args.project_name + '_' + args.transformation.lower() + '.sh >> ' + path_tmp_log + args.project_name + '_MICA_Kmeans.1.out \n'
+		out_0.write(script)
+		out_0.write('jobs=$(ps -ef | grep \"' + args.project_name + '_' + args.transformation + '\" | grep Kmeans.py -c)\n')
+		out_0.write('while [ $jobs -gt 0 ]\ndo\n\tsleep 30\n\tjobs=$(ps -ef | grep \"' + args.project_name + '_' + args.transformation + '\" | grep Kmeans.py -c)\ndone\n')
+		script = 'sh ' + path_tmp + '06_CClust_' + args.project_name + '_' + args.transformation.lower() + '.sh >> ' + path_tmp_log + args.project_name + '_MICA_Cclust.out \n'
+		out_0.write(script)			
+		script = 'sh ' + path_tmp + '07_GGplot_' + args.project_name + '_' + args.transformation.lower() + '.sh >> ' + path_tmp_log + args.project_name + '_MICA_Ggplot.out \n'
+		out_0.write(script)
+		script = 'sh ' + path_tmp + '08_Clean_' + args.project_name + '_' + args.transformation.lower() + '.sh >> ' + path_tmp_log + args.project_name + '_MICA_Clean.out \n'
+		out_0.write(script)
+	out_0.close()
+
 def run(args):
 	args_ = setup(args)
 	if args_.mode == 'Clust':
@@ -204,6 +296,17 @@ def run(args):
 		cclust(args_, paths)
 		ggplot(args_, paths)
 		clust(args_, paths)
+		reduce(args_, paths)
+		reduce_clust(args_, paths)
+		path_tmp = args_.outdir + '.tmp/'
+		path_tmp_log = path_tmp + '.log/'
+		if args_.host == 'LSF':
+			script = 'bsub -P ' + args_.project_name + ' -J ' + args_.project_name + '_MICA_Clust -q ' + args_.queue + ' -R \"rusage[mem=2000]\" -oo ' + path_tmp_log + args_.project_name + '_MICA_Clust.out -eo ' + path_tmp_log + args_.project_name + '_MICA_Clust.err sh ' + path_tmp + '00_Clust_' + args_.project_name + '_' + args_.transformation.lower() + '.sh \n'
+			subprocess.Popen(shlex.split(script))
+		elif args_.host == 'LOCAL':
+			script = 'sh ' + path_tmp + '00_Clust_' + args_.project_name + '_' + args_.transformation.lower() + '.sh >> ' + path_tmp_log + args_.project_name + '_MICA_Clust.out \n'
+			subprocess.Popen(shlex.split(script))
+		"""
 		for i in range(len(paths[3])):
 			if args_.host == 'LSF':
 				script = 'bsub -P ' + args_.project_name + ' -J ' + args_.project_name + '_MICA_Clust -q ' + args_.queue + ' -R \"rusage[mem=2000]\" -oo ' + paths[1][i] + args_.project_name + '_MICA_Clust.out -eo ' + paths[1][i] + args_.project_name + '_MICA_Clust.err sh ' + paths[3][i] + '00_Clust_' + args_.project_name + '_' + args_.transformation.lower() + '_' + str(args_.k[i]) + '.sh \n'
@@ -211,6 +314,7 @@ def run(args):
 			elif args_.host == 'LOCAL':
 				script = 'sh ' + paths[3][i] + '00_Clust_' + args_.project_name + '_' + args_.transformation.lower() + '_' + str(args_.k[i]) + '.sh >> ' + paths[1][i] + args_.project_name + '_MICA_Clust.out \n'
 				subprocess.Popen(shlex.split(script))
+		"""
 	else:
 		print('[EROR] --> [MICA] Unsupported command.')
 		exit()

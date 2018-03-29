@@ -173,9 +173,9 @@ def pipeline(args, paths):
 	norm(args, paths)
 	out_0 = open(paths[3] + '00_Pipeline_' + args.project_name + '.sh', 'w')
 	if args.host == 'LSF':
-		script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MIE_Calc -q ' + args.queue + ' -M ' + str(args.resource[2]) + ' -i ' + paths[3] + '03_Calc_' + args.project_name + '.sh -oo ' + paths[1] + args.project_name + '_MIE_Calc.%J.%I.out -eo ' + paths[1] + args.project_name + '_MIE_Calc.%J.%I.err \n'
+		script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MIE_Calc -q ' + args.queue + ' -M ' + str(args.resource[2]) + ' -i ' + paths[3] + '03_Calc_' + args.project_name + '.sh -oo ' + paths[1] + args.project_name + '_MIE_Calc.%J.%I.out -eo ' + paths[1] + args.project_name + '_MIE_Calc.%J.%I.err \nsleep 30\n'
 		out_0.write(script)
-		script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MIE_Merge -q ' + args.queue + ' -M ' + str(args.resource[3]) + ' -i ' + paths[3] + '04_Merge_' + args.project_name + '.sh -oo ' + paths[1] + args.project_name + '_MIE_Merge.%J.%I.out -eo ' + paths[1] + args.project_name + '_MIE_Merge.%J.%I.err \n'
+		script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MIE_Merge -q ' + args.queue + ' -M ' + str(args.resource[3]) + ' -i ' + paths[3] + '04_Merge_' + args.project_name + '.sh -oo ' + paths[1] + args.project_name + '_MIE_Merge.%J.%I.out -eo ' + paths[1] + args.project_name + '_MIE_Merge.%J.%I.err \nsleep 30\n'
 		out_0.write(script)
 		script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MIE_Norm -q ' + args.queue + ' -M ' + str(args.resource[4]) + ' -i ' + paths[3] + '05_Norm_' + args.project_name + '.sh -oo ' + paths[1] + args.project_name + '_MIE_Norm.%J.%I.out -eo ' + paths[1] + args.project_name + '_MIE_Norm.%J.%I.err \n'
 		out_0.write(script)
@@ -184,7 +184,7 @@ def pipeline(args, paths):
 		out_0.write(script)
 		out_0.write('jobs=$(ps -ef | grep ' + args.project_name + ' | grep Calc.py -c)\n')
 		out_0.write('while [ $jobs -gt 0 ]\ndo\n\tsleep 30\n\tjobs=$(ps -ef | grep ' + args.project_name + ' | grep Calc.py -c)\ndone\n')
-		script = 'sh ' + paths[3] + '04_Merge_' + args.project_name + '.sh >> ' + paths[1] + args.project_name + '_MIE_Merge.out \n'
+		script = 'sh ' + paths[3] + '04_Merge_' + args.project_name + '.sh >> ' + paths[1] + args.project_name + '_MIE_Merge.out \nsleep 30\n'
 		out_0.write(script)
 		script = 'sh ' + paths[3] + '05_Norm_' + args.project_name + '.sh >> ' + paths[1] + args.project_name + '_MIE_Norm.out \n'
 		out_0.write(script)

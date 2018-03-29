@@ -29,7 +29,7 @@ df1 <- data.frame(x_pose, y_pose, label)
 p <- ggplot() + 
   geom_point(data=df, aes(x=x_tsne, y=y_tsne, color=as.factor(c)), size=as.numeric(args[s_args+1])) + 
   xlab("MICA-1") + ylab("MICA-2") + 
-  guides(col=guide_legend(override.aes = list(size=10), title=paste(c("Clusters\n(", toString(ncols-1), ")"), collapse = '')[1])) + 
+  guides(col=guide_legend(override.aes = list(size=10), title=paste(c("Clusters\n(", toString(ncols-1), ")"), collapse = '')[1]), ncol=ceiling(n/10)) + 
   geom_text(data=df1, aes(x=x_pose, y=y_pose, label=label), size=as.numeric(args[s_args+2])+4) + 
   scale_color_discrete(labels=l_size) +
   ggtitle(paste(c(args[s_args+3], " (", toString(n), ")"), collapse = '')[1]) + 
@@ -38,6 +38,6 @@ p <- ggplot() +
         axis.title=element_text(size=14,face="bold"), 
         legend.text = element_text(size=12), 
         legend.title = element_text(size=14,face="bold"))
-ggsave(dest_file, plot = p, width = 8, height = 8)
+ggsave(dest_file, plot = p, width = 12, height = 12)
 
 
