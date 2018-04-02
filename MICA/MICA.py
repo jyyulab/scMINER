@@ -33,6 +33,16 @@ def setup(args):
 		parser.add_argument('--host', default='LSF', help='Computation host of the jobs [LOCAL | LSF] (default: LSF)')
 		parser.add_argument('--resource', type=int, nargs='+', default=[2000]*6, help='Memory allocation for each individual step in clustering pipeline (default: 2GB)')
 		parser.add_argument('--queue', default='compbio', help='Queue name for job allocation')
+		parser.add_argument('--preclust', default='None', help='Whether the clustering is based on previous clustering result or not (default: None)')
+	if args_.mode == 'Reclust':
+		parser.add_argument('--transformation', default='MDS', help='Transformation method used for dimension reduction [MDS | PCA | LPL | LPCA] (default: MDS)')
+		parser.add_argument('--max_dim', type=int, default=19, help='Maximum number of dimensions used in clustering (default: 19)')
+		parser.add_argument('--k', type=int, default=[2], nargs='+', help='Number of clusters to divide the dataset to (default: [2])')
+		parser.add_argument('outdir', help='Output directory')
+		parser.add_argument('outfilename', help='Common name used for all outputs')
+		parser.add_argument('--host', default='LSF', help='Computation host of the jobs [LOCAL | LSF] (default: LSF)')
+		parser.add_argument('--resource', type=int, nargs='+', default=[2000]*2, help='Memory allocation for each individual step in clustering pipeline (default: 2GB)')
+		parser.add_argument('--queue', default='compbio', help='Queue name for job allocation')
 	args_ = parser.parse_args(args[1:])
 	return args_
 
@@ -82,7 +92,7 @@ def transform(args, paths):
 		path_tmp = paths[2][i] + '.tmp/'
 		if not os.path.exists(path_tmp):
 			exit()
-		script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Transform.py ' + ' ' + args.transformation + ' ' + str(fig_num) + ' ' + path_tmp + args.dist_file.split('/')[-1] + ' ' + str(args.max_dim) + ' ' + paths[2][i] + ' ' + args.outfilename + ' '
+		script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Transform.py ' + ' ' + args.transformation + ' ' + str(fig_num) + ' ' + path_tmp + args.dist_file.split('/')[-1] + ' ' + str(args.max_dim) + ' ' + paths[2][i] + ' ' + args.outfilename + ' ' + args.preclust + ' '
 		out_2 = open(paths[3][i] + '02_Transform_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'w')
 		out_2.write(script + '\n')
 		out_2.close()
@@ -150,7 +160,6 @@ def ggplot(args, paths):
 		out_6 = open(paths[3][i] + '06_GGplot_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'w')
 		out_6.write(script + '\n')
 		out_6.close()
-
 
 def clust(args, paths):
 	for i in range(len(paths[3])):
@@ -285,10 +294,42 @@ def reduce_clust(args, paths):
 		out_0.write(script)
 	out_0.close()
 
+def retransform(args, paths):
+	global fig_num
+	for i in range(len(paths[2])):
+		script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Retransform.py ' + ' ' + str(fig_num) + ' ' + paths[2][i] + args.outfilename + '_clust.h5 ' + args.transformation.lower() + ' ' + str(args.max_dim) + ' ' + paths[2][i] + ' ' + args.outfilename + ' '
+		out_7 = open(paths[3][i] + '01_Retransform_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'w')
+		out_7.write(script + '\n')
+		out_7.close()
+
+def reggplot(args, paths):
+	for i in range(len(paths[2])):
+		script = 'Rscript ' + scMINER_PATH + 'MICA/ggplot.cc.r ' + ' ' + paths[2][i] + args.outfilename + '_reclust.ggplot.txt 1 5 ' + args.outfilename + ' ' + paths[2][i] + args.outfilename + '_re_clust_k' + str(args.k[i]) + '.rplot.pdf '
+		out_8 = open(paths[3][i] + '02_Reggplot_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'w')
+		out_8.write(script + '\n')
+		out_8.close()
+
+def reclust(args, paths):
+	for i in range(len(paths[3])):
+		out_0 = open(paths[3][i] + '00_Reclust_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'w')
+		if args.host == 'LSF':
+			script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MICA_Reclust -q ' + args.queue + ' -M ' + str(args.resource[0]) + ' -i ' + paths[3][i] + '01_Retransform_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh -oo ' + paths[1][i] + args.project_name + '_MICA_Reclust.%J.%I.out -eo ' + paths[1][i] + args.project_name + '_MICA_Reclust.%J.%I.err \n'
+			out_0.write(script)
+			script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MICA_Reggplot -q ' + args.queue + ' -M ' + str(args.resource[1]) + ' -i ' + paths[3][i] + '02_Reggplot_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh -oo ' + paths[1][i] + args.project_name + '_MICA_Reggplot.%J.%I.out -eo ' + paths[1][i] + args.project_name + '_MICA_Reggplot.%J.%I.err \n'
+			out_0.write(script)
+		elif args.host == 'LOCAL':
+			script = 'sh ' + paths[3][i] + '01_Retransform_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh >> ' + paths[1][i] + args.project_name + '_MICA_Retransform.out \n'
+			out_0.write(script)
+			script = 'sh ' + paths[3][i] + '02_Reggplot_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh >> ' + paths[1][i] + args.project_name + '_MICA_Reggplot.out \n'
+			out_0.write(script)
+		out_0.close()
+
 def run(args):
 	args_ = setup(args)
 	if args_.mode == 'Clust':
 		paths = setup_directory(args_.outdir, args_.project_name, args_.transformation, args_.k)
+		if args_.preclust != 'None':
+			args_.hclust = 'False'
 		prep(args_, paths)		
 		hclust(args_, paths)
 		transform(args_, paths)
@@ -306,7 +347,7 @@ def run(args):
 		elif args_.host == 'LOCAL':
 			script = 'sh ' + path_tmp + '00_Clust_' + args_.project_name + '_' + args_.transformation.lower() + '.sh >> ' + path_tmp_log + args_.project_name + '_MICA_Clust.out \n'
 			subprocess.Popen(shlex.split(script))
-		"""
+		""" Old method when redundant transformation ran for multiple k on an input file
 		for i in range(len(paths[3])):
 			if args_.host == 'LSF':
 				script = 'bsub -P ' + args_.project_name + ' -J ' + args_.project_name + '_MICA_Clust -q ' + args_.queue + ' -R \"rusage[mem=2000]\" -oo ' + paths[1][i] + args_.project_name + '_MICA_Clust.out -eo ' + paths[1][i] + args_.project_name + '_MICA_Clust.err sh ' + paths[3][i] + '00_Clust_' + args_.project_name + '_' + args_.transformation.lower() + '_' + str(args_.k[i]) + '.sh \n'
@@ -315,6 +356,18 @@ def run(args):
 				script = 'sh ' + paths[3][i] + '00_Clust_' + args_.project_name + '_' + args_.transformation.lower() + '_' + str(args_.k[i]) + '.sh >> ' + paths[1][i] + args_.project_name + '_MICA_Clust.out \n'
 				subprocess.Popen(shlex.split(script))
 		"""
+	elif args_.mode == 'Reclust':
+		paths = setup_directory(args_.outdir, args_.project_name, args_.transformation, args_.k)
+		retransform(args_, paths)
+		reggplot(args_, paths)
+		reclust(args_, paths)
+		for i in range(len(paths[3])):
+			if args_.host == 'LSF':
+				script = 'bsub -P ' + args_.project_name + ' -J ' + args_.project_name + '_MICA_Reclust -q ' + args_.queue + ' -R \"rusage[mem=2000]\" -oo ' + paths[1][i] + args_.project_name + '_MICA_Reclust.out -eo ' + paths[1][i] + args_.project_name + '_MICA_Reclust.err sh ' + paths[3][i] + '00_Reclust_' + args_.project_name + '_' + args_.transformation.lower() + '_' + str(args_.k[i]) + '.sh \n'
+				subprocess.Popen(shlex.split(script))
+			elif args_.host == 'LOCAL':
+				script = 'sh ' + paths[3][i] + '00_Reclust_' + args_.project_name + '_' + args_.transformation.lower() + '_' + str(args_.k[i]) + '.sh >> ' + paths[1][i] + args_.project_name + '_MICA_Reclust.out \n'
+				subprocess.Popen(shlex.split(script))
 	else:
 		print('[EROR] --> [MICA] Unsupported command.')
 		exit()

@@ -8,7 +8,10 @@ from sklearn import decomposition
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gs	
 from scipy.cluster.hierarchy import dendrogram, linkage
+from scipy.linalg import eigh
 warnings.filterwarnings('ignore', category=Warning)
+import resource
+resource.setrlimit(resource.RLIMIT_STACK, (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
 
 def read_file(file, sep, header, out_dir, out_file_name, index_col='0'):
 	index_col = int(index_col)
@@ -194,6 +197,18 @@ def mds(fig_num, in_mat_file, max_dim, out_dir, out_file_name, plot='True'):
 	n = df.shape[0]
 	H = np.eye(n) - np.ones((n,n))/n
 	B = -H.dot(df ** 2).dot(H)/2
+	evals, evecs = eigh(B, eigvals=(n-np.min([n, 200]), n-1))
+	idx = np.argsort(evals)[::-1]
+	evals = evals[idx]
+	evecs = evecs[:,idx]
+	evals_pos = evals > 0
+	L = np.diag(np.sqrt(evals[evals_pos]))
+	V = evecs[:, evals_pos]
+	Y = pd.DataFrame(data=V.dot(L), index=df.index, columns=['mds_' + str(x) for x in np.arange(1, L.shape[0] + 1)])
+	Y.to_hdf(out_dir + out_file_name + '_clust.h5', 'mds')
+	if plot == 'True':
+		tsne(fig_num, Y, max_dim, out_dir, out_file_name, 'mds', 'mds-tsne')
+	"""
 	evals, evecs = np.linalg.eigh(B)
 	idx = np.argsort(evals)[::-1]
 	evals = evals[idx]
@@ -207,6 +222,7 @@ def mds(fig_num, in_mat_file, max_dim, out_dir, out_file_name, plot='True'):
 	Y.to_hdf(out_dir + out_file_name + '_clust.h5', 'mds')
 	if plot == 'True':
 		tsne(fig_num, Y, max_dim, out_dir, out_file_name, 'mds', 'mds-tsne')
+	"""
 	hdf.close()
 
 def lpl(fig_num, in_mat_file,  max_dim, out_dir, out_file_name, plot='True'):
@@ -306,7 +322,6 @@ def cc(tmp_dir, n_clusters, project_name, common_name, transformation, out_dir, 
 		hdf['cclust'].loc[:, ['X', 'Y', 'label']].to_csv(out_dir + out_file_name + '.ggplot.txt', sep='\t')
 		hdf.close()
 
-
 def plot(fig_num, in_file, out_dir, out_file_name, hclust='False'):
 	hdf = pd.HDFStore(in_file)
 	mi = hdf['norm_mi'] if '/norm_mi' in hdf.keys() else None
@@ -317,5 +332,54 @@ def plot(fig_num, in_file, out_dir, out_file_name, hclust='False'):
 		heatmap2(fig_num + 1, mi, cclust.loc[:, 'label'], out_dir, out_file_name, 'mi')
 		heatmap2(fig_num + 2, mem, cclust.loc[:, 'label'], out_dir, out_file_name, 'clusts')
 	hdf.close()
+
+def retransform(transformation, max_dim, out_dir, out_file_name):
+	in_file = out_dir + out_file_name + '_clust.h5'
+	if os.path.exists(in_file):
+		transformation = 'pca' if transformation == 'lpca' else transformation
+		hdf = pd.HDFStore(in_file)
+		Y = hdf[transformation]
+		cclust = hdf['cclust'].loc[:, ['label']]
+		hdf.close()
+		if cclust is not None and Y is not None:
+			perplexity = np.min([1200, np.max(cclust.groupby(['label']).size())])
+			tsne(None, Y, max_dim, out_dir, out_file_name, None, transformation + '-tsne-re', perplexity, 'False')
+			hdf = pd.HDFStore(in_file)
+			Y_tsne = hdf[transformation + '-tsne-re']
+			hdf.close()
+			reclust = pd.concat([cclust, Y_tsne.loc[cclust.index, :]], axis=1).loc[:, ['X', 'Y', 'label']]
+			reclust.to_hdf(in_file, 'reclust')
+			reclust.to_csv(out_dir + out_file_name + '_reclust.ggplot.txt', sep='\t')
+
+def replot(fig_num, in_file, out_dir, out_file_name):
+	hdf = pd.HDFStore(in_file)
+	reclust = hdf['reclust'] if '/reclust' in hdf.keys() else None
+	scatter2(fig_num, reclust, out_dir, out_file_name + '_re')
+	hdf.close()
+
+def preclust(in_file, transformation, out_dir, out_file_name):
+	hdf = pd.HDFStore(in_file)
+	out_file = out_dir + out_file_name + '_clust.h5'
+	in_file_name = in_file.split('/')[-1].split('_')[0]
+	in_path = '/'.join(in_file.split('/')[:-1]) + '/'
+	if transformation != 'lpca':
+		trans = hdf[transformation]
+		trans_tsne = hdf[transformation + '-tsne']
+		hdf.close()
+		trans.to_hdf(out_file, transformation)
+		trans_tsne.to_hdf(out_file, transformation + '-tsne')
+		shutil.copyfile(in_path + in_file_name + '_' + transformation + '.pdf', out_dir + out_file_name + '_' + transformation + '.pdf')
+	elif transformation == 'lpca':
+		trans1 = hdf['lpl']
+		trans2 = hdf['pca']
+		trans1_tsne = hdf['lpl-tsne']
+		trans2_tsne = hdf['pca-tsne']
+		hdf.close()
+		trans1.to_hdf(out_file, 'lpl')
+		trans2.to_hdf(out_file, 'pca')
+		trans1_tsne.to_hdf(out_file, 'lpl-tsne')
+		trans2_tsne.to_hdf(out_file, 'pca-tsne')
+		shutil.copyfile(in_path + in_file_name + '_lpl.pdf', out_dir + out_file_name + '_lpl.pdf')
+		shutil.copyfile(in_path + in_file_name + '_pca.pdf', out_dir + out_file_name + '_pca.pdf')
 
 
