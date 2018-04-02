@@ -61,7 +61,8 @@ To compare the visualizations in the presence or absence of retransformation, di
 
 <code>python3 scMINER.py MICA Reclust [project_name] [output_dir: path where program can find the directories of the clustering result with retransformation as False] [project_name] --k 2 3 4 ... </code>
 
-Make sure that the output directory is where the original output directories are: [path_to]/scMINER_[project_name]/scMINER_[project_name]_out/
+Make sure that the output directory is where the original output directories are: 
+<code>[path_to]/scMINER_[project_name]/scMINER_[project_name]_out/</code>
 
 ### Clustering Using Preclustering
 To benefit of the previous clustering result on a dataset for specific number of clusters (k), use preclust option to surpass common calculations as follows:
