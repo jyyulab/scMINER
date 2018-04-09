@@ -83,5 +83,5 @@ To benefit of the previous clustering result on a dataset for specific number of
 
 The above command ignores <code>--perplexity</code> option since it uses preclustering transformation result.</br>
 
-It is possible to use <code>--retransformation</code> option to change the value of the parameter for final visualization. DO NOT SET to None or False or any not integer values.
+It is possible to use <code>--retransformation</code> option to change the value of the parameter for final visualization. DO NOT SET to None or False or any non-integer values.
 
