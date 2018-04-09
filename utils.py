@@ -145,6 +145,7 @@ def heatmap2(fig_num, data, labels, out_dir, out_file_name, tag):
 def hclust(fig_num, in_mat_file, out_dir, out_file_name, plot='True'):
 	hdf = pd.HDFStore(in_mat_file)
 	df = 1 - hdf['norm_mi']
+	hdf.close()
 	n = df.shape[0]
 	linkage_ = linkage(df, method='ward')
 	leaves = dendrogram(linkage_, no_plot=True, orientation='top', labels=df.index, leaf_font_size=2, color_threshold=0)['leaves']
@@ -154,7 +155,6 @@ def hclust(fig_num, in_mat_file, out_dir, out_file_name, plot='True'):
 	hc_matrix.to_hdf(out_dir + out_file_name + '_clust.h5', 'hclust')
 	if plot == 'True':
 		heatmap(fig_num, df, linkage_, hc_matrix, out_dir, out_file_name, 'hclust', 'True')
-	hdf.close()
 
 def scatter(fig_num, Y_tsne, out_dir, out_file_name, tag, facecolor='none', edgecolor='r', marker='o', marker_size=20):
 	fig = plt.figure(fig_num, figsize=(16, 16), dpi=300)
@@ -191,9 +191,10 @@ def tsne(fig_num, data, max_dim, out_dir, out_file_name, tag, key, perplexity=30
 	if plot == 'True':
 		scatter(fig_num, Y_tsne, out_dir, out_file_name, tag)
 
-def mds(fig_num, in_mat_file, max_dim, out_dir, out_file_name, plot='True'):
+def mds(fig_num, in_mat_file, max_dim, out_dir, out_file_name, perplexity=30, plot='True'):
 	hdf = pd.HDFStore(in_mat_file)
 	df = 1 - hdf['norm_mi']
+	hdf.close()
 	n = df.shape[0]
 	H = np.eye(n) - np.ones((n,n))/n
 	B = -H.dot(df ** 2).dot(H)/2
@@ -207,8 +208,8 @@ def mds(fig_num, in_mat_file, max_dim, out_dir, out_file_name, plot='True'):
 	Y = pd.DataFrame(data=V.dot(L), index=df.index, columns=['mds_' + str(x) for x in np.arange(1, L.shape[0] + 1)])
 	Y.to_hdf(out_dir + out_file_name + '_clust.h5', 'mds')
 	if plot == 'True':
-		tsne(fig_num, Y, max_dim, out_dir, out_file_name, 'mds', 'mds-tsne')
-	"""
+		tsne(fig_num, Y, max_dim, out_dir, out_file_name, 'mds', 'mds-tsne', perplexity, plot)
+	""" Old version calculating all eigen vectors -> not practical in large dataset > 50K
 	evals, evecs = np.linalg.eigh(B)
 	idx = np.argsort(evals)[::-1]
 	evals = evals[idx]
@@ -223,37 +224,36 @@ def mds(fig_num, in_mat_file, max_dim, out_dir, out_file_name, plot='True'):
 	if plot == 'True':
 		tsne(fig_num, Y, max_dim, out_dir, out_file_name, 'mds', 'mds-tsne')
 	"""
-	hdf.close()
 
-def lpl(fig_num, in_mat_file,  max_dim, out_dir, out_file_name, plot='True'):
+def lpl(fig_num, in_mat_file,  max_dim, out_dir, out_file_name, perplexity=30, plot='True'):
 	hdf = pd.HDFStore(in_mat_file)
 	df = 1 - hdf['norm_mi']
+	hdf.close()
 	n = np.min(df.shape[0], 200)
 	laplacian = manifold.SpectralEmbedding(n_components=n, eigen_solver='lobpcg', random_state=10)
 	Y = pd.DataFrame(data=laplacian.fit_transform(df), index=df.index, columns=['lpl_' + str(x) for x in np.arange(1, n)])
 	Y.to_hdf(out_dir + out_file_name + '_clust.h5', 'lpl')
 	if plot == 'True':
-		tsne(fig_num, Y, max_dim, out_dir, out_file_name, 'lpl', 'lpl-tsne')
-	hdf.close()
+		tsne(fig_num, Y, max_dim, out_dir, out_file_name, 'lpl', 'lpl-tsne', perplexity, plot)
 
-def pca(fig_num, in_mat_file, max_dim, out_dir, out_file_name, plot='True'):
+def pca(fig_num, in_mat_file, max_dim, out_dir, out_file_name, perplexity=30, plot='True'):
 	hdf = pd.HDFStore(in_mat_file)
 	df = 1 - hdf['norm_mi']
+	hdf.close()
 	n = np.min(df.shape[0], 200)
 	pca_ = decomposition.PCA(n_components=n, random_state=10)
 	Y = pd.DataFrame(data=np.transpose(pca_.fit(df).components_), index=df.index, columns=['pca_' + str(x) for x in np.arange(1, n+1)])
 	Y.to_hdf(out_dir + out_file_name + '_clust.h5', 'pca')
 	if plot == 'True':
-		tsne(fig_num, Y, max_dim, out_dir, out_file_name, 'pca', 'pca-tsne')
-	hdf.close()
+		tsne(fig_num, Y, max_dim, out_dir, out_file_name, 'pca', 'pca-tsne', perplexity, plot)
 
 def kmeans(in_mat_file, transformation, n_clusters, dim, out_dir, out_file_name):
 	hdf = pd.HDFStore(in_mat_file)
 	df = hdf[transformation]
+	hdf.close()
 	km = cluster.KMeans(n_clusters=n_clusters, max_iter=1000, n_init=1000)
 	km_res = pd.DataFrame(data=np.transpose(km.fit_predict(df.iloc[:,0:dim])), index=df.index, columns=['label'])
 	km_res.to_hdf(out_dir + out_file_name, 'kmeans')
-	hdf.close()
 
 def aggregate(tmp_dir, n_clusters, common_name):
 	clusts = [f for f in os.listdir(tmp_dir) if f.find(common_name) >= 0]
@@ -264,12 +264,12 @@ def aggregate(tmp_dir, n_clusters, common_name):
 	for i in range(n_iter):
 		hdf = pd.HDFStore(tmp_dir + clusts[i]) 
 		df = hdf['kmeans'] + 1
+		hdf.close()
 		dff = pd.DataFrame(data=np.matmul(df, df.T), index=df.index, columns=df.index)
 		dff_div = pd.DataFrame(data=np.array((np.diag(dff),)*dff.shape[0]).T, index=dff.index, columns=dff.columns)
 		mem_mat = pd.DataFrame(data=dff/dff_div==1, index=dff.index, columns=dff.columns, dtype=np.float32)
 		mem = mem_mat if i == 0 else mem + mem_mat.loc[mem.index, mem.columns]
 		mem = mem / n_iter if i == n_iter - 1 else mem
-		hdf.close()
 	clust = cluster.AgglomerativeClustering(linkage='ward', n_clusters=n_clusters, affinity='euclidean')
 	clust.fit(mem)
 	cclust = pd.DataFrame(data=clust.labels_, index=mem.index, columns=['label'])
@@ -289,11 +289,11 @@ def cc(tmp_dir, n_clusters, project_name, common_name, transformation, out_dir, 
 		out_file = out_dir + out_file_name + '_clust.h5'
 		if os.path.exists(out_file):
 			transformation = 'pca' if transformation == 'lpca' else transformation
-			if re_trans == 'True' and max_dim > 0:
+			if re_trans != 'None' and re_trans != 'False' and max_dim > 0:
 				hdf = pd.HDFStore(out_file)
 				Y = hdf[transformation]
 				hdf.close()
-				perplexity = np.min([1200, np.max(cclust.groupby(['label']).size())])
+				perplexity = np.min([int(re_trans), np.max(cclust.groupby(['label']).size())])
 				tsne(None, Y, max_dim, out_dir, out_file_name, None, transformation + '-tsne', perplexity, 'False')
 				hdf = pd.HDFStore(out_file)
 				Y_tsne = hdf[transformation + '-tsne']
@@ -307,14 +307,14 @@ def cc(tmp_dir, n_clusters, project_name, common_name, transformation, out_dir, 
 			if os.path.exists(data_file):
 				hdf = pd.HDFStore(data_file)
 				data = hdf['slice_0']
-				cclust = pd.concat([cclust, data.loc[cclust.index, :]], axis=1)
 				hdf.close()
+				cclust = pd.concat([cclust, data.loc[cclust.index, :]], axis=1)
 			mi_file = tmp_dir + project_name + '_mi.h5'
 			if os.path.exists(mi_file):
 				hdf = pd.HDFStore(mi_file)
 				mi = 1 - hdf['norm_mi']
-				mi.to_hdf(out_file, 'norm_mi')
 				hdf.close()
+				mi.to_hdf(out_file, 'norm_mi')
 		cclust.to_hdf(out_file, 'cclust')
 		mem.to_hdf(out_file, 'membership')
 		#shutil.rmtree(tmp_dir)
@@ -327,13 +327,13 @@ def plot(fig_num, in_file, out_dir, out_file_name, hclust='False'):
 	mi = hdf['norm_mi'] if '/norm_mi' in hdf.keys() else None
 	mem = hdf['membership'] if '/membership' in hdf.keys() else None
 	cclust = hdf['cclust'] if '/cclust' in hdf.keys() else None
+	hdf.close()
 	scatter2(fig_num, cclust, out_dir, out_file_name)
 	if cclust is not None and hclust == 'True':
 		heatmap2(fig_num + 1, mi, cclust.loc[:, 'label'], out_dir, out_file_name, 'mi')
 		heatmap2(fig_num + 2, mem, cclust.loc[:, 'label'], out_dir, out_file_name, 'clusts')
-	hdf.close()
 
-def retransform(transformation, max_dim, out_dir, out_file_name):
+def retransform(transformation, max_dim, out_dir, out_file_name, re_trans=1200):
 	in_file = out_dir + out_file_name + '_clust.h5'
 	if os.path.exists(in_file):
 		transformation = 'pca' if transformation == 'lpca' else transformation
@@ -342,7 +342,7 @@ def retransform(transformation, max_dim, out_dir, out_file_name):
 		cclust = hdf['cclust'].loc[:, ['label']]
 		hdf.close()
 		if cclust is not None and Y is not None:
-			perplexity = np.min([1200, np.max(cclust.groupby(['label']).size())])
+			perplexity = np.min([re_trans, np.max(cclust.groupby(['label']).size())])
 			tsne(None, Y, max_dim, out_dir, out_file_name, None, transformation + '-tsne-re', perplexity, 'False')
 			hdf = pd.HDFStore(in_file)
 			Y_tsne = hdf[transformation + '-tsne-re']
@@ -354,8 +354,8 @@ def retransform(transformation, max_dim, out_dir, out_file_name):
 def replot(fig_num, in_file, out_dir, out_file_name):
 	hdf = pd.HDFStore(in_file)
 	reclust = hdf['reclust'] if '/reclust' in hdf.keys() else None
-	scatter2(fig_num, reclust, out_dir, out_file_name + '_re')
 	hdf.close()
+	scatter2(fig_num, reclust, out_dir, out_file_name + '_re')
 
 def preclust(in_file, transformation, out_dir, out_file_name):
 	hdf = pd.HDFStore(in_file)

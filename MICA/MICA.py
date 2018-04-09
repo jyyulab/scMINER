@@ -27,15 +27,17 @@ def setup(args):
 		parser.add_argument('--k', type=int, default=[2], nargs='+', help='Number of clusters to divide the dataset to (default: [2])')
 		parser.add_argument('--transformation', default='MDS', help='Transformation method used for dimension reduction [MDS | PCA | LPL | LPCA] (default: MDS)')
 		parser.add_argument('--hclust', default='False', help='Whether apply hierarchical clustering or not (default: False')
-		parser.add_argument('--retransformation', default='True', help='Whether apply re-transformation for final visualization or not (default: True)')
+		parser.add_argument('--retransformation', default=1200, help='If None or False no retransformation is used in the final visualization, if a number, retransformation threshold will be set to the value (default: 1200)')
 		parser.add_argument('outdir', help='Output directory')
 		parser.add_argument('outfilename', help='Common name used for all outputs')
 		parser.add_argument('--host', default='LSF', help='Computation host of the jobs [LOCAL | LSF] (default: LSF)')
 		parser.add_argument('--resource', type=int, nargs='+', default=[2000]*6, help='Memory allocation for each individual step in clustering pipeline (default: 2GB)')
 		parser.add_argument('--queue', default='compbio', help='Queue name for job allocation')
 		parser.add_argument('--preclust', default='None', help='Whether the clustering is based on previous clustering result or not (default: None)')
+		parser.add_argument('--perplexity', default=30, help='Visualization parameter determining how dense the clusters are')
 	if args_.mode == 'Reclust':
 		parser.add_argument('--transformation', default='MDS', help='Transformation method used for dimension reduction [MDS | PCA | LPL | LPCA] (default: MDS)')
+		parser.add_argument('--retransformation', default=1200, help='Retransformation threshold will be set to the value (default: 1200)')
 		parser.add_argument('--max_dim', type=int, default=19, help='Maximum number of dimensions used in clustering (default: 19)')
 		parser.add_argument('--k', type=int, default=[2], nargs='+', help='Number of clusters to divide the dataset to (default: [2])')
 		parser.add_argument('outdir', help='Output directory')
@@ -92,7 +94,7 @@ def transform(args, paths):
 		path_tmp = paths[2][i] + '.tmp/'
 		if not os.path.exists(path_tmp):
 			exit()
-		script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Transform.py ' + ' ' + args.transformation + ' ' + str(fig_num) + ' ' + path_tmp + args.dist_file.split('/')[-1] + ' ' + str(args.max_dim) + ' ' + paths[2][i] + ' ' + args.outfilename + ' ' + args.preclust + ' '
+		script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Transform.py ' + ' ' + args.transformation + ' ' + str(fig_num) + ' ' + path_tmp + args.dist_file.split('/')[-1] + ' ' + str(args.max_dim) + ' ' + paths[2][i] + ' ' + args.outfilename + ' ' + str(args.perplexity) + ' ' + args.preclust + ' '
 		out_2 = open(paths[3][i] + '02_Transform_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'w')
 		out_2.write(script + '\n')
 		out_2.close()
@@ -148,7 +150,7 @@ def cclust(args, paths):
 		path_tmp = paths[2][i] + '.tmp/'
 		if not os.path.exists(path_tmp):
 			exit()
-		script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Cclust.py ' + ' ' + str(fig_num) + ' ' + paths[2][i] + args.outfilename + '_clust.h5 ' + path_tmp + ' ' + str(args.k[i]) + ' ' + args.project_name + ' kmeans.h5.tmp ' + args.transformation.lower() + ' ' + paths[2][i] + ' ' + args.outfilename + ' ' + str(args.max_dim) + ' ' + args.retransformation + ' ' 
+		script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Cclust.py ' + ' ' + str(fig_num) + ' ' + paths[2][i] + args.outfilename + '_clust.h5 ' + path_tmp + ' ' + str(args.k[i]) + ' ' + args.project_name + ' kmeans.h5.tmp ' + args.transformation.lower() + ' ' + paths[2][i] + ' ' + args.outfilename + ' ' + str(args.max_dim) + ' ' + str(args.retransformation) + ' ' 
 		out_5 = open(paths[3][i] + '05_CClust_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'w')
 		out_5.write(script + '\n')
 		out_5.close()
@@ -297,7 +299,7 @@ def reduce_clust(args, paths):
 def retransform(args, paths):
 	global fig_num
 	for i in range(len(paths[2])):
-		script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Retransform.py ' + ' ' + str(fig_num) + ' ' + paths[2][i] + args.outfilename + '_clust.h5 ' + args.transformation.lower() + ' ' + str(args.max_dim) + ' ' + paths[2][i] + ' ' + args.outfilename + ' '
+		script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Retransform.py ' + ' ' + str(fig_num) + ' ' + paths[2][i] + args.outfilename + '_clust.h5 ' + args.transformation.lower() + ' ' + str(args.max_dim) + ' ' + paths[2][i] + ' ' + args.outfilename + ' ' + str(args.retransformation) + ' '
 		out_7 = open(paths[3][i] + '01_Retransform_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'w')
 		out_7.write(script + '\n')
 		out_7.close()
@@ -337,25 +339,27 @@ def run(args):
 		cclust(args_, paths)
 		ggplot(args_, paths)
 		clust(args_, paths)
-		reduce(args_, paths)
-		reduce_clust(args_, paths)
-		path_tmp = args_.outdir + '.tmp/'
-		path_tmp_log = path_tmp + '.log/'
-		if args_.host == 'LSF':
-			script = 'bsub -P ' + args_.project_name + ' -J ' + args_.project_name + '_MICA_Clust -q ' + args_.queue + ' -R \"rusage[mem=2000]\" -oo ' + path_tmp_log + args_.project_name + '_MICA_Clust.out -eo ' + path_tmp_log + args_.project_name + '_MICA_Clust.err sh ' + path_tmp + '00_Clust_' + args_.project_name + '_' + args_.transformation.lower() + '.sh \n'
-			subprocess.Popen(shlex.split(script))
-		elif args_.host == 'LOCAL':
-			script = 'sh ' + path_tmp + '00_Clust_' + args_.project_name + '_' + args_.transformation.lower() + '.sh >> ' + path_tmp_log + args_.project_name + '_MICA_Clust.out \n'
-			subprocess.Popen(shlex.split(script))
-		""" Old method when redundant transformation ran for multiple k on an input file
-		for i in range(len(paths[3])):
+		if len(args_.k) > 1:
+			reduce(args_, paths)
+			reduce_clust(args_, paths)
+			path_tmp = args_.outdir + '.tmp/'
+			path_tmp_log = path_tmp + '.log/'
 			if args_.host == 'LSF':
-				script = 'bsub -P ' + args_.project_name + ' -J ' + args_.project_name + '_MICA_Clust -q ' + args_.queue + ' -R \"rusage[mem=2000]\" -oo ' + paths[1][i] + args_.project_name + '_MICA_Clust.out -eo ' + paths[1][i] + args_.project_name + '_MICA_Clust.err sh ' + paths[3][i] + '00_Clust_' + args_.project_name + '_' + args_.transformation.lower() + '_' + str(args_.k[i]) + '.sh \n'
+				script = 'bsub -P ' + args_.project_name + ' -J ' + args_.project_name + '_MICA_Clust -q ' + args_.queue + ' -R \"rusage[mem=2000]\" -oo ' + path_tmp_log + args_.project_name + '_MICA_Clust.out -eo ' + path_tmp_log + args_.project_name + '_MICA_Clust.err sh ' + path_tmp + '00_Clust_' + args_.project_name + '_' + args_.transformation.lower() + '.sh \n'
 				subprocess.Popen(shlex.split(script))
 			elif args_.host == 'LOCAL':
-				script = 'sh ' + paths[3][i] + '00_Clust_' + args_.project_name + '_' + args_.transformation.lower() + '_' + str(args_.k[i]) + '.sh >> ' + paths[1][i] + args_.project_name + '_MICA_Clust.out \n'
+				script = 'sh ' + path_tmp + '00_Clust_' + args_.project_name + '_' + args_.transformation.lower() + '.sh >> ' + path_tmp_log + args_.project_name + '_MICA_Clust.out \n'
 				subprocess.Popen(shlex.split(script))
-		"""
+		else:
+			""" Old method when redundant transformation ran for multiple k on an input file """
+			for i in range(len(paths[3])):
+				if args_.host == 'LSF':
+					script = 'bsub -P ' + args_.project_name + ' -J ' + args_.project_name + '_MICA_Clust -q ' + args_.queue + ' -R \"rusage[mem=2000]\" -oo ' + paths[1][i] + args_.project_name + '_MICA_Clust.out -eo ' + paths[1][i] + args_.project_name + '_MICA_Clust.err sh ' + paths[3][i] + '00_Clust_' + args_.project_name + '_' + args_.transformation.lower() + '_' + str(args_.k[i]) + '.sh \n'
+					subprocess.Popen(shlex.split(script))
+				elif args_.host == 'LOCAL':
+					script = 'sh ' + paths[3][i] + '00_Clust_' + args_.project_name + '_' + args_.transformation.lower() + '_' + str(args_.k[i]) + '.sh >> ' + paths[1][i] + args_.project_name + '_MICA_Clust.out \n'
+					subprocess.Popen(shlex.split(script))
+			""""""
 	elif args_.mode == 'Reclust':
 		paths = setup_directory(args_.outdir, args_.project_name, args_.transformation, args_.k)
 		retransform(args_, paths)
