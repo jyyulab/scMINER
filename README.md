@@ -76,18 +76,18 @@ It is possible to use <code>--retransformation</code> option to change the value
 
 #### Options:
 
-<code>--min_dim, type=int, default=19, help='Minimum number of dimensions used in clustering (default: 19)')</code></br>
-<code>--max_dim, type=int, default=19, help='Maximum number of dimensions used in clustering (default: 19)')</code></br>
-<code>--bootstrap, type=int, default=10, help='Maximum number of iterations per dimnesion (default: 10)')</code></br>
-<code>--k, type=int, default=[2], nargs='+', help='Number of clusters to divide the dataset to (default: [2])')</code></br>
-<code>--transformation, default='MDS', help='Transformation method used for dimension reduction [MDS | PCA | LPL | LPCA] (default: MDS)')</code></br>
-<code>--hclust, default='False', help='Whether apply hierarchical clustering or not (default: False')</code></br>
-<code>--retransformation, default=150, help='If None or False no retransformation is used in the final visualization, if a number, retransformation threshold will be set to the value (default: 150)')</code></br>
-<code>--host, default='LSF', help='Computation host of the jobs [LOCAL | LSF] (default: LSF)')</code></br>
-<code>--resource, type=int, nargs='+', default=[2000]*6, help='Memory allocation for each individual step in clustering pipeline (default: 2GB)')</code></br>
-<code>--queue, default='compbio', help='Queue name for job allocation')</code></br>
-<code>--preclust', default='None', help='Whether the clustering is based on previous clustering result or not (default: None)')</code></br>
-<code>--perplexity', default=30, help='Visualization parameter determining how dense the clusters are')</code></br>
+<code>--min_dim, type=int, default=19, help='Minimum number of dimensions used in clustering (default: 19)')</code></br></br>
+<code>--max_dim, type=int, default=19, help='Maximum number of dimensions used in clustering (default: 19)')</code></br></br>
+<code>--bootstrap, type=int, default=10, help='Maximum number of iterations per dimnesion (default: 10)')</code></br></br>
+<code>--k, type=int, default=[2], nargs='+', help='Number of clusters to divide the dataset to (default: [2])')</code></br></br>
+<code>--transformation, default='MDS', help='Transformation method used for dimension reduction [MDS | PCA | LPL | LPCA] (default: MDS)')</code></br></br>
+<code>--hclust, default='False', help='Whether apply hierarchical clustering or not (default: False')</code></br></br>
+<code>--retransformation, default=150, help='If None or False no retransformation is used in the final visualization, if a number, retransformation threshold will be set to the value (default: 150)')</code></br></br>
+<code>--host, default='LSF', help='Computation host of the jobs [LOCAL | LSF] (default: LSF)')</code></br></br>
+<code>--resource, type=int, nargs='+', default=[2000]*6, help='Memory allocation for each individual step in clustering pipeline (default: 2GB)')</code></br></br>
+<code>--queue, default='compbio', help='Queue name for job allocation')</code></br></br>
+<code>--preclust', default='None', help='Whether the clustering is based on previous clustering result or not (default: None)')</code></br></br>
+<code>--perplexity', default=30, help='Visualization parameter determining how dense the clusters are')</code></br></br>
 
 ### Reclust Command: Retransforming Clustering Result
 To compare the visualizations in the presence or absence of retransformation, disable the retransformation on clustering and when the results are ready, use Reclust function from MICA module in scMINER as follows:
@@ -103,10 +103,10 @@ The above command will run the retransformation setting the parameter to 1200 by
 
 #### Options:
 
-<code>--transformation, default='MDS', help='Transformation method used for dimension reduction [MDS | PCA | LPL | LPCA] (default: MDS)')</code></br>
-<code>--retransformation, nargs='+', default=[60, 80, 100, 120, 150], help='Retransformation threshold will be set to the value (default: [60, 80, 100, 120, 150])')</code></br>
-<code>--max_dim, type=int, default=19, help='Maximum number of dimensions used in clustering (default: 19)')</code></br>
-<code>--k, type=int, default=[2], nargs='+', help='Number of clusters to divide the dataset to (default: [2])')</code></br>
-<code>--host, default='LSF', help='Computation host of the jobs [LOCAL | LSF] (default: LSF)')</code></br>
-<code>--resource, type=int, nargs='+', default=[2000]*2, help='Memory allocation for each individual step in clustering pipeline (default: 2GB)')</code></br>
-<code>--queue, default='compbio', help='Queue name for job allocation')</code></br>
+<code>--transformation, default='MDS', help='Transformation method used for dimension reduction [MDS | PCA | LPL | LPCA] (default: MDS)')</code></br></br>
+<code>--retransformation, nargs='+', default=[60, 80, 100, 120, 150], help='Retransformation threshold will be set to the value (default: [60, 80, 100, 120, 150])')</code></br></br>
+<code>--max_dim, type=int, default=19, help='Maximum number of dimensions used in clustering (default: 19)')</code></br></br>
+<code>--k, type=int, default=[2], nargs='+', help='Number of clusters to divide the dataset to (default: [2])')</code></br></br>
+<code>--host, default='LSF', help='Computation host of the jobs [LOCAL | LSF] (default: LSF)')</code></br></br>
+<code>--resource, type=int, nargs='+', default=[2000]*2, help='Memory allocation for each individual step in clustering pipeline (default: 2GB)')</code></br></br>
+<code>--queue, default='compbio', help='Queue name for job allocation')</code></br></br>
