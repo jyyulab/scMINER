@@ -27,7 +27,7 @@ def setup(args):
 		parser.add_argument('--k', type=int, default=[2], nargs='+', help='Number of clusters to divide the dataset to (default: [2])')
 		parser.add_argument('--transformation', default='MDS', help='Transformation method used for dimension reduction [MDS | PCA | LPL | LPCA] (default: MDS)')
 		parser.add_argument('--hclust', default='False', help='Whether apply hierarchical clustering or not (default: False')
-		parser.add_argument('--retransformation', default=1200, help='If None or False no retransformation is used in the final visualization, if a number, retransformation threshold will be set to the value (default: 1200)')
+		parser.add_argument('--retransformation', default=150, help='If None or False no retransformation is used in the final visualization, if a number, retransformation threshold will be set to the value (default: 150)')
 		parser.add_argument('outdir', help='Output directory')
 		parser.add_argument('outfilename', help='Common name used for all outputs')
 		parser.add_argument('--host', default='LSF', help='Computation host of the jobs [LOCAL | LSF] (default: LSF)')
@@ -37,7 +37,7 @@ def setup(args):
 		parser.add_argument('--perplexity', default=30, help='Visualization parameter determining how dense the clusters are')
 	if args_.mode == 'Reclust':
 		parser.add_argument('--transformation', default='MDS', help='Transformation method used for dimension reduction [MDS | PCA | LPL | LPCA] (default: MDS)')
-		parser.add_argument('--retransformation', default=1200, help='Retransformation threshold will be set to the value (default: 1200)')
+		parser.add_argument('--retransformation', nargs='+', default=[60, 80, 100, 120, 150], help='Retransformation threshold will be set to the value (default: [60, 80, 100, 120, 150])')
 		parser.add_argument('--max_dim', type=int, default=19, help='Maximum number of dimensions used in clustering (default: 19)')
 		parser.add_argument('--k', type=int, default=[2], nargs='+', help='Number of clusters to divide the dataset to (default: [2])')
 		parser.add_argument('outdir', help='Output directory')
@@ -299,16 +299,21 @@ def reduce_clust(args, paths):
 def retransform(args, paths):
 	global fig_num
 	for i in range(len(paths[2])):
-		script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Retransform.py ' + ' ' + str(fig_num) + ' ' + paths[2][i] + args.outfilename + '_clust.h5 ' + args.transformation.lower() + ' ' + str(args.max_dim) + ' ' + paths[2][i] + ' ' + args.outfilename + ' ' + str(args.retransformation) + ' '
+		if not os.path.exists(paths[2][i] + '.tmp/'):
+			os.mkdir(paths[2][i] + '.tmp/')
 		out_7 = open(paths[3][i] + '01_Retransform_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'w')
-		out_7.write(script + '\n')
+		for j in range(len(args.retransformation)):
+			script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/Retransform.py ' + ' ' + str(fig_num) + ' ' + paths[2][i] + args.outfilename + '_clust.h5 ' + args.transformation.lower() + ' ' + str(args.max_dim) + ' ' + paths[2][i] + ' ' + args.outfilename + ' ' + str(args.retransformation[j]) + ' '
+			out_7.write(script + '\n')
+			fig_num += 1
 		out_7.close()
 
 def reggplot(args, paths):
 	for i in range(len(paths[2])):
-		script = 'Rscript ' + scMINER_PATH + 'MICA/ggplot.cc.r ' + ' ' + paths[2][i] + args.outfilename + '_reclust.ggplot.txt 1 5 ' + args.outfilename + ' ' + paths[2][i] + args.outfilename + '_re_clust_k' + str(args.k[i]) + '.rplot.pdf '
 		out_8 = open(paths[3][i] + '02_Reggplot_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh', 'w')
-		out_8.write(script + '\n')
+		for j in range(len(args.retransformation)):
+			script = 'Rscript ' + scMINER_PATH + 'MICA/ggplot.cc.r ' + ' ' + paths[2][i] + args.outfilename + '_reclust_re' + str(args.retransformation[j]) + '.ggplot.txt 1 5 ' + args.outfilename + ' ' + paths[2][i] + args.outfilename + '_re' + str(args.retransformation[j]) + '_clust_k' + str(args.k[i]) + '.rplot.pdf '
+			out_8.write(script + '\n')
 		out_8.close()
 
 def reclust(args, paths):
@@ -319,11 +324,13 @@ def reclust(args, paths):
 			out_0.write(script)
 			script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MICA_Reggplot -q ' + args.queue + ' -M ' + str(args.resource[1]) + ' -i ' + paths[3][i] + '02_Reggplot_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh -oo ' + paths[1][i] + args.project_name + '_MICA_Reggplot.%J.%I.out -eo ' + paths[1][i] + args.project_name + '_MICA_Reggplot.%J.%I.err \n'
 			out_0.write(script)
+			out_0.write('rm -rf ' + paths[2][i] + '.tmp/ \n')
 		elif args.host == 'LOCAL':
 			script = 'sh ' + paths[3][i] + '01_Retransform_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh >> ' + paths[1][i] + args.project_name + '_MICA_Retransform.out \n'
 			out_0.write(script)
 			script = 'sh ' + paths[3][i] + '02_Reggplot_' + args.project_name + '_' + args.transformation.lower() + '_' + str(args.k[i]) + '.sh >> ' + paths[1][i] + args.project_name + '_MICA_Reggplot.out \n'
 			out_0.write(script)
+			out_0.write('rm -rf ' + paths[2][i] + '.tmp/ \n')
 		out_0.close()
 
 def run(args):

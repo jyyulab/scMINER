@@ -15,6 +15,7 @@ resource.setrlimit(resource.RLIMIT_STACK, (resource.RLIM_INFINITY, resource.RLIM
 
 def read_file(file, sep, header, out_dir, out_file_name, index_col='0'):
 	index_col = int(index_col)
+	index_col = index_col if index_col >= 0 else 'None'
 	if header == 'False':
 		frame = pd.read_csv(file, sep=sep, header=None, index_col=index_col).iloc[:,index_col:]
 	else:
@@ -333,9 +334,11 @@ def plot(fig_num, in_file, out_dir, out_file_name, hclust='False'):
 		heatmap2(fig_num + 1, mi, cclust.loc[:, 'label'], out_dir, out_file_name, 'mi')
 		heatmap2(fig_num + 2, mem, cclust.loc[:, 'label'], out_dir, out_file_name, 'clusts')
 
-def retransform(transformation, max_dim, out_dir, out_file_name, re_trans=1200):
+def retransform(transformation, max_dim, out_dir, out_file_name, re_trans=150):
 	in_file = out_dir + out_file_name + '_clust.h5'
-	if os.path.exists(in_file):
+	if os.path.exists(in_file):	
+		shutil.copyfile(out_dir + out_file_name + '_clust.h5', out_dir + '.tmp/' + out_file_name + '_re' + str(re_trans) + '_clust.h5')
+		in_file = out_dir + '.tmp/' + out_file_name + '_re' + str(re_trans) + '_clust.h5'
 		transformation = 'pca' if transformation == 'lpca' else transformation
 		hdf = pd.HDFStore(in_file)
 		Y = hdf[transformation]
@@ -343,24 +346,24 @@ def retransform(transformation, max_dim, out_dir, out_file_name, re_trans=1200):
 		hdf.close()
 		if cclust is not None and Y is not None:
 			perplexity = np.min([re_trans, np.max(cclust.groupby(['label']).size())])
-			tsne(None, Y, max_dim, out_dir, out_file_name, None, transformation + '-tsne-re', perplexity, 'False')
+			tsne(None, Y, max_dim, out_dir + '.tmp/', out_file_name + '_re' + str(re_trans), None, transformation + '-tsne-re', perplexity, 'False')
 			hdf = pd.HDFStore(in_file)
 			Y_tsne = hdf[transformation + '-tsne-re']
 			hdf.close()
 			reclust = pd.concat([cclust, Y_tsne.loc[cclust.index, :]], axis=1).loc[:, ['X', 'Y', 'label']]
-			reclust.to_hdf(in_file, 'reclust')
-			reclust.to_csv(out_dir + out_file_name + '_reclust.ggplot.txt', sep='\t')
+			reclust.to_hdf(out_dir + out_file_name + '_re' + str(re_trans) + '_clust.h5', 'reclust')
+			reclust.to_csv(out_dir + out_file_name + '_reclust_re' + str(re_trans) + '.ggplot.txt', sep='\t')
 
-def replot(fig_num, in_file, out_dir, out_file_name):
+def replot(fig_num, in_file, out_dir, out_file_name, re_trans=150):
 	hdf = pd.HDFStore(in_file)
 	reclust = hdf['reclust'] if '/reclust' in hdf.keys() else None
 	hdf.close()
-	scatter2(fig_num, reclust, out_dir, out_file_name + '_re')
+	scatter2(fig_num, reclust, out_dir, out_file_name + '_re' + str(re_trans))
 
 def preclust(in_file, transformation, out_dir, out_file_name):
 	hdf = pd.HDFStore(in_file)
 	out_file = out_dir + out_file_name + '_clust.h5'
-	in_file_name = in_file.split('/')[-1].split('_')[0]
+	in_file_name = '_'.join(in_file.split('/')[-1].split('_')[:-1])
 	in_path = '/'.join(in_file.split('/')[:-1]) + '/'
 	if transformation != 'lpca':
 		trans = hdf[transformation]
