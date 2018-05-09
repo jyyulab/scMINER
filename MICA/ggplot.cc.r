@@ -11,13 +11,13 @@ cells = t(cc[1, 2:ncols])
 
 x_tsne <- as.numeric(t(cc[2, 2:ncols]))
 y_tsne <- as.numeric(t(cc[3, 2:ncols]))
-c <- as.numeric(t(cc[4, 2:ncols])) + 1
+c <- as.numeric(t(cc[4, 2:ncols]))
 uc <- unique(c)
 n = as.numeric(length(uc))
 df <- data.frame(x_tsne, y_tsne, c)
 x_pose = rep(c(0), n)
 y_pose = rep(c(0), n)
-label = c(1:n)
+label = c(1:n+1)
 l_size = rep(c(0), n)
 for(i in 1:n){
   x_pose[i] <- sum(x_tsne[c==i]) / length(c[c==i]);

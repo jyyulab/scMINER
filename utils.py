@@ -278,7 +278,7 @@ def aggregate(tmp_dir, n_clusters, common_name):
 	label_map = {index[i]: i+1000 for i in range(len(index))}
 	cclust = cclust.replace(to_replace={'label': label_map})
 	index = cclust.groupby(['label']).size().sort_values(ascending=False).index
-	map_back = {index[i]: i for i in range(len(index))}
+	map_back = {index[i]: i+1 for i in range(len(index))}
 	cclust = cclust.replace(to_replace={'label': map_back})
 	return [cclust, mem]
 
