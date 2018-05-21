@@ -97,7 +97,7 @@ To compare the visualizations in the presence or absence of retransformation, di
 Make sure that the output directory is where the original output directories are: 
 <code>[path_to]/scMINER_[project_name]/scMINER_[project_name]_out/</code>
 
-The above command will run the retransformation setting the parameter to 1200 by default, to change this add the following option:
+The above command will run the retransformation setting the parameter to [60, 80, 100, 120, 150] by default, to change this add the following option:
 
 <code>--retransformation 200</code>
 
