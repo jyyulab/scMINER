@@ -262,7 +262,7 @@ def reduce_clust(args, paths):
 			out_0.write(script)
 		script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MICA_Transform.0 -q ' + args.queue + ' -M ' + str(args.resource[1]) + ' -i ' + path_tmp + '02_Transform_' + args.project_name + '_' + args.transformation.lower() + '.sh -oo ' + path_tmp_log + args.project_name + '_MICA_Transform.0.%J.%I.out -eo ' + path_tmp_log + args.project_name + '_MICA_Transform.0.%J.%I.err \n'
 		out_0.write(script)
-		script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MICA_Transform.1 -q ' + args.queue + ' -M ' + str(args.resource[1]) + ' -i ' + path_tmp + '03_Share_' + args.project_name + '_' + args.transformation.lower() + '.sh -oo ' + path_tmp_log + args.project_name + '_MICA_Transform.1.%J.%I.out -eo ' + path_tmp_log + args.project_name + '_MICA_Transform.0.%J.%I.err \n'
+		script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MICA_Transform.1 -q ' + args.queue + ' -M ' + str(2000) + ' -i ' + path_tmp + '03_Share_' + args.project_name + '_' + args.transformation.lower() + '.sh -oo ' + path_tmp_log + args.project_name + '_MICA_Transform.1.%J.%I.out -eo ' + path_tmp_log + args.project_name + '_MICA_Transform.0.%J.%I.err \n'
 		out_0.write(script)
 		script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_MICA_Kmeans.0 -q ' + args.queue + ' -M ' + str(args.resource[2]) + ' -i ' + path_tmp + '04_Prep_' + args.project_name + '_' + args.transformation.lower() + '.sh -oo ' + path_tmp_log + args.project_name + '_MICA_Kmeans.0.%J.%I.out -eo ' + path_tmp_log + args.project_name + '_MICA_Kmeans.0.%J.%I.err \n'
 		out_0.write(script)
