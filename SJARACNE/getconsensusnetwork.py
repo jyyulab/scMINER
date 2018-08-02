@@ -87,7 +87,7 @@ header += 'source\ttarget\tMI\n'
 consensus_network.write(header)
 current_gene = 'none'
 
-for key in sorted(total_support.iterkeys()):	# Iterating on all edges in a sorted fashion
+for key in sorted(total_support.keys()):	# Iterating on all edges in a sorted fashion
 	gene1 = key.split('--')[0]		# Extracting first gene involving in an edge from the key (edge)
 	gene2 = key.split('--')[1]		# Extracting second gene involving in an edge from the key (edge)
 	z = float(total_support[key] - mu) / float(sigma) if sigma != 0 else 100	# Computing the z score of normal distribution 
