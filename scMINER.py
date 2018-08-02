@@ -28,6 +28,9 @@ def run(args):
 		# MICA.py checks on if the command has enough parameters
 		script = PYTHON_PATH + ' ' + scMINER_PATH + 'MICA/MICA.py ' + ' '.join(args[2:])
 		subprocess.Popen(shlex.split(script))
+	elif args_.module == 'SJARACNE':
+		script = PYTHON_PATH + ' ' + scMINER_PATH + 'SJARACNE/SJARACNE.py ' + ' '.join(args[2: ])
+		subprocess.Popen(shlex.split(script))
 	else:
 		print('[EROR] --> [MAIN] Unsupported command.')
 		exit()
