@@ -95,4 +95,4 @@ for key in sorted(total_support.keys()):	# Iterating on all edges in a sorted fa
 	if pval < p_threshold:			# Decision making if the edge has enough support or not and therefore if it has to be remained or removed
 		mi = '{0:.4f}'.format(float(total_mi[key]) / float(total_support[key]))	# Computing MI corresponding to an edge remaining in the network
 		consensus_network.write(gene1 + '\t' + gene2 + '\t' + mi + '\n')
-
+consensus_network.close()

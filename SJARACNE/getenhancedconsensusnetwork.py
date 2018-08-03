@@ -1,25 +1,18 @@
 import os, sys, csv, re, igraph
 from scipy import stats
 import xlsxwriter
+import pandas as pd
 
 marker_set = {}
-with open(sys.argv[1]) as exp:
-	reader = csv.reader(exp, delimiter='\t')
-	columns = reader.next()
-	reader = csv.DictReader(exp, columns, delimiter='\t')
-	for row in reader:
-		samples = []
-		for i in range(2, len(row)):
-			samples.append(float(row[columns[i]]))
-		marker_set[row[columns[0]]] = dict(symbol=row[columns[1]], samples=samples)
+exp = pd.read_csv(sys.argv[1], sep='\t')
+for i in range(exp.shape[0]):
+	samples = exp.iloc[i, 2:].values.astype(float)
+	marker_set[exp.iloc[i, 0]] = dict(symbol=exp.iloc[i, 1], samples=samples)
 
 gene_network = {}
-with open(sys.argv[2]) as net:
-	reader = csv.reader(net, delimiter='\t')
-	columns = reader.next()
-	reader = csv.DictReader(net, columns, delimiter='\t')
-	for row in reader:
-		gene_network[row[columns[0]] + '--' + row[columns[1]]] = float(row[columns[2]])
+net = pd.read_csv(sys.argv[2], sep='\t')
+for i in range(net.shape[0]):
+	gene_network[net.iloc[i, 0] + '--' + net.iloc[i, 1]] = net.iloc[i, 2].values.astype(float) 
 
 for src_gene in marker_set.keys():
 	for tar_gene in marker_set.keys():
