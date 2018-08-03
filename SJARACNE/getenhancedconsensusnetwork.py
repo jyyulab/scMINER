@@ -12,7 +12,7 @@ for i in range(exp.shape[0]):
 gene_network = {}
 net = pd.read_csv(sys.argv[2], sep='\t')
 for i in range(net.shape[0]):
-	gene_network[net.iloc[i, 0] + '--' + net.iloc[i, 1]] = net.iloc[i, 2].values.astype(float) 
+	gene_network[net.iloc[i, 0] + '--' + net.iloc[i, 1]] = net.iloc[i, 2]
 
 for src_gene in marker_set.keys():
 	for tar_gene in marker_set.keys():
