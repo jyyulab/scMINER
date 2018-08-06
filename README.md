@@ -51,14 +51,10 @@ To avoid memory issue in case that the input file is large, make sure to use bsu
 
 ##### Options
 
-<code>project_name, help='Project name', REQUIRED</code></br></br>
-<code>input_file, help='Input text-based file name', REQUIRED</code></br></br>
 <code>--delimiter, default='tab', help='Delimiter used in the input file [tab | comma | semicolon | pipe] (default: tab)'</code></br></br>
 <code>--header, default='True', help='Whether the input contains header line or not [True | False]'</code></br></br>
 <code>--index_col, type=int, default=0, help='Column index to be used as row index and the starting poing of actual data [ >= 0 ] (default: 0)'</code></br></br>
 <code>--slice_size, type=int, default=1000, help='Size for each slice (default: 1000)'</code></br></br>
-<code>outdir, help='Output directory', REQUIRED</code></br></br>
-<code>outfilename, help='Common name used for all outputs', REQUIRED</code></br></br>
 <code>--host, default='LSF', help='Computation host of the jobs [LOCAL | LSF] (default: LSF)'</code></br></br>
 <code>--resource, type=int, nargs='+', default=[2000] * 5, help='Memory allocation to each step in the following order: read, slice, calc, merge, and norm (default: 2GB)'</code></br></br>
 <code>--queue, default='compbio', help='Queue name for job allocation'</code></br></br>
@@ -137,14 +133,10 @@ The above command will run the retransformation setting the parameter to [60, 80
 
 #### Options
 
-<code>project_name, help='Project name', REQUIRED</code></br></br>
-<code>expression_matrix, help='Path to expression matrix, row indexes are used as the nodes in the network.', REQUIRED</code></br></br>
-<code>hub_genes, help='Path to hub genes, containing list of symbols to be considered as hub genes.', REQUIRED</code></br></br>
 <code>--bootstrap, type=int, default=100, help='Number of bootstrap networks.'</code></br></br>
 <code>--c_threshold, type=float, default=float('1e-5'), help='P-value threshold in building consensus network.'</code></br></br>
 <code>--p_threshold, type=float, default=float('1e-7'), help='P-value threshold in building bootstrap netwroks.'</code></br></br>
 <code>--depth, type=int, default=40, help='Maximum partitioning depth.'</code></br></br>
-<code>outdir, help='Output directory', REQUIRED</code></br></br>
 <code>--host, default='LSF', help='Computation host of the jobs [LOCAL | LSF] (default: LSF)'</code></br></br>
 <code>--resource, type=int, nargs='+', default=[2000]*4, help='Memory allocation for each individual step in network construction (default: 2GB)'</code></br></br>
 <code>--queue, default='compbio', help='Queue name for job allocation'</code></br></br>
