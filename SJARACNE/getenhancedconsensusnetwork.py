@@ -7,7 +7,7 @@ marker_set = {}
 exp = pd.read_csv(sys.argv[1], sep='\t')
 for i in range(exp.shape[0]):
 	samples = exp.iloc[i, 2:].values.astype(float)
-	marker_set[exp.iloc[i, 0]] = dict(symbol=exp.iloc[i, 1], samples=samples)
+	marker_set[exp.iloc[i, 0]] = dict(symbol=str(exp.iloc[i, 1]), samples=samples)
 
 gene_network = {}
 net = pd.read_csv(sys.argv[2], sep='\t')
