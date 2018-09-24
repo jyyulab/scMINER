@@ -91,8 +91,8 @@ def pipeline(args, paths):
 	curr_dir = os.getcwd()
 	os.chdir(SJARACNE_PATH)
 	if args.host == 'LSF':
-		script = 'sh ' + paths[3] + '01_prepare_' + args.project_name + '.sh\n'
-		out_0.write(script)
+		#script = 'sh ' + paths[3] + '01_prepare_' + args.project_name + '.sh\n'
+		#out_0.write(script)
 		script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_SJARACNE_Bootstrap -q ' + args.queue + ' -M ' + str(args.resource[1]) + ' -i ' + paths[3] + '02_bootstrap_' + args.project_name + '.sh -oo ' + paths[1] + args.project_name + '_SJARACNE_Bootstrap.%J.%I.out -eo ' + paths[1] + args.project_name + '_SJARACNE_Bootstrap.%J.%I.err \nsleep 30\n'
 		out_0.write(script) 
 		script = 'psub -K -P ' + args.project_name + ' -J ' + args.project_name + '_SJARACNE_Consensus -q ' + args.queue + ' -M ' + str(args.resource[2]) + ' -i ' + paths[3] + '03_getconsensusnetwork_' + args.project_name + '.sh -oo ' + paths[1] + args.project_name + '_SJARACNE_Consensus.%J.%I.out -eo ' + paths[1] + args.project_name + '_SJARACNE_Consensus.%J.%I.err \nsleep 30\n'
@@ -102,8 +102,8 @@ def pipeline(args, paths):
 	elif args.host == 'LOCAL':
 		#script = 'sh ' + paths[3] + '00_cleanup_' + args.project_name + '.sh\n'
 		#out_0.write(script)
-		script = 'sh ' + paths[3] + '01_prepare_' + args.project_name + '.sh\n'
-		out_0.write(script)
+		#script = 'sh ' + paths[3] + '01_prepare_' + args.project_name + '.sh\n'
+		#out_0.write(script)
 		script = 'sh ' + paths[3] + '02_bootstrap_' + args.project_name + '.sh\n'
 		out_0.write(script)
 		out_0.write('jobs=$(ps -ef | grep \"' + args.project_name + '\" | grep sjaracne -c)\n')
