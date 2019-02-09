@@ -1,0 +1,41 @@
+Sender: LSF System <lsfadmin@nodem146>
+Subject: Job 70847807[1]: <NaiveT_884_884_156_SJARACNE_Consensus[1-1]> in cluster <hpcf_research_cluster> Done
+
+Job <NaiveT_884_884_156_SJARACNE_Consensus[1-1]> was submitted from host <nodem102> by user <cqian> in cluster <hpcf_research_cluster> at Wed Jan 16 15:28:11 2019.
+Job was executed on host(s) <nodem146>, in queue <compbio>, as user <cqian> in cluster <hpcf_research_cluster> at Wed Jan 16 15:28:14 2019.
+</home/cqian> was used as the home directory.
+</home/cqian/PBMCdemo/Sjaracne> was used as the working directory.
+Started at Wed Jan 16 15:28:14 2019.
+Terminated at Wed Jan 16 15:28:24 2019.
+Results reported at Wed Jan 16 15:28:24 2019.
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+_phoenix_sub_line_from_cmdfile /home/cqian/PBMCdemo/Sjaracne/NaiveT_884_884_156/tf/scMINER_NaiveT_884_884_156/scMINER_SJARACNE_scripts/03_getconsensusnetwork_NaiveT_884_884_156.sh
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   4.83 sec.
+    Max Memory :                                 48 MB
+    Average Memory :                             26.00 MB
+    Total Requested Memory :                     2000.00 MB
+    Delta Memory :                               1952.00 MB
+    Max Swap :                                   1569 MB
+    Max Processes :                              4
+    Max Threads :                                36
+    Run time :                                   10 sec.
+    Turnaround time :                            13 sec.
+
+The output (if any) follows:
+
+
+
+PS:
+
+Read file </home/cqian/PBMCdemo/Sjaracne/NaiveT_884_884_156/tf/scMINER_NaiveT_884_884_156/scMINER_SJARACNE_log/NaiveT_884_884_156_SJARACNE_Consensus.70847807.1.err> for stderr output of this job.
+

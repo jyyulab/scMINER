@@ -1,0 +1,41 @@
+Sender: LSF System <lsfadmin@nodem124>
+Subject: Job 70847864[1]: <MemoryT_981_981_190_SJARACNE_Enhanced[1-1]> in cluster <hpcf_research_cluster> Exited
+
+Job <MemoryT_981_981_190_SJARACNE_Enhanced[1-1]> was submitted from host <nodem105> by user <cqian> in cluster <hpcf_research_cluster> at Wed Jan 16 15:28:37 2019.
+Job was executed on host(s) <nodem124>, in queue <compbio>, as user <cqian> in cluster <hpcf_research_cluster> at Wed Jan 16 15:28:38 2019.
+</home/cqian> was used as the home directory.
+</home/cqian/PBMCdemo/Sjaracne> was used as the working directory.
+Started at Wed Jan 16 15:28:38 2019.
+Terminated at Wed Jan 16 15:28:40 2019.
+Results reported at Wed Jan 16 15:28:40 2019.
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+_phoenix_sub_line_from_cmdfile /home/cqian/PBMCdemo/Sjaracne/MemoryT_981_981_190/tf/scMINER_MemoryT_981_981_190/scMINER_SJARACNE_scripts/04_getenhancedconsensusnetwork_MemoryT_981_981_190.sh
+------------------------------------------------------------
+
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   0.15 sec.
+    Max Memory :                                 -
+    Average Memory :                             -
+    Total Requested Memory :                     2000.00 MB
+    Delta Memory :                               -
+    Max Swap :                                   -
+    Max Processes :                              -
+    Max Threads :                                -
+    Run time :                                   1 sec.
+    Turnaround time :                            3 sec.
+
+The output (if any) follows:
+
+
+
+PS:
+
+Read file </home/cqian/PBMCdemo/Sjaracne/MemoryT_981_981_190/tf/scMINER_MemoryT_981_981_190/scMINER_SJARACNE_log/MemoryT_981_981_190_SJARACNE_Enhanced.70847864.1.err> for stderr output of this job.
+

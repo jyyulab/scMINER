@@ -1,0 +1,1 @@
+/hpcf/apps/python/install/3.6.1/bin/python3 /research/projects/yu3grp/scRNASeq/yu3grp/TracyQian/scMINER/scMINER-master/MIE/Merge.py  /home/cqian/PBMCdemo/scMINER_PBMCdemo/scMINER_MIE_out/ PBMCdemo 1 /home/cqian/PBMCdemo/scMINER_PBMCdemo/scMINER_MIE_out/ PBMCdemo

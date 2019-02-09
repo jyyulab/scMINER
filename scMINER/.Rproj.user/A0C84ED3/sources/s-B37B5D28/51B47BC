@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1549474013476.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "16|72|40|0|\n44|62|68|0|\n73|59|107|0|\n113|54|146|0|\n152|65|194|0|\n198|65|228|0|\n231|62|244|0|\n256|1|333|0|\n",
+    "hash" : "0",
+    "id" : "51B47BC",
+    "lastKnownWriteTime" : 1549662114,
+    "last_content_update" : 1549662139887,
+    "path" : "~/Desktop/PBMC tutorial/PBMCdemo/scMINER/R/MINIE_FUN.r",
+    "project_path" : "R/MINIE_FUN.r",
+    "properties" : {
+        "cursorPosition" : "251,23",
+        "scrollLine" : "197"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

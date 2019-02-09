@@ -1,0 +1,8 @@
+>  Input file      /home/cqian/PBMCdemo/Sjaracne//CD8em_821_821_89/CD8em_821_821_89.exp
+>  MI threshold    0.163424
+>  MI P-value      1e-07
+>  DPI tolerance   0
+>  Subnetwork file /home/cqian/PBMCdemo/Sjaracne//CD8em_821_821_89/tf/CD8em_87_87_89_tf.txt
+>  Bootstrap No: 100
+>  Source: sjaracne2
+>  Output network: /home/cqian/PBMCdemo/Sjaracne//CD8em_821_821_89/tf/scMINER_CD8em_821_821_89/scMINER_SJARACNE_out.final/consensus_network_3col_.txt

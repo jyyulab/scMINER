@@ -1,0 +1,41 @@
+Sender: LSF System <lsfadmin@nodem134>
+Subject: Job 69823314[1]: <PBMCdemo_MICA_Transform.0[1-1]> in cluster <hpcf_research_cluster> Done
+
+Job <PBMCdemo_MICA_Transform.0[1-1]> was submitted from host <nodem132> by user <cqian> in cluster <hpcf_research_cluster> at Fri Dec 21 15:26:02 2018.
+Job was executed on host(s) <nodem134>, in queue <compbio>, as user <cqian> in cluster <hpcf_research_cluster> at Fri Dec 21 15:26:14 2018.
+</home/cqian> was used as the home directory.
+</home/cqian/PBMCdemo> was used as the working directory.
+Started at Fri Dec 21 15:26:14 2018.
+Terminated at Fri Dec 21 15:26:43 2018.
+Results reported at Fri Dec 21 15:26:43 2018.
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+_phoenix_sub_line_from_cmdfile /home/cqian/PBMCdemo/scMINER_PBMCdemo/scMINER_MICA/.tmp/02_Transform_PBMCdemo_mds.sh
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   17.03 sec.
+    Max Memory :                                 158 MB
+    Average Memory :                             92.80 MB
+    Total Requested Memory :                     2000.00 MB
+    Delta Memory :                               1842.00 MB
+    Max Swap :                                   1993 MB
+    Max Processes :                              4
+    Max Threads :                                28
+    Run time :                                   29 sec.
+    Turnaround time :                            41 sec.
+
+The output (if any) follows:
+
+
+
+PS:
+
+Read file </home/cqian/PBMCdemo/scMINER_PBMCdemo/scMINER_MICA/.tmp/.log/PBMCdemo_MICA_Transform.0.69823314.1.err> for stderr output of this job.
+

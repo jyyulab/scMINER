@@ -1,0 +1,59 @@
+Sender: LSF System <lsfadmin@nodem102>
+Subject: Job 71351352: <NaiveT_884_884_156_SJARACNE_Pipeline> in cluster <hpcf_research_cluster> Done
+
+Job <NaiveT_884_884_156_SJARACNE_Pipeline> was submitted from host <nodem143> by user <cqian> in cluster <hpcf_research_cluster> at Mon Jan 28 15:41:03 2019.
+Job was executed on host(s) <nodem102>, in queue <compbio>, as user <cqian> in cluster <hpcf_research_cluster> at Mon Jan 28 15:41:04 2019.
+</home/cqian> was used as the home directory.
+</home/cqian/PBMCdemo/Sjaracne> was used as the working directory.
+Started at Mon Jan 28 15:41:04 2019.
+Terminated at Mon Jan 28 15:45:49 2019.
+Results reported at Mon Jan 28 15:45:49 2019.
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+sh /home/cqian/PBMCdemo/Sjaracne//NaiveT_884_884_156/tf/scMINER_NaiveT_884_884_156/scMINER_SJARACNE_scripts/00_pipeline_NaiveT_884_884_156.sh
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   1.69 sec.
+    Max Memory :                                 23 MB
+    Average Memory :                             17.43 MB
+    Total Requested Memory :                     2000.00 MB
+    Delta Memory :                               1977.00 MB
+    Max Swap :                                   887 MB
+    Max Processes :                              10
+    Max Threads :                                11
+    Run time :                                   285 sec.
+    Turnaround time :                            286 sec.
+
+The output (if any) follows:
+
+[INFO] Splitting jobids 71351359
+[INFO] Reading bjobs
+[INFO] Reading jobs from bjobs
+[INFO] Sleeping for 37 seconds between each update
+[UPDATE][71351359] 2019-01-28 15:41:05 nPEND nRUN nDONE nREQUEUE nFAIL =   100     0     0     0     0
+[UPDATE][71351359] 2019-01-28 15:41:43 nPEND nRUN nDONE nREQUEUE nFAIL =     0     0   100     0     0
+[INFO] Splitting jobids 71351441
+[INFO] Reading bjobs
+[INFO] Reading jobs from bjobs
+[INFO] Sleeping for 37 seconds between each update
+[UPDATE][71351441] 2019-01-28 15:42:50 nPEND nRUN nDONE nREQUEUE nFAIL =     1     0     0     0     0
+[UPDATE][71351441] 2019-01-28 15:43:27 nPEND nRUN nDONE nREQUEUE nFAIL =     0     0     1     0     0
+[INFO] Splitting jobids 71351750
+[INFO] Reading bjobs
+[INFO] Reading jobs from bjobs
+[INFO] Sleeping for 37 seconds between each update
+[UPDATE][71351750] 2019-01-28 15:44:35 nPEND nRUN nDONE nREQUEUE nFAIL =     1     0     0     0     0
+[UPDATE][71351750] 2019-01-28 15:45:12 nPEND nRUN nDONE nREQUEUE nFAIL =     0     0     1     0     0
+
+
+PS:
+
+Read file </home/cqian/PBMCdemo/Sjaracne//NaiveT_884_884_156/tf/scMINER_NaiveT_884_884_156/scMINER_SJARACNE_log/NaiveT_884_884_156_SJARACNE_Pipeline.err> for stderr output of this job.
+

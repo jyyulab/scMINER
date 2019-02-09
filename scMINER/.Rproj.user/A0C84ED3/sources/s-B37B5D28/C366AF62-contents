@@ -1,0 +1,54 @@
+\name{readMICAoutput}
+\alias{readMICAoutput}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{readMICAoutput
+%%  ~~function to do ... ~~
+}
+\description{
+Read MICA I/O and create an Expressionset:
+Read MICA input expression matrix and result file that MICA outputs,
+including gene expresssion matrix, t-SNE coordinates and clustering labels(default as TRUE).
+}
+\usage{
+readMICAoutput(input_file,output_file,load_clust_label=TRUE)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{input_file}{Cell by gene matrix in .txt.}
+  \item{output_file}{Clustering result .txt file including tSNE cordinates and clustering label.}
+  \item{load_clust_label}{logical, define whether to store clustering label under eset$label.}
+}
+\details{
+%%  ~~ If necessary, more details than the description above ~~
+}
+\value{
+%%  ~Describe the value returned
+\item{eset}{ExpressionSet with tSNE and clustering label information in pData.}
+
+}
+\references{
+%% ~put references to the literature/web site here ~
+}
+\author{
+YuLab
+}
+\note{
+%%  ~~further notes~~
+}
+
+%% ~Make other sections like Warning with \section{Warning }{....} ~
+
+\examples{
+##---- Should be DIRECTLY executable !! ----
+##-- ==>  Define data, use random,
+##--	or do  help(data=index)  for the standard data sets.
+
+## The function is currently defined as
+function (x)
+{
+  }
+}
+% Add one or more standard keywords, see file 'KEYWORDS' in the
+% R documentation directory.
+\keyword{MICA}% use one of  RShowDoc("KEYWORDS")
+\keyword{scMINER}% __ONLY ONE__ keyword per line

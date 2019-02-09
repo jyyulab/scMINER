@@ -1,0 +1,41 @@
+Sender: LSF System <lsfadmin@nodem150>
+Subject: Job 71351440[1]: <CD8em_821_821_89_SJARACNE_Consensus[1-1]> in cluster <hpcf_research_cluster> Done
+
+Job <CD8em_821_821_89_SJARACNE_Consensus[1-1]> was submitted from host <nodem150> by user <cqian> in cluster <hpcf_research_cluster> at Mon Jan 28 15:42:50 2019.
+Job was executed on host(s) <nodem150>, in queue <compbio>, as user <cqian> in cluster <hpcf_research_cluster> at Mon Jan 28 15:42:51 2019.
+</home/cqian> was used as the home directory.
+</home/cqian/PBMCdemo/Sjaracne> was used as the working directory.
+Started at Mon Jan 28 15:42:51 2019.
+Terminated at Mon Jan 28 15:43:05 2019.
+Results reported at Mon Jan 28 15:43:05 2019.
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+_phoenix_sub_line_from_cmdfile /home/cqian/PBMCdemo/Sjaracne/CD8em_821_821_89/tf/scMINER_CD8em_821_821_89/scMINER_SJARACNE_scripts/03_getconsensusnetwork_CD8em_821_821_89.sh
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   3.89 sec.
+    Max Memory :                                 49 MB
+    Average Memory :                             47.50 MB
+    Total Requested Memory :                     2000.00 MB
+    Delta Memory :                               1951.00 MB
+    Max Swap :                                   1023 MB
+    Max Processes :                              4
+    Max Threads :                                20
+    Run time :                                   14 sec.
+    Turnaround time :                            15 sec.
+
+The output (if any) follows:
+
+
+
+PS:
+
+Read file </home/cqian/PBMCdemo/Sjaracne/CD8em_821_821_89/tf/scMINER_CD8em_821_821_89/scMINER_SJARACNE_log/CD8em_821_821_89_SJARACNE_Consensus.71351440.1.err> for stderr output of this job.
+

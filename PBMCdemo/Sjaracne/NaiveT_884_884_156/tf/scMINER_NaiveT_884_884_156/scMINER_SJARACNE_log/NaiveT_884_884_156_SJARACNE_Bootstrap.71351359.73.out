@@ -1,0 +1,69 @@
+Sender: LSF System <lsfadmin@nodecn234>
+Subject: Job 71351359[73]: <NaiveT_884_884_156_SJARACNE_Bootstrap[1-100]> in cluster <hpcf_research_cluster> Done
+
+Job <NaiveT_884_884_156_SJARACNE_Bootstrap[1-100]> was submitted from host <nodem102> by user <cqian> in cluster <hpcf_research_cluster> at Mon Jan 28 15:41:05 2019.
+Job was executed on host(s) <nodecn234>, in queue <compbio>, as user <cqian> in cluster <hpcf_research_cluster> at Mon Jan 28 15:41:27 2019.
+</home/cqian> was used as the home directory.
+</home/cqian/PBMCdemo/Sjaracne> was used as the working directory.
+Started at Mon Jan 28 15:41:27 2019.
+Terminated at Mon Jan 28 15:41:33 2019.
+Results reported at Mon Jan 28 15:41:33 2019.
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+_phoenix_sub_line_from_cmdfile /home/cqian/PBMCdemo/Sjaracne/NaiveT_884_884_156/tf/scMINER_NaiveT_884_884_156/scMINER_SJARACNE_scripts/02_bootstrap_NaiveT_884_884_156.sh
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   1.91 sec.
+    Max Memory :                                 6 MB
+    Average Memory :                             6.00 MB
+    Total Requested Memory :                     2000.00 MB
+    Delta Memory :                               1994.00 MB
+    Max Swap :                                   88 MB
+    Max Processes :                              2
+    Max Threads :                                2
+    Run time :                                   5 sec.
+    Turnaround time :                            28 sec.
+
+The output (if any) follows:
+
+Displaying parameters
+
+[PARA] Input file:    /home/cqian/PBMCdemo/Sjaracne//NaiveT_884_884_156/NaiveT_884_884_156.exp
+[PARA] Output file:   /home/cqian/PBMCdemo/Sjaracne//NaiveT_884_884_156/tf/scMINER_NaiveT_884_884_156/scMINER_SJARACNE_out/NaiveT_884_884_156_run_073.adj
+[PARA] MI P-value:    1e-07
+[PARA] DPI tolerance: 0
+[PARA] Subset of probes to reconstruct: /home/cqian/PBMCdemo/Sjaracne//NaiveT_884_884_156/tf/NaiveT_92_92_156_tf.txt (92)
+[PARA] TF annotation list: /home/cqian/PBMCdemo/Sjaracne//NaiveT_884_884_156/tf/NaiveT_92_92_156_tf.txt (92)
+[PARA] Npar limit:    40
+
+[READ] 0 Description lines bypassed.
+[READ] P-value columns not found.
+Marker No: 884 (884 active), Array No: 156
+MI threshold determined for p=1e-07: 0.116393
+10%, time: 0
+20%, time: 0
+30%, time: 0
+40%, time: 0
+50%, time: 0
+60%, time: 1
+70%, time: 1
+80%, time: 1
+90%, time: 1
+Gene: 92 Time: 1
+[NETWORK] Applying DPI ...
+DPI running time is: 0
+Writing matrix: /home/cqian/PBMCdemo/Sjaracne//NaiveT_884_884_156/tf/scMINER_NaiveT_884_884_156/scMINER_SJARACNE_out/NaiveT_884_884_156_run_073.adj
+Maximum observed npar: 5
+
+
+PS:
+
+Read file </home/cqian/PBMCdemo/Sjaracne/NaiveT_884_884_156/tf/scMINER_NaiveT_884_884_156/scMINER_SJARACNE_log/NaiveT_884_884_156_SJARACNE_Bootstrap.71351359.73.err> for stderr output of this job.
+

@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1549668173426.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "916913C7",
+    "lastKnownWriteTime" : 1549668206,
+    "last_content_update" : 1549668729678,
+    "path" : "~/Desktop/PBMC tutorial/PBMCdemo/scMINER/man/DAG_ttest.Rd",
+    "project_path" : "man/DAG_ttest.Rd",
+    "properties" : {
+        "cursorPosition" : "15,16",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 8,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_doc"
+}

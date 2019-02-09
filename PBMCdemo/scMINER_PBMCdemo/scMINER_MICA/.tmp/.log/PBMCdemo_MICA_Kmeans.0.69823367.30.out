@@ -1,0 +1,41 @@
+Sender: LSF System <lsfadmin@nodecn262>
+Subject: Job 69823367[30]: <PBMCdemo_MICA_Kmeans.0[1-40]> in cluster <hpcf_research_cluster> Done
+
+Job <PBMCdemo_MICA_Kmeans.0[1-40]> was submitted from host <nodem132> by user <cqian> in cluster <hpcf_research_cluster> at Fri Dec 21 15:59:05 2018.
+Job was executed on host(s) <nodecn262>, in queue <compbio>, as user <cqian> in cluster <hpcf_research_cluster> at Fri Dec 21 15:59:15 2018.
+</home/cqian> was used as the home directory.
+</home/cqian/PBMCdemo> was used as the working directory.
+Started at Fri Dec 21 15:59:15 2018.
+Terminated at Fri Dec 21 15:59:16 2018.
+Results reported at Fri Dec 21 15:59:16 2018.
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+_phoenix_sub_line_from_cmdfile /home/cqian/PBMCdemo/scMINER_PBMCdemo/scMINER_MICA/.tmp/04_Prep_PBMCdemo_mds.sh
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   0.07 sec.
+    Max Memory :                                 5 MB
+    Average Memory :                             5.00 MB
+    Total Requested Memory :                     2000.00 MB
+    Delta Memory :                               1995.00 MB
+    Max Swap :                                   44 MB
+    Max Processes :                              1
+    Max Threads :                                1
+    Run time :                                   1 sec.
+    Turnaround time :                            11 sec.
+
+The output (if any) follows:
+
+
+
+PS:
+
+Read file </home/cqian/PBMCdemo/scMINER_PBMCdemo/scMINER_MICA/.tmp/.log/PBMCdemo_MICA_Kmeans.0.69823367.30.err> for stderr output of this job.
+
