@@ -13,7 +13,6 @@ SJARACNeInput_scRNAseq(eset.sel=eset.demo,tf.ref=ref,wd.src="./",grp.tag="Cluste
   \item{wd.src}{path to store SjAracne input.}
   \item{group.tag}{name of group for identification}
 }
-}
 \details{
 Non-expressed genes in subgroups are filtered.
 tf.ref should be coordinate with featureNames(eset.sel).

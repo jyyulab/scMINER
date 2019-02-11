@@ -10,8 +10,8 @@ gene_vlnplot(eset, group_tag = "celltype", target, ylabel = "Expression", ncol =
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{eset}{A ExpressionSet,which stores group information in pData.}
-  \item{group_tag}{A string, Column name in pData(eset) that indicates group info.}
+  \item{eset}{ExpressionSet that stores group information in pData.}
+  \item{group_tag}{A string, the column name in pData(eset) that indicates group info.}
   \item{target}{One or a set of gene name(s) to be visualized.}
   \item{ylabel}{A string, indicating name of value on y axis.}
   \item{ncol}{number of plot per row.}

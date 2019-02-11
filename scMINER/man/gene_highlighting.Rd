@@ -20,7 +20,7 @@ gene_highlighting(input_eset = eset, target, ylabel = "Expression", title.size =
   \item{title.size}{numerical}
 }
 \value{
-  \item{One ggplot obj}
+  \item{p}{A ggplot object }
 }
 \references{
 %% ~put references to the literature/web site here ~
@@ -36,7 +36,8 @@ see package "ggplot2" for plot saving and handling;
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \examples{
-#use function as
+require(reshape2)
+require(RColorBrewer)
 
 gene_highlighting(eset,target="GZMK")
 gene_highlighting(eset,target=c("GZMK","TCF7","CD8A"))
