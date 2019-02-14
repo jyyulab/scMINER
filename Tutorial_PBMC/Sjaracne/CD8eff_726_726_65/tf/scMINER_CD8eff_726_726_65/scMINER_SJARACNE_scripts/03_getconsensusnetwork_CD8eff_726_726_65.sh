@@ -1,1 +1,0 @@
-/hpcf/apps/python/install/3.6.1/bin/python3.6 /research/projects/yu3grp/scRNASeq/yu3grp/TracyQian/scMINER/scMINER-master/SJARACNE/getconsensusnetwork.py /home/cqian/PBMCdemo/Sjaracne//CD8eff_726_726_65/tf/scMINER_CD8eff_726_726_65/scMINER_SJARACNE_out/ 0.01 /home/cqian/PBMCdemo/Sjaracne//CD8eff_726_726_65/tf/scMINER_CD8eff_726_726_65/scMINER_SJARACNE_out.final/ 

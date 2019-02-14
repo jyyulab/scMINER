@@ -1,11 +1,13 @@
 Package: MINIE
-Type: Package
-Title: single-cell Mutual Information Network Engineered Ranger
+Type: Packagesingle-cell Mutual Information Network Engineered Ranger
+Title: 
 Version: 0.1.0
 Author: YuLab(St.Jude Children's Research Hospital)
 Maintainer: Chenxi Qian <chenxi.qian@stjude.org>
-Description: Analysis workflow for scRNA-seq clustering, cluster specific network construction and hidden driver detection. 
-License: What license is it under?
+Description: Analysis workflow for post scRNA-seq clustering, cluster specific network construction and hidden driver detection. 
+License: https://github.com/jyyulab/scMINER/blob/master/LICENSE
+Depends: R (>= 3.4.0)
 Encoding: UTF-8
 LazyData: TRUE 
-RoxygenNote: 6.1.1
+RoxygenNote: 6.1.1 
+

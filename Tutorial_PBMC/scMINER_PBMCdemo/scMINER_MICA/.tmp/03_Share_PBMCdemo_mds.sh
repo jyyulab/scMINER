@@ -1,6 +1,0 @@
-cp /home/cqian/PBMCdemo//scMINER_PBMCdemo/scMINER_MICA/scMINER_PBMCdemo_MDS_3/scMINER_MICA_out/PBMCdemo_clust.h5 /home/cqian/PBMCdemo//scMINER_PBMCdemo/scMINER_MICA/scMINER_PBMCdemo_MDS_4/scMINER_MICA_out/
-cp /home/cqian/PBMCdemo//scMINER_PBMCdemo/scMINER_MICA/scMINER_PBMCdemo_MDS_3/scMINER_MICA_out/PBMCdemo_mds.pdf /home/cqian/PBMCdemo//scMINER_PBMCdemo/scMINER_MICA/scMINER_PBMCdemo_MDS_4/scMINER_MICA_out/
-cp /home/cqian/PBMCdemo//scMINER_PBMCdemo/scMINER_MICA/scMINER_PBMCdemo_MDS_3/scMINER_MICA_out/PBMCdemo_clust.h5 /home/cqian/PBMCdemo//scMINER_PBMCdemo/scMINER_MICA/scMINER_PBMCdemo_MDS_5/scMINER_MICA_out/
-cp /home/cqian/PBMCdemo//scMINER_PBMCdemo/scMINER_MICA/scMINER_PBMCdemo_MDS_3/scMINER_MICA_out/PBMCdemo_mds.pdf /home/cqian/PBMCdemo//scMINER_PBMCdemo/scMINER_MICA/scMINER_PBMCdemo_MDS_5/scMINER_MICA_out/
-cp /home/cqian/PBMCdemo//scMINER_PBMCdemo/scMINER_MICA/scMINER_PBMCdemo_MDS_3/scMINER_MICA_out/PBMCdemo_clust.h5 /home/cqian/PBMCdemo//scMINER_PBMCdemo/scMINER_MICA/scMINER_PBMCdemo_MDS_6/scMINER_MICA_out/
-cp /home/cqian/PBMCdemo//scMINER_PBMCdemo/scMINER_MICA/scMINER_PBMCdemo_MDS_3/scMINER_MICA_out/PBMCdemo_mds.pdf /home/cqian/PBMCdemo//scMINER_PBMCdemo/scMINER_MICA/scMINER_PBMCdemo_MDS_6/scMINER_MICA_out/

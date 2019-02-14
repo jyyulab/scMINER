@@ -1,1 +1,0 @@
-Rscript /research/projects/yu3grp/scRNASeq/yu3grp/TracyQian/scMINER/scMINER-master/MICA/ggplot.cc.r  /home/cqian/PBMCdemo//scMINER_PBMCdemo/scMINER_MICA/scMINER_PBMCdemo_MDS_5/scMINER_MICA_out/PBMCdemo.ggplot.txt 1 5 PBMCdemo /home/cqian/PBMCdemo//scMINER_PBMCdemo/scMINER_MICA/scMINER_PBMCdemo_MDS_5/scMINER_MICA_out/PBMCdemo_clust_k5.rplot.pdf 

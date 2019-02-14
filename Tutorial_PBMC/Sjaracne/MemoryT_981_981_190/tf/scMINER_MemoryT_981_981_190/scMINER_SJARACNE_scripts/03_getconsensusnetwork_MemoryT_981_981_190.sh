@@ -1,1 +1,0 @@
-/hpcf/apps/python/install/3.6.1/bin/python3.6 /research/projects/yu3grp/scRNASeq/yu3grp/TracyQian/scMINER/scMINER-master/SJARACNE/getconsensusnetwork.py /home/cqian/PBMCdemo/Sjaracne//MemoryT_981_981_190/tf/scMINER_MemoryT_981_981_190/scMINER_SJARACNE_out/ 0.01 /home/cqian/PBMCdemo/Sjaracne//MemoryT_981_981_190/tf/scMINER_MemoryT_981_981_190/scMINER_SJARACNE_out.final/ 

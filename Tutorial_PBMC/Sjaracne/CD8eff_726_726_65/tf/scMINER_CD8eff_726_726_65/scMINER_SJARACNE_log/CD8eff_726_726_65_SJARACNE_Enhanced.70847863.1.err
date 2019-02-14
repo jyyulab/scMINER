@@ -1,6 +1,0 @@
-Traceback (most recent call last):
-  File "/research/projects/yu3grp/scRNASeq/yu3grp/TracyQian/scMINER/scMINER-master/SJARACNE/getenhancedconsensusnetwork.py", line 1, in <module>
-    import os, sys, csv, re, igraph
-  File "/hpcf/apps/python/install/3.6.1/lib/python3.6/site-packages/igraph/__init__.py", line 34, in <module>
-    from igraph._igraph import *
-ImportError: libigraph.so.0: cannot open shared object file: No such file or directory

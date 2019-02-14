@@ -1,1 +1,0 @@
-/hpcf/apps/python/install/3.6.1/bin/python3 /research/projects/yu3grp/scRNASeq/yu3grp/TracyQian/scMINER/scMINER-master/MICA/Hclust.py  1 /home/cqian/PBMCdemo//scMINER_PBMCdemo/scMINER_MICA/scMINER_PBMCdemo_MDS_3/scMINER_MICA_out/.tmp/PBMCdemo_mi.h5 /home/cqian/PBMCdemo//scMINER_PBMCdemo/scMINER_MICA/scMINER_PBMCdemo_MDS_3/scMINER_MICA_out/ PBMCdemo 

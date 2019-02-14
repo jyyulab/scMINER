@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+
+<html lang="en-us">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  
+
+  <title>Complemantary guidance with PBMC(12k) scRNA-seq data - </title>
+  <link rel="stylesheet" href="http://localhost:4000/assets/css/just-the-docs.css">
+
+  
+
+  
+  <script type="text/javascript" src="http://localhost:4000/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+
+  <div class="page-wrap">
+    <div class="side-bar">
+      <a href="http://localhost:4000" class="site-title fs-6 lh-tight"></a>
+      <span class="fs-3"><button class="js-main-nav-trigger navigation-list-toggle btn btn-outline" type="button" data-text-toggle="Hide">Menu</button></span>
+      <div class="navigation main-nav js-main-nav">
+        <nav role="navigation" aria-label="Main navigation">
+  <ul class="navigation-list">
+    
+    
+      
+        
+          <li class="navigation-list-item">
+            
+            <a href="http://localhost:4000/" class="navigation-list-link">Welcome to scMINER</a>
+            
+          </li>
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+          <li class="navigation-list-item">
+            
+            <a href="http://localhost:4000/docs/MICA.html" class="navigation-list-link">MICA</a>
+            
+          </li>
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+          <li class="navigation-list-item">
+            
+            <a href="http://localhost:4000/docs/MINIE.html" class="navigation-list-link">MINIE</a>
+            
+          </li>
+        
+      
+    
+      
+        
+      
+    
+      
+        
+          <li class="navigation-list-item">
+            
+            <a href="http://localhost:4000/docs/ui-components" class="navigation-list-link">UI Components</a>
+            
+              
+              <ul class="navigation-list-child-list ">
+                
+                  
+                
+                  
+                    <li class="navigation-list-item ">
+                      
+                      <a href="http://localhost:4000/docs/ui-components/typography.html" class="navigation-list-link">Typography</a>
+                      
+                    </li>
+                  
+                
+                  
+                
+                  
+                
+                  
+                    <li class="navigation-list-item ">
+                      
+                      <a href="http://localhost:4000/docs/ui-components/buttons.html" class="navigation-list-link">Buttons</a>
+                      
+                    </li>
+                  
+                
+                  
+                    <li class="navigation-list-item ">
+                      
+                      <a href="http://localhost:4000/docs/ui-components/labels.html" class="navigation-list-link">Labels</a>
+                      
+                    </li>
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                    <li class="navigation-list-item ">
+                      
+                      <a href="http://localhost:4000/docs/ui-components/tables.html" class="navigation-list-link">Tables</a>
+                      
+                    </li>
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                    <li class="navigation-list-item ">
+                      
+                      <a href="http://localhost:4000/docs/ui-components/lists.html" class="navigation-list-link">Lists</a>
+                      
+                    </li>
+                  
+                
+                  
+                    <li class="navigation-list-item ">
+                      
+                      <a href="http://localhost:4000/docs/ui-components/code.html" class="navigation-list-link">Code</a>
+                      
+                    </li>
+                  
+                
+                  
+                
+                  
+                
+              </ul>
+            
+          </li>
+        
+      
+    
+      
+        
+      
+    
+      
+        
+          <li class="navigation-list-item">
+            
+            <a href="http://localhost:4000/docs/utilities" class="navigation-list-link">Utilities</a>
+            
+              
+              <ul class="navigation-list-child-list ">
+                
+                  
+                
+                  
+                
+                  
+                    <li class="navigation-list-item ">
+                      
+                      <a href="http://localhost:4000/docs/utilities/responsive-modifiers.html" class="navigation-list-link">Responsive Modifiers</a>
+                      
+                    </li>
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                    <li class="navigation-list-item ">
+                      
+                      <a href="http://localhost:4000/docs/utilities/typography.html" class="navigation-list-link">Typography</a>
+                      
+                    </li>
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                
+                  
+                    <li class="navigation-list-item ">
+                      
+                      <a href="http://localhost:4000/docs/utilities/color.html" class="navigation-list-link">Color</a>
+                      
+                    </li>
+                  
+                
+                  
+                
+                  
+                
+                  
+                    <li class="navigation-list-item ">
+                      
+                      <a href="http://localhost:4000/docs/utilities/layout.html" class="navigation-list-link">Layout</a>
+                      
+                        
+                        <ul class="navigation-list-child-list">
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                            
+                          
+                        </ul>
+                      
+                    </li>
+                  
+                
+                  
+                
+              </ul>
+            
+          </li>
+        
+      
+    
+      
+        
+          <li class="navigation-list-item active">
+            
+            <a href="http://localhost:4000/docs/PBMC-12k.html" class="navigation-list-link active">Complemantary guidance with PBMC(12k) scRNA-seq data</a>
+            
+          </li>
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+          <li class="navigation-list-item">
+            
+            <a href="http://localhost:4000/docs/index-test.html" class="navigation-list-link">Markdown kitchen sink</a>
+            
+          </li>
+        
+      
+    
+  </ul>
+</nav>
+
+      </div>
+      <footer role="contentinfo" class="site-footer">
+        <p class="text-small text-grey-dk-000 mb-0">This site uses <a href="https://github.com/pmarsceill/just-the-docs">Just the Docs</a>, a documentation theme for Jekyll.</p>
+      </footer>
+    </div>
+    <div class="main-content-wrap js-main-content" tabindex="0">
+      <div class="page-header">
+        <div class="main-content">
+          
+          
+        </div>
+      </div>
+      <div class="main-content">
+        
+          
+        
+        <div id="main-content" class="page-content" role="main">
+          <h1 class="no_toc" id="analysis-on-pbmc12k-scrna-seq-data-via-minie">Analysis on PBMC(12k) scRNA-seq data via MINIE</h1>
+<p><strong>MINIE</strong> analysis was wrapped up as a R package to help bridge unsupervised clustering and gene regulatory network analysis. Here we demonstrate our pipeline using PBMC (10x genmomics) scRNA-seq data [link to data matrix]. Full data contains 68k cells(link to 10x website), in order to provide a quicker guidance, we’ve down sampled this data to 12k cells.</p>
+
+<blockquote>
+  <p><strong><em>Note:</em></strong> Detailed information about individual functions are documented in package manual.</p>
+</blockquote>
+
+<h2 class="no_toc text-delta" id="table-of-contents">Table of contents</h2>
+
+<ol id="markdown-toc">
+  <li><a href="#install-minie-package-in-r" id="markdown-toc-install-minie-package-in-r">Install MINIE package in R</a></li>
+  <li><a href="#cell-type-analysis-from-mica-output" id="markdown-toc-cell-type-analysis-from-mica-output">Cell type analysis from MICA output</a>    <ol>
+      <li><a href="#reading-mica-output" id="markdown-toc-reading-mica-output">Reading MICA output</a></li>
+      <li><a href="#marker-gene-highlighting" id="markdown-toc-marker-gene-highlighting">Marker gene highlighting</a></li>
+      <li><a href="#assign-cell-type-to-cluster" id="markdown-toc-assign-cell-type-to-cluster">Assign cell type to cluster</a></li>
+    </ol>
+  </li>
+  <li><a href="#network-generation-via-sjaracne" id="markdown-toc-network-generation-via-sjaracne">Network generation via SJARACNe</a></li>
+  <li><a href="#find-cell-type-specific-master-regulator" id="markdown-toc-find-cell-type-specific-master-regulator">Find cell type specific master regulator</a>    <ol>
+      <li><a href="#calculate-inferred-activity" id="markdown-toc-calculate-inferred-activity">Calculate Inferred activity</a></li>
+      <li><a href="#find-differential-activity-tf" id="markdown-toc-find-differential-activity-tf">Find Differential activity TF</a></li>
+    </ol>
+  </li>
+</ol>
+
+<hr />
+<h2 class="d-inline-block" id="install-minie-package-in-r">Install MINIE package in R</h2>
+
+<h2 class="d-inline-block" id="cell-type-analysis-from-mica-output">Cell type analysis from MICA output</h2>
+
+<p>First, after clustering via MICA(see [MICA] (/docs/MICA.html), you can load MICA output (in .txt) as well as input expression matrix in R under an expressionSet. This is going to be the major data structure we used for MINIE analysis in R.</p>
+
+<h3 id="reading-mica-output">Reading MICA output</h3>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">eset.demo</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">readMICAoutput</span><span class="p">(</span><span class="w"> 
+	</span><span class="n">input_file</span><span class="o">=</span><span class="s2">"PBMC12k_MICA_input.txt"</span><span class="p">,</span><span class="w">
+	</span><span class="n">load_clust_label</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> 
+	</span><span class="n">output_file</span><span class="o">=</span><span class="s2">"PBMC12k.ggplot.txt"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="marker-gene-highlighting">Marker gene highlighting</h3>
+
+<p>Picked marker genes could be visualized on t-SNE scatterplot, heatmap or violinplot. This will help pick up a reasonable number of cluster.</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gn.sel</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s2">"GZMK"</span><span class="p">,</span><span class="s2">"GZMH"</span><span class="p">,</span><span class="s2">"GZMA"</span><span class="p">,</span><span class="s2">"CCR7"</span><span class="p">,</span><span class="s2">"CD8A"</span><span class="p">,</span><span class="s2">"SELL"</span><span class="p">)</span><span class="w">
+</span><span class="n">gene_highlighting</span><span class="p">(</span><span class="n">input_eset</span><span class="o">=</span><span class="n">eset.demo</span><span class="p">,</span><span class="w"> </span><span class="n">target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gn.sel</span><span class="p">,</span><span class="w"> </span><span class="n">title.size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="https://guides.github.com/activities/hello-world/branching.png" alt="" /></p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gene_vlnplot</span><span class="p">(</span><span class="n">eset.demo</span><span class="p">,</span><span class="n">target</span><span class="o">=</span><span class="n">gn.sel</span><span class="p">,</span><span class="n">group_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"label"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="https://guides.github.com/activities/hello-world/branching.png" alt="" /></p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gene_heatmap</span><span class="p">(</span><span class="n">eset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eset.demo</span><span class="p">,</span><span class="n">target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gn.sel</span><span class="p">,</span><span class="n">group_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"label"</span><span class="p">,</span><span class="w">
+			 </span><span class="n">save_plot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6</span><span class="p">,</span><span class="n">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6</span><span class="p">,</span><span class="w">
+             </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"log2_expression"</span><span class="p">,</span><span class="n">plot_name</span><span class="o">=</span><span class="s2">"./GeneHeatmap.png"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="https://guides.github.com/activities/hello-world/branching.png" alt="" /></p>
+
+<h3 id="assign-cell-type-to-cluster">Assign cell type to cluster</h3>
+
+<p>Here we curated a reference signature list of 8 immune cell types(link) for cell type annotation. In <code class="highlighter-rouge">AssignCellTypes.hmp</code> function, we calculated cell type scores for each clusters, and visualize scores using heatmap.</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ref</span><span class="o">&lt;-</span><span class="n">read.xlsx</span><span class="p">(</span><span class="s2">"Immune_signatures.xlsx"</span><span class="p">)</span><span class="w">
+</span><span class="n">hmp</span><span class="o">&lt;-</span><span class="n">AssignCellTypes.Hmp</span><span class="p">(</span><span class="n">ref</span><span class="o">=</span><span class="n">ref</span><span class="p">,</span><span class="n">eset</span><span class="o">=</span><span class="n">eset.demo</span><span class="p">,</span><span class="n">save_plot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+
+</span><span class="c1"># Manually assign your cell type label</span><span class="w">
+</span><span class="n">celltype</span><span class="o">&lt;-</span><span class="nf">c</span><span class="p">(</span><span class="s2">"MemoryT"</span><span class="p">,</span><span class="s2">"NaiveT"</span><span class="p">,</span><span class="s2">"CD8em"</span><span class="p">,</span><span class="s2">"CD8eff"</span><span class="p">)</span><span class="w">
+</span><span class="n">eset.demo</span><span class="o">$</span><span class="n">celltype</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">celltype</span><span class="p">[</span><span class="n">eset.demo</span><span class="o">$</span><span class="n">label</span><span class="p">]</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="network-generation-via-sjaracne">Network generation via SJARACNe</h2>
+
+<p>In order to generate cell type/group/cluster specific network, group information should be stored under <code class="highlighter-rouge">pData([your_expressionSet])</code>. And R function <code class="highlighter-rouge">generateSJAracneInput</code> will help to partition your expression matrix and conduct a loose filtering of your scRNA-seq data(filter about 0 expressed genes in cluster). Besides, a reference TF list should be provided as <code class="highlighter-rouge">tf.ref</code> to guide hub gene selection. Each group will create one directory which contains filtered expression matrix in .exp format, as long as the filtered TF list in .txt.</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">generateSJAracneInput</span><span class="p">(</span><span class="n">eset</span><span class="o">=</span><span class="n">eset.demo</span><span class="p">,</span><span class="n">tf.ref</span><span class="o">=</span><span class="n">tf.ref</span><span class="p">,</span><span class="n">wd.src</span><span class="o">=</span><span class="s2">"Sjaracne/"</span><span class="p">,</span><span class="w"> </span><span class="n">group_tag</span><span class="o">=</span><span class="s2">"celltype"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+<p><em>Warning:</em> SJARACNe has not been integrated into MINIE yet, please consult <a href="https://github.com/jyyulab/SJARACNe">here</a> to run SJARACNe for network generation on scRNA-seq data.</p>
+
+<h2 id="find-cell-type-specific-master-regulator">Find cell type specific master regulator</h2>
+
+<p>Identify master regulator from content based network is the key step in MINIE to help understanding your scRNA-seq data.</p>
+
+<h3 id="calculate-inferred-activity">Calculate Inferred activity</h3>
+<p>TF acitivities are calculated by integrating expression profile of their targets. Targets identified from SJARACNe of perticular TF was normalized and averaged to infer TF activity.</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">acs.demo</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">GetActivityFromSJARANCE</span><span class="p">(</span><span class="w">
+			 </span><span class="n">SJaracne_output_path</span><span class="o">=</span><span class="s2">"Sjaracne/"</span><span class="p">,</span><span class="w">
+			 </span><span class="n">SJaracne_input_eset</span><span class="o">=</span><span class="n">eset.demo</span><span class="p">,</span><span class="w">
+			 </span><span class="n">activity.method</span><span class="o">=</span><span class="s2">"unweighted"</span><span class="p">,</span><span class="w"> 
+			 </span><span class="n">activity.norm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> 
+			 </span><span class="n">group_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"celltype"</span><span class="p">,</span><span class="w">
+			 </span><span class="n">save_network_file</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="n">save_path</span><span class="o">=</span><span class="kc">NA</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="find-differential-activity-tf">Find Differential activity TF</h3>
+
+<p>The function <code class="highlighter-rouge">FindDAG</code> was designed for identify highly differentiated TF from SJARACNe inferred activity matrix. In order to do so, we did two sided student’s t-test to compare mean acitivty from one cell type V.S. the others.</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">res</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">FindDAG</span><span class="p">(</span><span class="n">eset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">acs.demo</span><span class="p">,</span><span class="n">group_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"celltype"</span><span class="p">)</span><span class="w">
+
+</span></code></pre></div></div>
+<p>This function will output a full matrix that contians all TF occurred in original dataset, statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help idenify master regulators.</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">print</span><span class="p">(</span><span class="n">head</span><span class="p">(</span><span class="n">res</span><span class="p">))</span><span class="w">
+
+
+
+
+</span></code></pre></div></div>
+
+<p>You can also visualize top master regulator candidates in heatmap or violinplots. Only png as plotting device is supported.</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gn.sel</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">TopMasterRegulator</span><span class="p">(</span><span class="n">res</span><span class="p">)</span><span class="w">
+
+</span><span class="n">gene_heatmap</span><span class="p">(</span><span class="n">eset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eset.demo</span><span class="p">,</span><span class="n">target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gn.sel</span><span class="p">,</span><span class="n">group_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"label"</span><span class="p">,</span><span class="w">
+			 </span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6</span><span class="p">,</span><span class="n">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6</span><span class="p">,</span><span class="w"> </span><span class="n">save_plot</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w">
+             </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"log2_expression"</span><span class="p">,</span><span class="n">plot_name</span><span class="o">=</span><span class="s2">"./TopTFHeatmap.png"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="https://guides.github.com/activities/hello-world/branching.png" alt="" /></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+---
+## R session info
+
+
+R version 3.5.0 (2018-04-23)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS High Sierra 10.13.6
+
+Matrix products: default
+BLAS: /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] parallel  stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] bindrcpp_0.2.2      Biobase_2.42.0      BiocGenerics_0.28.0 dplyr_0.7.8        
+[5] RColorBrewer_1.1-2  ggplot2_3.1.0       reshape2_1.4.3     
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.0       rstudioapi_0.8   bindr_0.1.1      magrittr_1.5     tidyselect_0.2.5
+ [6] munsell_0.5.0    colorspace_1.3-2 R6_2.3.0         rlang_0.3.0.1    stringr_1.3.1   
+[11] plyr_1.8.4       tools_3.5.0      grid_3.5.0       gtable_0.2.0     withr_2.1.2     
+[16] digest_0.6.18    yaml_2.2.0       lazyeval_0.2.1   assertthat_0.2.0 tibble_1.4.2    
+[21] crayon_1.3.4     zip_1.0.0        purrr_0.2.5      glue_1.3.0       labeling_0.3    
+[26] openxlsx_4.1.0   stringi_1.2.4    compiler_3.5.0   pillar_1.3.1     scales_1.0.0    
+[31] pkgconfig_2.0.2 
+</code></pre></div></div>
+<hr />
+
+
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
