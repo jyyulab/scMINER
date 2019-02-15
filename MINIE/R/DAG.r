@@ -79,7 +79,6 @@ DAG_ttest<-function(d,group){
     rs.t <- c(id=d$acs.id,
               t.stat,
               pval = pval.t,
-              z  = sign(pval.t)*abs(qnorm(pval.t/2)),
               res$parameter,#df
               CI.low = res$conf.int[1],
               CI.high = res$conf.int[2],
@@ -89,7 +88,6 @@ DAG_ttest<-function(d,group){
     rs.t <- c(id = d$acs.id,
               t.stat=NA,
               pval = NA,
-              z  = NA,
               df = NA,
               CI.low = NA,
               CI.high = NA,

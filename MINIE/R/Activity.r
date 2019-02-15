@@ -1,3 +1,7 @@
+##Function based MINIE
+##Author:chenxi.qian@stjude.org
+##Stjude.YuLab
+
 ###Function9: Activity Function(from SJARACNe output)###
 ## calculate activity and networks from network files
 ## path to where you want to calculate activity

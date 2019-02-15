@@ -1,11 +1,6 @@
-require(Biobase)
-require(reshape2)
-require(ggplot2)
-require(RColorBrewer)
-require(scales)
-require(ComplexHeatmap)
-require(pheatmap)
-
+##Function based MINIE
+##Author:chenxi.qian@stjude.org
+##Stjude.YuLab
 
 #' @export
 gene_highlighting<-function(input_eset=eset,target,
@@ -21,7 +16,7 @@ gene_highlighting<-function(input_eset=eset,target,
       {target_values <- input[indx,]}#indx = 1
 
    	proj_target <- cbind(projection,target_values)
-    proj_target_melt <- melt(proj_target, id.vars=c("tSNE_1", "tSNE_2"))
+    proj_target_melt <- reshape2::melt(proj_target, id.vars=c("tSNE_1", "tSNE_2"))
 
       p<- ggplot(proj_target_melt, aes(tSNE_1, tSNE_2)) +
         geom_point(aes(colour=value),size=0.5) +
@@ -57,7 +52,7 @@ gene_vlnplot <- function(eset,group_tag="celltype",target,
     colnames(df)[1]<-target
   }
 
-  df_melt <- melt(df, id.vars="cluster")
+  df_melt <- reshape2::melt(df, id.vars="cluster")
 
   p <- ggplot(df_melt, aes(x=cluster, y=value,fill=cluster))
 

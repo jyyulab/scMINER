@@ -1,3 +1,7 @@
+##Function based MINIE
+##Author:chenxi.qian@stjude.org
+##Stjude.YuLab
+
 ###Function 1:read MICA result & MICA input, output as a eset###
 #' @export
 readMICAoutput<-function(input_file, output_file,load_clust_label=TRUE){
