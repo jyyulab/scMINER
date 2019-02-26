@@ -1,10 +1,10 @@
 ---
 layout: default
-title: MINIE
-nav_order: 3
+title: Quick start with scMINER (local version)
+nav_order: 2
 ---
 
-# Customization
+# 
 {:.no_toc}
 
 ## Table of contents

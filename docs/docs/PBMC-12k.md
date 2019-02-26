@@ -1,14 +1,14 @@
 ---
 layout: default
-title: Complemantary guidance with PBMC(12k) scRNA-seq data
+title: PBMC(12k) scRNA-seq data
 nav_order: 4
 ---
 
-# Analysis on PBMC(12k) scRNA-seq data via MINIE
+# Analysis on PBMC(12k) scRNA-seq data via scMINER
 {:.no_toc}
-**MINIE** analysis was wrapped up as a R package to help bridge unsupervised clustering and gene regulatory network analysis. Here we demonstrate our pipeline using PBMC (10x genmomics) scRNA-seq data [link to data matrix]. Full data contains 68k cells(link to 10x website), in order to provide a quicker guidance, we've down sampled this data to 12k cells. 
+Here we demonstrate our pipeline using PBMC (10x genmomics) scRNA-seq data [link to data matrix]. Full data contains 68k cells(link to 10x website), in order to provide a quicker guidance, we've down sampled this data to 12k cells.
+Original data website can be downloaded here: https://support.10xgenomics.com/single-cell-gene-expression/datasets/1.1.0/fresh_68k_pbmc_donor_a
 
-> **_Note:_** Detailed information about individual functions are documented in package manual.
 
 ## Table of contents
 {: .no_toc .text-delta }
@@ -17,8 +17,35 @@ nav_order: 4
 {:toc}
 
 ---
+## Data preprocessing
+This can be done by any scRNA-seq preprocessing pipeline. We encourage user to feed in all genes from your data for MICA, instead of highly variable genes only. Here, in order to stick to the focus, we only demonstrate a quick function to conduct gene/cell filtering, without any data exploratory visualization.
+
+```R
+eset.demo<-pre.MICA(data.input=,
+				)
+```
+
+
+
+
+## Run MICA clustering
+
+MICA is implemented in Python now. 
+
+This will give you one visualization for each choice of k.
+
+
+
+![]()
+
+
 ## Install MINIE package in R
 {: .d-inline-block :}
+
+**MINIE** analysis was wrapped up as a R package to help bridge unsupervised clustering and gene regulatory network analysis.  
+
+> **_Note:_** Detailed information about individual functions are documented in package manual.
+
 
 ## Cell type analysis from MICA output
 {: .d-inline-block :}
@@ -46,7 +73,7 @@ gn.sel <- c("GZMK","GZMH","GZMA","CCR7","CD8A","SELL")
 gene_highlighting(input_eset=eset.demo, target = gn.sel, title.size = 8)
 ```
 
-![](https://guides.github.com/activities/hello-world/branching.png)
+![]()
 
 
 ```R
@@ -54,7 +81,7 @@ gene_vlnplot(eset.demo,target=gn.sel,group_tag = "label")
 ```
 
 
-![](https://guides.github.com/activities/hello-world/branching.png)
+![]()
 
 
 ```R
@@ -63,7 +90,7 @@ gene_heatmap(eset = eset.demo,target = gn.sel,group_tag = "label",
              name = "log2_expression",plot_name="./GeneHeatmap.png")
 ```
 
-![](https://guides.github.com/activities/hello-world/branching.png)
+![]()
 
 
 ### Assign cell type to cluster

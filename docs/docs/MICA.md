@@ -1,49 +1,32 @@
 ---
 layout: default
-title: MICA
-nav_order: 2
+title: Run clustering with MICA
+nav_order: 3
 ---
 
-# Configuration
+# Run clustering with MICA module
+{:.no_toc}
+MICA(Mutual Information based Clustering Analysis) is a nonlinear clustering analysis tool designed for scRNA-seq data. To install MICA solely, please refer.. 
+{: .fs-6 .fw-300 }
 
-Just the Docs has some specific configuration parameters that can be definied in your Jekyll site's `_config.yml` file.
+## Table of contents
+{: .no_toc .text-delta }
 
-## Search enabled
+1. TOC
+{:toc}
 
-```yml
-# Enable or disable the site search
-search_enabled: true
-```
+---
+## Preprocessing
 
-## Aux links
+Preprocessing is very simple for MICA analysis. 
 
-```yml
-# Aux links for the upper right navigation
-aux_links:
-    "Just the Docs on GitHub":
-      - "//github.com/pmarsceill/just-the-docs"
-```
+## Basic MICA usage
 
-## Color scheme
+## MICA Outputs
 
-```yml
-# Color scheme currently only supports "dark" or nil (default)
-color_scheme: "dark"
-```
-<button class="btn js-toggle-dark-mode">Preview dark color scheme</button>
+## Additional functions
 
-<script>
-const toggleDarkMode = document.querySelector('.js-toggle-dark-mode')
-const cssFile = document.querySelector('[rel="stylesheet"]')
-const originalCssRef = cssFile.getAttribute('href')
-const darkModeCssRef = originalCssRef.replace('just-the-docs.css', 'dark-mode-preview.css')
-
-addEvent(toggleDarkMode, 'click', function(){
-if (cssFile.getAttribute('href') === originalCssRef) {
-cssFile.setAttribute('href', darkModeCssRef)
-} else {
-cssFile.setAttribute('href', originalCssRef)
-}
-})
-</script>
-
+### Tunning your t-SNE visualization 
+### Pick your optimal number of K
+### Try other dimension reduction methods
+### Visualize with U-MAP 
