@@ -16,4 +16,5 @@ Depends:
 	RColorBrewer,
 	scales,
 	ComplexHeatmap,
-	pheatmap
+	pheatmap,
+	cowplot
