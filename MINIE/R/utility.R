@@ -87,30 +87,79 @@ generateSJARACNeInput<-function(eset,tf.ref,wd.src,group_tag){
 
 
 
+#####
+#function to generate MICA input from pre.MICA output
+#' @export
+generateMICAinput <- function(data,filename){
+
+  mica.input <- as.data.frame(t(data))
+
+  mica.input$ID <- colnames(data)
+
+  mica.input <- mica.input[,c("ID",rownames(data))]
+
+  if(length(grep("txt",filename))==0){
+    filename<-paste0(filename,".txt")
+  }
+
+  cat("Writing MICA input to table...","\n")
+  write.table(mica.input,file = filename,sep = "\t",
+    row.names = FALSE,col.names = TRUE,quote = FALSE)
+  cat("Done.","\n")
+
+}
+
+##read data, a wrapper of conventional data reading (read.delim2) and 10x genomics data reading
+#' @export
+readscRNAseqData <- function(file,is.10x=TRUE,...){
+
+  if(is.10x){
+   data.path <- file
+   data.raw <- Matrix::readMM(file.path(data.path,"matrix.mtx"))
+   barcodes <- read.table(file.path(data.path,"barcodes.tsv"),header=FALSE,stringsAsFactors = FALSE)
+   genes <- read.table(file.path(data.path,"genes.tsv"),header=FALSE,stringsAsFactors = FALSE)
+   dimnames(data.raw)[[1]] <- genes$V2
+   dimnames(data.raw)[[2]] <- barcodes$V1
+  }
+  else{
+  data.raw <- read.delim2(file=file,...)
+  }
+  return(data.raw)
+}
+
+
+
+
 
 ###scRNA-seq data preprocess(before running clustering)
 #' @export
 pre.MICA <- function(data.input=NULL, #data matrix that have unique colnames and geneSymbol as rownames
-            gene_filter=TRUE, 
+            gene_filter=TRUE,
             cell_filter=TRUE,
-            cell_percentage=0.005, 
+            cell_percentage=0.005,
             ERCC_filter=TRUE,
             Mito_filter=TRUE, # one way filtering
-            UMI_filter="both", #three way filtering 
+            UMI_filter="both", #three way filtering
             plotting=TRUE,
             plot.dir=".",
-            norm=10e6, 
+            norm=10e6,
             sampleID="PBMC_12k",
             log2Transform=TRUE)
 {
-  cat("Pre-QC expression matrix dimention: ", dim(data.input),"\n")
-  # 
-  cells_per_gene <- rowSums(sign(as.matrix(data.input)))
+  if(!class(data.input)[1]%in%c("dgCMatrix","dgTMatrix","matrix")){
+    stop("Input format should %in% c( 'matrix','dgTMatrix','dgCMatrix')","\n")
+  }
+
+  cat("Running QC...","\n",
+      "Pre-QC expression matrix dimention: ", dim(data.input),"\n")
+
+  data.input <-as.matrix(data.input)
+  cells_per_gene <- rowSums(sign(data.input))
   nGene <- sum(cells_per_gene > 0)
   cat("# of non-zero gene:", nGene, "\n")
 
   # Count the cells with >=1 identified gene(s)
-  genes_per_cell <- colSums(sign(as.matrix(data.input)))
+  genes_per_cell <- colSums(sign(data.input))
   nCell <- sum(genes_per_cell > 0)
   cat("# of non-zero cell:", nCell, "\n")
 
@@ -119,27 +168,19 @@ pre.MICA <- function(data.input=NULL, #data matrix that have unique colnames and
   nCell_cutoff <- floor(cell_percentage * dim(data.input)[2])
   cut.gene <- names(which(cells_per_gene < nCell_cutoff))
 
+  #gene filtering
+  if(gene_filter){
+  	data <- data.input[!rownames(data.input) %in% cut.gene,]}
+  	else {data <- data.input}
 
-  p.gene.qc <- ggplot(data=data.frame(ncells=cells_per_gene), aes(log10(ncells+1))) + 
-      geom_histogram(bins = 100) + 
-      labs(x = "LOG10 (Cell counts + 1)", 
-           y = "Gene counts", 
-           title = "Histogram: Number of cells expressed by each genes") + 
-      theme(axis.text = element_text(size = 10), 
-          axis.title = element_text(size = 12, face = "bold"), 
-          plot.title = element_text(size = 10, face = "bold"))
- 
-
-  data <- data.input[!rownames(data.input) %in% cut.gene, ]
-  
   cat("Gene expressed in less than ", nCell_cutoff,
-      "(",length(cut.gene)*100/dim(data.input)[1],"%) cells were filtered","\n",
+      "cells (",length(cut.gene)*100/dim(data.input)[1],"% genes) were filtered","\n",
       "Filtered expression matrix dimension:",dim(data),"\n")
-  
+
   # extract mito-gene and spike-in genes
   mito.genes <- grep(pattern = "^mt-|^MT-", x = rownames(data), value = TRUE)
   spikeIn.genes <- grep(pattern = "^ERCC-", x = rownames(data), value = TRUE)
- 
+
   pd <- data.frame(nUMI.total = colSums(data),
              nGene = genes_per_cell,
              percent.mito= Matrix::colSums(data[mito.genes, ]) / Matrix::colSums(data),
@@ -154,74 +195,97 @@ pre.MICA <- function(data.input=NULL, #data matrix that have unique colnames and
   mito_cf <- median(pd$percent.mito) + 3 * mad(pd$percent.mito)
 
 
-  if(UMI_filter=="low") {umi_cf_hi<-Inf
-    }else if(UMI_filter=="high") {umi_cf_lo <- 0}
-  
+  if(plotting){
+
+  	if(!dir.exists(plot.dir)) {dir.create(plot.dir)}
+
+  	p.gene.qc <- ggplot(data = data.frame(ncells = cells_per_gene), aes(log10(ncells+1))) +
+      geom_histogram(bins = 100) +
+      labs(x = "Log10 (Cell counts + 1)",
+           y = "Gene counts",
+           title = "Histogram: Number of cells expressed by each genes") +
+      theme(axis.text = element_text(size = 10),
+          axis.title = element_text(size = 12, face = "bold"),
+          plot.title = element_text(size = 10, face = "bold"))+
+      geom_vline(xintercept = log10 (nCell_cutoff + 1), data = as.data.frame(nCell_cutoff),
+      	color="blue",size = 1,alpha = 0.3)
+
+  	ggsave(plot = p.gene.qc, filename = file.path(plot.dir,"1_1_Gene_QCmetrics_before_filtering.png"),
+        	width = 5, height = 4, units = "in", dpi = 300)
+  	dev.off()
+
+
+    # Visulize the distribution of Identified Genes, UMIs and %Mitochondrial genes among cells
+  	p1 <- ggplot(pd,aes(x=sampleID,y=nUMI.total,fill=sampleID)) +
+      geom_violin(scale="width", na.rm=TRUE)+
+      geom_boxplot(width=0.3,outlier.size = 0.25, outlier.stroke = 0.5,fill="white")+
+      labs(x=" ",y="",title="Total UMI count for each cell") +
+      theme(legend.position="none",plot.title=element_text(size=8))+
+      geom_hline(yintercept = umi_cf_lo, data = as.data.frame(umi_cf_lo),
+      	color="blue",size=2,alpha = 0.3) +
+      geom_hline(yintercept = umi_cf_hi, data = as.data.frame(umi_cf_hi),
+      	color="blue",size=2,alpha = 0.3)
+
+
+ 	p2 <- ggplot(pd,aes(x=sampleID,y=nGene,fill=sampleID)) +
+      geom_violin(scale="width", na.rm=TRUE)+
+      geom_boxplot(width=0.3,outlier.size = 0.25, outlier.stroke = 0.5,fill="white")+
+      labs(x=" ",y="",title="Total # of gene expressed in each cell") +
+      theme(legend.position="none",plot.title=element_text(size=8))
+
+  	plot.list <- list(p1,p2)
+
+  	if(length(spikeIn.genes)!=0){
+
+  		p3 <- ggplot(data=pd, aes(x=nUMI.total,y=percent.ERCC))+
+  			geom_point(na.rm=TRUE,size=0.8,alpha=0.5)+
+      		labs(x="",y="",title="Percentage of spike-in gene expression VS Total UMI counts in each cell") +
+      		theme(legend.position="none",plot.title=element_text(size=8))+
+      		geom_hline(yintercept = ERCC_cf,data=as.data.frame(ERCC_cf),
+      			size=2,color="blue",alpha = 0.3)
+  		plot.list$p3 <- p3}
+
+  	if(length(mito.genes)!=0){
+  		p4 <- ggplot(data=pd, aes(x=nUMI.total,y=percent.mito))+
+  			geom_point(na.rm=TRUE,size=0.8,alpha=0.5)+
+      		labs(x="",y="",title="Percentag e of MT-gene expression VS Total UMI counts in each cell") +
+      		theme(legend.position="none",plot.title=element_text(size=8))+
+      		geom_hline(yintercept = mito_cf, data=as.data.frame(mito_cf),
+      			size=2,color="blue",alpha = 0.3)
+		plot.list$p4 <- p4}
+
+  	p.cell.qc <- cowplot::plot_grid(plotlist=plot.list,nrow=1)
+
+  	png(file.path(plot.dir,"1_2_Cell_QCmetrics_before_filtering.png"),width = 14, height = 6, units = "in", res = 300)
+  	print(p.cell.qc)
+  	dev.off()
+
+  	message("Plots are generated and saved at",normalizePath(plot.dir),"\n")
+  }
+
+
+  if(UMI_filter=="low") {umi_cf_hi = Inf
+  }else if(UMI_filter=="high") {umi_cf_lo = 0}
+
   cut.cell <- which((pd$nUMI.total < umi_cf_lo) | (pd$nUMI.total > umi_cf_hi))
-  
+
   if(ERCC_filter) cut.cell <- union(cut.cell,
-                  which(pd$percent.ERCC > ERCC_cf))
+                                    which(pd$percent.ERCC > ERCC_cf))
 
   if(Mito_filter) cut.cell <- union(cut.cell,
-                  which(pd$percent.mito > mito_cf))
+                                    which(pd$percent.mito > mito_cf))
 
+  # do cell filtering
+  if(cell_filter){
+    data <- data[,-c(cut.cell)]
+    pd <- pd[colnames(data), ] }
 
-  # Visulize the distribution of Identified Genes, UMIs and %Mitochondrial genes among cells
-  p1 <- ggplot(pd,aes(x=sampleID,y=nUMI.total,fill=sampleID)) + 
-      geom_violin(scale="width", na.rm=TRUE)+
-      geom_boxplot(width=0.3,outlier.size = 0.25, outlier.stroke = 0.5,fill="white")+
-      labs(x=" ",y="",title="Total UMI count for each cell") + 
-      theme(legend.position="none",plot.title=element_text(size=8))
-  
-  p2 <- ggplot(pd,aes(x=sampleID,y=nGene,fill=sampleID)) + 
-      geom_violin(scale="width", na.rm=TRUE)+
-      geom_boxplot(width=0.3,outlier.size = 0.25, outlier.stroke = 0.5,fill="white")+
-      labs(x=" ",y="",title="Total # of gene expressed in each cell") + 
-      theme(legend.position="none",plot.title=element_text(size=8))
-  
-  plot.list <- list(p1,p2)
-
-  if(length(spikeIn.genes)!=0){
-  p3 <- ggplot(data=pd, aes(x=nUMI.total,y=percent.ERCC))+ geom_point(na.rm=TRUE)+
-      labs(x=" ",y="",title="Percentage of spike-in gene expression VS Total UMI counts in each cell") + 
-      theme(legend.position="none",plot.title=element_text(size=8))
-  
-  plot.list$p3<-p3}
- 
-  if(length(mito.genes)!=0){
-  p4 <- ggplot(data=pd, aes(x=nUMI.total,y=percent.mito))+ geom_point(na.rm=TRUE)+
-      labs(x=" ",y="",title="Percentage of MT-gene expression VS Total UMI counts in each cell") + 
-      theme(legend.position="none",plot.title=element_text(size=8))
-  
-  plot.list$p4<-p4}
-
-  p.cell.qc <- cowplot::plot_grid(plotlist=plot.list,nrow=1)
-  
- ##############################
- # do cell filtering 
-  data<-data[,-c(cut.cell)]
-  pd<-pd[data@Dimnames[[2]], ] 
- ###############################
 
   cat("A total of ",length(cut.cell), "(",length(cut.cell)*100/dim(data.input)[1],"%) cells were filtered","\n",
       "Filtered expression matrix dimension:",dim(data),"\n")
   cat("==============","\n")
 
-
-  if(plotting){
-  
-  ggsave(plot = p.gene.qc, filename = "1_1_Gene_QCmetrics_before_filtering.png", 
-        width = 5, height = 5, units = "in", dpi = 300)
-  dev.off()
-  
-  png("1_2_Cell_QCmetrics_before_filtering.png",width = 14, height = 6, units = "in", res = 300)
-  print(p.cell.qc)
-  dev.off()
-
-  message("Plots are generated and saved at",normalizePath(plot.dir),"\n")
-  }
-
-  # Normalization and log2 transformation #########
+  # Normalization and log2 transformation
   # CPM 100k
   cellSum <- colSums(data)
   if(!is.null(norm)) {
@@ -234,9 +298,5 @@ pre.MICA <- function(data.input=NULL, #data matrix that have unique colnames and
     cat("Data was log2Transformed!","\n")}
 
   return(data)
-}
-
-
-
-
+}#end pre.MICA
 

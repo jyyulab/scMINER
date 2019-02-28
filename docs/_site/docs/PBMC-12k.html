@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=Edge">
   
 
-  <title>Complemantary guidance with PBMC(12k) scRNA-seq data - </title>
+  <title>PBMC(12k) scRNA-seq data - </title>
   <link rel="stylesheet" href="http://localhost:4000/assets/css/just-the-docs.css">
 
   
@@ -82,7 +82,7 @@
         
           <li class="navigation-list-item active">
             
-            <a href="http://localhost:4000/docs/PBMC-12k.html" class="navigation-list-link active">Complemantary guidance with PBMC(12k) scRNA-seq data</a>
+            <a href="http://localhost:4000/docs/PBMC-12k.html" class="navigation-list-link active">PBMC(12k) scRNA-seq data</a>
             
           </li>
         
@@ -336,13 +336,19 @@
         
         <div id="main-content" class="page-content" role="main">
           <h1 class="no_toc" id="analysis-on-pbmc12k-scrna-seq-data-via-scminer">Analysis on PBMC(12k) scRNA-seq data via scMINER</h1>
+<p>Here we demonstrate our pipeline using PBMC (10x genmomics) scRNA-seq data [link to data matrix]. Full data contains 68k cells(link to 10x website), in order to provide a quicker guidance, we’ve down sampled this data to 12k cells.
+Original data website can be downloaded <a href="https://support.10xgenomics.com/single-cell-gene-expression/datasets/1.1.0/fresh_68k_pbmc_donor_a">here</a>.</p>
 
 <h2 class="no_toc text-delta" id="table-of-contents">Table of contents</h2>
 
 <ol id="markdown-toc">
-  <li><a href="#data-preprocessing" id="markdown-toc-data-preprocessing">Data preprocessing</a></li>
-  <li><a href="#run-mica-clustering" id="markdown-toc-run-mica-clustering">Run MICA clustering</a></li>
-  <li><a href="#install-minie-package-in-r" id="markdown-toc-install-minie-package-in-r">Install MINIE package in R</a></li>
+  <li><a href="#data-preprocessing" id="markdown-toc-data-preprocessing">Data preprocessing</a>    <ol>
+      <li><a href="#quality-control" id="markdown-toc-quality-control">Quality control</a></li>
+      <li><a href="#generate-mica-input" id="markdown-toc-generate-mica-input">Generate MICA input</a></li>
+    </ol>
+  </li>
+  <li><a href="#run-mica-clustering-on-hpcf" id="markdown-toc-run-mica-clustering-on-hpcf">Run MICA clustering on HPCF</a></li>
+  <li><a href="#install-minie-package-in-r-for-cluster-based-network-analysis" id="markdown-toc-install-minie-package-in-r-for-cluster-based-network-analysis">Install MINIE package in R for cluster-based network analysis</a></li>
   <li><a href="#cell-type-analysis-from-mica-output" id="markdown-toc-cell-type-analysis-from-mica-output">Cell type analysis from MICA output</a>    <ol>
       <li><a href="#reading-mica-output" id="markdown-toc-reading-mica-output">Reading MICA output</a></li>
       <li><a href="#marker-gene-highlighting" id="markdown-toc-marker-gene-highlighting">Marker gene highlighting</a></li>
@@ -359,12 +365,71 @@
 
 <hr />
 <h2 id="data-preprocessing">Data preprocessing</h2>
+<p>This can be done by any scRNA-seq preprocessing pipeline. We encourage user to feed in all genes from your data for MICA, instead of highly variable genes only. Here, in order to stick to the focus, we only demonstrate a quick function to conduct gene/cell filtering, without any data exploratory visualization.</p>
 
-<h2 id="run-mica-clustering">Run MICA clustering</h2>
+<h3 id="quality-control">Quality control</h3>
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">d</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pre.MICA</span><span class="w"> </span><span class="p">(</span><span class="n">data.input</span><span class="o">=</span><span class="n">data.input</span><span class="p">,</span><span class="w"> </span><span class="c1">#data matrix that have unique colnames and geneSymbol as rownames</span><span class="w">
+                     </span><span class="n">gene_filter</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="c1"># do gene filtering</span><span class="w">
+                     </span><span class="n">cell_filter</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="c1"># do cell filtering</span><span class="w">
+                     </span><span class="n">cell_percentage</span><span class="o">=</span><span class="m">0.005</span><span class="p">,</span><span class="w"> </span><span class="c1"># gene filtering criteria</span><span class="w">
+                     </span><span class="n">ERCC_filter</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="c1"># by spike-in</span><span class="w">
+                     </span><span class="n">Mito_filter</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="c1"># by mitochondra genes</span><span class="w">
+                     </span><span class="n">UMI_filter</span><span class="o">=</span><span class="s2">"both"</span><span class="p">,</span><span class="w"> </span><span class="c1"># by UMI count(three way filtering)</span><span class="w">
+                     </span><span class="n">plotting</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="c1"># If do visualization </span><span class="w">
+                     </span><span class="n">plot.dir</span><span class="o">=</span><span class="s2">"."</span><span class="p">,</span><span class="w"> </span><span class="c1"># save plot at..</span><span class="w">
+                     </span><span class="n">norm</span><span class="o">=</span><span class="m">10e6</span><span class="p">,</span><span class="w"> </span><span class="c1"># normalize to ..</span><span class="w">
+                     </span><span class="n">sampleID</span><span class="o">=</span><span class="s2">"PBMC_12k"</span><span class="p">,</span><span class="w"> </span><span class="c1"># sample info</span><span class="w">
+                     </span><span class="n">log2Transform</span><span class="o">=</span><span class="kc">TRUE</span><span class="w"> </span><span class="c1">#if or not do log2 transformation</span><span class="w">
+                     </span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
 
-<h2 class="d-inline-block" id="install-minie-package-in-r">Install MINIE package in R</h2>
+<p>If you set <code class="highlighter-rouge">plotting = TRUE</code>, then there will be two visualization plot generated for gene/cell quality control.
+One is the total number of cell expressed by each gene
+<img src="" alt="" /></p>
 
-<p><strong>MINIE</strong> analysis was wrapped up as a R package to help bridge unsupervised clustering and gene regulatory network analysis. Here we demonstrate our pipeline using PBMC (10x genmomics) scRNA-seq data [link to data matrix]. Full data contains 68k cells(link to 10x website), in order to provide a quicker guidance, we’ve down sampled this data to 12k cells.</p>
+<p>The other plot will visualize total UMI count, total number of gene expressed, mitochondria percentage, and spike-in percentage for each cell.
+<img src="" alt="" /></p>
+
+<h3 id="generate-mica-input">Generate MICA input</h3>
+<p>After reviewing all visualization and conduct filtering, you can go ahead and generate MICA input, which will be a cell by gene txt file. If your data was not generated by 10x genomics, you can prepare your own filtering and use this step for MICA Input generation, please note that you should always feed MICA the log or log2 transformed data.</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">generateMICAinput</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s2">"PBMC12k_MICA_input.txt"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+<p>This will output a txt file containing correct information for MICA.</p>
+
+<h2 id="run-mica-clustering-on-hpcf">Run MICA clustering on HPCF</h2>
+
+<p>MICA is implemented in Python now. If you would like to install MICA solely, please infer <a href="https://github.com/jyyulab/MICA">MICA github page</a>.There are several parameters for you to choose when running MICA.
+Here we provided is an example of running MICA on high performance clusters.</p>
+
+<p>In shell terminal, for environmental set up:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh hpc                             <span class="c"># ssh to a head node</span>
+hpcf_interactive                    <span class="c"># login an interactive node</span>
+setcbenv prod                       <span class="c"># set CompBio environment to prod</span>
+cbload phoenix                      <span class="c"># load CompBio modules</span>
+cbload util-python
+
+module load python/3.6.1            <span class="c"># load python for clustering</span>
+module load R/3.4.0                 <span class="c"># load R for visualization</span>
+</code></pre></div></div>
+
+<p>To run MICA:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./MIE/mie.py Pipeline test_no_intall_LSF ./test_data/inputs/PBMC_Demo_MICA_input_mini.txt ./test_data/outputs/ <span class="se">\</span>
+test_no_intall_LSF <span class="nt">--host</span> LSF       <span class="c"># run MIE</span>
+
+./MICA/mica.py Clust PBMC_12k ./PBMC_12k/inputs/PBMC_12k.whole.h5 ./test_data/inputs/PBMC_12k_mi.h5 ./PBMC_12k/outputs/ PBMC_12k <span class="nt">--k</span> 7 8 9 10 <span class="nt">--perplexity</span> 30 <span class="nt">--retransformation</span> False 
+<span class="nt">--host</span> LSF
+</code></pre></div></div>
+
+<p>This will give you one t-SNE visualization for each choice of k.</p>
+
+<p><img src="" alt="" /></p>
+
+<h2 class="d-inline-block" id="install-minie-package-in-r-for-cluster-based-network-analysis">Install MINIE package in R for cluster-based network analysis</h2>
+
+<p><strong>MINIE</strong> analysis was wrapped up as a R package to help bridge unsupervised clustering and gene regulatory network analysis.</p>
 
 <blockquote>
   <p><strong><em>Note:</em></strong> Detailed information about individual functions are documented in package manual.</p>
