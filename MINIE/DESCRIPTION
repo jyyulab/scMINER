@@ -17,4 +17,5 @@ Depends:
 	scales,
 	ComplexHeatmap,
 	pheatmap,
+	dplyr,
 	cowplot

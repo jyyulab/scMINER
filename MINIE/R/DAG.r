@@ -4,6 +4,7 @@
 
 ###Differential Activity analysis#######
 ###Anova####
+#' @export
 HVG_Anova<-function(d,group){
 
   d.tmp<-unlist(d[,-1])
@@ -29,6 +30,7 @@ HVG_Anova<-function(d,group){
 }
 
 ###Wrapper of Anova###
+#' @export
 FindHVG<-function(eset=acs.demo,group_tag="celltype",
                    print_screen=TRUE){
 
@@ -58,7 +60,7 @@ FindHVG<-function(eset=acs.demo,group_tag="celltype",
 
 
 ###t.test(pairwise/2case)###
-
+#' @export
 DAG_ttest<-function(d,group){
 
   #d.tmp<-unlist(d[1,-1])

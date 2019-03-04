@@ -62,11 +62,13 @@ d <- pre.MICA (data.input=d.12k, #data matrix that have unique colnames and gene
 
 If you set `plotting = TRUE`, then there will be two visualization plot generated for gene/cell quality control.
 One is the total number of cell expressed by each gene
-![]()
+
+![](./plots/00_Gene_QCmetrics_before_filtering.png)
 
 
 The other plot will visualize total UMI count, total number of gene expressed, mitochondria percentage, and spike-in percentage for each cell.
-![]()
+
+![](./plots/01_Cell_QCmetrics_before_filtering.png)
 
 
 
@@ -108,7 +110,7 @@ test_no_intall_LSF --host LSF       # run MIE
 
 This will give you one t-SNE visualization for each choice of k.
 
-![]()
+![](./plots/10_MICA-result.png)
 
 
 
@@ -142,11 +144,12 @@ eset.demo <- readMICAoutput(
 Picked marker genes could be visualized on t-SNE scatterplot, heatmap or violinplot. This will help pick up a reasonable number of cluster.
 
 ```R
-gn.sel <- c("GZMK","GZMH","GZMA","CCR7","CD8A","SELL")
+gn.sel<-c("CD3D","CD27","IL7R","SELL","CCR7","IL32","GZMA",
+          "GZMK","DUSP2","CD8A","GZMH","GZMB","CD79A","CD79B","CD86","CD14")
 gene_highlighting(input_eset=eset.demo, target = gn.sel, title.size = 8)
 ```
 
-![]()
+![](./plots/11_MICA_markers_scatterplots.png)
 
 
 ```R
@@ -154,7 +157,7 @@ gene_vlnplot(eset.demo,target=gn.sel,group_tag = "label")
 ```
 
 
-![]()
+![](./plots/12_Marker_violinplots.png)
 
 
 ```R
@@ -163,7 +166,7 @@ gene_heatmap(eset = eset.demo,target = gn.sel,group_tag = "label",
              name = "log2_expression",plot_name="./GeneHeatmap.png")
 ```
 
-![]()
+![](./plots/13_Marker_heatmaps)
 
 
 ### Assign cell type to cluster
@@ -173,12 +176,29 @@ Here we curated a reference signature list of 8 immune cell types(link) for cell
 
 ```R
 ref<-read.xlsx("Immune_signatures.xlsx")
+head(ref)
+```
+```R
+> head(ref)
+  celltype markers weight
+1   NaiveT    SELL      1
+2   NaiveT    CCR7      1
+3     Tmem    IL7R      1
+4     Tmem    CD27      1
+5     Tmem    IL32      1
+6     Tmem    GZMA     -1
+
+```
+
+```R
 hmp<-AssignCellTypes.Hmp(ref=ref,eset=eset.demo,save_plot = TRUE)
 
 # Manually assign your cell type label
-celltype<-c("MemoryT","NaiveT","CD8em","CD8eff")
+celltype <-c("NaiveT","Tmem","CD8em","CD8eff","NK","Bcell","DC","Mo")
 eset.demo$celltype <- celltype[eset.demo$label]
 ```
+
+![](./plots/20_Celltype_Score.png)
 
 ## Network generation via SJARACNe
 {: no_toc }
@@ -224,7 +244,7 @@ res <- FindDAG(eset = acs.demo,group_tag = "celltype")
 This function will output a full matrix that contians all TF occurred in original dataset, statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help idenify master regulators. 
 
 ```R
-print(head(res))
+
 
 
 
@@ -235,13 +255,15 @@ You can also visualize top master regulator candidates in heatmap or violinplots
 
 ```R
 gn.sel <- TopMasterRegulator(res)
-
-gene_heatmap(eset = eset.demo,target = gn.sel,group_tag = "label",
-			 width = 6,height = 6, save_plot=TRUE,
-             name = "log2_expression",plot_name="./TopTFHeatmap.png")
 ```
 
-![](https://guides.github.com/activities/hello-world/branching.png)
+```R
+gene_heatmap(eset = eset.demo,target = gn.sel,group_tag = "label",
+			 width = 6,height = 6, save_plot=TRUE,
+             name = "Activity",plot_name="./TopTFHeatmap.png")
+```
+
+![]()
 
 ```
 
