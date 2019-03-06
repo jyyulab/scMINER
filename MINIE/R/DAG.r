@@ -85,7 +85,9 @@ DAG_ttest<-function(d,group){
               CI.low = res$conf.int[1],
               CI.high = res$conf.int[2],
               MeanAct.Aim = unname(res$estimate[1]),
-              MeanAct.Ctrl = unname(res$estimate[2]))
+              MeanAct.Ctrl = unname(res$estimate[2])
+              )
+
   }else{
     rs.t <- c(id = d$acs.id,
               t.stat=NA,
@@ -101,7 +103,7 @@ DAG_ttest<-function(d,group){
 
 ###Wrapper of T-test###
 #' @export
-FindDAG<-function(eset=acs.demo,group_tag="celltype",group_case=NULL){
+FindDAG<-function(eset=NULL,group_tag="celltype",group_case=NULL){
 
   d<-data.frame(id = featureNames(eset), exprs(eset), stringsAsFactors=FALSE)
   rs <- fData(eset);rs$id <- d$id
@@ -143,10 +145,37 @@ FindDAG<-function(eset=acs.demo,group_tag="celltype",group_case=NULL){
                             starts_with("t"),
                             starts_with("pval"),
                             starts_with("z"),
-                            starts_with("MeanAct"))
+                            starts_with("MeanAct")
+                            )
     }
   return(rs)
 }
+
+##Pick top master regulator from t.test result
+#' @export
+TopMasterRegulator <- function(DAG_result=res,n=5,degree_filter= NULL){
+
+  cols <- colnames(res)
+  celltypes<-gsub("^degree_","",cols[grep("^degree_",cols)])
+  cat("Output top regulators for",length(celltypes) ,"clusters.","\n")
+
+  for (i in celltypes){
+
+    if(!is.null(degree_filter)) {res<-res[which(res[,paste0("degree_",i)]> degree_filter),]}
+
+    topMR<-res$id[sort(res[,paste0("t_",i)],decreasing=TRUE,na.last=TRUE,index.return=TRUE)$ix][1:n]
+
+    MR2print<-filter(res[,c(1,grep(i,colnames(res)))],id%in%topMR)
+
+    cat("Top MR for:" ,i,"\n")
+    print(MR2print)
+  }
+  cat("Done!")
+}
+
+
+
+
 
 
 

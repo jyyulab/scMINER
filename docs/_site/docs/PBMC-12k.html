@@ -549,16 +549,9 @@ test_no_intall_LSF <span class="nt">--host</span> LSF       <span class="c"># ru
 <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">res</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">FindDAG</span><span class="p">(</span><span class="n">eset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">acs.demo</span><span class="p">,</span><span class="n">group_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"celltype"</span><span class="p">)</span><span class="w">
 
 </span></code></pre></div></div>
-<p>This function will output a full matrix that contians all TF occurred in original dataset, statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help idenify master regulators.</p>
+<p>This function will output a full matrix that contians all TF occurred in original dataset, statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help idenify master regulators. You can save it in txt or xlsx for checking.</p>
 
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">
-
-
-
-
-</span></code></pre></div></div>
-
-<p>You can also visualize top master regulator candidates in heatmap or violinplots. Only png as plotting device is supported.</p>
+<p>While you can also visualize top master regulator candidates in heatmap or violinplots. Only png as plotting device is supported.</p>
 
 <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gn.sel</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">TopMasterRegulator</span><span class="p">(</span><span class="n">res</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>

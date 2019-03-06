@@ -241,17 +241,9 @@ The function `FindDAG` was designed for identify highly differentiated TF from S
 res <- FindDAG(eset = acs.demo,group_tag = "celltype")
 
 ```
-This function will output a full matrix that contians all TF occurred in original dataset, statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help idenify master regulators. 
+This function will output a full matrix that contians all TF occurred in original dataset, statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help idenify master regulators. You can save it in txt or xlsx for checking.
 
-```R
-
-
-
-
-
-```
-
-You can also visualize top master regulator candidates in heatmap or violinplots. Only png as plotting device is supported.
+While you can also visualize top master regulator candidates in heatmap or violinplots. Only png as plotting device is supported.
 
 ```R
 gn.sel <- TopMasterRegulator(res)
