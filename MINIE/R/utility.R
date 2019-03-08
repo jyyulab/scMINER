@@ -174,7 +174,7 @@ pre.MICA <- function(d=NULL, #data matrix that have unique colnames and geneSymb
   cat("Defining meta data...","\n")
   # extract mito-gene and spike-in genes
   mito.genes <- grep(pattern = "^mt-|^MT-", x = rownames(d.tmp), value = TRUE)
-  spikeIn.genes <- grep(pattern = "^ERCC-", x = rownames(d.tmp), value = TRUE)
+  spikeIn.genes <- grep(pattern = "^ERCC-|^Ercc", x = rownames(d.tmp), value = TRUE)
   if(length(mito.genes)==0) Mito_filter=FALSE
   if(length(spikeIn.genes)==0) ERCC_filter=FALSE
 
@@ -189,7 +189,7 @@ pre.MICA <- function(d=NULL, #data matrix that have unique colnames and geneSymb
   umi_cf_lo <- max(floor(exp(median(log(pd$nUMI.total)) - 3 * mad(log(pd$nUMI.total)))),100)
   umi_cf_hi <- ceiling(exp(median(log(pd$nUMI.total)) + 3 * mad(log(pd$nUMI.total))))
   nGene_cf <- max(floor(exp(median(log(pd$nGene)) - 3 * mad(log(pd$nGene)))),50)
-  ERCC_cf <- round(median(pd$percent.ERCC) + 3 * mad(pd$percent.ERCC),4)
+  ERCC_cf <- round(median(pd$percent.spikeIn) + 3 * mad(pd$percent.spikeIn),4)
   mito_cf <- round(median(pd$percent.mito) + 3 * mad(pd$percent.mito),4)
 
 
@@ -237,7 +237,7 @@ pre.MICA <- function(d=NULL, #data matrix that have unique colnames and geneSymb
 
     if(length(spikeIn.genes)!=0){
 
-      p3 <- ggplot(data=pd, aes(x=nUMI.total,y=percent.ERCC))+
+      p3 <- ggplot(data=pd, aes(x=nUMI.total,y=percent.spikeIn))+
         geom_point(na.rm=TRUE,size=0.8,alpha=0.5)+
         labs(x="",y="",title="Percentage of spike-in gene expression VS Total UMI counts in each cell") +
         theme(legend.position="none",plot.title=element_text(size=8))+
@@ -268,7 +268,7 @@ pre.MICA <- function(d=NULL, #data matrix that have unique colnames and geneSymb
   }else if(nUMI_filter=="high") {umi_cf_lo = 0}
   cell <- which((pd$nUMI.total > umi_cf_lo) & (pd$nUMI.total < umi_cf_hi))
   if(nGene_filter) cell <- intersect(cell, which(pd$nGene > nGene_cf))
-  if(ERCC_filter) cell <- intersect(cell, which(pd$percent.ERCC < ERCC_cf))
+  if(ERCC_filter) cell <- intersect(cell, which(pd$percent.spikeIn < ERCC_cf))
   if(Mito_filter) cell <- intersect(cell, which(pd$percent.mito < mito_cf))
 
   #gene filtering
