@@ -3,6 +3,23 @@
 ##Stjude.YuLab
 
 #' @export
+MICAplot<-function(input_eset=eset,label= metaName,title.size=5,title.name="",pct=0.5){
+
+  if(!label%in%colnames(pData(input_eset))){stop("Label name not contained in phenotype data!","\n")}
+
+  p <- ggplot(data=pData(input_eset),aes_string(x="tSNE_1",y="tSNE_2",color = label))+
+       geom_point(size=pct)+
+       labs(title=title.name)+
+       theme(plot.title = element_text(size = title.size, face = "bold"),
+          axis.title = element_text(size = 10),
+          legend.title = element_text(size = 15))+
+       guides(colour = guide_legend(override.aes = list(size = 10)))
+  return(p)
+
+}
+
+
+#' @export
 gene_highlighting<-function(input_eset=eset,target,
                             ylabel="Expression",title.size=5){
   # change it to expr is ok

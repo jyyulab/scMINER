@@ -7,15 +7,27 @@
 readMICAoutput<-function(input_file, output_file,load_clust_label=TRUE){
 
 	cat("Reading Input...","\n")
-	d <- read.table(input_file,header = TRUE,stringsAsFactors = FALSE,quote = "")
-	input<-t(d[,-1]);colnames(input)<-d$ID;rm(d)
+	d <- read.table(input_file,header = FALSE,
+	                stringsAsFactors = FALSE,
+	                quote = "",
+	                check.names = FALSE)
 
 	MICA_Result <- read.table( output_file, # MICA output text file
-                          	   header = TRUE,
-                          	   stringsAsFactors = FALSE)
+	                           header = TRUE,
+	                           stringsAsFactors = FALSE)
+
+	gn<-unname(unlist(d[1,-1]))
+	input<-t(d[-1,-1]);colnames(input)<-d$V1[-1]
+  class(input)<-"numeric"
+
+  if(length(which(duplicated(gn)))!=0){
+	  cat("Colnames has duplicates, assigned new rownames. Gene symbols stored in fData.","\n")
+  	}else{
+	  rownames(input)<-gn;
+	  cat("Gene Symbol as rownames.","\n")}
 
 	fd<-data.frame(row.names=rownames(input),
-					geneNames=rownames(input),stringsAsFactors = FALSE)
+					geneSymbol=gn,stringsAsFactors = FALSE)
 
 	pd<-data.frame(row.names=colnames(input),
 					cellNames=colnames(input),
@@ -167,9 +179,9 @@ pre.MICA <- function(d=NULL, #data matrix that have unique colnames and geneSymb
 
   #Compute filtering criteria for genes
   nCell_cutoff <- floor(cell_percentage * dim(d)[2])
-  gene <- names(which(cells_per_gene >= nCell_cutoff))
+  gene <- unname((which(cells_per_gene >= nCell_cutoff)))
 
-  d.tmp<-d[gene,]
+  d.tmp<-d[gene,]#use index instead of gene names to avoid mis-select problem
 
   cat("Defining meta data...","\n")
   # extract mito-gene and spike-in genes
