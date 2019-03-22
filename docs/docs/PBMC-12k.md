@@ -110,7 +110,6 @@ test_no_intall_LSF --host LSF       # run MIE
 
 This will give you one t-SNE visualization for each choice of k.
 
-![](./plots/10_MICA-result.png)
 
 
 

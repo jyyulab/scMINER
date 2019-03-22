@@ -347,17 +347,17 @@
 
 <h3 id="local-installation">Local installation:</h3>
 <ol>
-  <li>
-    <p>Install scMINER:</p>
-  </li>
-  <li>
-    <p>Install scMINER-MINIE:</p>
-  </li>
+  <li>Install scMINER:</li>
+</ol>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+</code></pre></div></div>
+<ol>
+  <li>Install scMINER-MINIE:</li>
 </ol>
 
 <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#install dev_tool first install.packages(devtools)</span><span class="w">
 </span><span class="n">devtools</span><span class="o">::</span><span class="n">install_github</span><span class="p">(</span><span class="s2">"jyyulab/MINIE"</span><span class="p">)</span><span class="w"> 
-
 </span></code></pre></div></div>
 
 <ol>
@@ -369,7 +369,6 @@
 </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">requireNamespace</span><span class="p">(</span><span class="s2">"BiocManager"</span><span class="p">,</span><span class="w"> </span><span class="n">quietly</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">))</span><span class="w">
     </span><span class="n">install.packages</span><span class="p">(</span><span class="s2">"BiocManager"</span><span class="p">)</span><span class="w">
 </span><span class="n">BiocManager</span><span class="o">::</span><span class="n">install</span><span class="p">(</span><span class="s2">"Biobase"</span><span class="p">,</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"3.8"</span><span class="p">)</span><span class="w"> </span><span class="c1"># For R version &gt;= 3.5</span><span class="w">
-
 </span></code></pre></div></div>
 
 <hr />

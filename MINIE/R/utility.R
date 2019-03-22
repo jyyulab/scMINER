@@ -144,8 +144,13 @@ readscRNAseqData <- function(file,is.10x=TRUE,...){
 
 
 ###scRNA-seq data preprocess(before running clustering)
+##without R markdown
 #' @export
 pre.MICA <- function(d=NULL, #data matrix that have unique colnames and geneSymbol as rownames
+                     projectName="SAMPLE",
+                     sampleID="SAMPLE",
+                     output_rmd=TRUE,
+
                      gene_filter=TRUE,
                      cell_filter=TRUE,
                      cell_percentage=0.005,
@@ -153,12 +158,14 @@ pre.MICA <- function(d=NULL, #data matrix that have unique colnames and geneSymb
                      Mito_filter=TRUE, # one way filtering
                      nGene_filter=TRUE,
                      nUMI_filter="both", #three way filtering
+
                      plotting=TRUE,
                      plot.dir=".",
+
                      norm=10e6,
-                     sampleID="PBMC_12k",
                      logTransform=TRUE,
-                     base=NULL)
+                     base=NULL
+                     )
 {
   if(!class(d)[1]%in%c("dgCMatrix","dgTMatrix","matrix")){
     stop("Input format should %in% c( 'matrix','dgTMatrix','dgCMatrix')","\n")
@@ -167,6 +174,27 @@ pre.MICA <- function(d=NULL, #data matrix that have unique colnames and geneSymb
   cat("Running QC...","\n",
       "Pre-QC expression matrix dimention: ", dim(d),"\n")
 
+  if(output_rmd) {render(input=system.file("rmd", "Preprocessing.Rmd", package = "MINIE"),
+                         output_dir = plot.dir,
+                         output_file = paste0(projectName,"_scRNAseq_preprocessing.html"),
+                         clean=TRUE,
+                         quiet = TRUE,
+                         params=list(
+                           d=d, #data matrix that have unique colnames and geneSymbol as rownames
+                           gene_filter=gene_filter,
+                           cell_filter=cell_filter,
+                           cell_percentage=cell_percentage,
+                           ERCC_filter=ERCC_filter,
+                           Mito_filter=Mito_filter,
+                           nGene_filter=nGene_filter,
+                           nUMI_filter=nUMI_filter,
+                           plot.dir=plot.dir,
+                           norm=norm,
+                           sampleID=sampleID,
+                           logTransform=logTransform,
+                           base=base))}
+
+  else{
   d <-as.matrix(d)
   cells_per_gene <- rowSums(sign(d))
   nGene <- sum(cells_per_gene > 0)
@@ -314,7 +342,18 @@ pre.MICA <- function(d=NULL, #data matrix that have unique colnames and geneSymb
     if(is.null(base)) data <- log( data + 1)
     else {data <- log(data+1,base=base)}
     cat(paste0("Data was log",base,"Transformed!"),"\n")}
-
+  }
   return(data)
 }#end pre.MICA
+
+
+#
+
+
+
+
+
+
+
+
 

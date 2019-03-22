@@ -3,17 +3,21 @@
 ##Stjude.YuLab
 
 #' @export
-MICAplot<-function(input_eset=eset,label= metaName,title.size=5,title.name="",pct=0.5){
+MICAplot<-function(input_eset=eset,label= metaName, visualize= "UMAP",title.size=5,title.name="",pct=0.5){
 
   if(!label%in%colnames(pData(input_eset))){stop("Label name not contained in phenotype data!","\n")}
+  if(visualize=="UMAP") (stop("Must specify 2D embedding methods!","\n"))
 
-  p <- ggplot(data=pData(input_eset),aes_string(x="tSNE_1",y="tSNE_2",color = label))+
+  p <- ggplot(data=pData(input_eset),aes_string(x=X,y=Y,color = label))+
        geom_point(size=pct)+
        labs(title=title.name)+
        theme(plot.title = element_text(size = title.size, face = "bold"),
           axis.title = element_text(size = 10),
           legend.title = element_text(size = 15))+
-       guides(colour = guide_legend(override.aes = list(size = 10)))
+       guides(colour = guide_legend(override.aes = list(size = 10)))+
+       xlab(label = paste0(toString(visualize),"_1"))+
+       ylab(label = paste0(toString(visualize),"_2"))
+
   return(p)
 
 }

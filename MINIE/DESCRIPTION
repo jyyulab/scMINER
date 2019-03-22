@@ -18,4 +18,8 @@ Depends:
 	ComplexHeatmap,
 	pheatmap,
 	dplyr,
-	cowplot
+	cowplot,
+	rmarkdown,
+	Matrix,
+	knitr,
+	kableExtra

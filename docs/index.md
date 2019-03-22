@@ -24,12 +24,14 @@ scMINER is depend on [python3](https://www.python.org/downloads/) and [R](https:
 ### Local installation: 
 1. Install scMINER:
 
+```
+
+```
 2. Install scMINER-MINIE:
 
 ```R
 #install dev_tool first install.packages(devtools)
 devtools::install_github("jyyulab/MINIE") 
-
 ```
 
 3. Install R dependencies:
@@ -40,7 +42,6 @@ install.packages(c("dplyr","plyr","ggplot2","Rcolorbrewer","reshape2","BiocGener
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 BiocManager::install("Biobase", version = "3.8") # For R version >= 3.5
-
 ```
 
 
