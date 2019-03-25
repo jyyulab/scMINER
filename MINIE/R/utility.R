@@ -81,15 +81,32 @@ SJARACNeInput_scRNAseq<-function(eset.sel,tf.ref,wd.src,grp.tag){
 
 ###Function8: Wrap up function for generate SJARACNe input###
 #' @export
-generateSJARACNeInput<-function(eset,tf.ref,wd.src,group_tag){
+generateSJARACNeInput<-function(eset,ref=NULL,funcType=NULL,wd.src,group_tag){
 
   if (!dir.exists(wd.src)) dir.create(wd.src,recursive = T)
 
-  if (group_tag%in%colnames(pData(eset))){
+  if (ref=="hg"){
+    ref_file<- system.file("RData", "tf_sigs_hg_201806.RData", package = "MINIE")
+  else if (ref=="mm")
+    load(ref_file)
+    cat("Using references from: ", ref_file,"\n")
+    if(is.null(funcType)) {
+      tf.ref<- filter(ref, isTF==TRUE)$geneSymbol
+      sig.ref<- filter(ref, isSIG==TRUE)$geneSymbol
+    }else{
+      ref<-ref$geneSymbol[grep(funcType, ref$funcType)]}
+    }
+  }else{
+
+
+  }
+
+
+  if(group_tag%in%colnames(pData(eset))){
     groups <- unique(pData(eset)[,"group_tag"])
     for (i in 1:length(groups)){
       grp.tag<-groups[i]; eset[,which(pData(eset)[,"group_tag"]==grp.tag)] -> eset.sel
-      SJARACNeInput_scRNAseq(eset.sel=eset.sel,tf.ref=tf.ref,wd.src=wd.src,grp.tag=grp.tag)
+      SJARACNeInput_scRNAseq(eset.sel=eset.sel,tf.ref=tf.ref,sig.ref=sig.ref,wd.src=wd.src,grp.tag=grp.tag)
     }#end for
   }else{
     stop("Lack of group info, please check your group_tag.","\n")
