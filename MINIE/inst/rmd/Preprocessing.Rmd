@@ -187,7 +187,8 @@ p.cell.1
 if(length(spikeIn.genes)!=0){
  p3 <- ggplot(data=pd, aes(x=nUMI.total,y=percent.spikeIn))+
         geom_point(na.rm=TRUE,size=0.8,alpha=0.5)+
-        labs(x="",y="",title="Percentage of spike-in gene expression VS Total UMI counts in each cell") +
+        labs(x="nUMI",y="ERCC percentage",
+             title="") +
         theme(legend.position="none",plot.title=element_text(size=8))+
         geom_hline(yintercept = ERCC_cf,data=as.data.frame(ERCC_cf),
                    size=2,color="blue",alpha = 0.3)
@@ -198,7 +199,8 @@ if(length(spikeIn.genes)!=0){
 if(length(mito.genes)!=0){
   p4 <- ggplot(data=pd, aes(x=nUMI.total,y=percent.mito))+
         geom_point(na.rm=TRUE,size=0.8,alpha=0.5)+
-        labs(x="",y="",title="Percentage of MT-gene expression VS Total UMI counts in each cell") +
+        labs(x="nUMI",y="MT-gene percentage",
+             title="") +
         theme(legend.position="none",plot.title=element_text(size=8))+
         geom_hline(yintercept = mito_cf, data=as.data.frame(mito_cf),
                    size=2,color="blue",alpha = 0.3)

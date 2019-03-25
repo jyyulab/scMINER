@@ -44,19 +44,18 @@ readMICAoutput<-function(input_file, output_file,load_clust_label=TRUE){
 
 
 
-###Network related functions###
-###Funciton2: Generate SJAaracne input using scRNAseq data###
+
+#' Funciton: Generate SJAaracne input using scRNAseq data###
 #' @export
-SJARACNeInput_scRNAseq<-function(eset.sel,tf.ref,wd.src,grp.tag){
+SJARACNeInput_scRNAseq<-function(eset.sel,tf.ref,sig.ref,wd.src,grp.tag){
 
   cat(grp.tag,'\n')
 
   #fData(eset.sel)$IQR<-apply(exprs(eset.sel),1,IQR)
-
   # exclude genes with all zero
   eset.sel<-eset.sel[apply(exprs(eset.sel),1,function(xx){sum(xx)!=0}),]
 
-  fData(eset.sel)$geneSymbol<-fData(eset.sel)$geneNames
+  fData(eset.sel)$geneNames<-fData(eset.sel)$geneSymbol
 
   ni<-nrow(eset.sel);ni
   ns<-ncol(eset.sel);ns
@@ -65,59 +64,67 @@ SJARACNeInput_scRNAseq<-function(eset.sel,tf.ref,wd.src,grp.tag){
 
   dir.cur<-file.path(wd.src,tag);dir.cur
   dir.create(dir.cur,recursive = T)
-  dir.create(file.path(dir.cur,'tf'),recursive = T)
 
   #write exp data to exp format
   expdata<-data.frame(cbind(isoformId=featureNames(eset.sel),geneSymbol=fData(eset.sel)$geneSymbol,exprs(eset.sel)))
   f.exp<-file.path(dir.cur,paste(grp.tag,"_",ni,"_",ng,"_",ns,".exp",sep=''));f.exp
   write.table(expdata,file=f.exp,sep="\t",row.names=FALSE,quote=FALSE)
 
+  if (!is.null(tf.ref)){
+  dir.create(file.path(dir.cur,'tf'),recursive = T)
   tf.eset.sel<-subset(eset.sel,fData(eset.sel)$geneSymbol%in%tf.ref)
   dim(tf.eset.sel)
   f.tf<-file.path(dir.cur,'tf',paste(grp.tag,"_",nrow(tf.eset.sel),"_",nlevels(factor(fData(tf.eset.sel)$geneSymbol)),"_",ns,"_tf.txt",sep=''));f.tf
   cat(featureNames(tf.eset.sel),file=f.tf,sep='\n')
+  }
+
+  if (!is.null(sig.ref)){
+    dir.create(file.path(dir.cur,'sig'),recursive = T)
+    sig.eset.sel<-subset(eset.sel,fData(eset.sel)$geneSymbol%in%sig.ref)
+    dim(sig.eset.sel)
+    f.sig<-file.path(dir.cur,'sig',paste(grp.tag,"_",nrow(sig.eset.sel),"_",nlevels(factor(fData(tf.eset.sel)$geneSymbol)),"_",ns,"_sig.txt",sep=''));f.sig
+    cat(featureNames(sig.eset.sel),file=f.sig,sep='\n')
+  }
 
 }
 
-###Function8: Wrap up function for generate SJARACNe input###
+###Function: Wrap up function for generate SJARACNe input###
 #' @export
 generateSJARACNeInput<-function(eset,ref=NULL,funcType=NULL,wd.src,group_tag){
 
   if (!dir.exists(wd.src)) dir.create(wd.src,recursive = T)
 
-  if (ref=="hg"){
-    ref_file<- system.file("RData", "tf_sigs_hg_201806.RData", package = "MINIE")
-  else if (ref=="mm")
+  if (ref%in%c("hg","mm")){
+    ref_file<-system.file("RData",paste0("tf_sigs_",ref,".RData"),package = "MINIE")
     load(ref_file)
     cat("Using references from: ", ref_file,"\n")
-    if(is.null(funcType)) {
-      tf.ref<- filter(ref, isTF==TRUE)$geneSymbol
-      sig.ref<- filter(ref, isSIG==TRUE)$geneSymbol
-    }else{
-      ref<-ref$geneSymbol[grep(funcType, ref$funcType)]}
-    }
-  }else{
 
+    tf.ref<- filter(tf_sigs, isTF==TRUE)$geneSymbol
+    sig.ref<- filter(tf_sigs, isSIG==TRUE)$geneSymbol
 
+    if (funcType=="TF") sig.ref <- NULL
+    if (funcType=="SIG") tf.ref <- NULL
+
+    }else {
+    if (funcType=="TF") tf.ref <- ref
+    if (funcType=="SIG") sig.ref <- ref
   }
 
-
   if(group_tag%in%colnames(pData(eset))){
-    groups <- unique(pData(eset)[,"group_tag"])
+    groups <- unique(pData(eset)[,group_tag])
     for (i in 1:length(groups)){
-      grp.tag<-groups[i]; eset[,which(pData(eset)[,"group_tag"]==grp.tag)] -> eset.sel
+      grp.tag<-groups[i]; eset[,which(pData(eset)[,group_tag]==grp.tag)] -> eset.sel
       SJARACNeInput_scRNAseq(eset.sel=eset.sel,tf.ref=tf.ref,sig.ref=sig.ref,wd.src=wd.src,grp.tag=grp.tag)
     }#end for
   }else{
     stop("Lack of group info, please check your group_tag.","\n")
   }#end if
+
+  save(eset, file=file.path(wd.src,"Input.eset")) # save input file as expressionSet
 }#end function
 
-
-
-
 #####
-#function to generate MICA input from pre.MICA output
+#' function to generate MICA input from pre.MICA output
 #' @export
 generateMICAinput <- function(d,filename){
 
@@ -156,10 +163,6 @@ readscRNAseqData <- function(file,is.10x=TRUE,...){
   return(data.raw)
 }
 
-
-
-
-
 ###scRNA-seq data preprocess(before running clustering)
 ##without R markdown
 #' @export
@@ -167,7 +170,7 @@ pre.MICA <- function(d=NULL, #data matrix that have unique colnames and geneSymb
                      projectName="SAMPLE",
                      sampleID="SAMPLE",
                      output_rmd=TRUE,
-
+                     plot.dir=".",
                      gene_filter=TRUE,
                      cell_filter=TRUE,
                      cell_percentage=0.005,
@@ -177,8 +180,6 @@ pre.MICA <- function(d=NULL, #data matrix that have unique colnames and geneSymb
                      nUMI_filter="both", #three way filtering
 
                      plotting=TRUE,
-                     plot.dir=".",
-
                      norm=10e6,
                      logTransform=TRUE,
                      base=NULL
@@ -191,6 +192,7 @@ pre.MICA <- function(d=NULL, #data matrix that have unique colnames and geneSymb
   cat("Running QC...","\n",
       "Pre-QC expression matrix dimention: ", dim(d),"\n")
 
+  if(!dir.exists(plot.dir)) {dir.create(plot.dir)}
   if(output_rmd) {render(input=system.file("rmd", "Preprocessing.Rmd", package = "MINIE"),
                          output_dir = plot.dir,
                          output_file = paste0(projectName,"_scRNAseq_preprocessing.html"),
@@ -251,8 +253,6 @@ pre.MICA <- function(d=NULL, #data matrix that have unique colnames and geneSymb
 
 
   if(plotting){
-
-    if(!dir.exists(plot.dir)) {dir.create(plot.dir)}
 
     p.gene.qc <- ggplot(data = data.frame(ncells = cells_per_gene), aes(log10(ncells+1))) +
       geom_histogram(bins = 100) +

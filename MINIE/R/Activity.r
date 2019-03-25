@@ -37,10 +37,12 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
   	  cat("Retrieve Network from ",i,net.name,"\n")
       TF.table<-read.table(output.files[i],header = TRUE,
   						stringsAsFactors = FALSE,check.names = FALSE)
-
-  	  if(save_network_file)
-  		{ gsc <- getGSC(tf = TF.table)
-  	 	  save(gsc,file=file.path(save_path,paste0("gsc.",netname)))}
+      
+  	  
+      if(save_network_file)
+  		{ gsc <- getGSC(tf = TF.table, sig=SIG.table)
+  	 	  save(gsc,file=file.path(save_path,paste0("gsc.",netname)))
+        cat("Network saved for ", net.name,"\n")}
 
   	  cat("Calculate Activity for ",net.name,"!",'\n')
   	  eset.sel<-eset[,pData(eset)[,group_tag]==net.name]
