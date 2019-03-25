@@ -1,10 +1,35 @@
-##Function based MINIE
 ##Author:chenxi.qian@stjude.org
 ##Stjude.YuLab
 
-###Function9: Activity Function(from SJARACNe output)###
-## calculate activity and networks from network files
-## path to where you want to calculate activity
+
+#' GetActivityFromSJARACNe
+#'
+#' @description Allocate network information from SJARACNe and calculate activity score for each hub genes.
+#'
+#' @param SJARACNe_output_path Path to SJARACNe output folder(s)
+#' @param SJARACNe_input_eset Expressionset that you generate input from
+#' @param group_tag a string, group name stored in pData that defines expression matrix separation
+#' @param activity.method c("weighted,unweighted), default to "unweighted"
+#' @param activity.norm logical, default to TRUE.
+#' @param save_network_file logical, default to FALSE
+#' @param save_path Path to save network file
+#'
+#' @return An expressionset with activity values
+#'
+#' @examples
+#' acs.12k <- GetActivityFromSJARACNe(
+#'              SJARACNe_output_path ="./",
+#'              SJARACNe_input_eset = eset.12k,
+#'              activity.method="unweighted",
+#'              activity.norm=TRUE,
+#'              group_tag = "celltype",
+#'              save_network_file=TRUE, #default as false, but recommended to be TRUE
+#'              save_path="./networks")
+#'
+#' @keywords GetActivity
+#' @author Chenxi Qian, \email{chenxi.qian@stjude.org}
+#'
+#'
 #' @export
 GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
 							   SJARACNe_input_eset=NA,
@@ -37,8 +62,8 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
   	  cat("Retrieve Network from ",i,net.name,"\n")
       TF.table<-read.table(output.files[i],header = TRUE,
   						stringsAsFactors = FALSE,check.names = FALSE)
-      
-  	  
+
+
       if(save_network_file)
   		{ gsc <- getGSC(tf = TF.table, sig=SIG.table)
   	 	  save(gsc,file=file.path(save_path,paste0("gsc.",netname)))
@@ -123,6 +148,8 @@ es <- function(z,es.method="mean"){
   return(es)
 }
 
+
+####inner function to calculate activity
 get_activity<-function(Net,eset,tag,exp.match=NULL, match.method=NULL,
                        es.method="mean", activity.method="weighted",
                        normalize=TRUE,test=FALSE,sep.symbol="."){

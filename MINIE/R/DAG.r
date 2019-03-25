@@ -29,7 +29,8 @@ HVG_Anova<-function(d,group){
   return(rs)
 }
 
-###Wrapper of Anova###
+
+
 #' @export
 FindHVG<-function(eset=acs.demo,group_tag="celltype",
                    print_screen=TRUE){
@@ -59,7 +60,12 @@ FindHVG<-function(eset=acs.demo,group_tag="celltype",
 }
 
 
-###t.test(pairwise/2case)###
+
+#' DAG_ttest
+#' @description t.test(pairwise/2case)
+#' @param d A vector of gene expression
+#' @param group A vector of group information
+#'
 #' @export
 DAG_ttest<-function(d,group){
 
@@ -101,8 +107,27 @@ DAG_ttest<-function(d,group){
   return(rs.t)
 }
 
-###Wrapper of T-test###
+#
+#' Find differential activity genes from activity matrix
+#'
+#' @description  This function is a wraper of (/code {DAG_test}),
+#'  which helps to conduct two_sided t.test on all genes in specific group VS Others
+#'  to find differential activity genes, a table with essential statistics will be outputted.
+#'
+#' @param eset ExpressionSet that stores group information in pData
+#' @param group_tag a character string, column name in pData(eset) that indicates group info
+#' @param group_case NULL(for 1vsOthers) or a character string(pairwise),
+#'  column name in pData(eset) that indicates group info
+#'
+#' @return output would be a table containing: t.statistics, p.value, z.score, and mean Activity value
+#'
+#' @seealso DAG_ttest
+#' @examples
+#' \dontrun{FindDAG(eset, group_tag="group")}
+#'  # Try find DAG for only group 1
+#'  \dontrun{FindDAG(eset, group_tag="group",group_case="group1")}
 #' @export
+
 FindDAG<-function(eset=NULL,group_tag="celltype",group_case=NULL){
 
   d<-data.frame(id = featureNames(eset), exprs(eset), stringsAsFactors=FALSE)
@@ -151,7 +176,14 @@ FindDAG<-function(eset=NULL,group_tag="celltype",group_case=NULL){
   return(rs)
 }
 
-##Pick top master regulator from t.test result
+##
+#' @title TopMasterRegulator
+#' @description Help quick pick top master regulators from previous
+#' differential activity analysis results
+#' @param DAG_result Output table from function FindDAG
+#' @param n threshold to pick top master regulators(top n)
+#' @param degree_filter filter out drivers with target number less than certain value
+#'
 #' @export
 TopMasterRegulator <- function(DAG_result=res,n=5,degree_filter= NULL){
 

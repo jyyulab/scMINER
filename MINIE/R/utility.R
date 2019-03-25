@@ -1,8 +1,9 @@
-##Function based MINIE
-##Author:chenxi.qian@stjude.org
-##Stjude.YuLab
-
-###Function 1:read MICA result & MICA input, output as a eset###
+#' @title readMICAoutput
+#' @description Read MICA input and output to create an expressionSet for downstream analysis
+#' @param input_file input txt file for MICA pipeline
+#' @param output_file output ggplot.txt file from MICA pipeline
+#' @param load_clust_label logical, if TRUE, clustering results will be store at pData(eset)$label
+#' @return An expressionSet
 #' @export
 readMICAoutput<-function(input_file, output_file,load_clust_label=TRUE){
 
@@ -45,9 +46,19 @@ readMICAoutput<-function(input_file, output_file,load_clust_label=TRUE){
 
 
 
-#' Funciton: Generate SJAaracne input using scRNAseq data###
+#' SJARACNe_filter
+#' @description This is the inner function to help generate SJARACNe input for scRNA-seq data,
+#' all non-informative (zero genes) will be filtered in by this function
+#' @param eset.sel ExpressionSet to generate SJaracne input
+#' @param tf.ref A vector of reference transcription factors
+#' @param sig.ref A vector of reference signaling genes
+#' @param wd.src path to store SjAracne input
+#' @param grp.tag name of group for identification
+#' @details Non-expressed genes in subgroups are filtered.
+#' tf.ref should be coordinate with featureNames(eset.sel).
+#' @return A folder with picked master regulator and filtered gene expression matrix
 #' @export
-SJARACNeInput_scRNAseq<-function(eset.sel,tf.ref,sig.ref,wd.src,grp.tag){
+SJARACNe_filter<-function(eset.sel,tf.ref,sig.ref,wd.src,grp.tag){
 
   cat(grp.tag,'\n')
 
@@ -88,7 +99,19 @@ SJARACNeInput_scRNAseq<-function(eset.sel,tf.ref,sig.ref,wd.src,grp.tag){
 
 }
 
-###Function: Wrap up function for generate SJARACNe input###
+#' generateSJARACNeInput
+#' @description This function helps to generate appropriate input files for SJARACNe pipeline.
+#' It can take transcription factor/signaling gene reference from internal(stored in package) or external (manual define)
+#' @param eset scRNA-seq ExpressionSet
+#' @param ref c("hg", "mm"), could be a manually defined geneSymbol vector
+#' @param funcType c("TF","SIG", NULL), if NULL then both TF and SIG will be considered
+#' @param wd.src output path
+#' @param group_tag name of group for sample identification
+#' @return SJARACNe input files for each subgroups
+#' @keywords SJARACNe
+#' @examples
+#' \dontrun{
+#' generateSJARACNeInput(eset = eset.demo,ref = "hg",wd.src = "./",group_tag = "celltype")}
 #' @export
 generateSJARACNeInput<-function(eset,ref=NULL,funcType=NULL,wd.src,group_tag){
 
@@ -114,7 +137,7 @@ generateSJARACNeInput<-function(eset,ref=NULL,funcType=NULL,wd.src,group_tag){
     groups <- unique(pData(eset)[,group_tag])
     for (i in 1:length(groups)){
       grp.tag<-groups[i]; eset[,which(pData(eset)[,group_tag]==grp.tag)] -> eset.sel
-      SJARACNeInput_scRNAseq(eset.sel=eset.sel,tf.ref=tf.ref,sig.ref=sig.ref,wd.src=wd.src,grp.tag=grp.tag)
+      SJARACNe_filter(eset.sel=eset.sel,tf.ref=tf.ref,sig.ref=sig.ref,wd.src=wd.src,grp.tag=grp.tag)
     }#end for
   }else{
     stop("Lack of group info, please check your group_tag.","\n")
@@ -163,8 +186,29 @@ readscRNAseqData <- function(file,is.10x=TRUE,...){
   return(data.raw)
 }
 
-###scRNA-seq data preprocess(before running clustering)
-##without R markdown
+
+
+#'
+#' @title pre.MICA
+#' @description This function helps to conduct scRNA-seq data preprocessing and quality
+#' control for MICA input.
+#' @param d input matrix
+#' @param projectName project name used for Rmarkdown report title
+#' @param sampleID a string or a vector to indicate sample info
+#' @param output_rmd logical, whether or not output Rmd QC report
+#' @param plot.dir output path for QC report
+#' @param gene_filter logical
+#' @param cell_filter logical
+#' @param cell_percentage numerical, default as 0.005
+#' @param ERCC_filter logical
+#' @param Mito_filter logical
+#' @param nGene_filter logical
+#' @param nUMI_filter logical
+#' @param plotting logical
+#' @param norm numerical, default to 10e6
+#' @param logTransform logical,default as TRUE
+#' @param base numerical, log(n+1,base=base)
+#'
 #' @export
 pre.MICA <- function(d=NULL, #data matrix that have unique colnames and geneSymbol as rownames
                      projectName="SAMPLE",
