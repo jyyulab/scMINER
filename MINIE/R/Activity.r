@@ -59,20 +59,23 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
   	  net.name<-gsub("\\_.*","",net.name);
   	  net.name<-gsub("[/]","",net.name)
 
-  	  cat("Retrieve Network from ",i,net.name,"\n")
+  	  TF.table<-NULL
+      SIG.table<-NULL
+
+      cat("Retrieve Network from ",i,net.name,"\n")
       TF.table<-read.table(output.files[i],header = TRUE,
   						stringsAsFactors = FALSE,check.names = FALSE)
 
-
-      if(save_network_file)
-  		{ gsc <- getGSC(tf = TF.table, sig=SIG.table)
-  	 	  save(gsc,file=file.path(save_path,paste0("gsc.",netname)))
-        cat("Network saved for ", net.name,"\n")}
+      if(save_network_file){
+        if(!dir.exists(save_path)) dir.create(path=save_path)
+        gsc <- getGSC(tf = TF.table, sig=SIG.table)
+  	 	  save(gsc,file=file.path(save_path,paste0("gsc.",net.name)))
+        cat("Network saved for ", net.name,"\n")
+        }
 
   	  cat("Calculate Activity for ",net.name,"!",'\n')
   	  eset.sel<-eset[,pData(eset)[,group_tag]==net.name]
 
-  	  fData(eset.sel)$geneSymbol<- fData(eset.sel)$geneNames
       acs.tmp<-get_activity(Net = TF.table,tag = "TF",normalize=activity.norm,
     					   eset = eset.sel, activity.method = activity.method)
       acs<-t(cbind(acs.tmp));rm(acs.tmp)

@@ -200,9 +200,12 @@ head(ref)
 ```R
 hmp<-AssignCellTypes.Hmp(ref=ref,eset=eset.demo,save_plot = TRUE)
 
+
 # Manually assign your cell type label
-celltype <-c("NaiveT","Tmem","CD8em","CD8eff","NK","Bcell","DC","Mo")
-eset.demo$celltype <- celltype[eset.demo$label]
+# We recommend assign your celltype as factors in Rs 
+indx<-factor(x=c("NaiveT","Tmem","CD8em","CD8eff","NK","Bcell","DC","Mo"),
+				levels=c("NaiveT","Tmem","CD8em","CD8eff","NK","Bcell","DC","Mo"))
+eset.12k$celltype <- indx[eset.12k$label]
 ```
 
 ![](./plots/3_4_MICA_cluster_score.png)
@@ -213,7 +216,7 @@ eset.demo$celltype <- celltype[eset.demo$label]
 In order to generate cell type/group/cluster specific network, group information should be stored under `pData([your_expressionSet])`. And R function `generateSJAracneInput` will help to partition your expression matrix and conduct a loose filtering of your scRNA-seq data(filter about 0 expressed genes in cluster). Besides, a reference TF list should be provided as `tf.ref` to guide hub gene selection. Each group will create one directory which contains filtered expression matrix in .exp format, as long as the filtered TF list in .txt. 
 
 ```R
-generateSJAracneInput(eset=eset.demo,tf.ref=tf.ref,wd.src="Sjaracne/", group_tag="celltype")
+generateSJAracneInput(eset=eset.12k,tf.ref=tf.ref,wd.src="Sjaracne/", group_tag="celltype")
 ```
 
 _Warning:_ SJARACNe has not been integrated into MINIE yet, please consult [here](https://github.com/jyyulab/SJARACNe) for installation.
@@ -265,41 +268,43 @@ This function will output a full matrix that contians all TF occurred in origina
 While you can also visualize top master regulator candidates in heatmap or violinplots. Only png as plotting device is supported.
 
 ```R
-TF_list <- TopMasterRegulator(DAG_result = res,n = 3, degree_filter = 50)
+TF_list <- TopMasterRegulator(DAG_result = DAG_result,
+                              celltype=levels(acs.12k$celltype), # ensure cluster order
+                              n = 5, degree_filter = c(50,500))
 ```
 
 ```R
-gene_heatmap(eset = eset.demo,target = gn.sel,group_tag = "label",
-			 width = 10,height = 6, save_plot=TRUE,
-             name = "Activity",plot_name="./TopTFHeatmap.png")
+gene_heatmap(eset = acs.12k,target = TF_list,group_tag = "celltype",
+             width = 6,height = 6, save_plot=TRUE, cluster_rows = FALSE,
+             name = "Activity",plot_name="./21_TopTFHeatmap.png")
 ```
 
-![]()
+![](./plots/4_1_TopTFHeatmap.png)
 
 
+You can also check some known master regulators as postivie control of your network analysis: 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```R
+p<-gene_vlnplot(eset=acs.12k,
+					target=c("LEF1.TF","TCF7.TF","BATF.TF","TCF7.TF","TBX21.TF","IRF8.TF","SPIB.TF","BATF3.TF","CEBPA.TF"),
+             		ylabel = "Activity",group_tag = "celltype",drawquantiles = FALSE,ncol = 2)
 ```
+
+![](./plots/4_2_Known_MR_vlnplot.png)
+
+
+### Cell type specific network profiling
+
+
+rewiring 
+and 
+bubbleplot
+
+
+
+
 ---
+```
 ## R session info
 
 
@@ -331,4 +336,3 @@ loaded via a namespace (and not attached):
 [31] pkgconfig_2.0.2 
 ```
 ---
-```

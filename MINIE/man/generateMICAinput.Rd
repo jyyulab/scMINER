@@ -2,9 +2,14 @@
 % Please edit documentation in R/utility.R
 \name{generateMICAinput}
 \alias{generateMICAinput}
-\title{function to generate MICA input from pre.MICA output}
+\title{generateMICAinput}
 \usage{
 generateMICAinput(d, filename)
+}
+\arguments{
+\item{d}{matrix with colnames as cell info, rownames as gene info}
+
+\item{filename}{filename of your MICA input file, supported format: txt}
 }
 \description{
 function to generate MICA input from pre.MICA output

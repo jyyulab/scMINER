@@ -78,7 +78,7 @@ DAG_ttest<-function(d,group){
 
   n.cases<-nlevels(d.sel$group)
 
-  #print(n.cases)
+  cat("=")
   if(n.cases==2){
     res <- t.test(dplyr::filter(d.tmp,group=="Aim")$acs,dplyr::filter(d.tmp,group=="Ctrl")$acs)
     pval.t <-res$p.value
@@ -147,7 +147,7 @@ FindDAG<-function(eset=NULL,group_tag="celltype",group_case=NULL){
 
   }else{
 
-    cat('Find Differential Activity TF for all groups!')
+    cat('\n','Find Differential Activity TF for all groups!','\n')
       #do all group cases in all
     da.list <- lapply(unique(pData(eset)[,group_tag]),function(xx){
 
@@ -183,26 +183,34 @@ FindDAG<-function(eset=NULL,group_tag="celltype",group_case=NULL){
 #' @param DAG_result Output table from function FindDAG
 #' @param n threshold to pick top master regulators(top n)
 #' @param degree_filter filter out drivers with target number less than certain value
-#'
+#' @return A list of top master regulators among different groups
 #' @export
-TopMasterRegulator <- function(DAG_result=res,n=5,degree_filter= NULL){
+TopMasterRegulator <- function(DAG_result=res,n=5,degree_filter=c(50,500),celltype=NULL){
 
-  cols <- colnames(res)
-  celltypes<-gsub("^degree_","",cols[grep("^degree_",cols)])
-  cat("Output top regulators for",length(celltypes) ,"clusters.","\n")
+  rownames(DAG_result)<-DAG_result$id
+  cols <- colnames(DAG_result)
+  if(is.null(celltype)) celltypes<-gsub("^degree_","",cols[grep("^degree_",cols)])
+    else { celltypes<-celltype }
+
+  cat("Output top regulators for ",celltypes ,"\n")
+  res<-NULL
 
   for (i in celltypes){
 
-    if(!is.null(degree_filter)) {res<-res[which(res[,paste0("degree_",i)]> degree_filter),]}
+    if(!is.null(degree_filter)) {
 
-    topMR<-res$id[sort(res[,paste0("t_",i)],decreasing=TRUE,na.last=TRUE,index.return=TRUE)$ix][1:n]
+    DAG_result<-DAG_result[which(DAG_result[,paste0("degree_",i)]> degree_filter[1] & DAG_result[,paste0("degree_",i)] <degree_filter[2]),]}
 
-    MR2print<-filter(res[,c(1,grep(i,colnames(res)))],id%in%topMR)
+    topMR<-DAG_result$id[sort(DAG_result[,paste0("t_",i)],decreasing=TRUE,index.return=TRUE,na.last=TRUE)$ix][1:n]
+
+    MR2print<-DAG_result[topMR,c(1,grep(i,colnames(DAG_result)))]
 
     cat("Top MR for:" ,i,"\n")
     print(MR2print)
+    res<- c(res,topMR)
   }
   cat("Done!")
+  return(res)
 }
 
 

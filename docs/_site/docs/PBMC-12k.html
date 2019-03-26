@@ -30,6 +30,16 @@
     
       
         
+          <li class="navigation-list-item active">
+            
+            <a href="http://localhost:4000/docs/index-test.html" class="navigation-list-link"></a>
+            
+          </li>
+        
+      
+    
+      
+        
           <li class="navigation-list-item">
             
             <a href="http://localhost:4000/" class="navigation-list-link">Welcome to scMINER</a>
@@ -63,16 +73,6 @@
           <li class="navigation-list-item active">
             
             <a href="http://localhost:4000/docs/PBMC-12k.html" class="navigation-list-link active">PBMC(12k) scRNA-seq data</a>
-            
-          </li>
-        
-      
-    
-      
-        
-          <li class="navigation-list-item">
-            
-            <a href="http://localhost:4000/docs/index-test.html" class="navigation-list-link">Markdown kitchen sink</a>
             
           </li>
         
@@ -125,6 +125,7 @@ Original data website can be downloaded <a href="https://support.10xgenomics.com
   <li><a href="#find-cell-type-specific-master-regulator" id="markdown-toc-find-cell-type-specific-master-regulator">Find cell type specific master regulator</a>    <ol>
       <li><a href="#calculate-inferred-activity" id="markdown-toc-calculate-inferred-activity">Calculate Inferred activity</a></li>
       <li><a href="#find-differential-activity-tf" id="markdown-toc-find-differential-activity-tf">Find Differential activity TF</a></li>
+      <li><a href="#cell-type-specific-network-profiling" id="markdown-toc-cell-type-specific-network-profiling">Cell type specific network profiling</a></li>
     </ol>
   </li>
 </ol>
@@ -280,9 +281,12 @@ test_no_intall_LSF <span class="nt">--host</span> LSF       <span class="c"># ru
 
 <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">hmp</span><span class="o">&lt;-</span><span class="n">AssignCellTypes.Hmp</span><span class="p">(</span><span class="n">ref</span><span class="o">=</span><span class="n">ref</span><span class="p">,</span><span class="n">eset</span><span class="o">=</span><span class="n">eset.demo</span><span class="p">,</span><span class="n">save_plot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
 
+
 </span><span class="c1"># Manually assign your cell type label</span><span class="w">
-</span><span class="n">celltype</span><span class="w"> </span><span class="o">&lt;-</span><span class="nf">c</span><span class="p">(</span><span class="s2">"NaiveT"</span><span class="p">,</span><span class="s2">"Tmem"</span><span class="p">,</span><span class="s2">"CD8em"</span><span class="p">,</span><span class="s2">"CD8eff"</span><span class="p">,</span><span class="s2">"NK"</span><span class="p">,</span><span class="s2">"Bcell"</span><span class="p">,</span><span class="s2">"DC"</span><span class="p">,</span><span class="s2">"Mo"</span><span class="p">)</span><span class="w">
-</span><span class="n">eset.demo</span><span class="o">$</span><span class="n">celltype</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">celltype</span><span class="p">[</span><span class="n">eset.demo</span><span class="o">$</span><span class="n">label</span><span class="p">]</span><span class="w">
+</span><span class="c1"># We recommend assign your celltype as factors in Rs </span><span class="w">
+</span><span class="n">indx</span><span class="o">&lt;-</span><span class="n">factor</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"NaiveT"</span><span class="p">,</span><span class="s2">"Tmem"</span><span class="p">,</span><span class="s2">"CD8em"</span><span class="p">,</span><span class="s2">"CD8eff"</span><span class="p">,</span><span class="s2">"NK"</span><span class="p">,</span><span class="s2">"Bcell"</span><span class="p">,</span><span class="s2">"DC"</span><span class="p">,</span><span class="s2">"Mo"</span><span class="p">),</span><span class="w">
+				</span><span class="n">levels</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"NaiveT"</span><span class="p">,</span><span class="s2">"Tmem"</span><span class="p">,</span><span class="s2">"CD8em"</span><span class="p">,</span><span class="s2">"CD8eff"</span><span class="p">,</span><span class="s2">"NK"</span><span class="p">,</span><span class="s2">"Bcell"</span><span class="p">,</span><span class="s2">"DC"</span><span class="p">,</span><span class="s2">"Mo"</span><span class="p">))</span><span class="w">
+</span><span class="n">eset.12k</span><span class="o">$</span><span class="n">celltype</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">indx</span><span class="p">[</span><span class="n">eset.12k</span><span class="o">$</span><span class="n">label</span><span class="p">]</span><span class="w">
 </span></code></pre></div></div>
 
 <p><img src="./plots/3_4_MICA_cluster_score.png" alt="" /></p>
@@ -291,7 +295,7 @@ test_no_intall_LSF <span class="nt">--host</span> LSF       <span class="c"># ru
 
 <p>In order to generate cell type/group/cluster specific network, group information should be stored under <code class="highlighter-rouge">pData([your_expressionSet])</code>. And R function <code class="highlighter-rouge">generateSJAracneInput</code> will help to partition your expression matrix and conduct a loose filtering of your scRNA-seq data(filter about 0 expressed genes in cluster). Besides, a reference TF list should be provided as <code class="highlighter-rouge">tf.ref</code> to guide hub gene selection. Each group will create one directory which contains filtered expression matrix in .exp format, as long as the filtered TF list in .txt.</p>
 
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">generateSJAracneInput</span><span class="p">(</span><span class="n">eset</span><span class="o">=</span><span class="n">eset.demo</span><span class="p">,</span><span class="n">tf.ref</span><span class="o">=</span><span class="n">tf.ref</span><span class="p">,</span><span class="n">wd.src</span><span class="o">=</span><span class="s2">"Sjaracne/"</span><span class="p">,</span><span class="w"> </span><span class="n">group_tag</span><span class="o">=</span><span class="s2">"celltype"</span><span class="p">)</span><span class="w">
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">generateSJAracneInput</span><span class="p">(</span><span class="n">eset</span><span class="o">=</span><span class="n">eset.12k</span><span class="p">,</span><span class="n">tf.ref</span><span class="o">=</span><span class="n">tf.ref</span><span class="p">,</span><span class="n">wd.src</span><span class="o">=</span><span class="s2">"Sjaracne/"</span><span class="p">,</span><span class="w"> </span><span class="n">group_tag</span><span class="o">=</span><span class="s2">"celltype"</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
 <p><em>Warning:</em> SJARACNe has not been integrated into MINIE yet, please consult <a href="https://github.com/jyyulab/SJARACNe">here</a> for installation.</p>
@@ -333,18 +337,35 @@ test_no_intall_LSF <span class="nt">--host</span> LSF       <span class="c"># ru
 
 <p>While you can also visualize top master regulator candidates in heatmap or violinplots. Only png as plotting device is supported.</p>
 
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">TF_list</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">TopMasterRegulator</span><span class="p">(</span><span class="n">DAG_result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">res</span><span class="p">,</span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="n">degree_filter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">50</span><span class="p">)</span><span class="w">
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">TF_list</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">TopMasterRegulator</span><span class="p">(</span><span class="n">DAG_result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DAG_result</span><span class="p">,</span><span class="w">
+                              </span><span class="n">celltype</span><span class="o">=</span><span class="n">levels</span><span class="p">(</span><span class="n">acs.12k</span><span class="o">$</span><span class="n">celltype</span><span class="p">),</span><span class="w"> </span><span class="c1"># ensure cluster order</span><span class="w">
+                              </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="n">degree_filter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">50</span><span class="p">,</span><span class="m">500</span><span class="p">))</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gene_heatmap</span><span class="p">(</span><span class="n">eset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eset.demo</span><span class="p">,</span><span class="n">target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gn.sel</span><span class="p">,</span><span class="n">group_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"label"</span><span class="p">,</span><span class="w">
-			 </span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="n">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6</span><span class="p">,</span><span class="w"> </span><span class="n">save_plot</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w">
-             </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Activity"</span><span class="p">,</span><span class="n">plot_name</span><span class="o">=</span><span class="s2">"./TopTFHeatmap.png"</span><span class="p">)</span><span class="w">
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gene_heatmap</span><span class="p">(</span><span class="n">eset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">acs.12k</span><span class="p">,</span><span class="n">target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TF_list</span><span class="p">,</span><span class="n">group_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"celltype"</span><span class="p">,</span><span class="w">
+             </span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6</span><span class="p">,</span><span class="n">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6</span><span class="p">,</span><span class="w"> </span><span class="n">save_plot</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">cluster_rows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w">
+             </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Activity"</span><span class="p">,</span><span class="n">plot_name</span><span class="o">=</span><span class="s2">"./21_TopTFHeatmap.png"</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<p><img src="" alt="" /></p>
+<p><img src="./plots/4_1_TopTFHeatmap.png" alt="" /></p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>---
-## R session info
+<p>You can also check some known master regulators as postivie control of your network analysis:</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">p</span><span class="o">&lt;-</span><span class="n">gene_vlnplot</span><span class="p">(</span><span class="n">eset</span><span class="o">=</span><span class="n">acs.12k</span><span class="p">,</span><span class="w">
+					</span><span class="n">target</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"LEF1.TF"</span><span class="p">,</span><span class="s2">"TCF7.TF"</span><span class="p">,</span><span class="s2">"BATF.TF"</span><span class="p">,</span><span class="s2">"TCF7.TF"</span><span class="p">,</span><span class="s2">"TBX21.TF"</span><span class="p">,</span><span class="s2">"IRF8.TF"</span><span class="p">,</span><span class="s2">"SPIB.TF"</span><span class="p">,</span><span class="s2">"BATF3.TF"</span><span class="p">,</span><span class="s2">"CEBPA.TF"</span><span class="p">),</span><span class="w">
+             		</span><span class="n">ylabel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Activity"</span><span class="p">,</span><span class="n">group_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"celltype"</span><span class="p">,</span><span class="n">drawquantiles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="n">ncol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="./plots/4_2_Known_MR_vlnplot.png" alt="" /></p>
+
+<h3 id="cell-type-specific-network-profiling">Cell type specific network profiling</h3>
+
+<p>rewiring 
+and 
+bubbleplot</p>
+
+<hr />
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## R session info
 
 
 R version 3.5.0 (2018-04-23)
@@ -375,7 +396,6 @@ loaded via a namespace (and not attached):
 [31] pkgconfig_2.0.2 
 </code></pre></div></div>
 <hr />
-<p>```</p>
 
 
           

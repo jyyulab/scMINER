@@ -96,7 +96,9 @@ gene_vlnplot <- function(eset,group_tag="celltype",target,
 gene_heatmap <- function(eset,target,
                          group_tag="label",name="log2_expression",
                          save_plot=TRUE,width=4,height=8,
-                         plot_name="GeneHeatmap.png"){
+                         cluster_rows=FALSE,
+                         plot_name="GeneHeatmap.png",
+                         ...){
 
   target<-intersect(target,featureNames(eset))
   exp<-exprs(eset)[target,]
@@ -118,9 +120,10 @@ gene_heatmap <- function(eset,target,
   hmp <- Heatmap(exp.ordered, col = mycolors, name = name,
           show_row_names = TRUE,
           show_column_names = FALSE,
-          cluster_rows = FALSE,
+          cluster_rows = cluster_rows,
           cluster_columns = FALSE,
-          top_annotation = myanndf)
+          top_annotation = myanndf,
+          ...)
 
   if(save_plot){
     png(filename = plot_name, width=width,height=height,units ="in",res = 300)
