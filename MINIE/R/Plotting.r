@@ -3,10 +3,11 @@
 ##Stjude.YuLab
 
 #' @export
-MICAplot<-function(input_eset=eset,label= metaName, visualize= "UMAP",title.size=5,title.name="",pct=0.5){
+MICAplot<-function(input_eset=eset,label= metaName,visualize=NULL,
+                   X=NULL,Y=NULL,
+                   title.size=5,title.name="",pct=0.5){
 
   if(!label%in%colnames(pData(input_eset))){stop("Label name not contained in phenotype data!","\n")}
-  if(visualize=="UMAP") (stop("Must specify 2D embedding methods!","\n"))
 
   p <- ggplot(data=pData(input_eset),aes_string(x=X,y=Y,color = label))+
        geom_point(size=pct)+
@@ -134,51 +135,124 @@ gene_heatmap <- function(eset,target,
   return(hmp)
 }
 
-###Function7: AssignCelltypes###
-#' @export
-AssignCellTypes.Hmp<-function(ref = NULL,eset = eset.demo,
-                              save_plot = FALSE,
-                              width=8.5, height=6.5,
-                              plot_name="AnnotationHeatmap.png"){
-  #start from eset
-  #z-normalize each sample
-  exp<-apply(exprs(eset),2,std)
-  #filter reference marker sets
-  ref<-filter(ref,markers%in%rownames(exp))
-  celltypes<-unique(ref$celltype)
+#inner function to draw pretty bubbleplot
+draw.bubblePlot<-function(bb_size=NULL,bb_color=NULL,pdf_file=NULL,
+                          gs_cex=1,driver_cex=1,
+                          plot_target_size=FALSE,Z_val=NULL,main=""
+                          )
+{
 
-  ac<-matrix(NA,nrow=ncol(exp),ncol=length(celltypes),dimnames = list(colnames(exp),celltypes))
+  f_mat1<-bb_size[,-1]
+  f_mat2<-bb_color[,-1]
+  nr <- ncol(f_mat1)
+  nc <- nrow(f_mat1)
 
-  for(i in 1:length(celltypes)){
-    cat(i,"\n")
-    ref.sel<-filter(ref,celltype==celltypes[i])
-    n <- length(ref.sel$markers)
+  ## modified from NetBID2, credit to Sherry Dong
+  gsWidth  <- max(strwidth(colnames(f_mat1),'inches',cex=gs_cex))
+  gsHeight <- max(strheight(colnames(f_mat1),'inches',cex=gs_cex)*nrow(f_mat1))
+  driverWidth  <- max(strwidth(show_label[colnames(f_mat1)],'inches',cex=gs_cex))
+  driverHeight <- max(strheight(show_label[colnames(f_mat1)],'inches',cex=gs_cex)*ncol(f_mat1))
 
-    if(n>1){
-      mat<-t(exp[ref.sel$markers,])%*%as.vector(ref.sel$weight)
-      ac[,i]<-mat[,1]/n
-    }else if (n==1){
-      ac[,i]<-exp[ref.sel$markers,]
-    }
+  ww <- (1+nc)*0.5+ gsWidth + 1.5 + 2
+  hh <- (4+nr)*0.5+ driverWidth + 2+1
+
+  ## output to pdf
+  if(is.null(pdf_file)==FALSE) pdf(pdf_file,width=ww,height=hh)
+
+  layout(1);par(mai=c(driverWidth+2,gsWidth+1.5,1,2))
+
+  plot(1,bty='n',col='white',
+       xlim=c(0,nc+1),ylim=c(-2,nr+1),
+       xaxt='n',yaxt='n',xlab="",ylab="",main=main)
+
+  segments(x0=0,x1=nc,y0=0:nr,y1=0:nr,col='dark grey',xpd=TRUE)
+  segments(x0=0:nc,x1=0:nc,y0=0,y1=nr,col='dark grey',xpd=TRUE)
+  segments(x0=0:nc,x1=0:nc,y0=0,y1=-3,col='grey',xpd=TRUE)
+
+  #
+  text(-0.5,1:nr-0.5,colnames(f_mat1),xpd=TRUE,srt=0,adj=1,cex=gs_cex) ## sig pathways
+  if(is.null(mark_gene)==TRUE){
+    text(1:nc-0.5,-2.5,show_label[rownames(f_mat1)],xpd=TRUE,srt=90,adj=1,cex=driver_cex) ## sig regulators
+  }else{
+    bc <- rep('black',length.out=length(rownames(f_mat1)))
+    bc[which(rownames(f_mat1) %in% mark_gene)] <- 'red'
+    print(table(bc))
+    text(1:nc-0.5,-2.5,show_label[rownames(f_mat1)],xpd=TRUE,srt=90,adj=1,col=bc,cex=driver_cex) ## sig regulators
   }
 
-  df<-data.frame(label=eset$label,ac);
-  df<-df[,colSums(is.na(df))<nrow(df)];#remove NA columns
-  df<-aggregate(.~label,df,mean)
+  ## draw circle
+  max_size <- max(f_mat1,na.rm=TRUE)
+  f_mat1 <- f_mat1/max_size
 
-  input<-t(df[,-1])
+  cc_r <- matrix(num2col(f_mat2,n_len=30,threshold=0.01),ncol=ncol(f_mat2),byrow = FALSE)
 
-  colnames(input)<-1:length(unique(eset$label))
-  myanndf<-data.frame(row.names=1:length(unique(eset$label)),scMINER=as.factor(1:length(unique(eset$label))))
+  for(i in 1:nrow(f_mat1)){
+    for(j in 1:ncol(f_mat1)){
+      draw.circle(i-0.5,j-0.5,radius=f_mat1[i,j]/20,col=cc_r[i,j])
+    }#library(plotrix)
+  }
+  ## draw circle legend
+  legend_size <- unique(round(seq(1,max_size,length.out=5)))
+  for(i in 1:length(legend_size)){
+    draw.circle(length(legend_size)-i+1.5,nr+0.5,radius=0.5*legend_size[i]/max_size)
+    text(length(legend_size)-i+1.5,nr+1,legend_size[i])
+  }
+  text(0.5,nr+0.5,'Size ')
 
-  hmp<-pheatmap::pheatmap(input,kmeans_k = NA,
-                          color = colorRampPalette(rev(brewer.pal(n = 7, name = "RdYlBu")))(30),
-                          cluster_rows = FALSE,cluster_cols = FALSE,
-                          scale = "row",
-                          show_rownames = TRUE,
-                          show_colnames = FALSE,
-                          annotation_col= myanndf)
-  hmp
-  if(save_plot){ggsave(hmp,filename = plot_name ,device="png",width = width,height = height,dpi = 300)}
-  return(hmp)
+  ## draw p-value legend
+  p_label <- c(1,0.1,0.05,0.01,0.001,1e-4,1e-10)
+  p_thre <- qnorm(1-c(1,0.1,0.05,0.01,0.001,0.0001,1e-10))
+
+  p_col  <- num2col(p_thre,n_len=30,sig_thre=qnorm(1-0.1))
+  p_col_m  <- num2col(-p_thre,n_len=30,sig_thre=qnorm(1-0.1))
+  ybottom <- seq(nr-6,nr-1,length.out=1+length(p_thre))[1:length(p_thre)]
+  ytop <- seq(nr-6,nr-1,length.out=1+length(p_thre))[2:(length(p_thre)+1)]
+
+  for(i in 1:length(p_thre)){
+    rect(nc+0.5,ybottom[i],nc+1.5,ytop[i],col=p_col[i],xpd=TRUE)
+    text(nc+1.7,(ybottom[i]+ytop[i])/2,adj=0,p_label[i],xpd=TRUE)
+  }
+
+  ybottom <- seq(nr-11,nr-6,length.out=1+length(p_thre))[1:length(p_thre)]
+  ytop <- seq(nr-11,nr-6,length.out=1+length(p_thre))[2:(length(p_thre)+1)]
+  for(i in 2:length(p_thre)){
+    rect(nc+0.5,ybottom[i],nc+1.5,ytop[i],col=rev(p_col_m)[i-1],xpd=TRUE)
+    text(nc+1.7,(ybottom[i]+ytop[i])/2,adj=0,rev(p_label)[i-1],xpd=TRUE)
+  }
+
+  text(nc+1.5,nr-0.5,'P-Value',xpd=TRUE)
+
+  # target size
+  if(plot_target_size){
+    max_target_size <- max(unlist(lapply(target_gene,function(x)max(unlist(lapply(x,length))))))
+    ori_size <- unlist(lapply(target_gene,function(x)length(x[[1]])))
+    pro_size <- unlist(lapply(target_gene,function(x)length(x[[2]])))
+
+    rect(0:(nc-1)+0.15,-2,0:(nc-1)+0.45,1.5*ori_size/max_target_size-2,col='blue')
+    rect(0:(nc-1)+0.55,-2,0:(nc-1)+0.85,1.5*pro_size/max_target_size-2,col='green')
+    segments(y0=-2,y1=-0.5,x0=0,x1=0)
+    segments(y0=seq(-2,-0.5,length.out=3),y1=seq(-2,-0.5,length.out=3),x0=-0.25,x1=0)
+
+    text(-0.3,seq(-2,-0.5,length.out=3),round(seq(0,max_target_size,length.out=3)),adj=1,xpd=TRUE)
+    legend(-5,-0.5,c('target_size','target_size\n(protein_coding)'),fill=c('blue','green'),border=NA,bty='n',cex=0.8,xpd=TRUE)}
+
+  # add sig color
+  if(!is.null(Z_val)){
+  sig_col <- num2col(Z_val[driver_list],n_len=30)
+  rect(0:(nc-1)+0.35,-0.4,0:(nc-1)+0.65,-0.1,col=sig_col)
+  }
+  # add driver type !!!
+  if(is.null(driver_type)==FALSE){
+    cc_tmp <- get.class.color(unique(driver_type[driver_list]))
+    points(x=0:(nc-1)+0.5,y=rep(-2.2,length.out=nc),col=cc_tmp[driver_type[driver_list]],pch=16,cex=2.5)
+    legend(nc+0.5,0.5,names(cc_tmp),fill=cc_tmp,border=NA,bty='n',cex=0.8,xpd=TRUE)
+  }
+  if(is.null(pdf_file)==FALSE) dev.off()
+  return(TRUE)
+
 }
+
+
+
+
+

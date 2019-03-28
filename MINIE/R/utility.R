@@ -68,6 +68,64 @@ generateMICAinput <- function(d,filename){
 }
 
 
+#########
+###Function7: AssignCelltypes###
+#' @export
+#'
+#'
+
+
+#load("~/Box Sync/Misc/PBMC/latest/pbmc12k_eset")
+#ref<-read.xlsx("/Users/cqian/Documents/GitHub/scMINER/tests/Ref/Immune_signatures.xlsx")
+#head(ref)
+AssignCellTypes.bbp<-function(ref = NULL,eset = eset.demo,
+                              save_plot = FALSE,
+                              width=8.5, height=6.5,
+                              plot_name="AnnotationHeatmap.png"){
+  #start from eset
+  #z-normalize each sample
+  exp<-apply(exprs(eset),2,std)
+  #filter reference marker sets
+  ref<-filter(ref,markers%in%rownames(exp))
+  celltypes<-unique(ref$celltype)
+
+  ac<-matrix(NA,nrow=ncol(exp),ncol=length(celltypes),dimnames = list(colnames(exp),celltypes))
+
+  for(i in 1:length(celltypes)){
+    cat(i,"\n")
+    ref.sel<-filter(ref,celltype==celltypes[i])
+    n <- length(ref.sel$markers)
+
+    if(n>1){
+      mat<-t(exp[ref.sel$markers,])%*%as.vector(ref.sel$weight)
+      ac[,i]<-mat[,1]/n
+    }else if (n==1){
+      ac[,i]<-exp[ref.sel$markers,]
+    }
+  }
+
+  df<-data.frame(label=eset$label,ac);
+  df<-df[,colSums(is.na(df))<nrow(df)];#remove NA columns
+  df<-aggregate(.~label,df,mean)
+
+  input<-t(df[,-1])
+
+  colnames(input)<-1:length(unique(eset$label))
+  myanndf<-data.frame(row.names=1:length(unique(eset$label)),
+                      scMINER=as.factor(1:length(unique(eset$label))))
+
+  #x axis ~ cluster #
+  #y axis ~ cell types
+  #bubble color ~
+  #bubble size ~
+
+  draw.bubblePlot()
+
+
+
+  if(save_plot){ggsave(filename = plot_name ,device="png",width = width,height = height,dpi = 300)}
+  return(hmp)
+}
 
 
 

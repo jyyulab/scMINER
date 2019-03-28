@@ -1,11 +1,9 @@
 # GSEA and FET inner function
 #
 
-
-
-#' Bubble plot for the top drivers in NetBID2 analysis.
+#' Bubble plot for the top drivers.
 #'
-#' \code{draw.bubblePlot} will draw the buble plot for the top drivers and the enriched gene sets for the targets of each driver.
+#' \code{draw.FET.bbplt} will draw the buble plot for the top drivers and the enriched gene sets for the targets of each driver.
 #'
 #' This is a function to draw the bubble plot for the top significant drivers. Each row is a gene set, and each column is a driver.
 #' Each bubble represents the enrichment for each driver's target gene in the corresponding gene set.
@@ -75,7 +73,7 @@
 #'                                            use_genes=use_genes,
 #'                                            dataset='hsapiens_gene_ensembl')
 #' ## get transfer table !!!
-#' draw.bubblePlot(driver_list=rownames(sig_driver),
+#' draw.FET.bbplt(driver_list=rownames(sig_driver),
 #'                show_label=ms_tab[rownames(sig_driver),'gene_label'],
 #'                Z_val=ms_tab[rownames(sig_driver),'Z.G4.Vs.others_DA'],
 #'                driver_type=ms_tab[rownames(sig_driver),'gene_biotype'],
@@ -126,7 +124,7 @@
 #'                'originalID_label'])
 #' }
 #' @export
-draw.bubblePlot <- function(driver_list=NULL,show_label=driver_list,Z_val=NULL,driver_type=NULL,
+draw.FET.bbplt <- function(driver_list=NULL,show_label=driver_list,Z_val=NULL,driver_type=NULL,
                             target_list=NULL,transfer2symbol2type=NULL,
                             bg_list=NULL,min_gs_size=5,max_gs_size=500,
                             gs2gene=NULL,use_gs=NULL,
@@ -187,7 +185,7 @@ draw.bubblePlot <- function(driver_list=NULL,show_label=driver_list,Z_val=NULL,d
     o1 <- order(abs(x),decreasing = TRUE)[1:3];
     x1<-x;x1[setdiff(1:length(x1),o1)] <- 0;x1
   }))
-  ## use top
+  ## use top, order pathways
   min_path_num <- 5
   max_path_num <- top_geneset_number
   all_path_order <- apply(f_mat3,2,max)
@@ -290,6 +288,8 @@ draw.bubblePlot <- function(driver_list=NULL,show_label=driver_list,Z_val=NULL,d
   if(is.null(pdf_file)==FALSE) dev.off()
   return(TRUE)
 }
+
+
 
 #' GSEA (gene set enrichment analysis) plot for a gene set or a driver.
 #'
@@ -1221,3 +1221,178 @@ draw.GSEA.NetBID.GS <- function(DE=NULL,name_col=NULL,profile_col=NULL,profile_t
   return(TRUE)
 }
 
+#' Gene set enrichment analysis by Fisher's Exact Test.
+#'
+#' \code{funcEnrich.Fisher} will perform gene set enrichment analysis by Fisher's Exact Test.
+#'
+#' This is a function to find significant enriched gene sets for input gene list. Users could prepare gs2gene or use all_gs2gene preloaded by using \code{gs.preload}.
+#' Background gene list is accepeted.
+#'
+#' @param input_list a vector of characters, the list of genes for analysis. Only accept gene symbols, and gene ID conversion could be done by preparing a transfer table
+#' by using \code{get_IDtransfer} and using \code{get_name_transfertab} to transfer the gene IDs.
+#' @param bg_list a vector of characters, the background list of genes for analysis. Only accept gene symbols.
+#' Default is NULL, will use all genes in the gs2gene as the background list.
+#' @param gs2gene a list for geneset to genes, the name for the list is the gene set name and the content in each list is the vector for genes belong to that gene set.
+#' If NULL, will use all_gs2gene loaded by using \code{gs.preload}. Default is NULL.
+#' @param use_gs a vector of characters, the name for gene set category used for anlaysis.
+#' If gs2gene is set to NULL, use_gs must be the subset of \code{names(all_gs2gene)}.
+#' Could check \code{all_gs2gene_info} for the cateogory description.
+#' If set to 'all', all gene sets in gs2gene will be used.
+#' Default is \code{c('H','CP:BIOCARTA','CP:REACTOME','CP:KEGG')} if gs2gene is set to NULL (use all_gs2gene).
+#' If user input own gs2gene list, use_gs will be set to 'all' as default.
+#' @param min_gs_size numeric, minimum gene set size for analysis, default is 5.
+#' @param max_gs_size numeric, maximum gene set size for analysis, default is 500.
+#' @param Pv_adj character, p-value adjustment method, could check \code{p.adjust.methods} for the available options. Default is 'fdr'.
+#' @param Pv_thre numeric, cutoff value for the adjusted p-values for significance. Default is 0.1.
+#'
+#' @return The function will return a list of gene sets with significant statistics, detailed as follows,
+#'
+#' \item{#Name}{Name for the enriched gene set}
+#' \item{Total_item}{Number of background size}
+#' \item{Num_item}{Number of genes in the gene set (filtered by the background list)}
+#' \item{Num_list}{Number of input genes for testing (filtered by the background list)}
+#' \item{Num_list_item}{Number input genes annotated by the gene set (filtered by the background list)}
+#' \item{Ori_P}{Original P-value from Fisher's Exact Test}
+#' \item{Adj_p}{Adjusted P-value}
+#' \item{Odds_Ratio}{Odds ratio by the 2*2 matrix used for Fisher's Exact Test}
+#' \item{Intersected_items}{List of the intersected genes, collapsed by ';', the number is equal to Num_list_item}
+#'
+#' @examples
+#' analysis.par <- list()
+#' analysis.par$out.dir.DATA <- system.file('demo1','driver/DATA/',package = "NetBID2")
+#' NetBID2.loadRData(analysis.par=analysis.par,step='ms-tab')
+#' ms_tab <- analysis.par$final_ms_tab
+#' sig_driver <- draw.volcanoPlot(dat=ms_tab,label_col='gene_label',
+#'                                logFC_col='logFC.G4.Vs.others_DA',
+#'                                Pv_col='P.Value.G4.Vs.others_DA',
+#'                                logFC_thre=0.4,
+#'                                Pv_thre=1e-7,
+#'                                main='Volcano Plot for G4.Vs.others_DA',
+#'                                show_label=FALSE,
+#'                                label_type = 'origin',
+#'                                label_cex = 0.5)
+#' gs.preload(use_spe='Homo sapiens',update=FALSE)
+#' res1 <- funcEnrich.Fisher(input_list=ms_tab[rownames(sig_driver),'geneSymbol'],
+#'                                bg_list=ms_tab[,'geneSymbol'],
+#'                                use_gs=c('H','C5'),
+#'                                Pv_thre=0.1,Pv_adj = 'none')
+#' \dontrun{
+#' }
+#' @export
+funcEnrich.Fisher <- function(input_list=NULL,bg_list=NULL,
+                              use_gs=NULL,
+                              gs2gene=NULL,
+                              min_gs_size=5,max_gs_size=500,Pv_adj='fdr',Pv_thre=0.1){
+  if(is.null(gs2gene)==TRUE){ ## use inner gs2gene
+    if(is.null(use_gs)==TRUE){
+      use_gs <- c('H','CP:BIOCARTA','CP:REACTOME','CP:KEGG')
+    }else{
+      if(use_gs[1] == 'all'){
+        use_gs <- c(all_gs2gene_info$Category,all_gs2gene_info$`Sub-Category`)
+      }
+    }
+    if(length(setdiff(use_gs,c(all_gs2gene_info$Category,all_gs2gene_info$`Sub-Category`)))>0){
+      message(sprintf('Input %s not in all_gs2gene, please check all_gs2gene_info (items in Category or Sub-Category) and re-try!',
+                      paste(setdiff(use_gs,c(all_gs2gene_info$Category,all_gs2gene_info$`Sub-Category`)),collapse=';')));
+      return(FALSE)
+    }
+    if(length(use_gs)>1){
+      gs2gene <- merge_gs(all_gs2gene,use_gs = use_gs)
+    }else{
+      gs2gene <- all_gs2gene[[use_gs]]
+    }
+  }else{
+    if(is.null(use_gs)==TRUE){
+      use_gs <- 'all'
+    }
+    if(length(use_gs)>1){
+        gs2gene <- merge_gs(gs2gene,use_gs = use_gs)
+    }else{
+      if(use_gs == 'all'){
+        gs2gene <- merge_gs(gs2gene,use_gs = NULL)
+      }else{
+        gs2gene <- gs2gene[[use_gs]]
+      }
+    }
+  }
+  all_gs <- names(gs2gene)
+  input_list <- unique(input_list)
+  bg_list <- unique(bg_list)
+  if(!is.null(bg_list)){
+    use_gs2gene <- lapply(gs2gene,function(x){intersect(x,bg_list)})
+    names(use_gs2gene) <- names(gs2gene)
+  }else{
+    use_gs2gene <- gs2gene
+  }
+  bg_list <- unique(unlist(use_gs2gene))
+  ## size selection
+  s1 <- unlist(lapply(use_gs2gene,length))
+  w1 <- which(s1>=min_gs_size & s1<=max_gs_size)
+  use_gs2gene <- use_gs2gene[w1]
+  all_gs <- names(use_gs2gene) ## all tested gene set number
+  ## input filter
+  input_list <- intersect(input_list,bg_list)
+  bg_or <- length(input_list)/length(bg_list)
+  s1 <- unlist(lapply(use_gs2gene,function(x){
+    length(intersect(input_list,x))/length(x)
+  }))
+  w1 <- which(s1>bg_or)
+  use_gs2gene <- use_gs2gene[w1]
+  empty_vec <- as.data.frame(matrix(NA,ncol=9));colnames(empty_vec) <- c('#Name','Total_item','Num_item','Num_list','Num_list_item','Ori_P','Adj_P','Odds_Ratio','Intersected_items')
+  if(length(w1)==0) return(empty_vec)
+  ## fisher~
+  pv <- lapply(use_gs2gene,function(x){
+    n11 <- length(intersect(input_list,x))
+    n12 <- length(intersect(input_list,setdiff(bg_list,x)))
+    n21 <- length(setdiff(x,input_list))
+    n22 <- length(setdiff(bg_list,unique(c(input_list,x))))
+    ft <- fisher.test(cbind(c(n11,n12),c(n21,n22)))$p.value
+    or <- n11/n12/(n21/n22)
+    c(length(bg_list),length(x),length(input_list),n11,ft,or,paste(intersect(input_list,x),collapse=';'))
+  })
+  pv <- do.call(rbind,pv)
+  pv <- as.data.frame(pv,stringsAsFactors=FALSE)
+  colnames(pv) <- c('Total_item','Num_item','Num_list','Num_list_item','Ori_P','Odds_Ratio','Intersected_items')
+  pv[1:6] <- lapply(pv[1:6],as.numeric)
+  pv$Adj_p <- p.adjust(pv$Ori_P,method=Pv_adj,n=length(all_gs))
+  pv$`#Name` <- rownames(pv)
+  pv <- pv[,c(9,1:5,8,6:7)]
+  pv <- pv[order(pv$Ori_P),]
+  use_pv <- pv[which(pv$Adj_p<=Pv_thre),]
+  return(use_pv)
+}
+
+
+
+
+#' transfer Z statistics to color bar(or any numerical score/statistics)
+#' @export
+num2col <- function(x,n_len=60, threshold=0.01,col_min_thre=0.01,col_max_thre=3,
+                  blue_col=brewer.pal(9,'Set1')[2],
+                  red_col=brewer.pal(9,'Set1')[1]){
+  ## create vector for z-score, can change sig threshold
+  x<-as.matrix(x)
+  x[which(is.na(x)==TRUE)] <- 0
+  if (length(which(input==Inf))!=0) x[which(x==Inf)]<-  max(x[which(x!=Inf)])+1
+  if (length(which(input==-Inf))!=0)x[which(x==-Inf)]<- min(x[which(x!=-Inf)])-1
+  if(col_min_thre<0) col_min_thre<-0.01
+  if(col_max_thre<0) col_max_thre<-3
+  #c1 <- brewer.pal(9,'Set1')
+  c2 <- colorRampPalette(c(blue_col,'white',red_col))(n_len)
+  r1 <- 1.05*max(abs(x)) ## -r1~r1
+  if(r1 < col_max_thre){
+    r1 <- col_max_thre
+  }
+  if(col_min_thre>r1){
+    r2 <- seq(-r1,r1,length.out=n_len+1)
+  }else{
+    r21 <- seq(-r1,-col_min_thre,length.out=n_len/2)
+    r22 <- seq(col_min_thre,r1,length.out=n_len/2)
+    r2 <- c(r21,r22)
+  }
+  x1 <- cut(x,r2)
+  names(c2) <- levels(x1)
+  x2 <- c2[x1]
+  x2[which(abs(x)<threshold)] <- 'white'
+  x2
+}
