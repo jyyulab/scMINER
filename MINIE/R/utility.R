@@ -70,27 +70,31 @@ generateMICAinput <- function(d,filename){
 
 #########
 ###Function7: AssignCelltypes###
+#' AssignCellTypes.bbp
+#' @description  Cell type annotation from known markers/signatures
+#'
+#' @param ref reference dataframe, includes positive or negative markers for different cell types
+#' @param eset expressionSet with clustering membership stored in pData
+#' @param save_plot logical
+#' @param width default as 8
+#' @param height default as 5
+#' @param plot_name plot name
+#'
+#' @return A ggplot object
+#'
 #' @export
-#'
-#'
-
-
-#load("~/Box Sync/Misc/PBMC/latest/pbmc12k_eset")
-#ref<-read.xlsx("/Users/cqian/Documents/GitHub/scMINER/tests/Ref/Immune_signatures.xlsx")
-#head(ref)
 AssignCellTypes.bbp<-function(ref = NULL,eset = eset.demo,
                               save_plot = FALSE,
-                              width=8.5, height=6.5,
-                              plot_name="AnnotationHeatmap.png"){
-  #start from eset
-  #z-normalize each sample
-  exp<-apply(exprs(eset),2,std)
+                              width=8, height=5,
+                              plot_name="AnnotationBubbleplot.png"){
+
+  #exp<-apply(exprs(eset),2,std)
   #filter reference marker sets
+  exp<-exprs(eset)
   ref<-filter(ref,markers%in%rownames(exp))
   celltypes<-unique(ref$celltype)
 
   ac<-matrix(NA,nrow=ncol(exp),ncol=length(celltypes),dimnames = list(colnames(exp),celltypes))
-
   for(i in 1:length(celltypes)){
     cat(i,"\n")
     ref.sel<-filter(ref,celltype==celltypes[i])
@@ -104,27 +108,38 @@ AssignCellTypes.bbp<-function(ref = NULL,eset = eset.demo,
     }
   }
 
-  df<-data.frame(label=eset$label,ac);
+  ac_norm<-apply(ac,2,scale) #column normalization
+
+  n_mtx<-(ac>0.5)
+  df_n<-data.frame(label=eset$label,n_mtx)
+  df_n<-aggregate(.~label,df_n,mean)
+  library(reshape2)
+  df_n_melt<-melt(df_n,id.vars = "label")
+
+  df<-data.frame(label=eset$label,ac_norm);
   df<-df[,colSums(is.na(df))<nrow(df)];#remove NA columns
   df<-aggregate(.~label,df,mean)
-
-  input<-t(df[,-1])
-
-  colnames(input)<-1:length(unique(eset$label))
-  myanndf<-data.frame(row.names=1:length(unique(eset$label)),
-                      scMINER=as.factor(1:length(unique(eset$label))))
-
-  #x axis ~ cluster #
-  #y axis ~ cell types
-  #bubble color ~
-  #bubble size ~
-
-  draw.bubblePlot()
+  input<-t(apply(df[,-1],1,scale))#row normalization
+  input<-as.data.frame(cbind(df[,1],input))
+  rownames(input)<-rownames(df)
+  colnames(input)<-colnames(df)
+  df_melt<-melt(input,id.vars = "label")
 
 
+  if(all(df_melt[,c(1,2)]==df_n_melt[,c(1,2)])){
 
-  if(save_plot){ggsave(filename = plot_name ,device="png",width = width,height = height,dpi = 300)}
-  return(hmp)
+    d<-cbind(df_melt,df_n_melt[,3])
+    colnames(d)<-c("Cluster", "CellType", "MarkerScore","ExpressionPercentage")
+    d$Cluster<-as.factor(d$Cluster)
+
+    p<-draw.bubblePlot2(df=d, xlab="Cluster",ylab="CellType",
+                        clab="MarkerScore",slab="ExpressionPercentage",
+                        plot.title="Cell type annotation for each cluster")
+  }
+
+  if(save_plot){ggsave(plot = p, filename = plot_name ,
+                       device="png",width = width,height = height,dpi = 300)}
+  return(p)
 }
 
 

@@ -117,7 +117,7 @@ Default setting will give you one u-MAP visualization for each choice of k.
 
 
 
-![](./plots/2_0_PBMC12K_clust_k8.pdf)
+![](./plots/2_0_PBMC12K_clust_k8.png)
 
 
 
@@ -198,17 +198,17 @@ head(ref)
 ```
 
 ```R
-hmp<-AssignCellTypes.Hmp(ref=ref,eset=eset.demo,save_plot = TRUE)
+p<-AssignCellTypes.bbp(ref=ref,eset=eset.12k)
 
 
 # Manually assign your cell type label
-# We recommend assign your celltype as factors in Rs 
+# We recommend assign your celltype as factors in your expression set
 indx<-factor(x=c("NaiveT","Tmem","CD8em","CD8eff","NK","Bcell","DC","Mo"),
 				levels=c("NaiveT","Tmem","CD8em","CD8eff","NK","Bcell","DC","Mo"))
 eset.12k$celltype <- indx[eset.12k$label]
 ```
 
-![](./plots/3_4_MICA_cluster_score.png)
+
 
 ## Network generation via SJARACNe
 {: no_toc }
@@ -285,10 +285,12 @@ gene_heatmap(eset = acs.12k,target = TF_list,group_tag = "celltype",
 You can also check some known master regulators as postivie control of your network analysis: 
 
 ```R
-p<-gene_vlnplot(eset=acs.12k,
-					target=c("LEF1.TF","TCF7.TF","BATF.TF","TCF7.TF","TBX21.TF","IRF8.TF","SPIB.TF","BATF3.TF","CEBPA.TF"),
-             		ylabel = "Activity",group_tag = "celltype",drawquantiles = FALSE,ncol = 2)
+p <- gene_vlnplot(eset=acs.12k, 
+					 target=c("LEF1.TF","TCF7.TF","BATF.TF","TCF7.TF",
+					 			"TBX21.TF","IRF8.TF","SPIB.TF","BATF3.TF","CEBPA.TF"),
+             		 ylabel = "Activity",group_tag = "celltype",drawquantiles = FALSE, ncol = 2)
 ```
+
 
 ![](./plots/4_2_Known_MR_vlnplot.png)
 

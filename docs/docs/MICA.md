@@ -72,6 +72,9 @@ cd [your_mica_root_directory]
 Each assigned number of k will output one folder containing following files.
 
 1. `[Project_name]_clust_k[number].rplot.pdf`  --visualization of clustering result (default as UMAP)
+
+<img src="./plots/2_0_PBMC12K_clust_k8.png" width="300"/> 
+
 2. `[Project_name]_clust.h5`  -- h5 file containing all intermediate results (including dimention reduced expression matrix, etc.)
 3. `[Project_name]_mds.pdf`  -- pdf file of t-SNE visualization of mds transformed distance matrix, with perplexity set to 30
 4. `[Project_name].ggplot.txt`  -- txt file containing visualization coordinates and clustering labels

@@ -6,10 +6,9 @@ permalink: /
 ---
 
 
-# scMINER tutorial
-{: .fs-9 }
+<img src="./docs/plots/scMINER_V4.png" alt="drawing" width="200"/> 
 
-scMINER is a toolbox for single-cell analysis based on mutual information. This package is a combination of several individual tools including but not limit to [MICA](https://github.com/jyyulab/MICA) and [MINIE](). Separate installation of each individual tools is also available on github. 
+**scMINER** is a toolbox for single-cell analysis based on mutual information. This package is a combination of several individual tools including but not limit to [MICA](https://github.com/jyyulab/MICA) and [MINIE](). Separate installation of each individual tools is also available on github. 
 
 {: .fs-6 .fw-300 }
 

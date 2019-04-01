@@ -52,16 +52,6 @@
         
           <li class="navigation-list-item">
             
-            <a href="http://localhost:4000/docs/scMINER_local.html" class="navigation-list-link">Quick start with scMINER (local version)</a>
-            
-          </li>
-        
-      
-    
-      
-        
-          <li class="navigation-list-item">
-            
             <a href="http://localhost:4000/docs/MICA.html" class="navigation-list-link">Run clustering with MICA</a>
             
           </li>
@@ -217,7 +207,7 @@ test_no_intall_LSF <span class="nt">--host</span> LSF       <span class="c"># ru
 
 <p>Default setting will give you one u-MAP visualization for each choice of k.</p>
 
-<p><img src="./plots/2_0_PBMC12K_clust_k8.pdf" alt="" /></p>
+<p><img src="./plots/2_0_PBMC12K_clust_k8.png" alt="" /></p>
 
 <h2 class="d-inline-block" id="cluster-based-network-analysis">Cluster-based network analysis</h2>
 
@@ -279,17 +269,15 @@ test_no_intall_LSF <span class="nt">--host</span> LSF       <span class="c"># ru
 </span><span class="m">6</span><span class="w">     </span><span class="n">Tmem</span><span class="w">    </span><span class="n">GZMA</span><span class="w">     </span><span class="m">-1</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">hmp</span><span class="o">&lt;-</span><span class="n">AssignCellTypes.Hmp</span><span class="p">(</span><span class="n">ref</span><span class="o">=</span><span class="n">ref</span><span class="p">,</span><span class="n">eset</span><span class="o">=</span><span class="n">eset.demo</span><span class="p">,</span><span class="n">save_plot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">p</span><span class="o">&lt;-</span><span class="n">AssignCellTypes.bbp</span><span class="p">(</span><span class="n">ref</span><span class="o">=</span><span class="n">ref</span><span class="p">,</span><span class="n">eset</span><span class="o">=</span><span class="n">eset.12k</span><span class="p">)</span><span class="w">
 
 
 </span><span class="c1"># Manually assign your cell type label</span><span class="w">
-</span><span class="c1"># We recommend assign your celltype as factors in Rs </span><span class="w">
+</span><span class="c1"># We recommend assign your celltype as factors in your expression set</span><span class="w">
 </span><span class="n">indx</span><span class="o">&lt;-</span><span class="n">factor</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"NaiveT"</span><span class="p">,</span><span class="s2">"Tmem"</span><span class="p">,</span><span class="s2">"CD8em"</span><span class="p">,</span><span class="s2">"CD8eff"</span><span class="p">,</span><span class="s2">"NK"</span><span class="p">,</span><span class="s2">"Bcell"</span><span class="p">,</span><span class="s2">"DC"</span><span class="p">,</span><span class="s2">"Mo"</span><span class="p">),</span><span class="w">
 				</span><span class="n">levels</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"NaiveT"</span><span class="p">,</span><span class="s2">"Tmem"</span><span class="p">,</span><span class="s2">"CD8em"</span><span class="p">,</span><span class="s2">"CD8eff"</span><span class="p">,</span><span class="s2">"NK"</span><span class="p">,</span><span class="s2">"Bcell"</span><span class="p">,</span><span class="s2">"DC"</span><span class="p">,</span><span class="s2">"Mo"</span><span class="p">))</span><span class="w">
 </span><span class="n">eset.12k</span><span class="o">$</span><span class="n">celltype</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">indx</span><span class="p">[</span><span class="n">eset.12k</span><span class="o">$</span><span class="n">label</span><span class="p">]</span><span class="w">
 </span></code></pre></div></div>
-
-<p><img src="./plots/3_4_MICA_cluster_score.png" alt="" /></p>
 
 <h2 id="network-generation-via-sjaracne">Network generation via SJARACNe</h2>
 
@@ -351,9 +339,10 @@ test_no_intall_LSF <span class="nt">--host</span> LSF       <span class="c"># ru
 
 <p>You can also check some known master regulators as postivie control of your network analysis:</p>
 
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">p</span><span class="o">&lt;-</span><span class="n">gene_vlnplot</span><span class="p">(</span><span class="n">eset</span><span class="o">=</span><span class="n">acs.12k</span><span class="p">,</span><span class="w">
-					</span><span class="n">target</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"LEF1.TF"</span><span class="p">,</span><span class="s2">"TCF7.TF"</span><span class="p">,</span><span class="s2">"BATF.TF"</span><span class="p">,</span><span class="s2">"TCF7.TF"</span><span class="p">,</span><span class="s2">"TBX21.TF"</span><span class="p">,</span><span class="s2">"IRF8.TF"</span><span class="p">,</span><span class="s2">"SPIB.TF"</span><span class="p">,</span><span class="s2">"BATF3.TF"</span><span class="p">,</span><span class="s2">"CEBPA.TF"</span><span class="p">),</span><span class="w">
-             		</span><span class="n">ylabel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Activity"</span><span class="p">,</span><span class="n">group_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"celltype"</span><span class="p">,</span><span class="n">drawquantiles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="n">ncol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w">
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">gene_vlnplot</span><span class="p">(</span><span class="n">eset</span><span class="o">=</span><span class="n">acs.12k</span><span class="p">,</span><span class="w"> 
+					 </span><span class="n">target</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"LEF1.TF"</span><span class="p">,</span><span class="s2">"TCF7.TF"</span><span class="p">,</span><span class="s2">"BATF.TF"</span><span class="p">,</span><span class="s2">"TCF7.TF"</span><span class="p">,</span><span class="w">
+					 			</span><span class="s2">"TBX21.TF"</span><span class="p">,</span><span class="s2">"IRF8.TF"</span><span class="p">,</span><span class="s2">"SPIB.TF"</span><span class="p">,</span><span class="s2">"BATF3.TF"</span><span class="p">,</span><span class="s2">"CEBPA.TF"</span><span class="p">),</span><span class="w">
+             		 </span><span class="n">ylabel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Activity"</span><span class="p">,</span><span class="n">group_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"celltype"</span><span class="p">,</span><span class="n">drawquantiles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="n">ncol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
 <p><img src="./plots/4_2_Known_MR_vlnplot.png" alt="" /></p>

@@ -200,6 +200,7 @@ draw.bubblePlot<-function(bb_size=NULL,bb_color=NULL,pdf_file=NULL,
   text(0.5,nr+0.5,'Size ')
 
   ## draw p-value legend
+  {
   p_label <- c(1,0.1,0.05,0.01,0.001,1e-4,1e-10)
   p_thre <- qnorm(1-c(1,0.1,0.05,0.01,0.001,0.0001,1e-10))
 
@@ -221,7 +222,7 @@ draw.bubblePlot<-function(bb_size=NULL,bb_color=NULL,pdf_file=NULL,
   }
 
   text(nc+1.5,nr-0.5,'P-Value',xpd=TRUE)
-
+  }
   # target size
   if(plot_target_size){
     max_target_size <- max(unlist(lapply(target_gene,function(x)max(unlist(lapply(x,length))))))
@@ -253,6 +254,39 @@ draw.bubblePlot<-function(bb_size=NULL,bb_color=NULL,pdf_file=NULL,
 }
 
 
+#' Inner function for simple bubbleplots
+#' @param df re-structured data.frame for bubble plots
+#' @param xlab string
+#' @param ylab string
+#' @param clab string
+#' @param slab string
+#' @param low.col string,default as "#004C99"
+#' @param high.col string, default as "CC0000
+#' @param plot.title string
+#'
+#' @export
+draw.bubblePlot2<-function(df=NULL,xlab,ylab,clab,slab,
+                           low.col="#004C99",high.col="#CC0000",plot.title=NULL){
 
+  p <- ggplot(df, aes_string(x= xlab, y= ylab)) +
+
+    geom_point(aes_string(color=clab, size= slab))+
+
+    scale_color_gradient2(low=low.col,high=high.col)+
+
+    theme_minimal()+ # minimal theme
+
+    scale_x_discrete(limits=levels(df[,xlab]))+
+
+    scale_y_discrete(limits=levels(df[,ylab]))+
+
+    theme(axis.text.x = element_text(size = 8),
+
+          axis.text.y = element_text(size = 8))
+
+    labs(x = xlab, y = ylab, title = plot.title)
+
+  return(p)
+}
 
 
