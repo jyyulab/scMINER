@@ -279,6 +279,8 @@ test_no_intall_LSF <span class="nt">--host</span> LSF       <span class="c"># ru
 </span><span class="n">eset.12k</span><span class="o">$</span><span class="n">celltype</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">indx</span><span class="p">[</span><span class="n">eset.12k</span><span class="o">$</span><span class="n">label</span><span class="p">]</span><span class="w">
 </span></code></pre></div></div>
 
+<p><img src="./plots/3_4_MICA_cluster_score.png" alt="" /></p>
+
 <h2 id="network-generation-via-sjaracne">Network generation via SJARACNe</h2>
 
 <p>In order to generate cell type/group/cluster specific network, group information should be stored under <code class="highlighter-rouge">pData([your_expressionSet])</code>. And R function <code class="highlighter-rouge">generateSJAracneInput</code> will help to partition your expression matrix and conduct a loose filtering of your scRNA-seq data(filter about 0 expressed genes in cluster). Besides, a reference TF list should be provided as <code class="highlighter-rouge">tf.ref</code> to guide hub gene selection. Each group will create one directory which contains filtered expression matrix in .exp format, as long as the filtered TF list in .txt.</p>

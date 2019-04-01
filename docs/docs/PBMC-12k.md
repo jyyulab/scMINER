@@ -208,7 +208,7 @@ indx<-factor(x=c("NaiveT","Tmem","CD8em","CD8eff","NK","Bcell","DC","Mo"),
 eset.12k$celltype <- indx[eset.12k$label]
 ```
 
-
+![](./plots/3_4_MICA_cluster_score.png)
 
 ## Network generation via SJARACNe
 {: no_toc }
