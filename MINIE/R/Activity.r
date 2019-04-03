@@ -40,7 +40,8 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
 							   save_path=NA)
 {
   eset<-SJARACNe_input_eset;
-	if(!group_tag%in%colnames(pData(eset))){
+
+  if(!group_tag%in%colnames(pData(eset))){
 	  stop('Check your group_tag please.','\n')
 	}
 
@@ -48,37 +49,59 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
 	output.files<-list.files(path=SJARACNe_output_path,
 						pattern="consensus_network_3col_.txt",recursive = TRUE,full.names = TRUE)
 
-  print(output.files)
-	#initialize actiivty list
+	if(length(output.files)==0) stop ("Please check your SJARACNe output path!",'\n')
+
+	net.names<-gsub(SJARACNe_output_path,"",output.files)
+	net.names<-gsub("\\_.*","",net.names);
+	net.names<-gsub("[/]","",net.names)
+	celltypes<-unique(net.names)
+
+  #initialize actiivty list
 	acs_master<-data.frame(geneSymbol=NA,stringsAsFactors=FALSE)
 	deg_master<-data.frame(geneSymbol=NA,stringsAsFactors=FALSE)
 
 	eset<-SJARACNe_input_eset
-	for( i in 1:length(output.files)){
-      net.name<-gsub(SJARACNe_output_path,"",output.files[i])
-  	  net.name<-gsub("\\_.*","",net.name);
-  	  net.name<-gsub("[/]","",net.name)
 
-  	  TF.table<-NULL
+	for( i in 1:length(celltypes)){
+
+	    net<-celltypes[i]
+      cat("Retrieve Network from ",i,net,"\n")
+
+      TF.table<-NULL
       SIG.table<-NULL
 
-      cat("Retrieve Network from ",i,net.name,"\n")
-      TF.table<-read.table(output.files[i],header = TRUE,
-  						stringsAsFactors = FALSE,check.names = FALSE)
+      f<-output.files[grep(paste0("/",net,"_"),output.files)]
+
+      if (length(grep("/tf/",f)!=0))
+        {TF.table<-read.table(file = f[grep("/tf/",f)],
+	                         header = TRUE,
+	                         check.names = FALSE,
+  						             stringsAsFactors = FALSE)}
+
+      if(length(grep("/sig/",f)!=0))
+        {SIG.table<-read.table(file= f[grep("/sig/",f)],
+                            header = TRUE,
+                            stringsAsFactors = FALSE,
+                            check.names = FALSE)}
+
 
       if(save_network_file){
         if(!dir.exists(save_path)) dir.create(path=save_path)
         gsc <- getGSC(tf = TF.table, sig=SIG.table)
-  	 	  save(gsc,file=file.path(save_path,paste0("gsc.",net.name)))
-        cat("Network saved for ", net.name,"\n")
+
+        save(gsc,file=file.path(save_path,paste0("gsc.",net)))
+        cat("Network saved for ", net,"\n")
         }
 
-  	  cat("Calculate Activity for ",net.name,"!",'\n')
-  	  eset.sel<-eset[,pData(eset)[,group_tag]==net.name]
+  	  cat("Calculate Activity for ",net,"!",'\n')
+  	  eset.sel<-eset[,pData(eset)[,group_tag]==net]
 
-      acs.tmp<-get_activity(Net = TF.table,tag = "TF",normalize=activity.norm,
+      acs1<-get_activity(Net = TF.table,tag = "TF",normalize=activity.norm,
     					   eset = eset.sel, activity.method = activity.method)
-      acs<-t(cbind(acs.tmp));rm(acs.tmp)
+      acs2<-get_activity(Net = SIG.table,tag = "SIG",normalize=activity.norm,
+                         eset = eset.sel, activity.method = activity.method)
+
+      acs<-t(cbind(acs1,acs2));rm(acs1,acs2)
 
  	  #update full gene list
  	  acs.ID <- sapply(strsplit(rownames(acs),"_"),"[",1)
@@ -92,7 +115,7 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
   	  acs_master<-merge(acs_master,acs.tmp,by.x="geneSymbol",by.y="row.names",all=TRUE)
   	  deg_master<-merge(deg_master,acs.deg,by="geneSymbol",all=TRUE)
 
-  	  colnames(deg_master)[i+1]<-paste0("degree_",net.name)
+  	  colnames(deg_master)[i+1]<-paste0("degree_",net)
 
   	  cat("Activity Done!!","\n")
   	  rm(acs)
@@ -157,6 +180,8 @@ get_activity<-function(Net,eset,tag,exp.match=NULL, match.method=NULL,
                        es.method="mean", activity.method="weighted",
                        normalize=TRUE,test=FALSE,sep.symbol="."){
   library(dplyr)
+  if(is.null(Net)) {return(NULL)}
+
   if(is.null(exp.match)) src<-unique(Net$source)
   else src<-unique(Net$source.symbol)
 
