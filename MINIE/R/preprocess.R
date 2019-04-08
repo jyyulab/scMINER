@@ -122,7 +122,7 @@ readscRNAseqData <- function(file,is.10x=TRUE,...){
 #' @title pre.MICA
 #' @description This function helps to conduct scRNA-seq data preprocessing and quality
 #' control for MICA input.
-#' @param d input matrix
+#' @param raw_data input matrix
 #' @param projectName project name used for Rmarkdown report title
 #' @param sampleID a string or a vector to indicate sample info
 #' @param output_rmd logical, whether or not output Rmd QC report
@@ -140,7 +140,7 @@ readscRNAseqData <- function(file,is.10x=TRUE,...){
 #' @param base numerical, log(n+1,base=base)
 #'
 #' @export
-pre.MICA <- function(d=NULL, #data matrix that have unique colnames and geneSymbol as rownames
+pre.MICA <- function(raw_data=NULL, #data matrix that have unique colnames and geneSymbol as rownames
                      projectName="SAMPLE",
                      sampleID="SAMPLE",
                      output_rmd=TRUE,
@@ -152,28 +152,27 @@ pre.MICA <- function(d=NULL, #data matrix that have unique colnames and geneSymb
                      Mito_filter=TRUE, # one way filtering
                      nGene_filter=TRUE,
                      nUMI_filter="both", #three way filtering
-
                      plotting=TRUE,
                      norm=10e6,
                      logTransform=TRUE,
                      base=NULL
 )
 {
-  if(!class(d)[1]%in%c("dgCMatrix","dgTMatrix","matrix")){
+  if(!class(raw_data)[1]%in%c("dgCMatrix","dgTMatrix","matrix")){
     stop("Input format should %in% c( 'matrix','dgTMatrix','dgCMatrix')","\n")
   }
 
   cat("Running QC...","\n",
-      "Pre-QC expression matrix dimention: ", dim(d),"\n")
+      "Pre-QC expression matrix dimention: ", dim(raw_data),"\n")
 
   if(!dir.exists(plot.dir)) {dir.create(plot.dir)}
   if(output_rmd) {render(input=system.file("rmd", "Preprocessing.Rmd", package = "MINIE"),
                          output_dir = plot.dir,
                          output_file = paste0(projectName,"_scRNAseq_preprocessing.html"),
                          clean=TRUE,
-                         quiet = TRUE,
+                         quiet =TRUE,
                          params=list(
-                           d=d, #data matrix that have unique colnames and geneSymbol as rownames
+                           d=raw_data,
                            gene_filter=gene_filter,
                            cell_filter=cell_filter,
                            cell_percentage=cell_percentage,
@@ -188,13 +187,14 @@ pre.MICA <- function(d=NULL, #data matrix that have unique colnames and geneSymb
                            base=base))}
 
   else{
-    #d <-as.matrix(d)
-    cells_per_gene <- rowSums(sign(d))
+    d<-raw_data;rm(raw_data)
+
+    cells_per_gene <- Matrix::rowSums(d!=0)
     nGene <- sum(cells_per_gene > 0)
     cat("# of non-zero gene:", nGene, "\n")
 
     # Count the cells with >=1 identified gene(s)
-    genes_per_cell <- colSums(sign(d))
+    genes_per_cell <- Matrix::colSums(d!=0)
     nCell <- sum(genes_per_cell > 0)
     cat("# of non-zero cell:", nCell, "\n")
 
@@ -211,8 +211,8 @@ pre.MICA <- function(d=NULL, #data matrix that have unique colnames and geneSymb
     if(length(mito.genes)==0) Mito_filter=FALSE
     if(length(spikeIn.genes)==0) ERCC_filter=FALSE
 
-    pd <- data.frame(nUMI.total = colSums(d),
-                     nGene = colSums(sign(d)),  #need adjustment!
+    pd <- data.frame(nUMI.total = Matrix::colSums(d),
+                     nGene = Matrix::colSums(sign(d)),  #need adjustment!
                      percent.mito = round(Matrix::colSums(d.tmp[mito.genes, ]) / Matrix::colSums(d.tmp),8),
                      percent.spikeIn = round(Matrix::colSums(d.tmp[spikeIn.genes, ]) / Matrix::colSums(d.tmp),8),
                      sampleID=sampleID,
@@ -323,7 +323,7 @@ pre.MICA <- function(d=NULL, #data matrix that have unique colnames and geneSymb
 
     # Normalization and log2 transformation
     # CPM 100k
-    cellSum <- colSums(data)
+    cellSum <- Matrix::colSums(data)
     if(!is.null(norm)) {
       data <- sweep(data, 2, norm/unname(pd$nUMI.total), '*');
       cat("Data was normalized!","\n")}

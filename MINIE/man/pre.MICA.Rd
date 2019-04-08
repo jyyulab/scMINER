@@ -4,14 +4,15 @@
 \alias{pre.MICA}
 \title{pre.MICA}
 \usage{
-pre.MICA(d = NULL, projectName = "SAMPLE", sampleID = "SAMPLE",
-  output_rmd = TRUE, plot.dir = ".", gene_filter = TRUE,
-  cell_filter = TRUE, cell_percentage = 0.005, ERCC_filter = TRUE,
-  Mito_filter = TRUE, nGene_filter = TRUE, nUMI_filter = "both",
-  plotting = TRUE, norm = 1e+07, logTransform = TRUE, base = NULL)
+pre.MICA(raw_data = NULL, projectName = "SAMPLE",
+  sampleID = "SAMPLE", output_rmd = TRUE, plot.dir = ".",
+  gene_filter = TRUE, cell_filter = TRUE, cell_percentage = 0.005,
+  ERCC_filter = TRUE, Mito_filter = TRUE, nGene_filter = TRUE,
+  nUMI_filter = "both", plotting = TRUE, norm = 1e+07,
+  logTransform = TRUE, base = NULL)
 }
 \arguments{
-\item{d}{input matrix}
+\item{raw_data}{input matrix}
 
 \item{projectName}{project name used for Rmarkdown report title}
 

@@ -4,52 +4,46 @@ date: '`r strftime(Sys.time(), format = "%B %d, %Y")`'
 output: html_document
 params:
     d:
-        value: x
-    file:
-        value: x
-    gene_filter:
-        value: x
-    cell_filter:
-        value: x
-    cell_percentage:
-        value: x
-    ERCC_filter:
-        value: x
-    Mito_filter:
-        value: x
-    nGene_filter:
-        value: x
-    nUMI_filter:
-        value: x
-    plotting:
-        value: x
-    plot.dir:
-        value: x
-    norm:
-        value: x
-    sampleID:
-        value: x
+      value: x,
+    gene_filter: 
+      value: x,
+    cell_filter: 
+      value: x,
+    cell_percentage: 
+      value: x,
+    ERCC_filter: 
+      value: x,
+    Mito_filter: 
+      value: x,
+    nGene_filter: 
+      value: x,
+    nUMI_filter: 
+      value: x,
+    plot.dir: 
+      value: x,
+    norm: 
+      value: x,
+    sampleID: 
+      value: x,
     logTransform:
-        value: x
-    base:
-        value: x
+      value: x,
+    base: 
+      value: x
 
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
 ```
 
 
-```{r Get_sample_info, echo=FALSE}
+```{r Get_sample_info, echo=TRUE}
 
+d<-params$d
 #calculate basic stastistics
-d <-as.matrix(params$d)
-
-cells_per_gene <- rowSums(sign(d))
+cells_per_gene <- Matrix::rowSums(d!=0)
 nGene <- sum(cells_per_gene > 0) # none zero genes
-genes_per_cell <- colSums(sign(d))
+genes_per_cell <- Matrix::colSums(d!=0)
 nCell <- sum(genes_per_cell > 0) #none zero cells
 
 sample_info_c1 <- c("Sample ID", "Output Directory", "Raw Genes", "Non-zero genes", "Raw Cells")
@@ -132,8 +126,8 @@ spikeIn.genes <- grep(pattern = "^ERCC-|^Ercc", x = rownames(d.tmp), value = TRU
 if(length(mito.genes)==0) Mito_filter<-FALSE else Mito_filter<-params$Mito_filter
 if(length(spikeIn.genes)==0) ERCC_filter<-FALSE else ERCC_filter<-params$ERCC_filter
 
-pd <- data.frame(nUMI.total = colSums(d),
-                   nGene = colSums(sign(d)),  #need adjustment!
+pd <- data.frame(nUMI.total = Matrix::colSums(d),
+                   nGene = Matrix::colSums((d)),  #need adjustment!
                    percent.mito = round(Matrix::colSums(d.tmp[mito.genes, ]) / Matrix::colSums(d.tmp),8),
                    percent.spikeIn = round(Matrix::colSums(d.tmp[spikeIn.genes, ]) / Matrix::colSums(d.tmp),8),
                    sampleID=params$sampleID,
@@ -306,9 +300,9 @@ qc_table %>% kable("html") %>%
 
 ```{r normalization_log2transformation, echo=FALSE}
 
-cellSum <- colSums(data)
+cellSum <- Matrix::colSums(data)
   if(!is.null(params$norm)) {
-    data <- sweep(data, 2, params$norm/unname(pd$nUMI.total), '*');
+    data <- sweep(data, 2, (params$norm)/unname(pd$nUMI.total), '*');
     cat("Data was normalized!","\n")}
 
   # log transformation

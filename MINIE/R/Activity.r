@@ -33,7 +33,6 @@
 #' @export
 GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
 							   SJARACNe_input_eset=NA,
-
 							   group_tag=NA,
 							   activity.method="unweighted",
 							   activity.norm=TRUE,
