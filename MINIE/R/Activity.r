@@ -33,10 +33,12 @@
 #' @export
 GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
 							   SJARACNe_input_eset=NA,
+
 							   group_tag=NA,
 							   activity.method="unweighted",
 							   activity.norm=TRUE,
 							   save_network_file=FALSE,
+							   functype=NULL,
 							   save_path=NA)
 {
   eset<-SJARACNe_input_eset;
@@ -51,7 +53,11 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
 
 	if(length(output.files)==0) stop ("Please check your SJARACNe output path!",'\n')
 
-	net.names<-gsub(SJARACNe_output_path,"",output.files)
+	if(!is.null(functype)) {
+    if (!functype%in%c("tf","sig")) stop("Only accept functype %in% c('tf','sig')","\n")
+    else output.files<-output.files[grep(paste0("/",functype,"/"),output.files)]}
+
+  net.names<-gsub(SJARACNe_output_path,"",output.files)
 	net.names<-gsub("\\_.*","",net.names);
 	net.names<-gsub("[/]","",net.names)
 	celltypes<-unique(net.names)

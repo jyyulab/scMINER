@@ -7,7 +7,7 @@
 GetActivityFromSJARACNe(SJARACNe_output_path = NA,
   SJARACNe_input_eset = NA, group_tag = NA,
   activity.method = "unweighted", activity.norm = TRUE,
-  save_network_file = FALSE, save_path = NA)
+  save_network_file = FALSE, functype = NULL, save_path = NA)
 }
 \arguments{
 \item{SJARACNe_output_path}{Path to SJARACNe output folder(s)}
