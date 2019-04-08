@@ -188,7 +188,7 @@ pre.MICA <- function(d=NULL, #data matrix that have unique colnames and geneSymb
                            base=base))}
 
   else{
-    d <-as.matrix(d)
+    #d <-as.matrix(d)
     cells_per_gene <- rowSums(sign(d))
     nGene <- sum(cells_per_gene > 0)
     cat("# of non-zero gene:", nGene, "\n")
