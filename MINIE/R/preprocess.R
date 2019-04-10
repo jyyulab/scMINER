@@ -174,6 +174,7 @@ pre.MICA <- function(raw_data=NULL, #data matrix that have unique colnames and g
                          params=list(
                            d=raw_data,
                            gene_filter=gene_filter,
+                           projectName=projectName,
                            cell_filter=cell_filter,
                            cell_percentage=cell_percentage,
                            ERCC_filter=ERCC_filter,
@@ -184,7 +185,11 @@ pre.MICA <- function(raw_data=NULL, #data matrix that have unique colnames and g
                            norm=norm,
                            sampleID=sampleID,
                            logTransform=logTransform,
-                           base=base))}
+                           base=base))
+
+    cat("Running QC...","\n",
+        "After QC expression matrix dimention: ", dim(data),"\n")
+     }
 
   else{
     d<-raw_data;rm(raw_data)

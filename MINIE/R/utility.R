@@ -52,7 +52,7 @@ readMICAoutput<-function(input_file, output_file,load_clust_label=TRUE){
 #' @export
 generateMICAinput <- function(d,filename){
 
-  mica.input <- as.data.frame(t(d))
+  mica.input <- as.data.frame(as.matrix(Matrix::t(d)))
   mica.input$ID <- colnames(d)
   mica.input <- mica.input[,c("ID",rownames(d))]
 
