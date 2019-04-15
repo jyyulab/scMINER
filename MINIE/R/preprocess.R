@@ -45,7 +45,7 @@ SJARACNe_filter<-function(eset.sel,tf.ref,sig.ref,wd.src,grp.tag){
     dir.create(file.path(dir.cur,'sig'),recursive = T)
     sig.eset.sel<-subset(eset.sel,fData(eset.sel)$geneSymbol%in%sig.ref)
     dim(sig.eset.sel)
-    f.sig<-file.path(dir.cur,'sig',paste(grp.tag,"_",nrow(sig.eset.sel),"_",nlevels(factor(fData(tf.eset.sel)$geneSymbol)),"_",ns,"_sig.txt",sep=''));f.sig
+    f.sig<-file.path(dir.cur,'sig',paste(grp.tag,"_",nrow(sig.eset.sel),"_",nlevels(factor(fData(sig.eset.sels)$geneSymbol)),"_",ns,"_sig.txt",sep=''));f.sig
     cat(featureNames(sig.eset.sel),file=f.sig,sep='\n')
   }
 
