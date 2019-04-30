@@ -32,10 +32,11 @@ readMICAoutput<-function(input_file, output_file,load_clust_label=TRUE){
 
   pd<-data.frame(row.names=colnames(input),
                  cellNames=colnames(input),
-                 tSNE_1=MICA_Result[,2],
-                 tSNE_2=MICA_Result[,3],stringsAsFactors=FALSE)
+                 X=MICA_Result[,2],
+                 Y=MICA_Result[,3],stringsAsFactors=FALSE)
 
-  if(load_clust_label){pd$label <- MICA_Result$label;cat("Clustering info is under 'label' slot.","\n")}
+  if(load_clust_label){pd$label <- as.factor(MICA_Result$label);
+  cat("Clustering info is under 'label' slot.","\n")}
 
   eset<-new("ExpressionSet",phenoData= new("AnnotatedDataFrame",pd),
             featureData=new("AnnotatedDataFrame",fd), annotation="",exprs=as.matrix(input))

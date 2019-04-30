@@ -12,6 +12,7 @@ MICAplot<-function(input_eset=eset,label= metaName,visualize=NULL,
   p <- ggplot(data=pData(input_eset),aes_string(x=X,y=Y,color = label))+
        geom_point(size=pct)+
        labs(title=title.name)+
+       theme_classic()+
        theme(plot.title = element_text(size = title.size, face = "bold"),
           axis.title = element_text(size = 10),
           legend.title = element_text(size = 15))+
