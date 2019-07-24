@@ -1,6 +1,6 @@
-Package: MINIE
+Package: scMINER
 Type: Package
-Title: MINIE
+Title: scMINER
 Version: 0.1.0
 Author: YuLab(St.Jude Children's Research Hospital)
 Maintainer: Chenxi Qian <chenxi.qian@stjude.org>
