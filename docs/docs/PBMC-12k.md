@@ -1,7 +1,7 @@
 ---
 layout: default
-title: PBMC(12k) scRNA-seq data
-nav_order: 4
+title: Sample Analysis with PBMC(12k) scRNA-seq data
+nav_order: 5
 ---
 
 # Analysis on PBMC(12k) scRNA-seq data via scMINER

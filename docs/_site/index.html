@@ -52,7 +52,7 @@
         
           <li class="navigation-list-item">
             
-            <a href="http://localhost:4000/docs/MICA.html" class="navigation-list-link">Run clustering with MICA</a>
+            <a href="http://localhost:4000/docs/MICA.html" class="navigation-list-link">Run MICA locally</a>
             
           </li>
         
@@ -62,7 +62,17 @@
         
           <li class="navigation-list-item">
             
-            <a href="http://localhost:4000/docs/PBMC-12k.html" class="navigation-list-link">PBMC(12k) scRNA-seq data</a>
+            <a href="http://localhost:4000/docs/MICA_LSF.html" class="navigation-list-link">Run MICA on LSF</a>
+            
+          </li>
+        
+      
+    
+      
+        
+          <li class="navigation-list-item">
+            
+            <a href="http://localhost:4000/docs/PBMC-12k.html" class="navigation-list-link">Sample Analysis with PBMC(12k) scRNA-seq data</a>
             
           </li>
         
@@ -88,7 +98,7 @@
         <div id="main-content" class="page-content" role="main">
           <p><img src="./docs/plots/scMINER_V4.png" alt="drawing" width="200" /></p>
 
-<p><strong>scMINER</strong> is a toolbox for single-cell analysis based on mutual information. This package is a combination of several individual tools including but not limit to <a href="https://github.com/jyyulab/MICA">MICA</a> and <a href="">MINIE</a>. Separate installation of each individual tools is also available on github.</p>
+<p><strong>scMINER</strong> is a toolbox for single-cell analysis based on mutual information. This package is a combination of several individual tools including but not limit to <a href="https://github.com/jyyulab/MICA">MICA</a> and <a href="https://github.com/jyyulab/SJARACNe">SJARACNe</a>. Separate installation of each individual tools is also available on github.</p>
 
 <p class="fs-6 fw-300"><a href="#getting-started" class="btn btn-primary fs-5 mb-4 mb-md-0 mr-2">Get started now</a> <a href="https://github.com/jyyulab/scMINER" class="btn fs-5">View it on GitHub</a></p>
 
@@ -100,12 +110,30 @@
 
 <h3 id="local-installation">Local installation:</h3>
 <ol>
-  <li>Install scMINER:</li>
+  <li>Install scMINER from github:</li>
 </ol>
 
 <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#install dev_tool first install.packages(devtools)</span><span class="w">
 </span><span class="n">devtools</span><span class="o">::</span><span class="n">install_github</span><span class="p">(</span><span class="s2">"jyyulab/scMINER"</span><span class="p">)</span><span class="w"> 
 </span></code></pre></div></div>
+
+<ol>
+  <li>Install <a href="https://github.com/jyyulab/MICA">MICA</a> from source:</li>
+</ol>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ git clone https://github.com/jyyulab/MICA
+$ cd MICA
+$ python setup.py install
+</code></pre></div></div>
+
+<ol>
+  <li>Install <a href="https://github.com/jyyulab/SJARACNe">SJARACNe</a> from source:</li>
+</ol>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ git clone https://github.com/jyyulab/SJARACNe
+$ cd SJARACNe
+$ python setup.py install
+</code></pre></div></div>
 
 <hr />
 

@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=Edge">
   
 
-  <title>Run MICA locally - </title>
+  <title>Run MICA on LSF - </title>
   <link rel="stylesheet" href="http://localhost:4000/assets/css/just-the-docs.css">
 
   
@@ -50,9 +50,9 @@
     
       
         
-          <li class="navigation-list-item active">
+          <li class="navigation-list-item">
             
-            <a href="http://localhost:4000/docs/MICA.html" class="navigation-list-link active">Run MICA locally</a>
+            <a href="http://localhost:4000/docs/MICA.html" class="navigation-list-link">Run MICA locally</a>
             
           </li>
         
@@ -60,9 +60,9 @@
     
       
         
-          <li class="navigation-list-item">
+          <li class="navigation-list-item active">
             
-            <a href="http://localhost:4000/docs/MICA_LSF.html" class="navigation-list-link">Run MICA on LSF</a>
+            <a href="http://localhost:4000/docs/MICA_LSF.html" class="navigation-list-link active">Run MICA on LSF</a>
             
           </li>
         
@@ -98,7 +98,7 @@
           
         
         <div id="main-content" class="page-content" role="main">
-          <h1 class="no_toc" id="clustering-analysis-with-mica-on-local-nodes">Clustering Analysis with MICA on local nodes</h1>
+          <h1 class="no_toc" id="clustering-analysis-with-mica-on-lsf">Clustering Analysis with MICA on LSF</h1>
 <p class="fs-6 fw-300">MICA(Mutual Information based Clustering Analysis) is a nonlinear clustering analysis tool designed for scRNA-seq data. To install MIE (Mutual inforamtion estimator for distance matrix generation, module required for MICA) and MICA, please refer our <a href="https://github.com/jyyulab/MIE">MIE</a> and <a href="https://github.com/jyyulab/MICA">MICA</a> github page.</p>
 
 <h2 class="no_toc text-delta" id="table-of-contents">Table of contents</h2>
@@ -128,21 +128,24 @@
 
 </span></code></pre></div></div>
 <h2 id="basic-usage">Basic usage</h2>
-<p>MICA is implemented in python, in order to run MICA troublefree, you could use function ‘generate_MICA_rmd’ in R package scMINER to generate essential command for running MICA locally:</p>
+<p>MICA is implemented in python, in order to run MICA troublefree, you could use function ‘generate_MICA_rmd’ in R package scMINER to generate essential command for running MICA on LSF via:</p>
 
 <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">generate_MICA_cmd</span><span class="o">&lt;-</span><span class="k">function</span><span class="p">(</span><span class="n">save_sh_at</span><span class="p">,</span><span class="w"> </span><span class="c1">#path to save shell script </span><span class="w">
                             </span><span class="n">input_file</span><span class="p">,</span><span class="w"> </span><span class="c1">#your MICA input file</span><span class="w">
                             </span><span class="n">project_name</span><span class="p">,</span><span class="w"> 
                             </span><span class="n">num_cluster</span><span class="p">,</span><span class="w"> </span><span class="c1">#a vector of numerical number</span><span class="w">
-                            </span><span class="n">output_path</span><span class="p">,</span><span class="w"> </span><span class="c1">#path to MICA output</span><span class="w">
-                            </span><span class="n">host</span><span class="o">=</span><span class="s2">"local"</span><span class="p">,</span><span class="w"> 
-                            </span><span class="n">visualization</span><span class="o">=</span><span class="s2">"tsne"</span><span class="w"> </span><span class="c1">#or "umap")</span><span class="w">
+                            </span><span class="n">output_path</span><span class="p">,</span><span class="w"> 
+                            </span><span class="n">host</span><span class="o">=</span><span class="s2">"lsf"</span><span class="p">,</span><span class="w"> </span><span class="c1">#or local</span><span class="w">
+                            </span><span class="n">queue</span><span class="o">=</span><span class="kc">NULL</span><span class="p">,</span><span class="w"> </span><span class="c1">#your queue to submit the job</span><span class="w">
+                            </span><span class="n">memory</span><span class="o">=</span><span class="kc">NULL</span><span class="p">,</span><span class="w"> </span><span class="c1">#specify if you use LSF</span><span class="w">
+                            </span><span class="n">dim_reduction_method</span><span class="o">=</span><span class="s2">"MDS"</span><span class="p">,</span><span class="w"> 
+                            </span><span class="n">visualization</span><span class="o">=</span><span class="s2">"tsne"</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
 <p>or, you can edit create your own shell script to run MICA like below:</p>
 
 <pre><code class="language-SHELL">#!/usr/bin/env bash
-mica local \
+mica LSF \
 -i ./test_data/inputs/PBMC_Demo_MICA_input_mini.txt \
 -p "test_local" \
 -k 3 4 \
@@ -153,13 +156,10 @@ mica local \
 
 <p>Each assigned number of k will output one folder containing following files.</p>
 
+<p><img src="./plots/pbmc_12k_k8_tsne.png" width="600" /></p>
+
 <ol>
   <li><code class="highlighter-rouge">[Project_name]_k[number]_tsne.png</code>  –visualization of clustering result (default as UMAP)</li>
-</ol>
-
-<p><img src="./plots/2_0_cwl_local_k3_tsne.png" width="600" /></p>
-
-<ol>
   <li><code class="highlighter-rouge">[Project_name]_dist.h5</code>  – h5 file containing distance matrix calculated.</li>
   <li><code class="highlighter-rouge">[Project_name]_mds.pdf</code>  – pdf file of t-SNE visualization of mds transformed distance matrix, with perplexity set to 30</li>
   <li><code class="highlighter-rouge">[Project_name]_tsne_ClusterMem.txt</code>  – txt file containing visualization coordinates and clustering labels</li>
