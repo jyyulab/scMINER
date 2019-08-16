@@ -78,6 +78,16 @@
         
       
     
+      
+        
+          <li class="navigation-list-item">
+            
+            <a href="http://localhost:4000/docs/PBMC-12k-network.html" class="navigation-list-link">Cell-type specific network analysis</a>
+            
+          </li>
+        
+      
+    
   </ul>
 </nav>
 
@@ -168,12 +178,12 @@ mica local \
 <h2 id="useful-parameters">Useful parameters</h2>
 
 <h3 id="visualize-with-u-map-or-t-sne">Visualize with U-map or t-SNE</h3>
-<p>MICA incorporate <a href="https://umap-learn.readthedocs.io/en/latest/parameters.html">UMAP</a> as default clustering visualization, with <code class="highlighter-rouge">min_dist</code> parameter set to <code class="highlighter-rouge">0.25</code>, this controls how points packed together. Low values of min_dist will result in clumpier embeddings. You can tune this parameter with :</p>
+<p>MICA incorporate <a href="https://umap-learn.readthedocs.io/en/latest/parameters.html">UMAP</a> as optional clustering visualization, with <code class="highlighter-rouge">min_dist</code> parameter set to <code class="highlighter-rouge">0.25</code>, this controls how points packed together. Low values of min_dist will result in clumpier embeddings. You can tune this parameter with :</p>
 
 <pre><code class="language-SHELL">-- min_dist 0.1 (or other number ranging from 0-1) 
 </code></pre>
 
-<p>tSNE visualization is also integrated in the pipeline, if you want to use t-SNE, just set :</p>
+<p>tSNE visualization the default visualization method in the pipeline, if you want to use t-SNE, just set :</p>
 
 <pre><code class="language-SHELL">--visualize tsne(all lower cap, no "-")
 </code></pre>

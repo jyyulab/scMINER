@@ -78,6 +78,16 @@
         
       
     
+      
+        
+          <li class="navigation-list-item">
+            
+            <a href="http://localhost:4000/docs/PBMC-12k-network.html" class="navigation-list-link">Cell-type specific network analysis</a>
+            
+          </li>
+        
+      
+    
   </ul>
 </nav>
 
@@ -113,8 +123,7 @@ Original data website can be downloaded <a href="https://support.10xgenomics.com
       <li><a href="#generate-mica-input" id="markdown-toc-generate-mica-input">Generate MICA input</a></li>
     </ol>
   </li>
-  <li><a href="#run-mica-clustering-on-hpcf" id="markdown-toc-run-mica-clustering-on-hpcf">Run MICA clustering on HPCF</a></li>
-  <li><a href="#cluster-based-network-analysis" id="markdown-toc-cluster-based-network-analysis">Cluster-based network analysis</a></li>
+  <li><a href="#run-mica-clustering" id="markdown-toc-run-mica-clustering">Run MICA clustering</a></li>
   <li><a href="#cell-type-analysis-from-mica-output" id="markdown-toc-cell-type-analysis-from-mica-output">Cell type analysis from MICA output</a>    <ol>
       <li><a href="#reading-mica-output" id="markdown-toc-reading-mica-output">Reading MICA output</a></li>
       <li><a href="#marker-gene-highlighting" id="markdown-toc-marker-gene-highlighting">Marker gene highlighting</a></li>
@@ -125,7 +134,6 @@ Original data website can be downloaded <a href="https://support.10xgenomics.com
   <li><a href="#find-cell-type-specific-master-regulator" id="markdown-toc-find-cell-type-specific-master-regulator">Find cell type specific master regulator</a>    <ol>
       <li><a href="#calculate-inferred-activity" id="markdown-toc-calculate-inferred-activity">Calculate Inferred activity</a></li>
       <li><a href="#find-differential-activity-tf" id="markdown-toc-find-differential-activity-tf">Find Differential activity TF</a></li>
-      <li><a href="#cell-type-specific-network-profiling" id="markdown-toc-cell-type-specific-network-profiling">Cell type specific network profiling</a></li>
     </ol>
   </li>
 </ol>
@@ -173,7 +181,7 @@ Original data website can be downloaded <a href="https://support.10xgenomics.com
 <p>If you set <code class="highlighter-rouge">plotting = TRUE</code>, then there will be two visualization plot generated for gene/cell quality control.
 One is the total number of cell expressed by each gene</p>
 
-<p><img src="./plots/1_1_Gene_QCmetrics_before_filtering.png" alt="" /></p>
+<p><img src="./plots/1_1_Gene_QCmetrics_before_filtering.png" alt="drawing" width="550" /></p>
 
 <p>The other plot will visualize total UMI count, total number of gene expressed, mitochondria percentage, and spike-in percentage for each cell.</p>
 
@@ -187,22 +195,10 @@ One is the total number of cell expressed by each gene</p>
 </span></code></pre></div></div>
 <p>This will output a txt file containing filtered expression matrix for MICA.</p>
 
-<h2 id="run-mica-clustering-on-hpcf">Run MICA clustering on HPCF</h2>
+<h2 id="run-mica-clustering">Run MICA clustering</h2>
 
-<p>MICA is implemented in Python now. If you would like to install MICA solely, please infer <a href="https://github.com/jyyulab/MICA">MICA github page</a>.There are several parameters for you to choose when running MICA.
+<p>MICA is implemented in Python. If you would like to install MICA solely, please infer <a href="https://github.com/jyyulab/MICA">MICA github page</a>.There are several parameters for you to choose when running MICA.
 Here we provided is an example of running MICA on high performance clusters.</p>
-
-<p>In shell terminal, for environmental set up:</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh hpc                             <span class="c"># ssh to a head node</span>
-hpcf_interactive                    <span class="c"># login an interactive node</span>
-setcbenv prod                       <span class="c"># set CompBio environment to prod</span>
-cbload phoenix                      <span class="c"># load CompBio modules</span>
-cbload util-python
-
-module load python/3.6.1            <span class="c"># load python for clustering</span>
-module load R/3.4.0                 <span class="c"># load R for visualization</span>
-</code></pre></div></div>
 
 <p>To run MICA:</p>
 
@@ -216,16 +212,6 @@ test_no_intall_LSF <span class="nt">--host</span> LSF       <span class="c"># ru
 </code></pre></div></div>
 
 <p>Default setting will give you one u-MAP visualization for each choice of k.</p>
-
-<p><img src="./plots/2_0_PBMC12K_clust_k8.png" alt="" /></p>
-
-<h2 class="d-inline-block" id="cluster-based-network-analysis">Cluster-based network analysis</h2>
-
-<p><strong>MINIE</strong> analysis was wrapped up as a R package to help bridge unsupervised clustering and gene regulatory network analysis.</p>
-
-<blockquote>
-  <p><strong><em>Note:</em></strong> Detailed information about individual functions are documented in package manual.</p>
-</blockquote>
 
 <h2 class="d-inline-block" id="cell-type-analysis-from-mica-output">Cell type analysis from MICA output</h2>
 
@@ -268,8 +254,7 @@ test_no_intall_LSF <span class="nt">--host</span> LSF       <span class="c"># ru
 
 <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ref</span><span class="o">&lt;-</span><span class="n">read.xlsx</span><span class="p">(</span><span class="s2">"Immune_signatures.xlsx"</span><span class="p">)</span><span class="w">
 </span><span class="n">head</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span><span class="w">
-</span></code></pre></div></div>
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span><span class="w">
   </span><span class="n">celltype</span><span class="w"> </span><span class="n">markers</span><span class="w"> </span><span class="n">weight</span><span class="w">
 </span><span class="m">1</span><span class="w">   </span><span class="n">NaiveT</span><span class="w">    </span><span class="n">SELL</span><span class="w">      </span><span class="m">1</span><span class="w">
 </span><span class="m">2</span><span class="w">   </span><span class="n">NaiveT</span><span class="w">    </span><span class="n">CCR7</span><span class="w">      </span><span class="m">1</span><span class="w">
@@ -277,19 +262,18 @@ test_no_intall_LSF <span class="nt">--host</span> LSF       <span class="c"># ru
 </span><span class="m">4</span><span class="w">     </span><span class="n">Tmem</span><span class="w">    </span><span class="n">CD27</span><span class="w">      </span><span class="m">1</span><span class="w">
 </span><span class="m">5</span><span class="w">     </span><span class="n">Tmem</span><span class="w">    </span><span class="n">IL32</span><span class="w">      </span><span class="m">1</span><span class="w">
 </span><span class="m">6</span><span class="w">     </span><span class="n">Tmem</span><span class="w">    </span><span class="n">GZMA</span><span class="w">     </span><span class="m">-1</span><span class="w">
+
+</span><span class="n">p</span><span class="o">&lt;-</span><span class="n">AssignCellTypes.bbp</span><span class="p">(</span><span class="n">ref</span><span class="o">=</span><span class="n">ref</span><span class="p">,</span><span class="n">eset</span><span class="o">=</span><span class="n">eset.12k</span><span class="p">)</span><span class="w">
+
 </span></code></pre></div></div>
+<p><img src="./plots/3_4_MICA_cluster_score.png" alt="" /></p>
 
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">p</span><span class="o">&lt;-</span><span class="n">AssignCellTypes.bbp</span><span class="p">(</span><span class="n">ref</span><span class="o">=</span><span class="n">ref</span><span class="p">,</span><span class="n">eset</span><span class="o">=</span><span class="n">eset.12k</span><span class="p">)</span><span class="w">
+<p>We recommend assign your celltype as factors in your expression set.</p>
 
-
-</span><span class="c1"># Manually assign your cell type label</span><span class="w">
-</span><span class="c1"># We recommend assign your celltype as factors in your expression set</span><span class="w">
-</span><span class="n">indx</span><span class="o">&lt;-</span><span class="n">factor</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"NaiveT"</span><span class="p">,</span><span class="s2">"Tmem"</span><span class="p">,</span><span class="s2">"CD8em"</span><span class="p">,</span><span class="s2">"CD8eff"</span><span class="p">,</span><span class="s2">"NK"</span><span class="p">,</span><span class="s2">"Bcell"</span><span class="p">,</span><span class="s2">"DC"</span><span class="p">,</span><span class="s2">"Mo"</span><span class="p">),</span><span class="w">
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">indx</span><span class="o">&lt;-</span><span class="n">factor</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"NaiveT"</span><span class="p">,</span><span class="s2">"Tmem"</span><span class="p">,</span><span class="s2">"CD8em"</span><span class="p">,</span><span class="s2">"CD8eff"</span><span class="p">,</span><span class="s2">"NK"</span><span class="p">,</span><span class="s2">"Bcell"</span><span class="p">,</span><span class="s2">"DC"</span><span class="p">,</span><span class="s2">"Mo"</span><span class="p">),</span><span class="w">
 				</span><span class="n">levels</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"NaiveT"</span><span class="p">,</span><span class="s2">"Tmem"</span><span class="p">,</span><span class="s2">"CD8em"</span><span class="p">,</span><span class="s2">"CD8eff"</span><span class="p">,</span><span class="s2">"NK"</span><span class="p">,</span><span class="s2">"Bcell"</span><span class="p">,</span><span class="s2">"DC"</span><span class="p">,</span><span class="s2">"Mo"</span><span class="p">))</span><span class="w">
 </span><span class="n">eset.12k</span><span class="o">$</span><span class="n">celltype</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">indx</span><span class="p">[</span><span class="n">eset.12k</span><span class="o">$</span><span class="n">label</span><span class="p">]</span><span class="w">
 </span></code></pre></div></div>
-
-<p><img src="./plots/3_4_MICA_cluster_score.png" alt="" /></p>
 
 <h2 id="network-generation-via-sjaracne">Network generation via SJARACNe</h2>
 
@@ -298,10 +282,9 @@ test_no_intall_LSF <span class="nt">--host</span> LSF       <span class="c"># ru
 <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">generateSJAracneInput</span><span class="p">(</span><span class="n">eset</span><span class="o">=</span><span class="n">eset.12k</span><span class="p">,</span><span class="n">tf.ref</span><span class="o">=</span><span class="n">tf.ref</span><span class="p">,</span><span class="n">wd.src</span><span class="o">=</span><span class="s2">"Sjaracne/"</span><span class="p">,</span><span class="w"> </span><span class="n">group_tag</span><span class="o">=</span><span class="s2">"celltype"</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<p><em>Warning:</em> SJARACNe has not been integrated into MINIE yet, please consult <a href="https://github.com/jyyulab/SJARACNe">here</a> for installation.</p>
+<p><em>Warning:</em> SJARACNe has not been integrated into scMINER yet, please consult <a href="https://github.com/jyyulab/SJARACNe">here</a> for installation and basic usage.</p>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-<span class="nv">indir</span><span class="o">=</span>~/PBMC12K/SJARACNE_PBMC12K/
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">indir</span><span class="o">=</span>~/PBMC12K/SJARACNE_PBMC12K/
 
 <span class="k">for </span>i <span class="k">in</span> <span class="k">$(</span><span class="nb">ls</span> <span class="nt">-d</span> <span class="k">*</span>/ | <span class="nb">cut</span> <span class="nt">-f1</span> <span class="nt">-d</span><span class="s1">'/'</span><span class="k">)</span><span class="p">;</span><span class="k">do
 </span>sjaracne <span class="k">${</span><span class="nv">i</span><span class="k">}</span> <span class="nv">$indir</span>/<span class="k">${</span><span class="nv">i</span><span class="k">}</span>/<span class="k">*</span>.exp <span class="nv">$indir</span>/<span class="k">${</span><span class="nv">i</span><span class="k">}</span>/tf/<span class="k">*</span>.txt <span class="nv">$indir</span>/<span class="k">${</span><span class="nv">i</span><span class="k">}</span>/tf/ <span class="nt">--c_threshold</span> 0.01<span class="p">;</span>
@@ -312,7 +295,7 @@ test_no_intall_LSF <span class="nt">--host</span> LSF       <span class="c"># ru
 
 <h2 id="find-cell-type-specific-master-regulator">Find cell type specific master regulator</h2>
 
-<p>Identify master regulator from content based network is the key step in MINIE to help understanding your scRNA-seq data.</p>
+<p>Identify master regulator from content based network is the key step in scMINER to help understanding your scRNA-seq data.</p>
 
 <h3 id="calculate-inferred-activity">Calculate Inferred activity</h3>
 <p>TF acitivities are calculated by integrating expression profile of their targets. Targets identified from SJARACNe of perticular TF was normalized and averaged to infer TF activity.</p>
@@ -352,18 +335,13 @@ test_no_intall_LSF <span class="nt">--host</span> LSF       <span class="c"># ru
 <p>You can also check some known master regulators as postivie control of your network analysis:</p>
 
 <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">gene_vlnplot</span><span class="p">(</span><span class="n">eset</span><span class="o">=</span><span class="n">acs.12k</span><span class="p">,</span><span class="w"> 
-					 </span><span class="n">target</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"LEF1.TF"</span><span class="p">,</span><span class="s2">"TCF7.TF"</span><span class="p">,</span><span class="s2">"BATF.TF"</span><span class="p">,</span><span class="s2">"TCF7.TF"</span><span class="p">,</span><span class="w">
-					 			</span><span class="s2">"TBX21.TF"</span><span class="p">,</span><span class="s2">"IRF8.TF"</span><span class="p">,</span><span class="s2">"SPIB.TF"</span><span class="p">,</span><span class="s2">"BATF3.TF"</span><span class="p">,</span><span class="s2">"CEBPA.TF"</span><span class="p">),</span><span class="w">
-             		 </span><span class="n">ylabel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Activity"</span><span class="p">,</span><span class="n">group_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"celltype"</span><span class="p">,</span><span class="n">drawquantiles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="n">ncol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w">
+		</span><span class="n">target</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"LEF1.TF"</span><span class="p">,</span><span class="s2">"TCF7.TF"</span><span class="p">,</span><span class="s2">"BATF.TF"</span><span class="p">,</span><span class="s2">"TCF7.TF"</span><span class="p">,</span><span class="s2">"TBX21.TF"</span><span class="p">,</span><span class="s2">"IRF8.TF"</span><span class="p">,</span><span class="s2">"SPIB.TF"</span><span class="p">,</span><span class="s2">"BATF3.TF"</span><span class="p">,</span><span class="s2">"CEBPA.TF"</span><span class="p">),</span><span class="w">
+       		</span><span class="n">ylabel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Activity"</span><span class="p">,</span><span class="n">group_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"celltype"</span><span class="p">,</span><span class="n">drawquantiles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="n">ncol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
 <p><img src="./plots/4_2_Known_MR_vlnplot.png" alt="" /></p>
 
-<h3 id="cell-type-specific-network-profiling">Cell type specific network profiling</h3>
-
-<p>rewiring 
-and 
-bubbleplot</p>
+<p>In order to conduct network analysis utilizing SJARACNe generated cell type specific networks, please infer 	<code class="highlighter-rouge">Cell-type spefic network analysis tab</code>.</p>
 
 <hr />
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## R session info

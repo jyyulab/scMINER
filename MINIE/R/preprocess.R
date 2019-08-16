@@ -100,24 +100,6 @@ generateSJARACNeInput<-function(eset,ref=NULL,funcType=NULL,wd.src,group_tag){
 }#end function
 
 
-##read data, a wrapper of conventional data reading (read.delim2) and 10x genomics data reading
-#' @export
-readscRNAseqData <- function(file,is.10x=TRUE,...){
-
-  if(is.10x){
-    data.path <- file
-    data.raw <- Matrix::readMM(file.path(data.path,"matrix.mtx"))
-    barcodes <- read.table(file.path(data.path,"barcodes.tsv"),header=FALSE,stringsAsFactors = FALSE)
-    genes <- read.table(file.path(data.path,"genes.tsv"),header=FALSE,stringsAsFactors = FALSE)
-    dimnames(data.raw)[[1]] <- genes$V2
-    dimnames(data.raw)[[2]] <- barcodes$V1
-  }
-  else{
-    data.raw <- read.delim2(file=file,...)
-  }
-  return(data.raw)
-}
-
 
 
 
@@ -142,7 +124,7 @@ readscRNAseqData <- function(file,is.10x=TRUE,...){
 #' @param base numerical, log(n+1,base=base)
 #'
 #' @export
-pre.MICA <- function(raw_data=NULL, #data matrix that have unique colnames and geneSymbol as rownames
+pre.MICA <- function(raw_data=NULL,  #data matrix that have unique colnames and geneSymbol as rownames
                      projectName="SAMPLE",
                      sampleID="SAMPLE",
                      output_rmd=TRUE,
@@ -206,7 +188,8 @@ pre.MICA <- function(raw_data=NULL, #data matrix that have unique colnames and g
     cat("# of non-zero cell:", nCell, "\n")
 
     #Compute filtering criteria for genes
-    nCell_cutoff <- floor(cell_percentage * dim(d)[2])
+    nCell_cutoff <- max(floor(cell_percentage * dim(d)[2]),1) #make sure that all 0 genes are filtered
+
     gene <- unname((which(cells_per_gene >= nCell_cutoff)))
 
     d.tmp<-d[gene,]#use index instead of gene names to avoid mis-select problem
@@ -286,7 +269,7 @@ pre.MICA <- function(raw_data=NULL, #data matrix that have unique colnames and g
       if(length(mito.genes)!=0){
         p4 <- ggplot(data=pd, aes(x=nUMI.total,y=percent.mito))+
           geom_point(na.rm=TRUE,size=0.8,alpha=0.5)+
-          labs(x="",y="",title="Percentag e of MT-gene expression VS Total UMI counts in each cell") +
+          labs(x="",y="",title="Percentage of MT-gene expression VS Total UMI counts in each cell") +
           theme(legend.position="none",plot.title=element_text(size=8))+
           geom_hline(yintercept = mito_cf, data=as.data.frame(mito_cf),
                      size=2,color="blue",alpha = 0.3)

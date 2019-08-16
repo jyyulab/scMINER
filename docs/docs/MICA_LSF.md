@@ -70,23 +70,22 @@ Each assigned number of k will output one folder containing following files.
 ## Useful parameters
 
 ### Visualize with U-map or t-SNE
-MICA incorporate [UMAP](https://umap-learn.readthedocs.io/en/latest/parameters.html) as default clustering visualization, with `min_dist` parameter set to `0.25`, this controls how points packed together. Low values of min_dist will result in clumpier embeddings. You can tune this parameter with :
+MICA incorporate [UMAP](https://umap-learn.readthedocs.io/en/latest/parameters.html) as optional clustering visualization, with `min_dist` parameter set to `0.25`, this controls how points packed together. Low values of min_dist will result in clumpier embeddings. You can tune this parameter with :
 
 ```SHELL
 -- min_dist 0.1 (or other number ranging from 0-1) 
 ```
 
-tSNE visualization is also integrated in the pipeline, if you want to use t-SNE, just set :
+tSNE visualization is our default visualization method in the pipeline, if you want to use t-SNE, just set :
 
 ```SHELL
---visualize tsne(all lower cap, no "-")
+--visualize tsne (all lower cap, no "-")
 ```
 and you can also set parameter (perplexity) for tsne using
 
 ```SHELL
 --perplexity 20 (or any other integers larger than 5)
 ```
-
 
 ### Try other dimension reduction methods
 MICA also incorporated other dimension reduction methods such as pca or lpl, 

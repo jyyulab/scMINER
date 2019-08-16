@@ -22,8 +22,6 @@ Original data website can be downloaded [here](https://support.10xgenomics.com/s
 scMINER is based on python and R, with a single R package glued all essential functions together.
 
 
-
-
 ## scRNA-seq data preprocessing
 This can be done by any scRNA-seq preprocessing pipeline. We encourage user to feed in all genes from your data for MICA, instead of highly variable genes only. Here, in order to stick to the focus, we only demonstrate a quick function to conduct gene/cell filtering, without any data exploratory visualization.
 
@@ -66,8 +64,7 @@ d <- pre.MICA (data.input=d.12k, #data matrix that have unique colnames and gene
 If you set `plotting = TRUE`, then there will be two visualization plot generated for gene/cell quality control.
 One is the total number of cell expressed by each gene
 
-![](./plots/1_1_Gene_QCmetrics_before_filtering.png)
-
+<img src="./plots/1_1_Gene_QCmetrics_before_filtering.png" alt="drawing" width="550"/>
 
 The other plot will visualize total UMI count, total number of gene expressed, mitochondria percentage, and spike-in percentage for each cell.
 
@@ -83,23 +80,11 @@ generateMICAinput(data=d,filename="PBMC12k_MICA_input.txt")
 This will output a txt file containing filtered expression matrix for MICA.
 
 
-## Run MICA clustering on HPCF
+## Run MICA clustering 
 
-MICA is implemented in Python now. If you would like to install MICA solely, please infer [MICA github page](https://github.com/jyyulab/MICA).There are several parameters for you to choose when running MICA.
+MICA is implemented in Python. If you would like to install MICA solely, please infer [MICA github page](https://github.com/jyyulab/MICA).There are several parameters for you to choose when running MICA.
 Here we provided is an example of running MICA on high performance clusters.
 
-In shell terminal, for environmental set up:
-
-```shell 
-ssh hpc                             # ssh to a head node
-hpcf_interactive                    # login an interactive node
-setcbenv prod                       # set CompBio environment to prod
-cbload phoenix                      # load CompBio modules
-cbload util-python
-
-module load python/3.6.1            # load python for clustering
-module load R/3.4.0                 # load R for visualization
-```
 
 To run MICA:  
 
@@ -115,19 +100,6 @@ test_no_intall_LSF --host LSF       # run MIE
 
 Default setting will give you one u-MAP visualization for each choice of k.
 
-
-
-![](./plots/2_0_PBMC12K_clust_k8.png)
-
-
-
-
-## Cluster-based network analysis
-{: .d-inline-block :}
-
-**MINIE** analysis was wrapped up as a R package to help bridge unsupervised clustering and gene regulatory network analysis.  
-
-> **_Note:_** Detailed information about individual functions are documented in package manual.
 
 
 ## Cell type analysis from MICA output
@@ -177,6 +149,7 @@ gene_heatmap(eset = eset.demo,target = gn.sel,group_tag = "label",
 ![](./plots/3_3_Marker_heatmaps.png)
 
 
+
 ### Assign cell type to cluster
 {: no_toc }
 
@@ -185,8 +158,6 @@ Here we curated a reference signature list of 8 immune cell types(link) for cell
 ```R
 ref<-read.xlsx("Immune_signatures.xlsx")
 head(ref)
-```
-```R
 > head(ref)
   celltype markers weight
 1   NaiveT    SELL      1
@@ -195,20 +166,21 @@ head(ref)
 4     Tmem    CD27      1
 5     Tmem    IL32      1
 6     Tmem    GZMA     -1
-```
 
-```R
 p<-AssignCellTypes.bbp(ref=ref,eset=eset.12k)
 
+```
+![](./plots/3_4_MICA_cluster_score.png)
 
-# Manually assign your cell type label
-# We recommend assign your celltype as factors in your expression set
+We recommend assign your celltype as factors in your expression set.
+
+```R
 indx<-factor(x=c("NaiveT","Tmem","CD8em","CD8eff","NK","Bcell","DC","Mo"),
 				levels=c("NaiveT","Tmem","CD8em","CD8eff","NK","Bcell","DC","Mo"))
 eset.12k$celltype <- indx[eset.12k$label]
 ```
 
-![](./plots/3_4_MICA_cluster_score.png)
+
 
 ## Network generation via SJARACNe
 {: no_toc }
@@ -219,10 +191,10 @@ In order to generate cell type/group/cluster specific network, group information
 generateSJAracneInput(eset=eset.12k,tf.ref=tf.ref,wd.src="Sjaracne/", group_tag="celltype")
 ```
 
-_Warning:_ SJARACNe has not been integrated into MINIE yet, please consult [here](https://github.com/jyyulab/SJARACNe) for installation.
+_Warning:_ SJARACNe has not been integrated into scMINER yet, please consult [here](https://github.com/jyyulab/SJARACNe) for installation and basic usage.
+
 
 ```shell
-
 indir=~/PBMC12K/SJARACNE_PBMC12K/
 
 for i in $(ls -d */ | cut -f1 -d'/');do
@@ -236,7 +208,7 @@ done
 ## Find cell type specific master regulator 
 {: no_toc }
 
-Identify master regulator from content based network is the key step in MINIE to help understanding your scRNA-seq data.  
+Identify master regulator from content based network is the key step in scMINER to help understanding your scRNA-seq data.  
 
 
 ### Calculate Inferred activity
@@ -286,24 +258,14 @@ You can also check some known master regulators as postivie control of your netw
 
 ```R
 p <- gene_vlnplot(eset=acs.12k, 
-					 target=c("LEF1.TF","TCF7.TF","BATF.TF","TCF7.TF",
-					 			"TBX21.TF","IRF8.TF","SPIB.TF","BATF3.TF","CEBPA.TF"),
-             		 ylabel = "Activity",group_tag = "celltype",drawquantiles = FALSE, ncol = 2)
+		target=c("LEF1.TF","TCF7.TF","BATF.TF","TCF7.TF","TBX21.TF","IRF8.TF","SPIB.TF","BATF3.TF","CEBPA.TF"),
+       		ylabel = "Activity",group_tag = "celltype",drawquantiles = FALSE, ncol = 2)
 ```
 
 
 ![](./plots/4_2_Known_MR_vlnplot.png)
 
-
-### Cell type specific network profiling
-
-
-rewiring 
-and 
-bubbleplot
-
-
-
+In order to conduct network analysis utilizing SJARACNe generated cell type specific networks, please infer 	`Cell-type spefic network analysis tab`.
 
 ---
 ```

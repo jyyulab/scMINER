@@ -7,10 +7,10 @@
 generateMICAinput(d, filename)
 }
 \arguments{
-\item{d}{matrix with colnames as cell info, rownames as gene info}
+\item{d}{matrix with colnames as cell/sample info, rownames as gene/feature info}
 
 \item{filename}{filename of your MICA input file, supported format: txt}
 }
 \description{
-function to generate MICA input from pre.MICA output
+This function helps generate MICA input from a data matrix with rownames and colnames
 }
