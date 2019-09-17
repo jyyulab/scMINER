@@ -62,10 +62,9 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
 	celltypes<-unique(net.names)
 
   #initialize actiivty list
-	acs_master<-data.frame(geneSymbol=NA,stringsAsFactors=FALSE)
-	deg_master<-data.frame(geneSymbol=NA,stringsAsFactors=FALSE)
+	acs_master<-data.frame(ID=NA,stringsAsFactors=FALSE)
+	deg_master<-data.frame(ID=NA,stringsAsFactors=FALSE)
 
-	eset<-SJARACNe_input_eset
 
 	for( i in 1:length(celltypes)){
 
@@ -111,14 +110,14 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
  	  #update full gene list
  	  acs.ID <- sapply(strsplit(rownames(acs),"_"),"[",1)
 
-	  acs.deg <- data.frame(geneSymbol=acs.ID,
+	  acs.deg <- data.frame(ID=acs.ID,
 	  						Degree=as.numeric(sapply(strsplit(rownames(acs),"_"),"[",2)),
 	  						stringsAsFactors=FALSE)
 
   	  acs.tmp <- acs; rownames(acs.tmp)<-acs.ID
 
-  	  acs_master<-merge(acs_master,acs.tmp,by.x="geneSymbol",by.y="row.names",all=TRUE)
-  	  deg_master<-merge(deg_master,acs.deg,by="geneSymbol",all=TRUE)
+  	  acs_master<-merge(acs_master,acs.tmp,by.x="ID",by.y="row.names",all=TRUE)
+  	  deg_master<-merge(deg_master,acs.deg,by="ID",all=TRUE)
 
   	  colnames(deg_master)[i+1]<-paste0("degree_",net)
 
@@ -131,15 +130,19 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
 	}#end for
 
 	# generate acs expression set
-	deg_master<-filter(deg_master,!is.na(geneSymbol))
-	fd <- data.frame(row.names=deg_master$geneSymbol,
-	                 geneSymbol=sapply(strsplit(deg_master$geneSymbol,"\\."),"[",1),
-	                 FuncType=sapply(strsplit(deg_master$geneSymbol,"\\."),"[",2),
+	deg_master<-filter(deg_master,!is.na(ID))
+	fd <- data.frame(ID=deg_master$ID,
+	                 fn=sapply(strsplit(deg_master$ID,"\\."),"[",1),
+	                 FuncType=sapply(strsplit(deg_master$ID,"\\."),"[",2),
 	                 deg_master[,-1],stringsAsFactors = FALSE)
-	pd <- pData(eset)
+	
+  fd <-merge(fd,fData(eset),by.x="fn",by.y="row.names") 
+  rownames(fd)<-fd$ID
+
+  pd <- pData(eset)
 
 	acs.mtx <- as.matrix(acs_master[,-1])
-	rownames(acs.mtx)<- acs_master$geneSymbol
+	rownames(acs.mtx)<- acs_master$ID
 
 	acs.mtx<-acs.mtx[,rownames(pd)]
   acs.mtx<-acs.mtx[-which(is.na(rownames(acs.mtx))),]
@@ -220,12 +223,11 @@ get_activity<-function(Net,eset,tag,exp.match=NULL, match.method=NULL,
     }
 
     #update the overlap between NetBID based geneset and real expression data
-    if(is.null(eset@featureData@data$geneSymbol))stop("Please check your geneSymbol!")
-
-    else{
-      eset.sel<-eset[eset@featureData@data$geneSymbol%in%gsc[[i]],]
-      gsc[[i]]<-featureNames(eset.sel)
-    }
+    if(length(intersect(featureNames(eset),gsc[[i]]))==0) stop("Please check your featureNames!")
+      else{
+        eset.sel<-eset[featureNames(eset)%in%gsc[[i]],]
+        gsc[[i]]<-featureNames(eset.sel)
+      }
 
     #n=degree
     n<-length(gsc[[i]])
@@ -237,8 +239,10 @@ get_activity<-function(Net,eset,tag,exp.match=NULL, match.method=NULL,
 
       else if (activity.method == 'weighted' && is.null(exp.match)){
 
-        fd.sel<-data.frame(fn=featureNames(eset.sel),geneSymbol=fData(eset.sel)$geneSymbol,stringsAsFactors=FALSE)
-        tmp<-merge(fd.sel,tmp,by.x="geneSymbol",by.y="target",sort = FALSE)
+        fd.sel<-data.frame(fn=featureNames(eset.sel),
+                           geneSymbol=fData(eset.sel)$geneSymbol,
+                           stringsAsFactors=FALSE)
+        tmp<-merge(fd.sel,tmp,by.x="fn",by.y="target",sort = FALSE)
 
         #if(!all(rownames(exp[gsc[[i]],])==fd.sel$fn)) stop("MI is not coordinate with Feature names! \n")
 

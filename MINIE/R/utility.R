@@ -6,19 +6,21 @@ readscRNAseqData <- function(file,is.10x=TRUE,...){
     data.path <- file
     data.raw <- Matrix::readMM(file.path(data.path,"matrix.mtx"))
 
-
     barcodes <- read.table(file.path(data.path,"barcodes.tsv"),header=FALSE,stringsAsFactors = FALSE)
-    
+
     if(file.exists(file.path(data.path,"genes.tsv"))){
       genes <- read.table(file.path(data.path,"genes.tsv"),header=FALSE,stringsAsFactors = FALSE)
       colnames(genes)<-c("ensembl","geneSymbol")
+      rownames(genes)<-genes[,1]
     }else if(file.exists(file.path(data.path, "feature.tsv"))){
       genes <- read.table(file.path(data.path, "feature.tsv"),header=FALSE,stringsAsFactors=FALSE)
       colnames(genes)<-c("ensembl","geneSymbol","biotype")
+      rownames(genes)<-genes[,1]
     }
 
-    dimnames(data.raw)[[1]] <- genes$V1
-    dimnames(data.raw)[[2]] <- barcodes$V1
+
+    dimnames(data.raw)[[1]] <- genes[,1]
+    dimnames(data.raw)[[2]] <- barcodes[,1]
 
     d=list(raw.data=data.raw,
            meta.data=barcodes,
@@ -35,48 +37,76 @@ readscRNAseqData <- function(file,is.10x=TRUE,...){
 
 #' @title readMICAoutput
 #' @description Read MICA input and output to create an expressionSet for downstream analysis
-#' @param input_file input txt file for MICA pipeline
+#' @param Obj a list object output from pre.MICA.QC()
+#' @param input_file optional if Obj isn't NULL, input txt file for MICA pipeline
 #' @param output_file output ggplot.txt file from MICA pipeline
 #' @param load_clust_label logical, if TRUE, clustering results will be store at pData(eset)$label
+#' @param generate_eset logical, if TRUE, return a eset obj
 #' @return An expressionSet
 #' @export
-readMICAoutput<-function(input_file, output_file,load_clust_label=TRUE){
-
-  cat("Reading Input...","\n")
-  d <- read.table(input_file,header = FALSE,
-                  stringsAsFactors = FALSE,
-                  quote = "",
-                  check.names = FALSE)
+readMICAoutput<-function(input_file, Obj=NULL, output_file,load_clust_label=TRUE, generate_eset=TRUE){
 
   res <- read.table( output_file, # MICA output text file
                              header = TRUE,
                              stringsAsFactors = FALSE)
 
-  gn<-unname(unlist(d[1,-1]))
-  input<-t(d[-1,-1]);colnames(input)<-d$V1[-1]
-  class(input)<-"numeric"
+  if(!is.null(Obj)){
 
-  if(length(which(duplicated(gn)))!=0){
-    cat("Colnames has duplicates, assigned new rownames. Gene symbols stored in fData.","\n")
+    if(dim(Obj$meta.data)[1]!=dim(res)[1]) stop("Output file doesnt match with input list object.","\n")
+    fd = Obj$feature.data
+    pd = Obj$meta.data
+    pd$X=res[,2]
+    pd$Y=res[,3]
+    pd$cellNames=res[,1]
+    input<-Obj$data
+
   }else{
-    rownames(input)<-gn;
-    cat("Gene Symbol as rownames.","\n")}
 
-  fd<-data.frame(row.names=rownames(input),
-                 geneSymbol=gn,stringsAsFactors = FALSE)
+    cat("Reading Input...","\n")
+    d <- read.table(input_file,header = FALSE,
+                  stringsAsFactors = FALSE,
+                  quote = "",
+                  check.names = FALSE)
 
-  pd<-data.frame(row.names=colnames(input),
+    gn<-unname(unlist(d[1,-1]))
+    input<-t(d[-1,-1]);colnames(input)<-d$V1[-1]
+    class(input)<-"numeric"
+
+    if(length(which(duplicated(gn)))!=0){
+
+      cat("Colnames has duplicates, assigned new rownames.
+        GeneSymbols will be stored in fData.","\n")
+
+    }else{
+      rownames(input)<-gn;
+      cat("Gene Symbol as rownames.","\n")}
+
+    fd<-data.frame(row.names=rownames(input),
+                  geneSymbol=gn,stringsAsFactors = FALSE)
+
+    pd<-data.frame(row.names=colnames(input),
                  cellNames=colnames(input),
                  X=res[,2],
                  Y=res[,3],stringsAsFactors=FALSE)
+  }
 
   if(load_clust_label){pd$label <- as.factor(res$label);
   cat("Clustering info is under 'label' slot.","\n")}
 
-  eset<-new("ExpressionSet",phenoData= new("AnnotatedDataFrame",pd),
+  if (generate_eset) {
+    eset<-new("ExpressionSet",phenoData= new("AnnotatedDataFrame",pd),
             featureData=new("AnnotatedDataFrame",fd), annotation="",exprs=as.matrix(input))
-  cat("ExpressionSet Generated!","\n")
-  return(eset)
+    cat("ExpressionSet Generated!","\n")
+    return(eset)
+    }else{
+      if(!is.null(Obj)) Obj$meta.data<-pd
+      else {
+        Obj=list(data=input,
+                 feautre.data=fd,
+                 meta.data=pd)
+        return(Obj)
+      }
+  }
 }
 
 
@@ -108,7 +138,6 @@ generateMICAinput <- function(d,filename){
 #' Generate MICA command script for job submission on local or LSF
 #' @description Generate command for running MICA locally or on LSF.
 #' MICA is a high-performance clustering analysis method that was implemented in python and cwl.
-#' @usage
 #' @param save_sh_at character, path to save your MICA command file
 #' @param input_file character, path to actual input file for MICA, usually use \code{generateMICAinput} to generete file with desired format.
 #' @param project_name character, name of your project, will be used for naming of output data
@@ -129,7 +158,7 @@ generateMICAinput <- function(d,filename){
 #' @return A .sh script with runnable command for MICA execution
 #' @examples
 #' \dontrun{
-#' generate_MICA_cmd<-function("./cmd", #path to save shell script
+#' generateMICAcmd<-function("./cmd", #path to save shell script
 #'                             "MICA_input.txt", #your MICA input file
 #'                             "test",
 #'                             c(3,4,5), #a vector of numerical number
@@ -141,7 +170,7 @@ generateMICAinput <- function(d,filename){
 #'                             visualization="tsne")
 #'}
 #' @export
-generate_MICA_cmd<-function(save_sh_at,
+generateMICAcmd<-function(save_sh_at,
                             input_file,
                             project_name,
                             num_cluster,
@@ -169,11 +198,11 @@ generate_MICA_cmd<-function(save_sh_at,
 
   if (tolower(host)=="lsf"){
     project<-ifelse(is.null(project_name),'',paste('#BSUB -P ',project_name,' \n'))
-    queue<-ifelse(is.null(queue),'',paste('#BSUB -q ', queue,' \n'))
-    
+    queue.bash<-ifelse(is.null(queue),'',paste('#BSUB -q ', queue,' \n'))
+
     job<-ifelse(is.null(project_name),
           '#BSUB -J MICA',
-          paste('#BSUB -J ','MICA_',project_name,',\n'))
+          paste0('#BSUB -J ','MICA_',project_name,'\n'))
 
     sh.scminer<-paste0(
       '#!/bin/env bash\n',
@@ -182,10 +211,10 @@ generate_MICA_cmd<-function(save_sh_at,
       '#BSUB -oo ',project_name,'.sh.out \n',
       '#BSUB -eo ',project_name,'.sh.err \n',
       '#BSUB -R \"rusage[mem=2000]\" \n',
-      queue,
+      queue.bash,
       "mica lsf ",
-      ifelse(is.null(memory),"",paste0("-r ",paste0(memory, collapse = ""), " ")))
-      ifelse(is.null(queue),"",paste0("-q ", queue, " "))
+      ifelse(is.null(memory),"",paste0("-r ",paste0(memory, collapse = ""), " ")),
+      ifelse(is.null(queue),"",paste0("-q ", queue, " ")))
   } else if (tolower(host)=="local") {
     sh.scminer<-paste0(
       '#!/bin/env bash\n' ,
@@ -229,15 +258,22 @@ generate_MICA_cmd<-function(save_sh_at,
 #' @return A ggplot object
 #'
 #' @export
-AssignCellTypes.bbp<-function(ref = NULL,eset = eset.demo,
+AssignCellTypes.bbp<-function(ref = NULL,eset = eset.demo,feature='geneSymbol',
                               save_plot = FALSE,
                               width=8, height=5,
                               plot_name="AnnotationBubbleplot.png"){
 
   #exp<-apply(exprs(eset),2,std)
   #filter reference marker sets
-  exp<-exprs(eset)
-  ref<-filter(ref,markers%in%rownames(exp))
+
+  if (!feature%in%colnames(fData(eset))) stop('Please check your feature!')
+
+  ref<-filter(ref,markers%in%fData(eset)[,feature])
+  indx<-which(fData(eset)[,feature]%in%ref$markers)
+
+  exp<-exprs(eset[indx,])
+  rownames(exp)<-fData(eset)[,feature][indx]
+
   celltypes<-unique(ref$celltype)
 
   ac<-matrix(NA,nrow=ncol(exp),ncol=length(celltypes),dimnames = list(colnames(exp),celltypes))

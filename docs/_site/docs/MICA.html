@@ -180,32 +180,31 @@ mica local \
 <h3 id="visualize-with-u-map-or-t-sne">Visualize with U-map or t-SNE</h3>
 <p>MICA incorporate <a href="https://umap-learn.readthedocs.io/en/latest/parameters.html">UMAP</a> as optional clustering visualization, with <code class="highlighter-rouge">min_dist</code> parameter set to <code class="highlighter-rouge">0.25</code>, this controls how points packed together. Low values of min_dist will result in clumpier embeddings. You can tune this parameter with :</p>
 
-<pre><code class="language-SHELL">-- min_dist 0.1 (or other number ranging from 0-1) 
+<pre><code class="language-SHELL">--min_dist 0.1 (or other number ranging from 0-1) 
 </code></pre>
 
-<p>tSNE visualization the default visualization method in the pipeline, if you want to use t-SNE, just set :</p>
+<p>tSNE visualization is our default visualization method in the pipeline, if you want to use t-SNE, just set :</p>
 
-<pre><code class="language-SHELL">--visualize tsne(all lower cap, no "-")
+<pre><code class="language-SHELL">--visualization tsne (all lower cap, no "-")
 </code></pre>
 <p>and you can also set parameter (perplexity) for tsne using</p>
 
-<pre><code class="language-SHELL">--perplexity 20 (or any other integers larger than 5)
+<pre><code class="language-SHELL">-pp 20 (or any other integers larger than 5)
 </code></pre>
 
 <h3 id="try-other-dimension-reduction-methods">Try other dimension reduction methods</h3>
 <p>MICA also incorporated other dimension reduction methods such as pca or lpl, 
 you can use them via adding parameter:</p>
 
-<pre><code class="language-SHELL">--transformation PCA  (or: MDS | PCA | LPL | LPCA) 
+<pre><code class="language-SHELL">-dr PCA  (or: MDS | PCA | LPL | LPCA) 
 </code></pre>
 
 <h3 id="try-other-distance-matrix-calculation-methods">Try other distance matrix calculation methods</h3>
 <p>MICA also incorporated other dimension reduction methods such as pca or lpl, 
 you can use them via adding parameter:</p>
 
-<pre><code class="language-SHELL">--distance MI  (or: euclidean | spearman | pearson)
+<pre><code class="language-SHELL">--dist MI  (or: euclidean | spearman | pearson)
 </code></pre>
-
 
 
           

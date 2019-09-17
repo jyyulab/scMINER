@@ -4,8 +4,9 @@
 \alias{AssignCellTypes.bbp}
 \title{AssignCellTypes.bbp}
 \usage{
-AssignCellTypes.bbp(ref = NULL, eset = eset.demo, save_plot = FALSE,
-  width = 8, height = 5, plot_name = "AnnotationBubbleplot.png")
+AssignCellTypes.bbp(ref = NULL, eset = eset.demo,
+  feature = "geneSymbol", save_plot = FALSE, width = 8, height = 5,
+  plot_name = "AnnotationBubbleplot.png")
 }
 \arguments{
 \item{ref}{reference dataframe, includes positive or negative markers for different cell types}

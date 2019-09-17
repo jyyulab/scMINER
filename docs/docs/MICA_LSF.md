@@ -32,14 +32,14 @@ d <- pre.MICA (data.input = [your_data], #data matrix that have unique colnames 
 MICA is implemented in python, in order to run MICA troublefree, you could use function 'generate_MICA_rmd' in R package scMINER to generate essential command for running MICA on LSF via:
 
 ```R
-generate_MICA_cmd<-function(save_sh_at, #path to save shell script 
+generateMICAcmd<-function(save_sh_at, #path to save shell script 
                             input_file, #your MICA input file
                             project_name, 
                             num_cluster, #a vector of numerical number
                             output_path, 
                             host="lsf", #or local
                             queue=NULL, #your queue to submit the job
-                            memory=NULL, #specify if you use LSF
+                            memory=NULL, #specify if you use LSF, a vector of 4 numerical number
                             dim_reduction_method="MDS", 
                             visualization="tsne")
 ```
@@ -73,18 +73,18 @@ Each assigned number of k will output one folder containing following files.
 MICA incorporate [UMAP](https://umap-learn.readthedocs.io/en/latest/parameters.html) as optional clustering visualization, with `min_dist` parameter set to `0.25`, this controls how points packed together. Low values of min_dist will result in clumpier embeddings. You can tune this parameter with :
 
 ```SHELL
--- min_dist 0.1 (or other number ranging from 0-1) 
+--min_dist 0.1 (or other number ranging from 0-1) 
 ```
 
 tSNE visualization is our default visualization method in the pipeline, if you want to use t-SNE, just set :
 
 ```SHELL
---visualize tsne (all lower cap, no "-")
+--visualization tsne (all lower cap, no "-")
 ```
 and you can also set parameter (perplexity) for tsne using
 
 ```SHELL
---perplexity 20 (or any other integers larger than 5)
+-pp 20 (or any other integers larger than 5)
 ```
 
 ### Try other dimension reduction methods
@@ -92,7 +92,7 @@ MICA also incorporated other dimension reduction methods such as pca or lpl,
 you can use them via adding parameter:
 
 ```SHELL
---transformation PCA  (or: MDS | PCA | LPL | LPCA) 
+-dr PCA  (or: MDS | PCA | LPL | LPCA) 
 ```
 
 ### Try other distance matrix calculation methods
@@ -100,6 +100,6 @@ MICA also incorporated other dimension reduction methods such as pca or lpl,
 you can use them via adding parameter:
 
 ```SHELL
---distance MI  (or: euclidean | spearman | pearson)
+--dist MI  (or: euclidean | spearman | pearson)
 ```
 

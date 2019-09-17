@@ -1,0 +1,261 @@
+---
+title: scRNA-seq quality control
+date: '`r strftime(Sys.time(), format = "%B %d, %Y")`'
+output: html_document
+params:
+    d:
+      value: x
+    projectName:
+      value: x
+    feature.data:
+      value: x
+    meta.data:
+      value: x
+    cell_percentage:
+      value: x
+    plot.dir: 
+      value: x
+    sampleID: 
+      value: x
+    
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r Get_sample_info, echo= FALSE}
+
+d<-params$d
+#calculate basic stastistics
+cells_per_gene <- Matrix::rowSums(d!=0)
+nGene <- sum(cells_per_gene > 0) # none zero genes
+genes_per_cell <- Matrix::colSums(d!=0)
+nCell <- sum(genes_per_cell > 0) #none zero cells
+
+if(is.null(params$feature.data)){
+  params$feature.data<-data.frame(nCells=cells_per_gene,
+                                  geneSymbol=rownames(d),
+                                  stringsAsFactors = FALSE)
+  }else feature.data$nCells<-cells_per_gene
+
+sample_info_c1 <- c("Sample ID", "Output Directory", "Raw Genes", "Non-zero genes", "Raw Cells")
+sample_info_c2 <- c(params$projectName, normalizePath(params$plot.dir), dim(d)[1], nGene, dim(d)[2])
+sample_info <- matrix(c(sample_info_c1, sample_info_c2), ncol = 2, byrow = F)
+
+# plot table
+sample_info %>% 
+  kable("html") %>% 
+  kable_styling(bootstrap_options = "striped", font_size = 14) %>% 
+  column_spec(1, bold = T) %>% column_spec(2, color = "red", bold = T)
+
+```
+
+
+### 1. Quality control on genes 
+#### 1.1 Calculate and visualize filtering criteria
+```{r Gene_qc_report, echo=FALSE}
+## 1.1.a Calculate criteria 
+nCell_cutoff <- max(floor(params$cell_percentage * dim(d)[2]), 1)
+gene <- unname((which(cells_per_gene >= nCell_cutoff)))
+
+# 1.1.b Visulize the distribution of cell counts of each gene
+p.gene.qc <- ggplot(data = data.frame(ncells = cells_per_gene), aes(log10(ncells+1))) +
+              geom_histogram(bins = 100) +
+              theme_classic()+
+              labs(x = "Log10 (Cell counts + 1)",
+                   y = "Gene counts",
+                   title = "Histogram: Number of cells expressed by each genes") +
+              theme(
+                    axis.text = element_text(size = 10),
+                    axis.title = element_text(size = 12, face = "bold"),
+                    plot.title = element_text(size = 12, face = "bold"))+
+              geom_vline(
+                xintercept = log10 (nCell_cutoff + 1),
+                data = as.data.frame(nCell_cutoff),
+                color="blue",size = 1,alpha = 0.3)
+
+ggsave(plot = p.gene.qc, filename = "1_1_Gene_QCmetrics_before_filtering.png",
+      width = 10, height = 4, units = "in", dpi = 300)
+
+```
+
+```{r, fig.width=10, fig.height=4 ,echo=FALSE} 
+p.gene.qc
+```
+
+
+#### 1.2 Generate QC report on genes
+```{r Gene_filtering, echo = FALSE}
+
+g_tbl_1 <- c(dim(d)[1], dim(d)[1]-length(gene), length(gene))
+perGene_rm <- round((g_tbl_1[2]/g_tbl_1[1] * 100), 2)
+g_tbl_2 <- c("100%", paste0(perGene_rm,"%"), paste0(100-perGene_rm,"%"))
+
+gene_table <- matrix(c(g_tbl_1, g_tbl_2), ncol = 2, byrow = F) # generate matrix
+rownames(gene_table) <- c("Total Genes", "Unqualified Genes", "Qualified Genes");
+colnames(gene_table) <- c("Number", "Percent") #rename
+
+#plot table
+gene_table %>% kable("html") %>% 
+  kable_styling(bootstrap_options = "striped", font_size = 14) %>% 
+  column_spec(2:3, bold = T, color = "Red") %>% 
+  add_footnote(paste0("Genes expressed in less than ", 
+                      (100*params$cell_percentage), "% (", 
+                      nCell_cutoff, ") cells will be removed."),  
+               notation = "number")
+
+```
+
+### 2. Quality control on cells
+
+```{r Add_metaData, echo=FALSE}
+## 2.1 Add metaData information
+# extract mito-gene and spike-in genes
+if ("geneSymbol" %in% colnames(feature.data)){
+  mito.genes <- grep(pattern = "^mt-|^MT-", x = feature.data$geneSymbol)
+  spikeIn.genes <- grep(pattern = "^ERCC-|^Ercc", x = feature.data$geneSymbol)
+  }else{
+    cat("Mitochondrial genes and spike-in genes were not found due to lack of geneSymbol information...","\n")
+    mito.genes<-integer(0)
+    spikeIn.genes<-integer(0)
+}
+
+pd <- data.frame(nUMI.total = Matrix::colSums(d),
+                   nGene = Matrix::colSums(d!=0),  
+                   percent.mito = round(Matrix::colSums(d[mito.genes, ]) / Matrix::colSums(d),8),
+                   percent.spikeIn = round(Matrix::colSums(d[spikeIn.genes, ]) / Matrix::colSums(d),8),
+                   sampleID=params$sampleID,
+                   stringsAsFactors = FALSE)
+
+#Compute filtering criteria for cells 
+umi_cf_lo <- max(floor(exp(median(log(pd$nUMI.total)) - 3 * mad(log(pd$nUMI.total)))),100)
+umi_cf_hi <- ceiling(exp(median(log(pd$nUMI.total)) + 3 * mad(log(pd$nUMI.total))))
+nGene_cf <- max(floor(exp(median(log(pd$nGene)) - 3 * mad(log(pd$nGene)))),50)
+ERCC_cf <- round(median(pd$percent.spikeIn) + 3 * mad(pd$percent.spikeIn),4)
+mito_cf <- round(median(pd$percent.mito) + 3 * mad(pd$percent.mito),4)
+```
+
+#### 2.1 Quality control on # gene expressed and umi counts in cells
+```{r Cell_qc_a, echo = FALSE, warning=FALSE}
+
+p1 <- ggplot(pd,aes(x=sampleID,y=nUMI.total,fill=sampleID)) +
+      theme_classic()+
+      geom_violin(scale="width", na.rm=TRUE)+
+      geom_boxplot(width=0.3,outlier.size = 0.25, outlier.stroke = 0.5,fill="white")+
+      labs(x=" ",y="nUMI",title="") +
+      theme(legend.position="none",plot.title=element_text(size=8))+
+      geom_hline(yintercept = umi_cf_lo, data = as.data.frame(umi_cf_lo),
+                 color="blue",size=2,alpha = 0.3) +
+      geom_text(aes(0.5,umi_cf_lo,label = umi_cf_lo, vjust = -1),size=3)+
+      geom_hline(yintercept = umi_cf_hi, data = as.data.frame(umi_cf_hi),
+                 color="blue",size=2,alpha = 0.3) +
+      geom_text(aes(0.5,umi_cf_hi,label = umi_cf_hi, vjust = -1),size=3)
+
+p2 <- ggplot(pd,aes(x=sampleID,y=nGene,fill=sampleID)) +
+      theme_classic()+
+      geom_violin(scale="width", na.rm=TRUE)+
+      geom_boxplot(width=0.3,outlier.size = 0.25, outlier.stroke = 0.5,fill="white")+
+      labs(x=" ",y="nGene",title="") +
+      theme_classic()+    
+      theme(legend.position="none",plot.title=element_text(size=8))+
+      geom_hline(yintercept = nGene_cf, data = as.data.frame(nGene_cf),
+                 color="blue",size=2,alpha = 0.3)+
+       geom_text(aes(0.5,nGene_cf,label = nGene_cf, vjust = -1),size=3)
+
+
+p.cell.1 <- cowplot::plot_grid(p1,p2,nrow=1,ncol=2)
+png("2_1_Distribution_of_nGene_and_nUMI_preQC.png",width = 10, height = 10, units = "in", res = 300)
+print(p.cell.1)
+dev.off()
+
+
+```
+
+```{r, fig.width=10, fig.height=6 ,echo=FALSE} 
+p.cell.1
+```
+
+#### 2.2 Quality control on Mito and ERCC genes
+```{r Cell_qc_b, echo=FALSE, warning=FALSE}
+
+if(length(spikeIn.genes)!=0){
+ p3 <- ggplot(data=pd, aes(x=nUMI.total,y=percent.spikeIn))+
+        geom_point(na.rm=TRUE,size=0.8,alpha=0.5)+
+        theme_classic()+ 
+        labs(x="nUMI",y="ERCC percentage",
+             title="") +
+        theme(legend.position="none",plot.title=element_text(size=8))+
+        geom_hline(yintercept = ERCC_cf,data=as.data.frame(ERCC_cf),
+                   size=2,color="blue",alpha = 0.3)+
+        geom_text(aes(0.5,ERCC_cf,label = ERCC_cf, vjust = -1,hjust=-6),size=3)
+}else { 
+  text<-"\n  No Spike-in genes detected. \n"
+  p3 <- ggplot() + 
+        theme_void() +
+        annotate("text", x = 4, y = 25, size=5, label = text)+
+        labs(x="",y="")
+  }
+
+if(length(mito.genes)!=0){
+  p4 <- ggplot(data=pd, aes(x=nUMI.total,y=percent.mito))+
+        geom_point(na.rm=TRUE,size=0.8,alpha=0.5)+
+        labs(x="nUMI",y="MT-gene fraction",
+             title="") +
+        theme_classic()+
+        theme(legend.position="none",plot.title=element_text(size=8))+
+        geom_hline(yintercept = mito_cf, data=as.data.frame(mito_cf),
+                   size=2,color="blue",alpha = 0.3)+
+        geom_text(aes(0.5,mito_cf,label = mito_cf, vjust = -1,hjust=-6),size=3)
+}else{  
+  text<-"\n  No Mitochondrial genes detected. \n"
+  p4 <- ggplot() +
+        theme_void() +
+        annotate("text", x = 4, y = 25, size=5, label = text)+
+        labs(x="",y="")
+  }
+
+p.cell.2 <- cowplot::plot_grid(p3,p4,nrow=1,ncol=2)
+png("2_2_Fraction_of_MT_and_SpikeIn_VS_nUMI_preQC.png",width = 10, height = 6, units = "in", res = 300)
+print(p.cell.2)
+dev.off()
+
+```
+
+```{r, fig.width=10, fig.height=5 , echo=FALSE} 
+p.cell.2
+```
+
+
+```{r Calc_cell_cutoff, echo=FALSE}
+
+# gather cutoff information 
+para_table_r1 <- c(nCell_cutoff, nGene_cf, umi_cf_lo, 0, 0)
+para_table_r2 <- c(Inf, Inf, umi_cf_hi, paste0((mito_cf * 100), "%"),paste0((ERCC_cf * 100), "%"))
+para_table <- matrix(c(para_table_r1, para_table_r2), ncol = 5, byrow = T)
+
+colnames(para_table) <- c("# Cells per Gene", "# Identified Genes", "# Identified UMIs", "% Mitochondrial Genes","% SpikeIn Genes")
+rownames(para_table) <- c("Low Thresholds", "High Thresholds")
+
+para_table %>% kable("html") %>% 
+  kable_styling(bootstrap_options = "striped", font_size = 14) %>% 
+  column_spec(1, bold = T)
+
+```
+
+```{r Return_list, echo=FALSE}
+if(!is.null(meta.data)) pd<-cbind(pd,meta.data)
+Obj<-list(raw.data=d,
+          meta.data=pd,
+          feature.data=feature.data,
+          plot.dir=normalizePath(plot.dir),
+          cal.cutoffs=list(nCell_cutoff = nCell_cutoff,
+                               umi_cf_lo=umi_cf_lo,
+                               umi_cf_hi=umi_cf_hi,
+                               nGene_cf = nGene_cf,
+                               ERCC_cf = ERCC_cf,
+                               mito_cf = mito_cf))
+
+
+```

@@ -1,0 +1,159 @@
+---
+title: scRNA-seq quality control
+date: '`r strftime(Sys.time(), format = "%B %d, %Y")`'
+output: html_document
+params:
+  projectName:
+    value: NULL
+  Obj.old:
+    value: x
+  Obj.new:
+    value: x
+  output.dir:
+    value: x
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r Get_sample_info, echo= FALSE}
+
+Obj.new<-params$Obj.new
+Obj.old<-params$Obj.old
+d<-Obj.old$raw.data
+data<-Obj.new$filtered.data
+cfs<-Obj.old$cal.cutoffs
+
+#calculate basic stastistics
+cells_per_gene <- Obj.old$feautre.data$cells_per_gene
+nGene <- sum(cells_per_gene > 0) # none zero genes
+genes_per_cell <- Obj.old$meta.data$nGene
+nCell <- sum(genes_per_cell > 0) #none zero cells
+
+sample_info_c1 <- c("Sample ID", "Output Directory", "Raw Genes", "Non-zero genes", "Raw Cells")
+sample_info_c2 <- c(params$projectName, normalizePath(params$output.dir), dim(d)[1], nGene, dim(d)[2])
+sample_info <- matrix(c(sample_info_c1, sample_info_c2), ncol = 2, byrow = F)
+
+# plot table
+sample_info %>% 
+  kable("html") %>% 
+  kable_styling(bootstrap_options = "striped", font_size = 14) %>% 
+  column_spec(1, bold = T) %>% column_spec(2, color = "red", bold = T)
+
+```
+
+
+### 1. Quality control on genes 
+```{r Gene_filtering, echo = FALSE}
+
+g_tbl_1 <- c(dim(d)[1], dim(d)[1]-dim(data)[1], dim(data)[1])
+perGene_rm <- round((g_tbl_1[2]/g_tbl_1[1] * 100), 2)
+
+g_tbl_2 <- c("100%", paste0(perGene_rm,"%"), paste0(100-perGene_rm,"%"))
+
+gene_table <- matrix(c(g_tbl_1, g_tbl_2), ncol = 2, byrow = F) # generate matrix
+rownames(gene_table) <- c("Gene Total", "Gene Removed", "Gene Remained");
+colnames(gene_table) <- c("Number", "Percent") #rename
+
+#plot table
+gene_table %>% kable("html") %>% 
+  kable_styling(bootstrap_options = "striped", font_size = 14) %>% 
+  column_spec(2:3, bold = T, color = "Red") %>% 
+  add_footnote(paste0("Genes expressed in less than ", 
+                      (100*cfs$cell_percentage), "% (", 
+                      cfs$nCell_cutoff, ") cells were removed."),  
+               notation = "number")
+
+```
+
+### 2. Quality control on cells
+
+```{r Add_metaData, echo=FALSE}
+
+para_table_r1 <- c(cfs$nCell_cutoff, cfs$nGene_cf, cfs$umi_cf_lo, 0, 0)
+para_table_r2 <- c(Inf, Inf, cfs$umi_cf_hi, paste0((cfs$mito_cf * 100), "%"),paste0((cfs$ERCC_cf * 100), "%"))
+para_table <- matrix(c(para_table_r1, para_table_r2), ncol = 5, byrow = T)
+
+colnames(para_table) <- c("# Cells per Gene", "# Identified Genes", "# Identified UMIs", "% Mitochondrial Genes","% SpikeIn Genes")
+rownames(para_table) <- c("Low Thresholds", "High Thresholds")
+
+para_table %>% kable("html") %>% 
+  kable_styling(bootstrap_options = "striped", font_size = 14) %>% 
+  column_spec(1, bold = T)
+
+```
+
+
+### 3. Quality Control report(after filtering)
+
+```{r QC_summary_a, echo=FALSE}
+
+cells_qc<-dim(Obj.new$filtered.data)[2]
+genes_qc<-dim(Obj.new$filtered.data)[1]
+
+M_gene<-floor(median(Obj.new$meta.data$nGene))
+mu_gene<-floor(mean(Obj.new$meta.data$nGene))
+M_UMI<-floor(median(Obj.new$meta.data$nUMI.total))
+mu_UMI<-floor(mean(Obj.new$meta.data$nUMI.total))
+  
+key_c1 <- c("Qualified Cells", "Qualified Genes", "Median Genes per Cell", "Mean UMIs per Cell")
+key_c2 <- c(cells_qc, genes_qc, M_gene, mu_UMI)
+key_table <- matrix(c(key_c1, key_c2), ncol = 2, byrow = F)
+
+# print quality control report
+t(key_table) %>% kable("html", align = "c") %>% 
+  kable_styling(bootstrap_options = "striped", font_size = 20) %>% 
+  column_spec(1:4, bold = T) %>% 
+  row_spec(2, color = "red", background = "lightgreen")
+
+```
+
+
+```{r Post_QC_plots, echo=FALSE}
+
+pd<-Obj.new$meta.data
+p1 <- ggplot(pd,aes(x=group,y=nUMI.total,fill=group)) +
+      geom_violin(scale="width", na.rm=TRUE)+
+      geom_boxplot(width=0.08,outlier.size = 0.25, outlier.stroke = 0.5,fill="white")+
+      labs(x=" ",y="nUMI",title="") +
+      theme(legend.position="none",plot.title=element_text(size=8))
+
+p2 <- ggplot(pd,aes(x=group,y=nGene,fill=group)) +
+      geom_violin(scale="width", na.rm=TRUE)+
+      geom_boxplot(width=0.08,outlier.size = 0.25, outlier.stroke = 0.5,fill="white")+
+      labs(x=" ",y="nGene",title="") +
+      theme(legend.position="none",plot.title=element_text(size=8))
+    
+p <- cowplot::plot_grid(p1,p2,nrow=1,ncol=2)
+# png("AfterQC_Distribution_of_nGene_and_nUMI.png",width = 10, height = 6, units = "in", res = 300)
+# print(p)
+# dev.off()
+
+```
+
+```{r, fig.width=10, fig.height=10 , echo=FALSE} 
+p
+```
+
+```{r QC_summary_b, echo=FALSE,warning=FALSE}
+
+qc_c1 <- c("Pre-QC Genes", "Post-QC Genes", "Pre-QC Cells", "Post-QC Cells", "% Post-QC Cells",
+           "Median of Post-QC Genes per Cell", "Mean of Post-QC Genes per Cell", 
+           "Median of Post-QC UMIs per Cell", "Mean of Post-QC UMIs per Cell")
+
+percent_cells <- paste0(round((dim(data)[2] / dim(d)[2] * 100), 2), "%")
+qc_c2 <- c(dim(d)[1], dim(data)[1], dim(d)[2], dim(data)[2], percent_cells, 
+           M_gene, mu_gene, M_UMI, mu_UMI)
+
+qc_table <- matrix(c(qc_c1, qc_c2), ncol = 2, byrow = F)
+
+qc_table %>% kable("html") %>% 
+  kable_styling(bootstrap_options = "striped", font_size = 14) %>% 
+  row_spec(c(2,4,5,6,9), bold = T, color = "Red")
+
+```
+
+
+
