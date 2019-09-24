@@ -6,14 +6,14 @@ pd<-pData(eset.12k)
 
 
 library(Biobase)
-setClass( "scMINEReSet",
+setClass( "SparseEset",
           contains = "ExpressionSet",
           slots = c(raw.count.data="matrix"),
           prototype = prototype( new( "VersionedBiobase",
-                                      versions = c(classVersion("ExpressionSet"), scMINEReSet = "1.0.0" )))
+                                      versions = c(classVersion("ExpressionSet"), SparseEset = "1.0.0" )))
 )
 
-cds <- new( "scMINER-Eset",
+cds <- new( "SparseEset",
             assayData = assayDataNew( "environment", exprs=tmp.smtx),
             phenoData= new("AnnotatedDataFrame",data=pd),
             featureData= new("AnnotatedDataFrame",data=fd))

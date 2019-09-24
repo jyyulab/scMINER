@@ -165,6 +165,7 @@ FindDAG<-function(eset=NULL,group_tag="celltype",group_case=NULL){
     rs.full <- merge(rs,rs.tmp,by='id');rm(rs.tmp)
 
     rs <- dplyr::select(rs.full,
+                            geneSymbol,
                             id:FuncType,
                             starts_with("degree"),
                             starts_with("t"),
@@ -201,13 +202,13 @@ TopMasterRegulator <- function(DAG_result=res,n=5,degree_filter=c(50,500),cellty
 
     DAG_result<-DAG_result[which(DAG_result[,paste0("degree_",i)]> degree_filter[1] & DAG_result[,paste0("degree_",i)] <degree_filter[2]),]}
 
-    topMR<-DAG_result$id[sort(DAG_result[,paste0("t_",i)],decreasing=TRUE,index.return=TRUE,na.last=TRUE)$ix][1:n]
+    topDriver<-DAG_result$id[sort(DAG_result[,paste0("t_",i)],decreasing=TRUE,index.return=TRUE,na.last=TRUE)$ix][1:n]
 
-    MR2print<-DAG_result[topMR,c(1,grep(i,colnames(DAG_result)))]
+    D2print<-DAG_result[topDriver,c(1,grep(i,colnames(DAG_result)))]
 
     cat("Top MR for:" ,i,"\n")
-    print(MR2print)
-    res<- c(res,topMR)
+    print(D2print)
+    res<- c(res,topDriver)
   }
   cat("Done!")
   return(res)

@@ -72,7 +72,7 @@ Third plot will visualize mitochondria percentage, and spike-in percentage for e
 Then you could run quality control as simple as 
 
 ```R
-d.sel<-preMICA.QC(d,project.name = "PBMC12k_sample", output_rmd=TRUE)
+d.sel<-preMICA.filtering(d,project.name = "PBMC12k_sample", output_rmd=TRUE)
 
 ```
 If `output_rmd=TRUE`,then visualization and corresponding stats will be reported in a html file. 
@@ -193,8 +193,8 @@ p<-AssignCellTypes.bbp(ref=ref,eset=eset.12k)
 We recommend assign your celltype as factors in your expression set.
 
 ```R
-indx<-factor(x=c("NaiveT","Tmem","CD8em","CD8eff","NK","Bcell","DC","Mo"),
-				levels=c("NaiveT","Tmem","CD8em","CD8eff","NK","Bcell","DC","Mo"))
+indx<-factor(x=c("NaiveT","Tmem","CD8em","CD8eff","Bcell","NK","DC","Mo"),
+				levels=c("NaiveT","Tmem","CD8em","CD8eff","Bcell","NK","DC","Mo"))
 eset.12k$celltype <- indx[eset.12k$label]
 ```
 

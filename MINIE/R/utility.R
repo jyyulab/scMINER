@@ -1,6 +1,15 @@
-##read data, a wrapper of conventional data reading (read.delim2) and 10x genomics data reading
+#' readscRNAseqData
+#' @description read data, a wrapper of conventional data reading (read.delim2) and 10x genomics data reading
+#' @param file data path to 10x genomics output folder, or data path to data txt/csv/tsv file
+#' @param is.10x logical, whether or not inputs are from CellRanger standard output
+#' @param CreateSparseEset logical, whether or not create sparse matrix incorporated expression set
+#' @param add.meta logical, whether or not calculate metadata info from expression matrix
+#' @param ... paramters pass to read.delim if is.10x = FALSE
+#'
+#' @return A list or sparse matrix expression set
 #' @export
-readscRNAseqData <- function(file,is.10x=TRUE,...){
+#'
+readscRNAseqData <- function(file,is.10x=TRUE,CreateSparseEset=TRUE, add.meta=F,...){
 
   if(is.10x){
     data.path <- file
@@ -22,9 +31,13 @@ readscRNAseqData <- function(file,is.10x=TRUE,...){
     dimnames(data.raw)[[1]] <- genes[,1]
     dimnames(data.raw)[[2]] <- barcodes[,1]
 
-    d=list(raw.data=data.raw,
+    if (CreateSparseEset){
+      d <- CreateSparseEset(raw.data=data.raw,meta.data=barcodes,
+        feature.data=genes,add.meta = add.meta)
+    }else{
+      d =list(raw.data=data.raw,
            meta.data=barcodes,
-           feature.data=genes)
+           feature.data=genes)}
   }
   else{
     d<- read.delim2(file=file,...)
@@ -33,35 +46,28 @@ readscRNAseqData <- function(file,is.10x=TRUE,...){
 }
 
 
-
-
 #' @title readMICAoutput
 #' @description Read MICA input and output to create an expressionSet for downstream analysis
-#' @param Obj a list object output from pre.MICA.QC()
-#' @param input_file optional if Obj isn't NULL, input txt file for MICA pipeline
-#' @param output_file output ggplot.txt file from MICA pipeline
+#' @param eset a SparseMatrix Eset
+#' @param input_file input expression txt file of MICA pipeline
+#' @param output_file output ClusterMem.txt file from MICA pipeline
 #' @param load_clust_label logical, if TRUE, clustering results will be store at pData(eset)$label
-#' @param generate_eset logical, if TRUE, return a eset obj
+#' @param NewSparseEset logical, if TRUE, return a eset obj
 #' @return An expressionSet
 #' @export
-readMICAoutput<-function(input_file, Obj=NULL, output_file,load_clust_label=TRUE, generate_eset=TRUE){
+readMICAoutput<-function(eset=NULL, input_file, output_file,load_ClusterRes=TRUE){
 
   res <- read.table( output_file, # MICA output text file
-                             header = TRUE,
-                             stringsAsFactors = FALSE)
+                     header = TRUE,
+                     stringsAsFactors = FALSE)
 
-  if(!is.null(Obj)){
-
-    if(dim(Obj$meta.data)[1]!=dim(res)[1]) stop("Output file doesnt match with input list object.","\n")
-    fd = Obj$feature.data
-    pd = Obj$meta.data
-    pd$X=res[,2]
-    pd$Y=res[,3]
-    pd$cellNames=res[,1]
-    input<-Obj$data
-
+  if (!is.null(eset)){
+    if(!all(colnames(eset)==res[,1])) stop("Check your eset, Output file doesnt match with input list object.","\n")
+    else{
+      eset$X=res[,2]
+      eset$Y=res[,3]
+    }
   }else{
-
     cat("Reading Input...","\n")
     d <- read.table(input_file,header = FALSE,
                   stringsAsFactors = FALSE,
@@ -71,42 +77,18 @@ readMICAoutput<-function(input_file, Obj=NULL, output_file,load_clust_label=TRUE
     gn<-unname(unlist(d[1,-1]))
     input<-t(d[-1,-1]);colnames(input)<-d$V1[-1]
     class(input)<-"numeric"
+    rownames(input)<-gn;
 
-    if(length(which(duplicated(gn)))!=0){
+    pd<-data.frame(row.names=colnames(input),cellNames=colnames(input),
+                     X=res[,2],Y=res[,3],stringsAsFactors=FALSE)
 
-      cat("Colnames has duplicates, assigned new rownames.
-        GeneSymbols will be stored in fData.","\n")
-
-    }else{
-      rownames(input)<-gn;
-      cat("Gene Symbol as rownames.","\n")}
-
-    fd<-data.frame(row.names=rownames(input),
-                  geneSymbol=gn,stringsAsFactors = FALSE)
-
-    pd<-data.frame(row.names=colnames(input),
-                 cellNames=colnames(input),
-                 X=res[,2],
-                 Y=res[,3],stringsAsFactors=FALSE)
+    eset<-CreateSparseEset(data=input,meta.data=pd)
+    cat("SparseMatrix Expression Set Generated!","\n")
   }
 
-  if(load_clust_label){pd$label <- as.factor(res$label);
-  cat("Clustering info is under 'label' slot.","\n")}
+  if(load_clust_label){eset$ClusterRes <- as.factor(res$label);
+  cat("Clustering info is under 'ClusterRes' slot.","\n")}
 
-  if (generate_eset) {
-    eset<-new("ExpressionSet",phenoData= new("AnnotatedDataFrame",pd),
-            featureData=new("AnnotatedDataFrame",fd), annotation="",exprs=as.matrix(input))
-    cat("ExpressionSet Generated!","\n")
-    return(eset)
-    }else{
-      if(!is.null(Obj)) Obj$meta.data<-pd
-      else {
-        Obj=list(data=input,
-                 feautre.data=fd,
-                 meta.data=pd)
-        return(Obj)
-      }
-  }
 }
 
 
@@ -244,10 +226,8 @@ generateMICAcmd<-function(save_sh_at,
 
 
 
-###Function7: AssignCelltypes###
-#' AssignCellTypes.bbp
+#' @title marker_bbplot
 #' @description  Cell type annotation from known markers/signatures
-#'
 #' @param ref reference dataframe, includes positive or negative markers for different cell types
 #' @param eset expressionSet with clustering membership stored in pData
 #' @param save_plot logical
@@ -258,7 +238,7 @@ generateMICAcmd<-function(save_sh_at,
 #' @return A ggplot object
 #'
 #' @export
-AssignCellTypes.bbp<-function(ref = NULL,eset = eset.demo,feature='geneSymbol',
+marker_bbplot<-function(ref = NULL,eset = eset.demo,feature='geneSymbol',
                               save_plot = FALSE,
                               width=8, height=5,
                               plot_name="AnnotationBubbleplot.png"){
