@@ -1,19 +1,30 @@
 
-CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T){
-
-  library(Biobase)
-  setClass( "SparseExpressionSet",
+#' @title SparseExpressionSet
+#' @exportClass SparseExpressionSet
+#' @importFrom Biobase ExpressionSet
+setClass( "SparseExpressionSet",
             contains = "ExpressionSet",
             prototype = prototype( new( "VersionedBiobase",
-                                        versions = c(classVersion("ExpressionSet"), SparseExpressionSet = "1.0.0" )))
-  )
+              versions = c(classVersion("ExpressionSet"), SparseExpressionSet = "1.0.0" ))))
+
+
+#' CreateSparseEset
+#' @description Create a S4 class which utilize 'ExpressionSet' template yet compatible with sparseMatrix type of assaydata
+#' @param data Sparse expression data, could be from either of these class:c('matrix','dgTMatrix','dgCMatrix').Required
+#' @param meta.data phenotype data which rownames should be the same as data colnames; Optional; Default as NULL
+#' @param feature.data feature data which rownames should be the same as data rownames; Optional; Default as NULL
+#' @param add.meta logical; Whether or not calculate extra pheonotype info including total number of UMI,
+#' number of non-zero gene for each cell, mitochondrial percentage and spike-in gene expression percentage and store them in pData
+#'
+#' @return A customized S4 class using
+#' @export
+CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T){
 
   if(!class(data)[1]%in%c("dgCMatrix","dgTMatrix","matrix")){
     stop("Input format should %in% c( 'matrix','dgTMatrix','dgCMatrix')","\n")
     if(class(data)%in%"matrix")
       data<-as(data,"sparseMatrix")
   }
-
 
   if(!is.null(feature.data)){
   	if(any(rownames(data)!=rownames(feature.data))){
@@ -50,7 +61,7 @@ CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T
 
     d<-data;rm(data)
     cells_per_gene <- Matrix::rowSums(d!=0)
-	feature.data$nCells<-cells_per_gene;
+	  feature.data$nCells<-cells_per_gene;
 
     nGene <- sum(cells_per_gene > 0)
     cat("# of non-zero gene:", nGene, "\n")

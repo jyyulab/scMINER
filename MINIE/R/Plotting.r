@@ -244,17 +244,29 @@ draw.bubblePlot2<-function(df=NULL,xlab,ylab,clab,slab,
 #'
 #' @return an R markdown QC report
 #' @export
-draw.scRNAseq.QC<-function(SparseEset,project.name,plot.dir){
+draw.scRNAseq.QC<-function(SparseEset,project.name,plot.dir="./QC/",output.cutoff=TRUE,group="group"){
   if(!dir.exists(plot.dir)) {dir.create(plot.dir)}
+
+  pd<-pData(SparseEset)
+  cfs<-list(nCell_cutoff = max(floor(0.005 * dim(SparseEset)[2]), 1),
+            umi_cf_lo = max(floor(exp(median(log(pd$nUMI.total)) - 3 * mad(log(pd$nUMI.total)))),100),
+            umi_cf_hi = ceiling(exp(median(log(pd$nUMI.total)) + 3 * mad(log(pd$nUMI.total)))),
+            nGene_cf = max(floor(exp(median(log(pd$nGene)) - 3 * mad(log(pd$nGene)))),50),
+            ERCC_cf = round(median(pd$percent.spikeIn) + 3 * mad(pd$percent.spikeIn),4),
+            mito_cf = round(median(pd$percent.mito) + 3 * mad(pd$percent.mito),4))
+
+
   render(input=system.file("rmd", "SparseEset_QC_report.Rmd", package = "scMINER"),
            output_dir = plot.dir,
            output_file = paste0(project.name,"_scRNAseq_QC.html"),
            clean=TRUE,
-           quiet =TRUE,
+           quiet =FALSE,
            params=list(
              Obj=SparseEset,
              projectName=project.name,
-             plot.dir=plot.dir))
-
+             cutoffs=cfs,
+             plot.dir=plot.dir,
+             output.cutoff=output.cutoff,
+             group=group))
 }
 

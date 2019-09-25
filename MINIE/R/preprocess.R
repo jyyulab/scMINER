@@ -103,66 +103,70 @@ generateSJARACNeInput<-function(eset,ref=NULL,funcType=NULL,wd.src,group_tag){
 
 #' preMICA.filtering
 #' @title preMICA.filtering
-#' @description Qualtiy control function to do the actual filtering
-#' @param Obj the list object outputted by preMICA.QA
-#' @param project.name character
-#' @param gene_filter logical
-#' @param cell_filter logical
-#' @param ERCC_filter logical
-#' @param Mito_filter logical
-#' @param nGene_filter logical
-#' @param nUMI_filter "high","low" or "both"
+#' @description scRNA-seq filtering function
+#' @param Obj the list object outputted by draw.scRNAseq.QC
+#' @param cutoffs a list outputted by draw.scRNAseq.QC, if NULL, manual input will be required
+#' @param gene_filter logical; or a numerical number, indicating lower threshold for gene filtering based on how many non-zero cells each gene expressed in
+#' @param ERCC_filter logical; a numerical number, indicating upper threshold put on ERCC percentage for cell filtering
+#' @param Mito_filter logical;a numerical number, indicating upper threshold put on Mitochondrial gene expression fraction for cell filtering
+#' @param nGene_filter logical; a numerical number, indicating lower threshold put on number of gene expression in each cell for cell filtering
+#' @param nUMI_filter logical;a vector of two numerical number, indicating lower threshold and upper threshold put on number of total UMI for cell filtering
 #'
-#' @return a list contains raw data, filtered data, feature data, meta data, and thresholds.
+#' @return A Sparse expression set
+#'
+#'
 #' @export
-#'
 preMICA.filtering <- function(SparseEset,
-                        project.name=NULL,
-                        gene_filter=TRUE,
-                        ERCC_filter=TRUE,
-                        Mito_filter=TRUE,
-                        nGene_filter=TRUE,
-                        nUMI_filter="low"){
+                              cutoffs,
+                              gene_filter=T,
+                              nGene_filter=T,
+                              nUMI_filter=T,
+                              ERCC_filter=T,
+                              Mito_filter=T)
+  {
 
-    cfs<-Obj$cal.cutoffs
-    d<-Obj$raw.data
-
-    if(nUMI_filter=="low") {cfs$umi_cf_hi = Inf
-    }else if(nUMI_filter=="high") {cfs$umi_cf_lo = 0}
-
+    if(is.null(cutoffs)){
+      if(all(is.logical(gene_filter,ERCC_filter,Mito_filter,nGene_filter,nUMI_filter))){
+        stop("No filtering will be conducted due to lack of numerical threshold input.","\n",
+             "You can take default cutoff calculated by function draw.scRNAseq.QC and feed them into cutoffs,
+             or input them manually in each function parameters.")
+        }else{
+          if(any(isTRUE(gene_filter),isTRUE(ERCC_filter),isTRUE(Mito_filter),is.TRUE(nGene_filter),is.TRUE(nUMI_filter)))
+            stop("When cutoffs=NULL, please indicate numerical threshold instead of 'TRUE' if you want to do filtering on that particular criteria !","\n")
+          cfs<-list()
+          if (gene_filter) cfs$nCell_cutoff=gene_filter
+          if (nGene_filter) cdf$nGene_cf=nGene_filter
+          if (nUMI_filter) cdf$umi_cf_lo=nUMI_filter[1];cdf$umi_cf_hi=nUMI_filter[2]
+          if (is.null(ERCC_filter)) ERCC_filter=FALSE else cdf$ERCC_cf=ERCC_filter
+        }
+    }else{cfs<-cutoffs}
+    if(!nUMI_filter) cdf$umi_cf_lo=0; cdf$umi_cf_hi=Inf
     cell <- which((SparseEset$nUMI.total > cfs$umi_cf_lo) & (SparseEset$nUMI.total < cfs$umi_cf_hi))
     if(nGene_filter) cell <- intersect(cell, which(SparseEset$nGene > cfs$nGene_cf))
-    if(ERCC_filter&cfs$ERCC_cf!=0) cell <- intersect(cell, which(Obj$meta.data$percent.spikeIn < cfs$ERCC_cf))
-    if(Mito_filter&cfs$ERCC_cf!=0) cell <- intersect(cell, which(Obj$meta.data$percent.mito < cfs$mito_cf))
+    if(ERCC_filter&cfs$ERCC_cf!=0) cell <- intersect(cell, which(SparseEset$percent.spikeIn < cfs$ERCC_cf))
+    if(Mito_filter&cfs$Mito_filter!=0) cell <- intersect(cell, which(SparseEset$percent.mito < cfs$mito_cf))
 
     #gene filtering
     if(gene_filter){
-      gene <- unname((which(Obj$feature.data$nCells >= Obj$cal.cutoffs$nCell_cutoff)))
-      data <- d[gene,]
-      fd<-Obj$feature.data[gene,]
-      cat("Gene expressed in less than ", Obj$cal.cutoffs$nCell_cutoff,
-          "cells (",(dim(d)[1]-length(gene))*100/dim(d)[1],"% genes) were filtered","\n",
+      gene <- unname((which(fData(SparseEset)$nCells >= cfs$nCell_cutoff)))
+      eset.sel<-SparseEset[gene,]
+
+      cat("Gene expressed in less than ", cfs$nCell_cutoff,
+          "cells (",(dim(SparseEset)[1]-length(gene))*100/dim(SparseEset)[1],"% genes) were filtered","\n",
           "Filtered expression matrix dimension:",dim(data),"\n")
-      }else { data <- d; fd <- Obj$feature.data}
+      }else { eset.sel <- SparseEset }
 
     #cell filtering
     if(cell_filter){
-      data <- data[,cell]
-      pd <- Obj$meta.data[cell,]
-      cat("A total of ",dim(d)[2]-length(cell),
-          "(",(dim(d)[2]-length(cell))*100/dim(d)[2],"%) cells were filtered","\n",
-          "Filtered expression matrix dimension:",dim(data),"\n")
-      }else {pd<-Obj@meta.data}
+      eset.sel2 <- eset.sel[,cell]
+      cat("A total of ",dim(SparseEset)[2]-length(cell),
+          "(",(dim(SparseEset)[2]-length(cell))*100/dim(SparseEset)[2],"%) cells were filtered","\n",
+          "Filtered expression matrix dimension:",dim(eset.sel2),"\n")
+      }else {eset.sel2<-eset.sel}
 
     cat("Data filtering done!","\n")
     cat("====================","\n")
 
-  return(Obj.new)
+  return(eset.sel2)
 }#end preMICA.filtering
-
-
-
-
-
-
 

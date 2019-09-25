@@ -4,19 +4,19 @@
 \alias{readMICAoutput}
 \title{readMICAoutput}
 \usage{
-readMICAoutput(input_file, Obj = NULL, output_file,
-  load_clust_label = TRUE, generate_eset = TRUE)
+readMICAoutput(eset = NULL, input_file, output_file,
+  load_ClusterRes = TRUE)
 }
 \arguments{
-\item{input_file}{optional if Obj isn't NULL, input txt file for MICA pipeline}
+\item{eset}{a SparseMatrix Eset}
 
-\item{Obj}{a list object output from pre.MICA.QC()}
+\item{input_file}{input expression txt file of MICA pipeline}
 
-\item{output_file}{output ggplot.txt file from MICA pipeline}
+\item{output_file}{output ClusterMem.txt file from MICA pipeline}
 
 \item{load_clust_label}{logical, if TRUE, clustering results will be store at pData(eset)$label}
 
-\item{generate_eset}{logical, if TRUE, return a eset obj}
+\item{NewSparseEset}{logical, if TRUE, return a eset obj}
 }
 \value{
 An expressionSet

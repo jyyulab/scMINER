@@ -55,7 +55,7 @@ g_tbl_2 <- c("100%", paste0(perGene_rm,"%"), paste0(100-perGene_rm,"%"))
 
 gene_table <- matrix(c(g_tbl_1, g_tbl_2), ncol = 2, byrow = F) # generate matrix
 rownames(gene_table) <- c("Gene Total", "Gene Removed", "Gene Remained");
-colnames(gene_table) <- c("Number", "Percent") #rename
+colnames(gene_table) <- c("Number", "Percentage") #rename
 
 #plot table
 gene_table %>% kable("html") %>% 

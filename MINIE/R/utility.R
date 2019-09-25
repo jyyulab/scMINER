@@ -8,7 +8,6 @@
 #'
 #' @return A list or sparse matrix expression set
 #' @export
-#'
 readscRNAseqData <- function(file,is.10x=TRUE,CreateSparseEset=TRUE, add.meta=F,...){
 
   if(is.10x){
@@ -16,6 +15,7 @@ readscRNAseqData <- function(file,is.10x=TRUE,CreateSparseEset=TRUE, add.meta=F,
     data.raw <- Matrix::readMM(file.path(data.path,"matrix.mtx"))
 
     barcodes <- read.table(file.path(data.path,"barcodes.tsv"),header=FALSE,stringsAsFactors = FALSE)
+    colnames(barcodes)[1]<-"CellNames"
 
     if(file.exists(file.path(data.path,"genes.tsv"))){
       genes <- read.table(file.path(data.path,"genes.tsv"),header=FALSE,stringsAsFactors = FALSE)
@@ -28,14 +28,14 @@ readscRNAseqData <- function(file,is.10x=TRUE,CreateSparseEset=TRUE, add.meta=F,
     }
 
 
-    dimnames(data.raw)[[1]] <- genes[,1]
-    dimnames(data.raw)[[2]] <- barcodes[,1]
+    dimnames(data.raw)[[1]] <- rownames(genes)
+    dimnames(data.raw)[[2]] <- rownames(barcodes)
 
     if (CreateSparseEset){
-      d <- CreateSparseEset(raw.data=data.raw,meta.data=barcodes,
+      d <- CreateSparseEset(data=data.raw,meta.data=barcodes,
         feature.data=genes,add.meta = add.meta)
     }else{
-      d =list(raw.data=data.raw,
+      d = list(raw.data=data.raw,
            meta.data=barcodes,
            feature.data=genes)}
   }
