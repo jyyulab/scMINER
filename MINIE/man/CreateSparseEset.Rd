@@ -18,7 +18,7 @@ CreateSparseEset(data = NULL, meta.data = NULL, feature.data = NULL,
 number of non-zero gene for each cell, mitochondrial percentage and spike-in gene expression percentage and store them in pData}
 }
 \value{
-A customized S4 class using
+A customized S4 class using ExpressionSet class as prototype
 }
 \description{
 Create a S4 class which utilize 'ExpressionSet' template yet compatible with sparseMatrix type of assaydata

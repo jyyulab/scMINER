@@ -11,19 +11,19 @@ marker_bbplot(ref = NULL, eset = eset.demo, feature = "geneSymbol",
 \arguments{
 \item{ref}{reference dataframe, includes positive or negative markers for different cell types}
 
-\item{eset}{expressionSet with clustering membership stored in pData}
+\item{eset}{expressionSet/SparseExpressionSet object with clustering membership stored in pData}
 
-\item{save_plot}{logical}
+\item{save_plot}{logical, whether or not save your plot}
 
-\item{width}{default as 8}
+\item{width}{default as 8, inch as unit}
 
-\item{height}{default as 5}
+\item{height}{default as 5, inch as unit}
 
-\item{plot_name}{plot name}
+\item{plot_name}{plot name, please include plot type}
 }
 \value{
 A ggplot object
 }
 \description{
-Cell type annotation from known markers/signatures
+Marker visualizatoin from known markers/signatures, requires knowledge-based marker list as input
 }

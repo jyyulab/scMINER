@@ -12,5 +12,5 @@ generateMICAinput(d, filename)
 \item{filename}{filename of your MICA input file, supported format: txt}
 }
 \description{
-This function helps generate MICA input from a data matrix with rownames and colnames
+This utility function helps generate MICA input from a data matrix with rownames and colnames
 }

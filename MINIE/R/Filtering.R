@@ -51,54 +51,6 @@ SJARACNe_filter<-function(eset.sel,tf.ref,sig.ref,wd.src,grp.tag){
 
 }
 
-#' generateSJARACNeInput
-#' @description This function helps to generate appropriate input files for SJARACNe pipeline.
-#' It can take transcription factor/signaling gene reference from internal(stored in package) or external (manual define)
-#' @param eset scRNA-seq ExpressionSet
-#' @param ref c("hg", "mm"), could be a manually defined geneSymbol vector
-#' @param funcType c("TF","SIG", NULL), if NULL then both TF and SIG will be considered
-#' @param wd.src output path
-#' @param group_tag name of group for sample identification
-#' @return SJARACNe input files for each subgroups
-#' @keywords SJARACNe
-#' @examples
-#' \dontrun{
-#' generateSJARACNeInput(eset = eset.demo,ref = "hg",wd.src = "./",group_tag = "celltype")}
-#' @export
-generateSJARACNeInput<-function(eset,ref=NULL,funcType=NULL,wd.src,group_tag){
-
-  if (!dir.exists(wd.src)) dir.create(wd.src,recursive = T)
-
-  if (ref%in%c("hg","mm")){
-    ref_file<-system.file("RData",paste0("tf_sigs_",ref,".RData"),package = "MINIE")
-    load(ref_file)
-    cat("Using references from: ", ref_file,"\n")
-    sig.ref <- NULL;tf.ref <- NULL
-    tf.ref<- filter(tf_sigs, isTF==TRUE)$geneSymbol
-    sig.ref<- filter(tf_sigs, isSIG==TRUE)$geneSymbol
-    if (!is.null(funcType)){
-      if (funcType=="TF") sig.ref <- NULL
-      else if (funcType=="SIG") tf.ref <- NULL
-    }
-  }else {
-    if (funcType=="TF") tf.ref <- ref
-    else if (funcType=="SIG") sig.ref <- ref
-    else warning("Activity calculations will not be supported!","\n")
-  }
-
-  if(group_tag%in%colnames(pData(eset))){
-    groups <- unique(pData(eset)[,group_tag])
-    for (i in 1:length(groups)){
-      grp.tag<-groups[i]; eset[,which(pData(eset)[,group_tag]==grp.tag)] -> eset.sel
-      SJARACNe_filter(eset.sel=eset.sel,tf.ref=tf.ref,sig.ref=sig.ref,wd.src=wd.src,grp.tag=grp.tag)
-    }#end for
-  }else{
-    stop("Lack of group info, please check your group_tag.","\n")
-  }#end if
-
-  save(eset, file=file.path(wd.src,"Input.eset")) # save input file as expressionSet
-}#end function
-
 
 
 #' preMICA.filtering
@@ -113,7 +65,6 @@ generateSJARACNeInput<-function(eset,ref=NULL,funcType=NULL,wd.src,group_tag){
 #' @param nUMI_filter logical;a vector of two numerical number, indicating lower threshold and upper threshold put on number of total UMI for cell filtering
 #'
 #' @return A Sparse expression set
-#'
 #'
 #' @export
 preMICA.filtering <- function(SparseEset,

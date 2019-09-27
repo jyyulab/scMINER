@@ -8,13 +8,14 @@ readscRNAseqData(file, is.10x = TRUE, CreateSparseEset = TRUE,
   add.meta = F, ...)
 }
 \arguments{
-\item{file}{data path to 10x genomics output folder, or data path to data txt/csv/tsv file}
+\item{file}{data path to 10x genomics output folder, which normally contains 3 files (matrix.mtx, gene or feature.tsv and barcode.csv),
+or data path to data txt/csv/tsv file}
 
 \item{is.10x}{logical, whether or not inputs are from CellRanger standard output}
 
 \item{CreateSparseEset}{logical, whether or not create sparse matrix incorporated expression set}
 
-\item{add.meta}{logical, whether or not calculate metadata info from expression matrix}
+\item{add.meta}{logical, whether or not calculate metadata info from expression matrixm, this is not suggested before merging/downsampling your data}
 
 \item{...}{paramters pass to read.delim if is.10x = FALSE}
 }
@@ -22,5 +23,5 @@ readscRNAseqData(file, is.10x = TRUE, CreateSparseEset = TRUE,
 A list or sparse matrix expression set
 }
 \description{
-read data, a wrapper of conventional data reading (read.delim2) and 10x genomics data reading
+read scRNA-seq data, a wrapper of conventional data reading (read.delim2) and 10x genomics data standarad output reading
 }

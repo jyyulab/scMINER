@@ -16,7 +16,7 @@ setClass( "SparseExpressionSet",
 #' @param add.meta logical; Whether or not calculate extra pheonotype info including total number of UMI,
 #' number of non-zero gene for each cell, mitochondrial percentage and spike-in gene expression percentage and store them in pData
 #'
-#' @return A customized S4 class using
+#' @return A customized S4 class using ExpressionSet class as prototype
 #' @export
 CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T){
 

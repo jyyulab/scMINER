@@ -11,7 +11,7 @@ generateMICAcmd(save_sh_at, input_file, project_name, num_cluster,
   slice_size = 1000)
 }
 \arguments{
-\item{save_sh_at}{character, path to save your MICA command file}
+\item{save_sh_at}{character, path to save your MICA command file;}
 
 \item{input_file}{character, path to actual input file for MICA, usually use \code{generateMICAinput} to generete file with desired format.}
 

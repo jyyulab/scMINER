@@ -1,9 +1,11 @@
 #' readscRNAseqData
-#' @description read data, a wrapper of conventional data reading (read.delim2) and 10x genomics data reading
-#' @param file data path to 10x genomics output folder, or data path to data txt/csv/tsv file
+#' @description read scRNA-seq data, a wrapper of conventional data reading (read.delim2) and 10x genomics data standarad output reading
+#'
+#' @param file data path to 10x genomics output folder, which normally contains 3 files (matrix.mtx, gene or feature.tsv and barcode.csv),
+#'  or data path to data txt/csv/tsv file
 #' @param is.10x logical, whether or not inputs are from CellRanger standard output
 #' @param CreateSparseEset logical, whether or not create sparse matrix incorporated expression set
-#' @param add.meta logical, whether or not calculate metadata info from expression matrix
+#' @param add.meta logical, whether or not calculate metadata info from expression matrixm, this is not suggested before merging/downsampling your data
 #' @param ... paramters pass to read.delim if is.10x = FALSE
 #'
 #' @return A list or sparse matrix expression set
@@ -46,55 +48,13 @@ readscRNAseqData <- function(file,is.10x=TRUE,CreateSparseEset=TRUE, add.meta=F,
 }
 
 
-#' @title readMICAoutput
-#' @description Read MICA input and output to create an expressionSet for downstream analysis
-#' @param eset a SparseMatrix Eset
-#' @param input_file input expression txt file of MICA pipeline
-#' @param output_file output ClusterMem.txt file from MICA pipeline
-#' @param load_clust_label logical, if TRUE, clustering results will be store at pData(eset)$label
-#' @param NewSparseEset logical, if TRUE, return a eset obj
-#' @return An expressionSet
-#' @export
-readMICAoutput<-function(eset=NULL, input_file, output_file,load_ClusterRes=TRUE){
 
-  res <- read.table( output_file, # MICA output text file
-                     header = TRUE,
-                     stringsAsFactors = FALSE)
-
-  if (!is.null(eset)){
-    if(!all(colnames(eset)==res[,1])) stop("Check your eset, Output file doesnt match with input list object.","\n")
-    else{
-      eset$X=res[,2]
-      eset$Y=res[,3]
-    }
-  }else{
-    cat("Reading Input...","\n")
-    d <- read.table(input_file,header = FALSE,
-                  stringsAsFactors = FALSE,
-                  quote = "",
-                  check.names = FALSE)
-
-    gn<-unname(unlist(d[1,-1]))
-    input<-t(d[-1,-1]);colnames(input)<-d$V1[-1]
-    class(input)<-"numeric"
-    rownames(input)<-gn;
-
-    pd<-data.frame(row.names=colnames(input),cellNames=colnames(input),
-                     X=res[,2],Y=res[,3],stringsAsFactors=FALSE)
-
-    eset<-CreateSparseEset(data=input,meta.data=pd)
-    cat("SparseMatrix Expression Set Generated!","\n")
-  }
-
-  if(load_clust_label){eset$ClusterRes <- as.factor(res$label);
-  cat("Clustering info is under 'ClusterRes' slot.","\n")}
-
-}
 
 
 
 #' generateMICAinput
-#' @description This function helps generate MICA input from a data matrix with rownames and colnames
+#'
+#' @description This utility function helps generate MICA input from a data matrix with rownames and colnames
 #' @param d matrix with colnames as cell/sample info, rownames as gene/feature info
 #' @param filename filename of your MICA input file, supported format: txt
 #'
@@ -117,10 +77,13 @@ generateMICAinput <- function(d,filename){
 }
 
 
+
 #' Generate MICA command script for job submission on local or LSF
+#'
 #' @description Generate command for running MICA locally or on LSF.
 #' MICA is a high-performance clustering analysis method that was implemented in python and cwl.
-#' @param save_sh_at character, path to save your MICA command file
+#'
+#' @param save_sh_at character, path to save your MICA command file;
 #' @param input_file character, path to actual input file for MICA, usually use \code{generateMICAinput} to generete file with desired format.
 #' @param project_name character, name of your project, will be used for naming of output data
 #' @param num_cluster a vector or a numerical number, the number of clusters
@@ -226,14 +189,121 @@ generateMICAcmd<-function(save_sh_at,
 
 
 
+#' @title readMICAoutput
+#'
+#' @description Read MICA input and output to create an expressionSet for downstream analysis
+#'
+#'
+#' @param eset a SparseMatrix Eset
+#' @param input_file input expression txt file of MICA pipeline
+#' @param output_file output ClusterMem.txt file from MICA pipeline
+#' @param load_clust_label logical, if TRUE, clustering results will be store at pData(eset)$label
+#' @param NewSparseEset logical, if TRUE, return a eset obj
+#'
+#'
+#' @return An expressionSet
+#' @export
+readMICAoutput<-function(eset=NULL, input_file, output_file,load_ClusterRes=TRUE){
+
+  res <- read.table( output_file, # MICA output text file
+                     header = TRUE,
+                     stringsAsFactors = FALSE)
+
+  if (!is.null(eset)){
+    if(!all(colnames(eset)==res[,1])) stop("Check your eset, Output file doesnt match with input list object.","\n")
+    else{
+      eset$X=res[,2]
+      eset$Y=res[,3]
+    }
+  }else{
+    cat("Reading Input...","\n")
+    d <- read.table(input_file,header = FALSE,
+                    stringsAsFactors = FALSE,
+                    quote = "",
+                    check.names = FALSE)
+
+    gn<-unname(unlist(d[1,-1]))
+    input<-t(d[-1,-1]);colnames(input)<-d$V1[-1]
+    class(input)<-"numeric"
+    rownames(input)<-gn;
+
+    pd<-data.frame(row.names=colnames(input),cellNames=colnames(input),
+                   X=res[,2],Y=res[,3],stringsAsFactors=FALSE)
+
+    eset<-CreateSparseEset(data=input,meta.data=pd)
+    cat("SparseMatrix Expression Set Generated!","\n")
+  }
+
+  if(load_clust_label){eset$ClusterRes <- as.factor(res$label);
+  cat("Clustering info is under 'ClusterRes' slot.","\n")}
+
+}
+
+
+
+#' generateSJARACNeInput
+#'
+#'
+#' @description This function helps to generate appropriate input files for SJARACNe pipeline.
+#' It can take transcription factor/signaling gene reference from internal(stored in package) or external (manual define)
+#'
+#'
+#' @param eset scRNA-seq ExpressionSet
+#' @param ref c("hg", "mm"), could be a manually defined geneSymbol vector
+#' @param funcType c("TF","SIG", NULL), if NULL then both TF and SIG will be considered
+#' @param wd.src output path
+#' @param group_tag name of group for sample identification
+#' @return SJARACNe input files for each subgroups
+#' @keywords SJARACNe
+#' @examples
+#' \dontrun{
+#' generateSJARACNeInput(eset = eset.demo,ref = "hg",wd.src = "./",group_tag = "celltype")}
+#' @export
+generateSJARACNeInput<-function(eset,ref=NULL,funcType=NULL,wd.src,group_tag){
+
+  if (!dir.exists(wd.src)) dir.create(wd.src,recursive = T)
+
+  if (ref%in%c("hg","mm")){
+    ref_file<-system.file("RData",paste0("tf_sigs_",ref,".RData"),package = "MINIE")
+    load(ref_file)
+    cat("Using references from: ", ref_file,"\n")
+    sig.ref <- NULL;tf.ref <- NULL
+    tf.ref<- filter(tf_sigs, isTF==TRUE)$geneSymbol
+    sig.ref<- filter(tf_sigs, isSIG==TRUE)$geneSymbol
+    if (!is.null(funcType)){
+      if (funcType=="TF") sig.ref <- NULL
+      else if (funcType=="SIG") tf.ref <- NULL
+    }
+  }else {
+    if (funcType=="TF") tf.ref <- ref
+    else if (funcType=="SIG") sig.ref <- ref
+    else warning("Activity calculations will not be supported!","\n")
+  }
+
+  if(group_tag%in%colnames(pData(eset))){
+    groups <- unique(pData(eset)[,group_tag])
+    for (i in 1:length(groups)){
+      grp.tag<-groups[i]; eset[,which(pData(eset)[,group_tag]==grp.tag)] -> eset.sel
+      SJARACNe_filter(eset.sel=eset.sel,tf.ref=tf.ref,sig.ref=sig.ref,wd.src=wd.src,grp.tag=grp.tag)
+    }#end for
+  }else{
+    stop("Lack of group info, please check your group_tag.","\n")
+  }#end if
+
+  save(eset, file=file.path(wd.src,"Input.eset")) # save input file as expressionSet
+}#end function
+
+
+
+
 #' @title marker_bbplot
-#' @description  Cell type annotation from known markers/signatures
+#' @description  Marker visualizatoin from known markers/signatures, requires knowledge-based marker list as input
 #' @param ref reference dataframe, includes positive or negative markers for different cell types
-#' @param eset expressionSet with clustering membership stored in pData
-#' @param save_plot logical
-#' @param width default as 8
-#' @param height default as 5
-#' @param plot_name plot name
+#' @param eset expressionSet/SparseExpressionSet object with clustering membership stored in pData
+#' @param save_plot logical, whether or not save your plot
+#' @param width default as 8, inch as unit
+#' @param height default as 5, inch as unit
+#' @param plot_name plot name, please include plot type
 #'
 #' @return A ggplot object
 #'
@@ -299,9 +369,51 @@ marker_bbplot<-function(ref = NULL,eset = eset.demo,feature='geneSymbol',
                         plot.title="Cell type annotation for each cluster")
   }
 
-  if(save_plot){ggsave(plot = p, filename = plot_name ,
-                       device="png",width = width,height = height,dpi = 300)}
+  if(save_plot){ggsave(plot = p, filename = plot_name , unit="in",
+                       width = width,height = height,dpi = 300)}
   return(p)
 }
+
+
+
+#' getGSC
+#'
+#' This inner utility function is to help gather network information and store them in one list
+#'
+#' @param sig signaling genes network table
+#' @param tf transcription factors network table
+#'
+#' @return a list of master regulators and their targets
+#' @export
+getGSC<-function(sig=NULL,tf=NULL){
+  sig.gsc<-NULL
+  tf.gsc<-NULL
+
+  if(!is.null(sig)){
+    src <-unique(sig$source)
+    n<-length(src)
+
+    sig.gsc <-vector("list",n)
+    for(i in 1:n){
+      tag<-src[i]
+      tmp<-filter(sig,sig$source==tag)
+      names(sig.gsc)[i] <-paste(tag,"SIG",sep = ".")
+      sig.gsc[[i]] <-as.character(tmp$target)}
+  }
+
+  if (!is.null(tf)){
+    src <-unique(tf$source)
+    n<-length(src)
+    tf.gsc <-vector("list",n)
+    for(i in 1:n){
+      tag<-src[i]
+      tmp<-filter(tf,tf$source==tag)
+      names(tf.gsc)[i] <-paste(tag,"TF",sep = ".")
+      tf.gsc[[i]] <-as.character(tmp$target)}}
+
+  gsc<-c(sig.gsc,tf.gsc)
+  return(gsc)
+}
+
 
 
