@@ -20,8 +20,8 @@ setClass( "SparseExpressionSet",
 #' @export
 CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T){
 
-  if(!class(data)[1]%in%c("dgCMatrix","dgTMatrix","matrix")){
-    stop("Input format should %in% c( 'matrix','dgTMatrix','dgCMatrix')","\n")
+  if(!class(data)[1]%in%c("dgCMatrix","dgTMatrix","matrix","dgeMatrix")){
+    stop("Input format should %in% c( 'matrix','dgTMatrix','dgCMatrix','dgeMatrix,'Matrix')","\n")
     if(class(data)%in%"matrix")
       data<-as(data,"sparseMatrix")
   }
@@ -81,9 +81,6 @@ CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T
       mito.genes<-integer(0)
       spikeIn.genes<-integer(0)
     }
-
-    if(length(mito.genes)==0) Mito_filter=FALSE
-    if(length(spikeIn.genes)==0) ERCC_filter=FALSE
 
     pd <- data.frame(row.names = colnames(d),
                      nUMI.total = Matrix::colSums(d),

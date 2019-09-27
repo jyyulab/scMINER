@@ -264,8 +264,7 @@ draw.scRNAseq.QC<-function(SparseEset,project.name,plot.dir="./QC/",output.cutof
            params=list(
              Obj=SparseEset,
              projectName=project.name,
-             cutoffs=cfs,
-             plot.dir=plot.dir,
+             cfs=cfs,
              output.cutoff=output.cutoff,
              group=group))
 

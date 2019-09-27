@@ -26,10 +26,10 @@ scMINER is based on python and R, with a single R package glued all essential fu
 This can be done by any scRNA-seq preprocessing pipeline. We encourage user to feed in all genes from your data for MICA, instead of highly variable genes only. Here, in order to stick to the focus, we only demonstrate a quick function to conduct gene/cell filtering, without any data exploratory visualization.
 
 ### Read 10x genomics data
-Read 10x genomics data wih function embeded in scMINER package.
+Read 10x genomics data wih function embeded in scMINER package. This function could help read either 10x genomics standard output, as well as other text files types by passing arguments to `read.delim()`. If set `CreateSparseEset=T` This will help create a Sparse matrix object using Expressionset prototype, otherwise, it will create a list Object that stores expression data, feature data and sample data in different slots. If `add.meta=T`, then corresponding sample info such as total number of UMI will be calcualated and outputed.
 
 ```R
-d <- readscRNAseqData(file="PBMC68k_input/",is.10x = TRUE)
+d <- d.68k <- readscRNAseqData(file="../PBMC68k_input/",is.10x = TRUE,CreateSparseEset = F, add.meta=F)
 ```
 
 ### Down sampling
@@ -39,26 +39,24 @@ In order to provide a quicker guidance, we've down sampled this data to 12k cell
 set.seed(1)
 d.12k<-d[,sample(colnames(d),12000)]
 dim(d.12k) #[1] 32738 12000
-```	
-
-
-### Quality control
-Quality control includes two function with different purpose, 1. `preMICA.QA`, which can generate visualizations to help assist scRNA-seq data quality. 2. `preMICA.QC`, which uses pre-defined threshold (either calculated from `preMICA.QA` or via manual input). We recommend first run `preMICA.QA` then `preMICA.QC`. Both of these two functions have versions with or without rmd output. The rmd output will include all computed threshold an d visualizations.
- 
-```R
-d<-preMICA.QA(raw.data = d.12k,
-              feature.data = d.68k$feature.data,
-              project.name = "PBMC12k_sample",
-              output_rmd = FALSE,
-              plot.dir = "./QC/",
-              cell_percentage = 0.005)
-
 ```
-The output will be stored as a list with data matrix, meta data, feature data as well as the plot directory and calculated cutoffs(under `cal.cutoffs` slot. 
+You can also create Sparse Matrix expression by using `CreateSparseEset`function:
 
-If you set `plotting = TRUE`, then three visualization plot will be generated for gene/cell quality assessment.
+```R
+eset.12k<-CreateSparseEset(data=d.12k,feature.data = d.68k$feature.data,add.meta = T)
+```
 
-One is the total number of cell expressed by each gene
+### Quality control and data filtering
+Quality control assessments could be done using `draw.scRNAseq.QC` step, this will output a Rmarkdown generated report, including essential figures for at both gene and cell level. Suggested cutoff will be returned as a list if `output.cutoff` was set to be `TRUE`. 
+
+```R
+cutoffs <- draw.scRNAseq.QC(SparseEset=eset.12k, 
+                          project.name = "PBMC12k",
+                          plot.dir = "./QC/",
+                          group = "group",
+                          output.cutoff = TRUE)
+```
+
 
 <img src="./plots/1_1_Gene_QCmetrics_before_filtering.png" alt="drawing" width="550"/>
 
@@ -69,25 +67,26 @@ Third plot will visualize mitochondria percentage, and spike-in percentage for e
 ![](./plots/1_3_Cell_QC_2.png)
 
 
-Then you could run quality control as simple as 
+Then you could run cell filtering as simple as if feed 
 
 ```R
-d.sel<-preMICA.filtering(d,project.name = "PBMC12k_sample", output_rmd=TRUE)
+eset.sel<-preMICA.filtering(SparseEset = eset.12k,cutoffs = cutoffs)
 
 ```
-If `output_rmd=TRUE`,then visualization and corresponding stats will be reported in a html file. 
+ 
 
 ### Normalization and transformation
 In MICA, we don't provide a vriety of methods to do normalizaton, you can use your own prefered normalization method. Here we provide an example of doing CPM and log2 transformation. 
 
 ```R
 norm = 10e6
-data <- sweep(d.sel$filtered.data, 2, norm/unname(d.sel$meta.data$nUMI.total), '*')
+exp.norm <- sweep(exprs(eset.sel), 2, norm/unname(Matrix::colSums(exprs(eset.sel))), '*')
 
 # log transformation
-data <- log(data+1,base=2)
-d.sel$data<-data
+exp.log2 <- log(exp.norm+1,base=2)
 
+# save as SparseEset
+eset.norm<-CreateSparseEset(data=exp.log2,meta.data = pData(eset.sel),feature.data = fData(eset.sel),add.meta = F)
 ```
 
 ### Generate MICA input and command

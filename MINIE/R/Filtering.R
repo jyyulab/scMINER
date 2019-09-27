@@ -75,6 +75,7 @@ preMICA.filtering <- function(SparseEset,
                               ERCC_filter=T,
                               Mito_filter=T)
   {
+    cat("Pre-filtering dimension: ",dim(SparseEset),"\n")
 
     if(is.null(cutoffs)){
       if(all(is.logical(gene_filter,ERCC_filter,Mito_filter,nGene_filter,nUMI_filter))){
@@ -83,19 +84,25 @@ preMICA.filtering <- function(SparseEset,
              or input them manually in each function parameters.")
         }else{
           if(any(isTRUE(gene_filter),isTRUE(ERCC_filter),isTRUE(Mito_filter),is.TRUE(nGene_filter),is.TRUE(nUMI_filter)))
-            stop("When cutoffs=NULL, please indicate numerical threshold instead of 'TRUE' if you want to do filtering on that particular criteria !","\n")
+            stop("When cutoffs=NULL, please indicate numerical threshold instead of 'TRUE'
+                 if you want to do filtering on that particular criteria !","\n")
           cfs<-list()
           if (gene_filter) cfs$nCell_cutoff=gene_filter
-          if (nGene_filter) cdf$nGene_cf=nGene_filter
-          if (nUMI_filter) cdf$umi_cf_lo=nUMI_filter[1];cdf$umi_cf_hi=nUMI_filter[2]
-          if (is.null(ERCC_filter)) ERCC_filter=FALSE else cdf$ERCC_cf=ERCC_filter
+          if (nGene_filter) cfs$nGene_cf=nGene_filter
+          if (!isFLASE(nUMI_filter)) cfs$umi_cf_lo=nUMI_filter[1];cfs$umi_cf_hi=nUMI_filter[2]
+          if (ERCC_filter) cfs$ERCC_cf=ERCC_filter
+          if (Mito_filter) cfs$mito_cf=Mito_filter
         }
     }else{cfs<-cutoffs}
-    if(!nUMI_filter) cdf$umi_cf_lo=0; cdf$umi_cf_hi=Inf
+
+    if(isFALSE(nUMI_filter)){cfs$umi_cf_lo=0; cfs$umi_cf_hi=Inf}
     cell <- which((SparseEset$nUMI.total > cfs$umi_cf_lo) & (SparseEset$nUMI.total < cfs$umi_cf_hi))
     if(nGene_filter) cell <- intersect(cell, which(SparseEset$nGene > cfs$nGene_cf))
-    if(ERCC_filter&cfs$ERCC_cf!=0) cell <- intersect(cell, which(SparseEset$percent.spikeIn < cfs$ERCC_cf))
-    if(Mito_filter&cfs$Mito_filter!=0) cell <- intersect(cell, which(SparseEset$percent.mito < cfs$mito_cf))
+    if(ERCC_filter&(cfs$ERCC_cf!=0)) cell <- intersect(cell, which(SparseEset$percent.spikeIn < cfs$ERCC_cf))
+    if(Mito_filter&(cfs$mito_cf!=0)) cell <- intersect(cell, which(SparseEset$percent.mito < cfs$mito_cf))
+
+    cat("Below threshold were used:","\n")
+    print(cfs)
 
     #gene filtering
     if(gene_filter){
@@ -104,16 +111,13 @@ preMICA.filtering <- function(SparseEset,
 
       cat("Gene expressed in less than ", cfs$nCell_cutoff,
           "cells (",(dim(SparseEset)[1]-length(gene))*100/dim(SparseEset)[1],"% genes) were filtered","\n",
-          "Filtered expression matrix dimension:",dim(data),"\n")
+          "-Filtered expression matrix dimension:",dim(eset.sel),"\n")
       }else { eset.sel <- SparseEset }
 
-    #cell filtering
-    if(cell_filter){
-      eset.sel2 <- eset.sel[,cell]
-      cat("A total of ",dim(SparseEset)[2]-length(cell),
+    eset.sel2 <- eset.sel[,cell]
+    cat("A total of ",dim(SparseEset)[2]-length(cell),
           "(",(dim(SparseEset)[2]-length(cell))*100/dim(SparseEset)[2],"%) cells were filtered","\n",
-          "Filtered expression matrix dimension:",dim(eset.sel2),"\n")
-      }else {eset.sel2<-eset.sel}
+          "-Filtered expression matrix dimension:",dim(eset.sel2),"\n")
 
     cat("Data filtering done!","\n")
     cat("====================","\n")

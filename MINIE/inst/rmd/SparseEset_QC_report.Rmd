@@ -7,8 +7,6 @@ params:
       value: x
     projectName:
       value: x
-    plot.dir: 
-      value: x
     cfs:
       value: x
     output.cutoff:
@@ -40,8 +38,8 @@ mu_gene<-floor(mean(eset$nGene))
 M_UMI<-floor(median(eset$nUMI.total))
 mu_UMI<-floor(mean(eset$nUMI.total))
 
-sample_info_c1 <- c("Sample ID", "Output Directory", "Raw Genes", "Raw Cells", "Mean cells per gene")
-sample_info_c2 <- c(params$projectName, normalizePath(params$plot.dir), dim(d)[1], dim(d)[2], floor(mean(cells_per_gene)))
+sample_info_c1 <- c("Sample ID", "Raw Genes", "Raw Cells", "Mean cells per gene")
+sample_info_c2 <- c(params$projectName, dim(d)[1], dim(d)[2], floor(mean(cells_per_gene)))
 sample_info <- matrix(c(sample_info_c1, sample_info_c2), ncol = 2, byrow = F)
 
 # plot table
@@ -114,7 +112,7 @@ gene_table %>% kable("html") %>%
   kable_styling(bootstrap_options = "striped", font_size = 14) %>% 
   column_spec(2:3, bold = T, color = "Red") %>% 
   add_footnote(paste0("Genes expressed in less than 5% (", 
-                      nCell_cutoff, ") cells will be removed."),  
+                      cfs$nCell_cutoff, ") cells will be removed."),  
                notation = "number")
 
 ```
