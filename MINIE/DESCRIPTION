@@ -22,4 +22,5 @@ Depends:
 	rmarkdown,
 	Matrix,
 	knitr,
-	kableExtra
+	kableExtra,
+	NetBID2

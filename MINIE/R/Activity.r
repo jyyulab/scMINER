@@ -1,7 +1,7 @@
 ##Author:chenxi.qian@stjude.org
 ##Stjude.YuLab
-
-#' GetActivityFromSJARACNe
+#'
+#'  GetActivityFromSJARACNe
 #'
 #' @description Allocate network information from SJARACNe and calculate activity score for each hub genes.
 #'
@@ -37,8 +37,7 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
 							   activity.norm=TRUE,
 							   save_network_file=FALSE,
 							   functype=NULL,
-							   save_path=NA)
-{
+							   save_path=NA){
   eset<-SJARACNe_input_eset;
 
   if(!group_tag%in%colnames(pData(eset))){
@@ -76,11 +75,9 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
       f<-output.files[grep(paste0("/",net,"_"),output.files)]
 
       if (length(grep("/tf/",f)!=0))
-        {TF.net<-NetBID2::get.SJAracne.network(file = f[grep("/tf/",f)])
-
-
+        {TF.net<-NetBID2::get.SJAracne.network(file = f[grep("/tf/",f)])}
       if(length(grep("/sig/",f)!=0))
-        {SIG.table<-NetBID2::get.SJAracne.network(file= f[grep("/sig/",f)])
+        {SIG.table<-NetBID2::get.SJAracne.network(file= f[grep("/sig/",f)])}
 
       if(save_network_file){
         if(!is.null(TF.table)) save(TF.net,file=file.path(save_path,paste0(net,".TF.network")))
@@ -505,11 +502,5 @@ TopMasterRegulator <- function(DAG_result=res,n=5,degree_filter=c(50,500),cellty
   cat("Done!")
   return(res)
 }
-
-
-
-
-
-
 
 
