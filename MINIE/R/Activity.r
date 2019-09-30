@@ -76,40 +76,33 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
       f<-output.files[grep(paste0("/",net,"_"),output.files)]
 
       if (length(grep("/tf/",f)!=0))
-        {TF.table<-read.table(file = f[grep("/tf/",f)],
-	                         header = TRUE,
-	                         check.names = FALSE,
-  						             stringsAsFactors = FALSE)}
+        {TF.net<-NetBID2::get.SJAracne.network(file = f[grep("/tf/",f)])
+
 
       if(length(grep("/sig/",f)!=0))
-        {SIG.table<-read.table(file= f[grep("/sig/",f)],
-                            header = TRUE,
-                            stringsAsFactors = FALSE,
-                            check.names = FALSE)}
-
+        {SIG.table<-NetBID2::get.SJAracne.network(file= f[grep("/sig/",f)])
 
       if(save_network_file){
-        if(!dir.exists(save_path)) dir.create(path=save_path)
-        gsc <- getGSC(tf = TF.table, sig=SIG.table)
-
-        save(gsc,file=file.path(save_path,paste0("gsc.",net)))
+        if(!is.null(TF.table)) save(TF.net,file=file.path(save_path,paste0(net,".TF.network")))
+        if(!is.null(SIG.table)) save(SIG.table,file=file.path(save_path,paste0(net,".TF.network")))
         cat("Network saved for ", net,"\n")
-        }
+      }
 
   	  cat("Calculate Activity for ",net,"!",'\n')
   	  eset.sel<-eset[,pData(eset)[,group_tag]==net]
 
-      acs1<-get_activity(Net = TF.table,tag = "TF",normalize=activity.norm,
+      acs1<-get_activity(Net = TF.net$network_dat,tag = "TF",normalize=activity.norm,
     					   eset = eset.sel, activity.method = activity.method)
-      acs2<-get_activity(Net = SIG.table,tag = "SIG",normalize=activity.norm,
+
+      acs2<-get_activity(Net = SIG.table$network_dat,tag = "SIG",normalize=activity.norm,
                          eset = eset.sel, activity.method = activity.method)
 
       acs<-t(cbind(acs1,acs2));rm(acs1,acs2)
 
- 	  #update full gene list
- 	  acs.ID <- sapply(strsplit(rownames(acs),"_"),"[",1)
+ 	    #update full gene list
+ 	    acs.ID <- sapply(strsplit(rownames(acs),"_"),"[",1)
 
-	  acs.deg <- data.frame(ID=acs.ID,
+	    acs.deg <- data.frame(ID=acs.ID,
 	  						Degree=as.numeric(sapply(strsplit(rownames(acs),"_"),"[",2)),
 	  						stringsAsFactors=FALSE)
 

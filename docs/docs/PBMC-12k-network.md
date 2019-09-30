@@ -14,7 +14,8 @@ Original data website can be downloaded [here](https://support.10xgenomics.com/s
 
 ##Network visualization
 ###
-
+1. network/two network visualizaton
+2. 
 
 
 

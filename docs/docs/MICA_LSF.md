@@ -17,19 +17,11 @@ MICA(Mutual Information based Clustering Analysis) is a nonlinear clustering ana
 
 ---
 ## Preprocssing
-Preprocessing is very simple for MICA analysis. You can use our customized script in R, with function 'pre.MICA'
+Preprocessing is very simple for MICA analysis. You can use our customized script in R, with function `draw.scRNAseq.QC` and `preMICA.filtering` in scMINER R package. For detailed information, please see complementary tutorial in tab `Sample Analysis with PBMC(12k) scRNA-seq data`.
 
-```R
-require(scMINER)
-d <- pre.MICA (data.input = [your_data], #data matrix that have unique colnames and geneSymbol as rownames
-               output_rmd = TRUE, #whether or not output Rmarkdown report, default as TRUE
-               projectName = "PBMC12K", 
-               plot.dir = ".", # save plot at..
-               sampleID = "Sample", # sample info (could be a string or a vector of original group info))
 
-```
 ## Basic usage
-MICA is implemented in python, in order to run MICA troublefree, you could use function 'generate_MICA_rmd' in R package scMINER to generate essential command for running MICA on LSF via:
+MICA is implemented in python, in order to run MICA troublefree, you could use function `generate_MICA_rmd` in R package `scMINER` to generate essential command for running MICA on LSF via:
 
 ```R
 generateMICAcmd<-function(save_sh_at, #path to save shell script 
@@ -102,4 +94,8 @@ you can use them via adding parameter:
 ```SHELL
 --dist MI  (or: euclidean | spearman | pearson)
 ```
+
+## Post-clustering analysis
+We offer a handful of useful functions in scMINER to help you explore your scRNA-seq data in a system biology way after clustering. 
+
 
