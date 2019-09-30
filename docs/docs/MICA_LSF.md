@@ -17,14 +17,14 @@ MICA(Mutual Information based Clustering Analysis) is a nonlinear clustering ana
 
 ---
 ## Preprocssing
-Preprocessing is very simple for MICA analysis. You can use our customized script in R, with function `draw.scRNAseq.QC` and `preMICA.filtering` in scMINER R package. For detailed information, please see complementary tutorial in tab `Sample Analysis with PBMC(12k) scRNA-seq data`.
+Preprocessing is fairly simple for MICA analysis. You can use our customized script in R, with function `draw.scRNAseq.QC` and `preMICA.filtering` in scMINER R package. For detailed information, please see complementary tutorial in tab `Sample Analysis with PBMC(12k) scRNA-seq data`.
 
 
 ## Basic usage
 MICA is implemented in python, in order to run MICA troublefree, you could use function `generate_MICA_rmd` in R package `scMINER` to generate essential command for running MICA on LSF via:
 
 ```R
-generateMICAcmd<-function(save_sh_at, #path to save shell script 
+scMINER::generateMICAcmd(save_sh_at, #path to save shell script 
                             input_file, #your MICA input file
                             project_name, 
                             num_cluster, #a vector of numerical number
@@ -53,7 +53,7 @@ Each assigned number of k will output one folder containing following files.
 
    <img src="./plots/pbmc_12k_k8_tsne.png" width="600"/> 
 
-1. `[Project_name]_k[number]_tsne.png`  --visualization of clustering result (default as UMAP)
+1. `[Project_name]_k[number]_tsne.png`  --visualization of clustering result (default as tSNE)
 2. `[Project_name]_dist.h5`  -- h5 file containing distance matrix calculated.
 3. `[Project_name]_mds.pdf`  -- pdf file of t-SNE visualization of mds transformed distance matrix, with perplexity set to 30
 4. `[Project_name]_tsne_ClusterMem.txt`  -- txt file containing visualization coordinates and clustering labels
@@ -96,6 +96,6 @@ you can use them via adding parameter:
 ```
 
 ## Post-clustering analysis
-We offer a handful of useful functions in scMINER to help you explore your scRNA-seq data in a system biology way after clustering. 
+We offer a handful of useful functions in scMINER ranging from visualization to driver estimation to help you explore your scRNA-seq data in a system biology way after clustering. 
 
 

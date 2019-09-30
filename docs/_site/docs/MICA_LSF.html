@@ -123,24 +123,17 @@
       <li><a href="#try-other-distance-matrix-calculation-methods" id="markdown-toc-try-other-distance-matrix-calculation-methods">Try other distance matrix calculation methods</a></li>
     </ol>
   </li>
+  <li><a href="#post-clustering-analysis" id="markdown-toc-post-clustering-analysis">Post-clustering analysis</a></li>
 </ol>
 
 <hr />
 <h2 id="preprocssing">Preprocssing</h2>
-<p>Preprocessing is very simple for MICA analysis. You can use our customized script in R, with function ‘pre.MICA’</p>
+<p>Preprocessing is fairly simple for MICA analysis. You can use our customized script in R, with function <code class="highlighter-rouge">draw.scRNAseq.QC</code> and <code class="highlighter-rouge">preMICA.filtering</code> in scMINER R package. For detailed information, please see complementary tutorial in tab <code class="highlighter-rouge">Sample Analysis with PBMC(12k) scRNA-seq data</code>.</p>
 
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">require</span><span class="p">(</span><span class="n">scMINER</span><span class="p">)</span><span class="w">
-</span><span class="n">d</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pre.MICA</span><span class="w"> </span><span class="p">(</span><span class="n">data.input</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">your_data</span><span class="p">],</span><span class="w"> </span><span class="c1">#data matrix that have unique colnames and geneSymbol as rownames</span><span class="w">
-               </span><span class="n">output_rmd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="c1">#whether or not output Rmarkdown report, default as TRUE</span><span class="w">
-               </span><span class="n">projectName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"PBMC12K"</span><span class="p">,</span><span class="w"> 
-               </span><span class="n">plot.dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"."</span><span class="p">,</span><span class="w"> </span><span class="c1"># save plot at..</span><span class="w">
-               </span><span class="n">sampleID</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Sample"</span><span class="p">,</span><span class="w"> </span><span class="c1"># sample info (could be a string or a vector of original group info))</span><span class="w">
-
-</span></code></pre></div></div>
 <h2 id="basic-usage">Basic usage</h2>
-<p>MICA is implemented in python, in order to run MICA troublefree, you could use function ‘generate_MICA_rmd’ in R package scMINER to generate essential command for running MICA on LSF via:</p>
+<p>MICA is implemented in python, in order to run MICA troublefree, you could use function <code class="highlighter-rouge">generate_MICA_rmd</code> in R package <code class="highlighter-rouge">scMINER</code> to generate essential command for running MICA on LSF via:</p>
 
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">generateMICAcmd</span><span class="o">&lt;-</span><span class="k">function</span><span class="p">(</span><span class="n">save_sh_at</span><span class="p">,</span><span class="w"> </span><span class="c1">#path to save shell script </span><span class="w">
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">scMINER</span><span class="o">::</span><span class="n">generateMICAcmd</span><span class="p">(</span><span class="n">save_sh_at</span><span class="p">,</span><span class="w"> </span><span class="c1">#path to save shell script </span><span class="w">
                             </span><span class="n">input_file</span><span class="p">,</span><span class="w"> </span><span class="c1">#your MICA input file</span><span class="w">
                             </span><span class="n">project_name</span><span class="p">,</span><span class="w"> 
                             </span><span class="n">num_cluster</span><span class="p">,</span><span class="w"> </span><span class="c1">#a vector of numerical number</span><span class="w">
@@ -169,7 +162,7 @@ mica LSF \
 <p><img src="./plots/pbmc_12k_k8_tsne.png" width="600" /></p>
 
 <ol>
-  <li><code class="highlighter-rouge">[Project_name]_k[number]_tsne.png</code>  –visualization of clustering result (default as UMAP)</li>
+  <li><code class="highlighter-rouge">[Project_name]_k[number]_tsne.png</code>  –visualization of clustering result (default as tSNE)</li>
   <li><code class="highlighter-rouge">[Project_name]_dist.h5</code>  – h5 file containing distance matrix calculated.</li>
   <li><code class="highlighter-rouge">[Project_name]_mds.pdf</code>  – pdf file of t-SNE visualization of mds transformed distance matrix, with perplexity set to 30</li>
   <li><code class="highlighter-rouge">[Project_name]_tsne_ClusterMem.txt</code>  – txt file containing visualization coordinates and clustering labels</li>
@@ -205,6 +198,9 @@ you can use them via adding parameter:</p>
 
 <pre><code class="language-SHELL">--dist MI  (or: euclidean | spearman | pearson)
 </code></pre>
+
+<h2 id="post-clustering-analysis">Post-clustering analysis</h2>
+<p>We offer a handful of useful functions in scMINER ranging from visualization to driver estimation to help you explore your scRNA-seq data in a system biology way after clustering.</p>
 
 
 

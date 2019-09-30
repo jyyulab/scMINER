@@ -8,7 +8,7 @@ permalink: /
 
 <img src="./docs/plots/scMINER_V4.png" alt="drawing" width="200"/> 
 
-**scMINER** is a toolbox for single-cell analysis based on mutual information. This package is a combination of several individual tools including but not limit to [MICA](https://github.com/jyyulab/MICA) and [SJARACNe](https://github.com/jyyulab/SJARACNe). Separate installation of each individual tools is also available on github. 
+*scMINER* is a **system biology** analysis frame work for high-throughput single cell RNA-seq data implemented primarily in R and python. This package offers a combination of several individual tools including but not limit to [MICA](https://github.com/jyyulab/MICA) (Mutual Information based Clustering analysis) and [SJARACNe] (https://github.com/jyyulab/SJARACNe). Installation instructions for each individual tools are available on github through links above.
 
 {: .fs-6 .fw-300 }
 

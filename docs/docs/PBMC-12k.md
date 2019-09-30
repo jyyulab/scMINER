@@ -171,7 +171,7 @@ feature_heatmap(eset = eset.12k,target = gn.sel,group_tag = "label",
 ### Assign cell type to cluster
 {: no_toc }
 
-Here we curated a reference signature list of 8 immune cell types(link) for cell type annotation. In `AssignCellTypes.bbp` function, we calculated cell type scores for each clusters, and visualize scores using heatmap. 
+Here we curated a reference signature list of 8 immune cell types(link) for cell type annotation. In `marker_bbplot` function, we calculated cell type scores for each clusters, and visualize scores using heatmap. 
 
 ```R
 ref<-read.xlsx("Immune_signatures.xlsx")
@@ -185,7 +185,7 @@ head(ref)
 5     Tmem    IL32      1
 6     Tmem    GZMA     -1
 
-p<-AssignCellTypes.bbp(ref=ref,eset=eset.12k)
+p<-marker_bbplot(ref=ref,eset=eset.12k)
 
 ```
 ![](./plots/3_4_MICA_cluster_score.png)
@@ -197,6 +197,7 @@ indx<-factor(x=c("NaiveT","Tmem","CD8em","CD8eff","Bcell","NK","DC","Mo"),
 				levels=c("NaiveT","Tmem","CD8em","CD8eff","Bcell","NK","DC","Mo"))
 eset.12k$celltype <- indx[eset.12k$label]
 ```
+
 
 
 ## Network generation via SJARACNe
@@ -288,7 +289,11 @@ In order to conduct more advanced network analysis utilizing SJARACNe generated 
 
 
 ---
-```
+
 ## R session Info
+```R
+
+> sessionInfo()R version 3.5.2 (2018-12-20)Platform: x86_64-apple-darwin15.6.0 (64-bit)Running under: macOS Mojave 10.14.3Matrix products: defaultBLAS: /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylibLAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dyliblocale:[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8attached base packages:[1] grid      parallel  stats     graphics  grDevices utils     datasets  methods   base     other attached packages: [1] scMINER_0.1.0         kableExtra_1.1.0      knitr_1.24            rmarkdown_1.14        cowplot_1.0.0         [6] dplyr_0.8.3           pheatmap_1.0.12       ComplexHeatmap_1.20.0 scales_1.0.0          RColorBrewer_1.1-2   [11] ggplot2_3.2.1         reshape2_1.4.3        Biobase_2.42.0        BiocGenerics_0.28.0   Matrix_1.2-17        loaded via a namespace (and not attached): [1] Rcpp_1.0.2          pillar_1.4.2        compiler_3.5.2      plyr_1.8.4          tools_3.5.2         zeallot_0.1.0       [7] digest_0.6.20       viridisLite_0.3.0   evaluate_0.14       tibble_2.1.3        gtable_0.3.0        lattice_0.20-38    [13] pkgconfig_2.0.2     rlang_0.4.0         rstudioapi_0.10     xfun_0.8            xml2_1.2.2          httr_1.4.1         [19] withr_2.1.2         stringr_1.4.0       vctrs_0.2.0         hms_0.5.0           GlobalOptions_0.1.0 webshot_0.5.1      [25] tidyselect_0.2.5    glue_1.3.1          R6_2.4.0            GetoptLong_0.1.7    readr_1.3.1         purrr_0.3.2        [31] magrittr_1.5        backports_1.1.4     htmltools_0.3.6     rvest_0.3.4         assertthat_0.2.1    shape_1.4.4        [37] circlize_0.4.6      colorspace_1.4-1    stringi_1.4.3       lazyeval_0.2.2      munsell_0.5.0       crayon_1.3.4       [43] rjson_0.2.20   
 
 
+```

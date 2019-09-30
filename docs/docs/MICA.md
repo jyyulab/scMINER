@@ -17,28 +17,20 @@ MICA(Mutual Information based Clustering Analysis) is a nonlinear clustering ana
 
 ---
 ## Preprocssing
-Preprocessing is very simple for MICA analysis. You can use our customized script in R, with function 'pre.MICA'
+Preprocessing is fairly simple for MICA analysis. You can use our customized script in R, with function `draw.scRNAseq.QC` and `preMICA.filtering` in scMINER R package. For detailed information, please see complementary tutorial in tab `Sample Analysis with PBMC(12k) scRNA-seq data`.
 
-```R
-require(scMINER)
-d <- pre.MICA (data.input = [your_data], #data matrix that have unique colnames and geneSymbol as rownames
-               output_rmd = TRUE, #whether or not output Rmarkdown report, default as TRUE
-               projectName = "PBMC12K", 
-               plot.dir = ".", # save plot at..
-               sampleID = "Sample", # sample info (could be a string or a vector of original group info))
-
-```
 ## Basic usage
-MICA is implemented in python, in order to run MICA troublefree, you could use function 'generate_MICA_rmd' in R package scMINER to generate essential command for running MICA locally:
+MICA is implemented in python, in order to run MICA troublefree, you could use function `generate_MICA_rmd` in R package `scMINER` to generate essential command for running MICA locally:
 
+In R console: 
 ```R
-generate_MICA_cmd<-function(save_sh_at, #path to save shell script 
-                            input_file, #your MICA input file
-                            project_name, 
-                            num_cluster, #a vector of numerical number
-                            output_path, #path to MICA output
-                            host="local", 
-                            visualization="tsne" #or "umap")
+scMINER::generate_MICA_cmd(save_sh_at, #path to save shell script 
+                  			input_file, #your MICA input file
+                  			project_name, 
+                  			num_cluster, #a vector of numerical number
+                  			output_path, #path to MICA output
+                  			host="local", 
+		                    visualization="tsne" #or "umap")
 ```
 
 
@@ -57,7 +49,7 @@ mica local \
 
 Each assigned number of k will output one folder containing following files.
 
-1. `[Project_name]_k[number]_tsne.png`  --visualization of clustering result (default as UMAP)
+1. `[Project_name]_k[number]_tsne.png`  --visualization of clustering result (default as tSNE)
 
   <img src="./plots/2_0_cwl_local_k3_tsne.png" width="600"/> 
 
@@ -101,3 +93,6 @@ you can use them via adding parameter:
 ```SHELL
 --dist MI  (or: euclidean | spearman | pearson)
 ```
+
+## Post-clustering analysis
+We offer a handful of useful functions in scMINER ranging from visualization to driver estimation to help you explore your scRNA-seq data in a system biology way after clustering. 
