@@ -9,7 +9,7 @@ nav_order: 6
 Here we demonstrate our advanced downstream analysis pipeline using PBMC (10x genmomics) scRNA-seq data after completing driver estimation following tutorial under tab `step by step demo with PBMC data`
 
 ## Network visualization
-scMINER incorporates a handful of network visualization/exploration function adapted from [NetBID2](https://github.com/jyyulab/NetBID2), a powerful tool for data-driven network-based bayesian Inference of drivers. scMINER also offered several wrapper of basic visualization functions in NetBID2 for better usability. 
+scMINER incorporates a handful of network visualization/exploration function adapted from [NetBID2](https://jyyulab.github.io/NetBID/), a powerful tool for data-driven network-based bayesian Inference of drivers. scMINER also offered several wrapper of basic visualization functions in NetBID2 for better usability. 
 
 ### Single network visualization
 In scMINER, you can visualize your driver and its targets by function `draw.network`. It was adapted from function `draw.targetNet` and `draw.targetNet.TWO` from `NetBID2`. This function can help visualize a driver's targets as well as the relationship(edge) between source and target genes, by taking Mutual information as edge weight, and spearman correlation as direction.
@@ -22,8 +22,8 @@ draw.network(net1 = net,src1 = "LEF1", #driver name
 	n_layer=4)
 
 ```
+<center><img src="./plots/LEF1.TF_in_NaiveT_network.png" alt="drawing" width="600"></center>
 
-![](./plots/LEF1.TF_in_NaiveT_network.png)
 
 ### Subnetwork structure visualization between two networks
 You can also use `draw.network` function to visualize two networks and their subnetwork structure. This could be used for identify common targets from two top driver from the same network, or identify network rewiring event of same driver in different cell type network. Here below is an example for later case.
@@ -36,8 +36,8 @@ draw.network(net1 = net1,net2 = net2,
 		pdf_name = "BATF.TF_in_2_network.pdf",
 		n_layer=4)
 ```
+<center><img src="./plots/BATF.TF_in_2_network.png" alt="drawing" width="600"></center>
 
-![](./plots/BATF.TF_in_2_network.png)
 
 
 ## Biological function anlaysis for drivers 
@@ -65,21 +65,7 @@ draw.bubblePlot(driver_list= TF_list,
 
 ```
 
-
-![](./plots/NaiveT_bubblePlot.png)
-
-
-
-
-
-
-
-
-
-
-
-
-
+<center><img src="./plots/NaiveT_bubblePlot.png" alt="drawing" width="600"></center>
 
 
 

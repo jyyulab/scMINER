@@ -72,7 +72,7 @@
         
           <li class="navigation-list-item">
             
-            <a href="http://localhost:4000/docs/PBMC-12k.html" class="navigation-list-link">Step by step demo with PBMC(12k) data</a>
+            <a href="http://localhost:4000/docs/PBMC-12k.html" class="navigation-list-link">Step by step user guidance</a>
             
           </li>
         
@@ -114,31 +114,33 @@
 <p>scMINER is depend on <a href="https://www.python.org/downloads/">python3</a> and <a href="https://www.r-project.org/">R</a>, including three individual modules: scMINER R package, MICA and SJARACNe python package.</p>
 
 <h3 id="local-installation">Local installation:</h3>
-<ol>
+<ul>
   <li>Install <a href="https://github.com/jyyulab/scMINER">scMINER</a> from github:</li>
-</ol>
+</ul>
 
 <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#install dev_tool first install.packages(devtools)</span><span class="w">
 </span><span class="n">devtools</span><span class="o">::</span><span class="n">install_github</span><span class="p">(</span><span class="s2">"jyyulab/scMINER"</span><span class="p">)</span><span class="w"> 
-
 </span><span class="c1">#or</span><span class="w">
 </span><span class="n">devtools</span><span class="o">::</span><span class="n">install_local</span><span class="p">(</span><span class="s1">'scMINER_0.0.1.tar.gz'</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<ol>
-  <li>Install <a href="https://github.com/jyyulab/MICA">MICA</a> from source:
-    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ git clone https://github.com/jyyulab/MICA
+<ul>
+  <li>Install <a href="https://github.com/jyyulab/MICA">MICA</a> from source:</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ git clone https://github.com/jyyulab/MICA
 $ cd MICA
 $ python setup.py install
-</code></pre></div>    </div>
-  </li>
-  <li>Install <a href="https://github.com/jyyulab/SJARACNe">SJARACNe</a> from source:
-    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ git clone https://github.com/jyyulab/SJARACNe
+</code></pre></div></div>
+
+<ul>
+  <li>Install <a href="https://github.com/jyyulab/SJARACNe">SJARACNe</a> from source:</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ git clone https://github.com/jyyulab/SJARACNe
 $ cd SJARACNe
 $ python setup.py install
-</code></pre></div>    </div>
-  </li>
-</ol>
+</code></pre></div></div>
 
 
           
