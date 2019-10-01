@@ -19,6 +19,6 @@ permalink: /
 
 ## Overview
 
-<img src="docs/plots/scMINER_Overview.png" alt="drawing" width="700"/> 
+<img src="docs/plots/scMINER_Overview.png" alt="Overview"/> 
 
 

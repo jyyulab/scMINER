@@ -4,7 +4,7 @@ title: Installation
 nav_order: 2
 
 ---
-#Installation
+# Installation
 
 ### Dependencies
 scMINER is depend on [python3](https://www.python.org/downloads/) and [R](https://www.r-project.org/), which consists of three individual modules: scMINER R package, MICA and SJARACNe python package. 

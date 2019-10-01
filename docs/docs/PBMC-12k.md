@@ -25,20 +25,20 @@ Here we demonstrate our pipeline using PBMC (10x genmomics) scRNA-seq data. Full
 ### Read 10x genomics data
 Read 10x genomics data with function `readscRNAseqData `in scMINER package. This function could help read data from either 10x genomics standard output(usually contains three individual files: matrix.mtx, barcodes.tsv, features.tsv), or other text files by passing arguments to `read.delim()`. 
 
-This function helps create a Sparse matrix object using Expressionset prototype, If set `CreateSparseEset=T`. Otherwise, it will create a list object that stores expression data, feature data and sample data under three separate slots. If `add.meta=T`, then additional sample info such as total number of UMI will be calcualated and outputed in sample data. Here, since data was downsampled and not in standard 10x genomics output format, we defined `is.10x=F`,`CreateSparseEset = F`, and `add.meta=F`.
+This function helps create a Sparse matrix object using Expressionset prototype, If set `CreateSparseEset=T`. Otherwise, it will create a list object that stores expression data, feature data and sample data under three separate slots. If `add.meta=T`, then additional sample info such as total number of UMI will be calcualated and outputed in sample data. Here, we defined `is.10x=T`,`CreateSparseEset = F`, and `add.meta=F`.
 
 ```R
-d.12k <- readscRNAseqData(file="PBMC_demo_input.txt",is.10x = F,CreateSparseEset = F, add.meta=F)
+d.12k <- readscRNAseqData(file="../PBMC12k_input/",is.10x = T,CreateSparseEset = F, add.meta=F)
 ```
 
 After loading data to environment properly, you can now create Sparse Matrix expression by using `CreateSparseEset`function:
 
 ```R
-eset.12k<-CreateSparseEset(data=d.12k, add.meta = T)
+eset.12k <- CreateSparseEset(data=d.12k, add.meta = T)
 ```
 
 ### Quality control and data filtering
-Quality control assessments could be done using `draw.scRNAseq.QC` function, which outputs a html report generated through Rmarkdown. The report includes three essential quality control figures at both gene and cell level. Suggested cutoff will be returned as a list if set `output.cutoff=TRUE`.
+Quality control assessments could be done using `draw.scRNAseq.QC` function, which outputs a html report generated through Rmarkdown([PBMC12K_QC_report.html](./PBMC12k_scRNAseq_QC.html)). The report includes three essential quality control figures at both gene and cell level. Suggested cutoff will be returned as a list if set `output.cutoff=TRUE`.
 
 ```R
 cutoffs <- draw.scRNAseq.QC(SparseEset=eset.12k, 
@@ -49,7 +49,7 @@ cutoffs <- draw.scRNAseq.QC(SparseEset=eset.12k,
 ```
 The first plot is a histogram which helps visualize distribution of expressed genes among each cells. Blue veritcal line shows the recommended cutoff. Genes expressed lower number of cells than threshold should be filtered.
 
-<center><img src="./plots/1_1_Gene_QCmetrics_before_filtering.png" alt="drawing" width="600"></center>
+<center><img src="./plots/1_1_Gene_QCmetrics_before_filtering.png" alt="drawing" width="700"></center>
 
 The second plot helps visualize total UMI count, and total number of gene expressed in violin plots. Horizontal blue line indicates suggested high/low cutoffs. Suggested thresholds were computed based on Median ± 3 * MAD (Maximum absolute deviance). Actual threshold numbers are also printed right above blue lines in green labels.
 ![](./plots/1_2_Cell_QC_1.png)
@@ -87,11 +87,12 @@ eset.norm <- CreateSparseEset(data=exp.log2, meta.data = pData(eset.sel), featur
 MICA was implemented in Python. If you would like to install MICA, please refer to [MICA github page](https://github.com/jyyulab/MICA). There are several handlers for you to choose in MICA for better visualization. A more comprehensive tutorial could be found under [Clustering with MICA](./MICA.md) tab . **Here we suggest saving your working directory prior to running MICA**. 
 
 ### Generate MICA input and command
-After reviewing all visualization and finished filtering, you can go ahead and generate clustering (MICA) input with function `generateMICAinput`. This function takes an expression matrix as input, and outputs a cell by gene .txt file. Please note that **you should always feed MICA the log or log2 transformed data**.
+After reviewing all visualizations and finished filtering, you can go ahead and generate clustering (MICA) input with function `generateMICAinput`. This function takes an expression matrix as input, and outputs a cell by gene .txt file. Please note that **you should always feed MICA the log or log2 transformed data**.
 
 ```R
 generateMICAinput(data= exp.log2 ,filename="PBMC12k_MICA_input.txt")
 ```
+
 
 We also offer a function called `generate_MICA_cmd ` to help write MICA command in a shell script. In order to run MICA on LSF, you need to set `host=lsf`,  define `queue = [your queue]` (required), and `memory` (optional). In `num_cluster`, you can specify a vector of number of K to perform clustering analysis for different number of cluster simultaneously.
 
@@ -198,7 +199,7 @@ eset.12k$celltype <- indx[eset.12k$label]
 {: no_toc }
 
 ### Generate SJARACNe input
-Before generating cell type/group/cluster specific network, group information should be stored under `pData([your_expressionSet])`. An R function `generateSJAracneInput` will help to partition input expression matrix and perform essential filtering(filter out 0 expressed genes in cluster) to ensure a reliable network construction. `funcType` is required to specify what kind of network to generate. A reference transcription factor list will be loaded automatically without manual input. However, you do need to define species information for your data using under `ref`.
+Before generating cell type/group/cluster specific network, group information should be stored under `pData([your_expressionSet])`. An R function called `generateSJAracneInput` will help to partition input expression matrix and perform essential filtering(filter out 0 expressed genes in cluster) to ensure a reliable network construction. `funcType` is required to specify what kind of network to generate. If set `funcType="TF"`, a reference transcription factor list will be loaded automatically without manual input. However, you do need to define species information for your data using under `ref`.
 
 This function will help create one directory for each group/cell type, containing required input for SJARACNe such as filtered expression matrix in .exp format and filtered TF list in .txt format. 
 
@@ -212,12 +213,12 @@ generateSJARACNeInput(
 
 ### Run SJARACNe
 
-SJARACNe works as a separate module which implemented in python, please consult [here](https://github.com/jyyulab/SJARACNe) for installation and basic usage. We strongly suggest saving your working directory before running SJARACNe. 
+SJARACNe works as a separate module which was implemented in python, please refer to [SJARACNe](https://github.com/jyyulab/SJARACNe) github page for installation and basic usage. Please save your working directory before running SJARACNe. 
 
 Here we provide an example to run SJARACNe for all celltypes/clusters. After SJARACNe was sucessfully completed, you will be able to get one network for each cell and functional type.
 
 ```
-indir=~/PBMC12K/SJARACNE_PBMC12K/
+indir = ~/PBMC12K/SJARACNE_PBMC12K/
 
 for i in $(ls -d */ | cut -f1 -d'/');do
 sjaracne ${i} $indir/${i}/*.exp $indir/${i}/tf/*.txt $indir/${i}/tf/ --c_threshold 0.01;
@@ -252,26 +253,22 @@ acs.12k <- GetActivityFromSJARACNe(
 ### Driver estimation by differential activity analysis
 {: no_toc }
 
-The function `FindDAG` was designed to identify highly differentiated TF from SJARACNe inferred activity matrix. In order to do so, we did two sided student's t-test to compare mean acitivty from one cell type V.S. the others. 
+The function `FindDAG` was designed to perform differnetial activity analysis from SJARACNe inferred activity matrix. In this function, two-sided student's t-test will be performed to compare mean activity from one cell type V.S. the others. It will return a data frame that includes all TF occurred in original data. Statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help identify hidden drivers. You can save it to file in order to check them manually. 
 
 ```R
 DAG_result <- FindDAG(eset = acs.demo,group_tag = "celltype")
 ```
 
-This function will output a full matrix that contians all TF occurred in original dataset, statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help idenify hidden drivers. You can save it in txt or xlsx for checking. 
-
-We also offer a function called `TopDriversfromDAG` to help print top drivers in each cell type to console you specified. This function is helpful for downstream analysis.
-
-
+We also offer a function called `TopDriversfromDAG` to help picking top drivers for each cell type. You can specify `n` as maximum number of top drivers to pick, and `degree_filter` to restrict number of targets.
 
 ```R
 TF_list <- TopDriversfromDAG(DAG_result = DAG_result,
-                              celltype=levels(acs.12k$celltype), # ensure cluster order
-                              n = 5, degree_filter = c(50,500))
+                              celltype = levels(acs.12k$celltype), # ensure cluster order
+                              n = 5, degree_filter = c(50,600))
 ```
 
 
-In scMINER, we provide a handful of visualizations to compare driver activity from different cell type/ clusters. Here we demo 2 basic functions: `feature_heatmap` and `feature_vlnplot`. These functions could be used on either expression and activty matrix.
+In scMINER, we provide a handful of visualizations to compare driver activity from different cell type/clusters. Here we demo two basic functions: `feature_heatmap` and `feature_vlnplot`. These functions could be used on either expression and activty matrix.
 
 ```R
 feature_heatmap(eset = acs.12k,target = TF_list,group_tag = "celltype",feature = "geneSymbol",
@@ -280,17 +277,17 @@ feature_heatmap(eset = acs.12k,target = TF_list,group_tag = "celltype",feature =
 ```
 <center><img src="./plots/4_1_TopTFHeatmap.png" alt="Driver heatmap" width="550"></center>
 
+
 ```R
 #check postive controls
 p <- feature_vlnplot(eset=acs.12k,target=c("LEF1","TCF7","BATF","TCF7","TBX21","IRF8","SPIB","BATF3","CEBPA"), 
 						ylabel = "Activity",
 						group_tag = "celltype",feature="geneSymbol", ncol = 2)
 ```
-
 <center><img src="./plots/4_2_Known_MR_vlnplot.png" alt="Driver heatmap" width="600"></center>
 
 
-In order to conduct more advanced network analysis utilizing SJARACNe generated cell type specific networks, please infer 	[`Advanced analysis`](./PBMC-12k-network.md) tab.
+In order to perform more advanced network analysis utilizing SJARACNe generated cell type specific networks, please infer detailed guidance under [Advanced analysis](./PBMC-12k-network.md) tab.
 
 
 
@@ -298,8 +295,5 @@ In order to conduct more advanced network analysis utilizing SJARACNe generated 
 
 ## R session Info
 ```R
-
-> sessionInfo()R version 3.5.2 (2018-12-20)Platform: x86_64-apple-darwin15.6.0 (64-bit)Running under: macOS Mojave 10.14.3Matrix products: defaultBLAS: /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylibLAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dyliblocale:[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8attached base packages:[1] grid      parallel  stats     graphics  grDevices utils     datasets  methods   base     other attached packages: [1] scMINER_0.1.0         kableExtra_1.1.0      knitr_1.24            rmarkdown_1.14        cowplot_1.0.0         [6] dplyr_0.8.3           pheatmap_1.0.12       ComplexHeatmap_1.20.0 scales_1.0.0          RColorBrewer_1.1-2   [11] ggplot2_3.2.1         reshape2_1.4.3        Biobase_2.42.0        BiocGenerics_0.28.0   Matrix_1.2-17        loaded via a namespace (and not attached): [1] Rcpp_1.0.2          pillar_1.4.2        compiler_3.5.2      plyr_1.8.4          tools_3.5.2         zeallot_0.1.0       [7] digest_0.6.20       viridisLite_0.3.0   evaluate_0.14       tibble_2.1.3        gtable_0.3.0        lattice_0.20-38    [13] pkgconfig_2.0.2     rlang_0.4.0         rstudioapi_0.10     xfun_0.8            xml2_1.2.2          httr_1.4.1         [19] withr_2.1.2         stringr_1.4.0       vctrs_0.2.0         hms_0.5.0           GlobalOptions_0.1.0 webshot_0.5.1      [25] tidyselect_0.2.5    glue_1.3.1          R6_2.4.0            GetoptLong_0.1.7    readr_1.3.1         purrr_0.3.2        [31] magrittr_1.5        backports_1.1.4     htmltools_0.3.6     rvest_0.3.4         assertthat_0.2.1    shape_1.4.4        [37] circlize_0.4.6      colorspace_1.4-1    stringi_1.4.3       lazyeval_0.2.2      munsell_0.5.0       crayon_1.3.4       [43] rjson_0.2.20   
-
-
+> sessionInfo()R version 3.6.1 (2019-07-05)Platform: x86_64-apple-darwin15.6.0 (64-bit)Running under: macOS Mojave 10.14.3Matrix products: defaultBLAS:   /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylibLAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dyliblocale:[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8attached base packages: [1] stats4    grid      parallel  stats     graphics  grDevices utils     datasets  methods   base     other attached packages: [1] scMINER_0.1.0               NetBID2_2.0.1               openxlsx_4.1.0.1            msigdbr_7.0.1               GSVA_1.32.0                 biomaRt_2.40.4              [7] reshape_0.8.8               arm_1.10-1                  MASS_7.3-51.4               MCMCglmm_2.29               ape_5.3                     coda_0.19-3                [13] ordinal_2019.4-25           umap_0.2.3.1                plotrix_3.7-6               plot3D_1.1.1                igraph_1.2.4.1              aricode_0.1.2              [19] ConsensusClusterPlus_1.48.0 DESeq2_1.24.0               tximport_1.12.3             impute_1.58.0               limma_3.40.6                GEOquery_2.52.0            [25] lme4_1.1-21                 SummarizedExperiment_1.14.1 DelayedArray_0.10.0         BiocParallel_1.18.1         matrixStats_0.55.0          GenomicRanges_1.36.1       [31] GenomeInfoDb_1.20.0         IRanges_2.18.3              S4Vectors_0.22.1            kableExtra_1.1.0            knitr_1.25                  Matrix_1.2-17              [37] rmarkdown_1.16              cowplot_1.0.0               dplyr_0.8.3                 pheatmap_1.0.12             ComplexHeatmap_2.0.0        scales_1.0.0               [43] RColorBrewer_1.1-2          ggplot2_3.2.1               reshape2_1.4.3              Biobase_2.44.0              BiocGenerics_0.30.0         BiocManager_1.30.4         loaded via a namespace (and not attached):  [1] backports_1.1.4        circlize_0.4.8         Hmisc_4.2-0            plyr_1.8.4             lazyeval_0.2.2         GSEABase_1.46.0        splines_3.6.1          digest_0.6.21           [9] htmltools_0.3.6        magrittr_1.5           checkmate_1.9.4        memoise_1.1.0          cluster_2.1.0          readr_1.3.1            annotate_1.62.0        askpass_1.1            [17] prettyunits_1.0.2      colorspace_1.4-1       blob_1.2.0             rvest_0.3.4            xfun_0.10              jsonlite_1.6           crayon_1.3.4           RCurl_1.95-4.12        [25] graph_1.62.0           genefilter_1.66.0      zeallot_0.1.0          survival_2.44-1.1      glue_1.3.1             gtable_0.3.0           zlibbioc_1.30.0        XVector_0.24.0         [33] webshot_0.5.1          GetoptLong_0.1.7       Rhdf5lib_1.6.1         shape_1.4.4            abind_1.4-5            DBI_1.0.0              Rcpp_1.0.2             viridisLite_0.3.0      [41] xtable_1.8-4           progress_1.2.2         htmlTable_1.13.2       clue_0.3-57            reticulate_1.13        foreign_0.8-72         bit_1.1-14             Formula_1.2-3          [49] htmlwidgets_1.3        httr_1.4.1             acepack_1.4.1          pkgconfig_2.0.3        XML_3.98-1.20          nnet_7.3-12            locfit_1.5-9.1         tidyselect_0.2.5       [57] rlang_0.4.0            later_0.8.0            AnnotationDbi_1.46.1   munsell_0.5.0          tools_3.6.1            RSQLite_2.1.2          evaluate_0.14          stringr_1.4.0          [65] bit64_0.9-7            zip_2.0.4              purrr_0.3.2            nlme_3.1-141           mime_0.7               xml2_1.2.2             compiler_3.6.1         shinythemes_1.1.2      [73] rstudioapi_0.10        png_0.1-7              tibble_2.1.3           geneplotter_1.62.0     stringi_1.4.3          cubature_2.0.3         lattice_0.20-38        nloptr_1.2.1           [81] tensorA_0.36.1         vctrs_0.2.0            pillar_1.4.2           lifecycle_0.1.0        GlobalOptions_0.1.1    ucminf_1.1-4           data.table_1.12.2      bitops_1.0-6           [89] corpcor_1.6.9          httpuv_1.5.2           R6_2.4.0               latticeExtra_0.6-28    promises_1.0.1         gridExtra_2.3          boot_1.3-23            assertthat_0.2.1       [97] rhdf5_2.28.0           openssl_1.4.1          rjson_0.2.20           withr_2.1.2            GenomeInfoDbData_1.2.1 hms_0.5.1              rpart_4.1-15           tidyr_1.0.0           [105] minqa_1.2.4            misc3d_0.8-4           numDeriv_2016.8-1.1    shiny_1.3.2            base64enc_0.1-3       
 ```
