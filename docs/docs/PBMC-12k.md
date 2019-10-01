@@ -14,20 +14,20 @@ nav_order: 5
 {:toc}
 
 ---
-## About Demo data
-Here we demonstrate our pipeline using PBMC (10x genmomics) scRNA-seq data [link to data matrix]. Full data contains 68k cells(link to 10x website), in order to provide a quicker guidance, we've down sampled this data to 12k cells.
+## Demo data
+Here we demonstrate our pipeline using PBMC (10x genmomics) scRNA-seq data. Full data contains 68k cells, in order to provide a quicker guidance, we've down sampled this data to 12k cells.
 Original data website can be downloaded [here](https://support.10xgenomics.com/single-cell-gene-expression/datasets/1.1.0/fresh_68k_pbmc_donor_a).
 
 ## Step1: Data preprocessing
 
 ### Read 10x genomics data
-Read 10x genomics data with function in scMINER package. This function could help read either 10x genomics standard output, as well as other text files types by passing arguments to `read.delim()`. If set `CreateSparseEset=T` This will help create a Sparse matrix object using Expressionset prototype, otherwise, it will create a list Object that stores expression data, feature data and sample data in different slots. If `add.meta=T`, then corresponding sample info such as total number of UMI will be calcualated and outputed.
+Read 10x genomics data with function in scMINER package. This function could help read either 10x genomics standard output, as well as other text files types by passing arguments to `read.delim()`. If set `CreateSparseEset=T` This will help create a Sparse matrix object using Expressionset prototype, otherwise, it will create a list Object that stores expression data, feature data and sample data in different slots. If `add.meta=T`, then corresponding sample info such as total number of UMI will be calcualated and outputed. Here, since data was downsampled and not in standard 10x genomics output format, we defined `is.10x=F` and `add.meta=F`.
 
 ```R
-d.12k <- readscRNAseqData(file="..//",is.10x = T,CreateSparseEset = FALSE, add.meta=F)
+d.12k <- readscRNAseqData(file="PBMC_demo_input.txt",is.10x = F,CreateSparseEset = FALSE, add.meta=F)
 ```
 
-You can also create Sparse Matrix expression later by using `CreateSparseEset`function:
+After confriming your data was loaded properly, you can now create Sparse Matrix expression by using `CreateSparseEset`function:
 
 ```R
 eset.12k<-CreateSparseEset(data=d.12k,feature.data = d.68k$feature.data,add.meta = T)
@@ -40,7 +40,7 @@ Quality control assessments could be done using `draw.scRNAseq.QC` step, this wi
 cutoffs <- draw.scRNAseq.QC(SparseEset=eset.12k, 
                           project.name = "PBMC12k",
                           plot.dir = "./QC/",
-                          group = "group", # this indicate which meta data information will be use to group violinplots
+                          group = "group", # this indicate which meta data information will be use in x axis to group violin plots
                           output.cutoff = TRUE)
 ```
 The first plot is a histogram which helps visualize distribution of expressed genes among each cells.
@@ -62,18 +62,18 @@ eset.sel<-preMICA.filtering(SparseEset = eset.12k,cutoffs = cutoffs)
 ```
  
 ### Normalization and transformation
-In scMINER package, we don't provide a vriety of methods to conduct normalizaton, you can use your own prefered normalization method. However, we highly recommend to do CPM and log2 transformation.
+In scMINER package, we don't provide methods to conduct normalizaton. You can use your own prefered normalization method. However, we highly recommend to do CPM and log2 transformation for MICA input.
 
 ```R
 norm = 1e6 
 exp.norm <- sweep(exprs(eset.sel), 2, norm/unname(Matrix::colSums(exprs(eset.sel))), '*')
 
 # log transformation
-# Highly recommend
+# Required for MICA
 exp.log2 <- log(exp.norm+1,base=2)
 
 # save as SparseEset
-eset.norm<-CreateSparseEset(data=exp.log2,meta.data = pData(eset.sel),feature.data = fData(eset.sel),add.meta = F)
+eset.norm <- CreateSparseEset(data=exp.log2,meta.data = pData(eset.sel),feature.data = fData(eset.sel),add.meta = F)
 ```
 
 ### Generate MICA input and command
@@ -83,13 +83,13 @@ After reviewing all visualization and finished filtering, you can go ahead and g
 generateMICAinput(data= exp.log2 ,filename="PBMC12k_MICA_input.txt")
 ```
 
-This will output a txt file containing filtered expression matrix for MICA. 
-We also provide a function for you to generate MICA command without writing your own scripts. If you set `host=lsf`, then you need to define `queue` required, and `memory` (optional). In `num_cluster`, you can input a vector of number of K to achieve clustering membership for different k simultaneously.
+We also offer a function to generate MICA command without writing your own scripts. If you set `host=lsf`, then you need to define `queue` (required), and `memory` (optional). In `num_cluster`, you can input a vector of number of K to achieve clustering membership for different k simultaneously.
 
 ```R
-generate_MICA_cmd(save_sh_at = "./PBMC12k_v3/",
-                  input_file = "./PBMC12k_v3/PBMC12k_MICA_input.txt",
-                  project_name = "PBMC12k",num_cluster = c(8,9,10,12,13,14,15),
+generate_MICA_cmd(save_sh_at = "./PBMC12k/",
+                  input_file = "./PBMC12k/PBMC12k_MICA_input.txt",
+                  project_name = "PBMC12k",
+                  num_cluster = c(8,9,10,12,13,14,15),
                   host = "lsf", queue = [your_queue_name],
                   output_path = "./",queue = "standard")
 
@@ -153,6 +153,7 @@ feature_heatmap(eset = eset.12k,target = gn.sel,group_tag = "label",
 ![](./plots/3_3_Marker_heatmaps.png)
 
 
+
 ### Assign cell type to cluster
 {: no_toc }
 
@@ -174,6 +175,8 @@ p<-marker_bbplot(ref=ref,eset=eset.12k)
 
 ```
 ![](./plots/3_4_MICA_cluster_score.png)
+
+
 
 We recommend assign your celltype as factors in your expression set.
 
@@ -225,8 +228,9 @@ Identify hidden driver from content-based network is the key step in scMINER to 
 
 ### Calculate activity
 {: no_toc }
-Activity calculation is 
-TF acitivities are calculated by integrating expression profile of their targets. 
+Activity calculation is the basis of driver estimation in scMINER. To infer driver activity, expression profile of their targets are intergrated via function `GetActivityFromSJARACNe`. This function takes SJARACNe output path and expression set as input, and return an activity set as well as structured network files if set 	`save_network_files=TRUE`. 
+
+Since scRNA-seq data are extremly sparse and noisy, we strongly recommend to set `activity.method` as `'unweighted'`. 
 
 ```R
 acs.12k <- GetActivityFromSJARACNe(
@@ -234,9 +238,9 @@ acs.12k <- GetActivityFromSJARACNe(
     SJARACNe_input_eset = eset.12k,
     activity.method="unweighted", # we highly recommend using 'unweighted' as activity calculation method
     activity.norm=TRUE, 
-    group_tag = "celltype",
-    save_network_file=TRUE, # whether or not save network for each cell type
-    save_path="./networks") #default as false, but recommended to be TRUE
+    group_tag = "celltype", # which group was used to partition expression profiles
+    save_network_file=TRUE, # whether or not save network for each group
+    save_path="./networks/") #default as false, but recommended to be TRUE
 
 ```
 
@@ -250,15 +254,21 @@ The function `FindDAG` was designed to identify highly differentiated TF from SJ
 DAG_result <- FindDAG(eset = acs.demo,group_tag = "celltype")
 
 ```
-This function will output a full matrix that contians all TF occurred in original dataset, statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help idenify master regulators. You can save it in txt or xlsx for checking.
 
-While you can also visualize top master regulator candidates in heatmap or violinplots. Only png as plotting device is supported.
+This function will output a full matrix that contians all TF occurred in original dataset, statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help idenify hidden drivers. You can save it in txt or xlsx for checking. 
+
+We also offer a function called `TopDriversfromDAG` to help print top drivers in each cell type to console you specified. This function is helpful for downstream analysis.
+
+
 
 ```R
-TF_list <- TopMasterRegulator(DAG_result = DAG_result,
+TF_list <- TopDriversfromDAG(DAG_result = DAG_result,
                               celltype=levels(acs.12k$celltype), # ensure cluster order
                               n = 5, degree_filter = c(50,500))
 ```
+
+
+In scMINER, we provide a handful of visualizations to compare driver activity from different cell type/ clusters. Here we demo 2 basic functions: `feature_heatmap` and `feature_vlnplot`. These functions could be used on either expression and activty matrix.
 
 ```R
 feature_heatmap(eset = acs.12k,target = TF_list,group_tag = "celltype",feature = "geneSymbol",
@@ -269,19 +279,18 @@ feature_heatmap(eset = acs.12k,target = TF_list,group_tag = "celltype",feature =
 
 ![](./plots/4_1_TopTFHeatmap.png)
 
-
-You can also check some known master regulators as postivie control of your network analysis: 
-
 ```R
-p <- feature_vlnplot(eset=acs.12k,target=c("LEF1.TF","TCF7.TF","BATF.TF","TCF7.TF","TBX21.TF",
-								"IRF8.TF","SPIB.TF","BATF3.TF","CEBPA.TF"), 
-					ylabel = "Activity",group_tag = "celltype",drawquantiles = FALSE, ncol = 2)
+#check postive controls
+p <- feature_vlnplot(eset=acs.12k,
+target=c("LEF1","TCF7","BATF","TCF7","TBX21","IRF8","SPIB","BATF3","CEBPA"), 
+						ylabel = "Activity",
+						group_tag = "celltype",feature="geneSymbol", ncol = 2)
 ```
-
 
 ![](./plots/4_2_Known_MR_vlnplot.png)
 
 In order to conduct more advanced network analysis utilizing SJARACNe generated cell type specific networks, please infer 	`Cell-type spefic network analysis tab`.
+
 
 
 ---

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Clustering by MICA
+title: Clustering with MICA
 nav_order: 3
 ---
 
@@ -16,13 +16,29 @@ MICA(Mutual Information based Clustering Analysis) is a nonlinear clustering ana
 {:toc}
 
 ---
+## Overview
+
+<img src="plots/MICA_Overview.png" alt="drawing" width="700"/> 
+
+MICA is a non-linear clustering analysis algorithm that incorporated:  
+1. Fast mutual information estimation to construct cell-cell similarity matrix.  
+2. Multidimensional scaling for stabilized dimension reduction.  
+3. Consensus clustering from multiple individual runs of kmeans to generate robust clustering results.  
+
+
+
 ## Preprocssing
-Preprocessing is fairly simple for MICA analysis. You can use our customized script in R, with function `draw.scRNAseq.QC` and `preMICA.filtering` in scMINER R package. For detailed information, please see complementary tutorial in tab `Sample Analysis with PBMC(12k) scRNA-seq data`.
+MICA module was implemented in python, which only includes clustering analysis. For preprocessing, MICA is compatitble with most published scRNA-seq preprocessing pipeline. However, we highly recommend users to follow our preprocessing framework utilizing `scMINER` R package.For detailed information, please see complementary tutorial in tab `Step by step demo with PBMC data`. 
+
+> **notes** MICA only takes cell by gene txt file as input, we strongly recommend using `generateMICAinput` function to convert your input data to MICA standard input text file in R.
+
 
 ## Basic usage
-MICA is implemented in python. For those who are not familiar with python a well-designed function in scMINER R package could help generate command for   you could use function `generate_MICA_rmd` in R package `scMINER` to generate essential command for running MICA locally:
+For those who are not familiar with python, we designed a easy function in `scMINER` R package called `generate_MICA_rmd`to help users generate MICA command. 
 
-In R console: 
+### On local host
+To perform MICA on local host, you need to specify `host= "local"`
+
 ```R
 scMINER::generate_MICA_cmd(save_sh_at, #path to save shell script 
                   			input_file, #your MICA input file
@@ -33,8 +49,7 @@ scMINER::generate_MICA_cmd(save_sh_at, #path to save shell script
 		                    visualization="tsne" #or "umap")
 ```
 
-
-or, you can create your own shell script to run MICA like below: 
+or, you can create your own shell script as:
 
 ```SHELL
 #!/usr/bin/env bash
@@ -44,14 +59,51 @@ mica local \
 -k 3 4 \
 -o ./test_data/outputs/test_local/ \
 ```
+To execute your shell script locally, you can
+```SHELL
+sh your_mica_cmd.sh
+
+```
+
+### On LSF
+To perform MICA on LSF, you have to specify `host="lsf"`, which queue to submit your job `queue=[your_queue]`, and also memory requested for MICA.
+```R
+scMINER::generateMICAcmd(save_sh_at, #path to save shell script 
+                            input_file, #your MICA input file
+                            project_name, 
+                            num_cluster, #a vector of numerical number
+                            output_path, 
+                            host="lsf", #or local
+                            queue=NULL, #your queue to submit the job
+                            memory=NULL, #specify if you use LSF, a vector of 4 numerical number
+                            dim_reduction_method="MDS", 
+                            visualization="tsne")
+```
+
+Or, you can create your shell script as:
+
+```SHELL
+#!/usr/bin/env bash
+mica LSF \
+-i ./test_data/inputs/PBMC_Demo_MICA_input_mini.txt \
+-p "test_local" \
+-k 3 4 \
+-o ./test_data/outputs/test_local/ \
+```
+
+To execute your shell script on LSF, we suggest
+```SHELL
+bsub < your_mica_cmd.sh
+```
+
 
 ## MICA Outputs
 
-Each assigned number of k will output one folder containing following files.
+Each assigned number of k will output one folder containing following files:
 
 1. `[Project_name]_k[number]_tsne.png`  --visualization of clustering result (default as tSNE)
 
-  <img src="./plots/2_0_cwl_local_k3_tsne.png" width="600"/> 
+  <img src="./plots/pbmc_12k_k8_tsne.png" width="600"/> 
 
 2. `[Project_name]_dist.h5`  -- h5 file containing distance matrix calculated.
 3. `[Project_name]_mds.pdf`  -- pdf file of t-SNE visualization of mds transformed distance matrix, with perplexity set to 30
@@ -95,4 +147,4 @@ you can use them via adding parameter:
 ```
 
 ## Post-clustering analysis
-We offer a handful of useful functions in scMINER ranging from visualization to driver estimation to help you explore your scRNA-seq data in a system biology way after clustering. 
+We offer a handful of useful functions in `scMINER` ranging from visualization to driver estimation, to help you explore your scRNA-seq data in a system biology way after clustering. 
