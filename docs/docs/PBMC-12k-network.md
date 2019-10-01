@@ -6,10 +6,10 @@ nav_order: 6
 
 # Advanced analysis
 {:.no_toc}
-Here we demonstrate our advanced downstream analysis pipeline using PBMC (10x genmomics) scRNA-seq data after completing driver estimation following tutorial under tab `step by step demo with PBMC data`
+Here we demonstrate our advanced downstream analysis pipeline using PBMC (10x genmomics) scRNA-seq data after following driver estimation tutorial under tab `step by step user guide`
 
 ## Network visualization
-scMINER incorporates a handful of network visualization/exploration function adapted from [NetBID2](https://jyyulab.github.io/NetBID/), a powerful tool for data-driven network-based bayesian Inference of drivers. scMINER also offered several wrapper of basic visualization functions in NetBID2 for better usability. 
+scMINER incorporates a handful of network visualization/exploration function adapted from [NetBID2](https://jyyulab.github.io/NetBID/), a powerful tool for data-driven network-based bayesian Inference of drivers. scMINER also offered several wrappers of basic visualization functions in NetBID2 for better usability. 
 
 ### Single network visualization
 In scMINER, you can visualize your driver and its targets by function `draw.network`. It was adapted from function `draw.targetNet` and `draw.targetNet.TWO` from `NetBID2`. This function can help visualize a driver's targets as well as the relationship(edge) between source and target genes, by taking Mutual information as edge weight, and spearman correlation as direction.
@@ -26,7 +26,12 @@ draw.network(net1 = net,src1 = "LEF1", #driver name
 
 
 ### Subnetwork structure visualization between two networks
-You can also use `draw.network` function to visualize two networks and their subnetwork structure. This could be used for identify common targets from two top driver from the same network, or identify network rewiring event of same driver in different cell type network. Here below is an example for later case.
+You can also use `draw.network` function to visualize two networks and their subnetwork structure. This could be used for: 
+- Identify common targets from two top driver from the same network
+- Identify network rewiring event of same driver in different cell type network.   
+
+
+Here below is an example for later case:
 
 ```R
 draw.network(net1 = net1,net2 = net2,
@@ -45,12 +50,29 @@ draw.network(net1 = net1,net2 = net2,
 ### Gene set overlap with targets visualized by bubble plot
 When picking candidate hidden drivers, it would be extremly helpful if we could identify the potential biological pathways this driver regulates. With SJARACNe infered network, we can assess as well as  visualizethe overlap between knowledge-based gene sets and driver's targets via function `draw.bubblePlot`. This function returns a bubble plot indiating results from Fisher exact test. 
 
-```R 
+Before using`draw.bubblePlot` function, you have to load genesets in your working environment by function `gs.preload()`
 
+```R
+gs.preload(use_spe='Homo sapiens',update=FALSE)
+```
+
+Then you can use function `TopMasterRegulator` to pull out top hidden driver candidates from your Differential activity analysis results. Or write your own fucntions to hand pick candidate to visualize. Here we provide an example of using function `TopMasterRegulator`.
+
+```R 
 TF_list <- TopMasterRegulator(DAG_result = DAG_result,
                               celltype="NaiveT",
                               n = 10, degree_filter = c(50,800))
+```
+Next generate your ID to symbol conversion table, since all gene sets are curated at gene symbol level. Here in our data, we used ensembl_id as our default ID for network construction. In order to match your ID with gene symbols, you can use function: 
 
+```R
+tbl <- get_IDtransfer2symbol2type(from_type = "ensembl_gene_id",
+		use_genes = rownames(eset.12k),ignore_version = TRUE)
+```
+
+Here we provide an example for ploting out overlap between target list of top drivers in Naive T cells, and knowledge based gene sets from "Hallmark","KEGG" and "GO".
+
+```R
 draw.bubblePlot(driver_list= TF_list,
                 show_label=DAG_result[TF_list,"geneSymbol"],
                 Z_val=DAG_result[TF_list,"Z_NaiveT"],
@@ -65,15 +87,7 @@ draw.bubblePlot(driver_list= TF_list,
 
 ```
 
-<center><img src="./plots/NaiveT_bubblePlot.png" alt="drawing" width="600"></center>
-
-
-
-
-
-
-
-
+<center><img src="./plots/NaiveT_bubblePlot.png" alt="gsbbp"></center>
 
 
 

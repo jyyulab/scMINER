@@ -6,7 +6,7 @@ nav_order: 3
 
 # Clustering Analysis with MICA
 {:.no_toc}
-MICA(Mutual Information based Clustering Analysis) is a nonlinear clustering analysis tool designed for scRNA-seq data. To install MIE (Mutual inforamtion estimator for distance matrix generation, module required for MICA) and MICA, please refer our [MIE](https://github.com/jyyulab/MIE) and [MICA](https://github.com/jyyulab/MICA) github page.  
+MICA(Mutual Information based Clustering Analysis) is a nonlinear clustering analysis tool designed for scRNA-seq data. Here we provide a user guide to perform MICA clustering on both local node or LSF platform. To install, please infer our [MICA](https://github.com/jyyulab/MICA) github page. 
 {: .fs-6 .fw-300 }
 
 ## Table of contents
@@ -27,7 +27,7 @@ MICA is a non-linear clustering analysis algorithm that incorporated:
 
 
 ## Preprocssing
-MICA module was implemented in python, which only includes clustering analysis. For preprocessing, MICA is compatitble with most published scRNA-seq preprocessing pipeline. However, we highly recommend users to follow our preprocessing framework utilizing `scMINER` R package.For detailed information, please see complementary tutorial in tab `Step by step demo with PBMC data`. 
+MICA module was implemented in python, which only includes clustering analysis. For preprocessing, MICA is compatitble with most published scRNA-seq preprocessing pipeline. However, we highly recommend users to follow our preprocessing framework using `scMINER` R package. For detailed information, please see complementary tutorial in tab `Step by step user guide`. 
 
 > **MICA only takes cell by gene txt file as input, we strongly recommend using `generateMICAinput` function to convert your input data to MICA standard input text file in R.**
 
