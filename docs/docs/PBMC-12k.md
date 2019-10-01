@@ -17,27 +17,28 @@ nav_order: 5
 ## Demo data
 {: .d-inline-block :}
 
-Here we demonstrate our pipeline using PBMC (10x genmomics) scRNA-seq data. Full data contains 68k cells, in order to provide a quicker guidance, we've down sampled this data to 12k cells.
-Original data website can be downloaded [here](https://support.10xgenomics.com/single-cell-gene-expression/datasets/1.1.0/fresh_68k_pbmc_donor_a).
+Here we demonstrate our pipeline using PBMC (10x genmomics) scRNA-seq data. Full data contains 68k cells, in order to provide a faster guidance, we've down sampled this data to 12k cells. Original data can be downloaded [here](https://support.10xgenomics.com/single-cell-gene-expression/datasets/1.1.0/fresh_68k_pbmc_donor_a).
 
 ## Step 1: Data preprocessing
 {: .d-inline-block :}
 
 ### Read 10x genomics data
-Read 10x genomics data with function in scMINER package. This function could help read either 10x genomics standard output, as well as other text files types by passing arguments to `read.delim()`. If set `CreateSparseEset=T` This will help create a Sparse matrix object using Expressionset prototype, otherwise, it will create a list Object that stores expression data, feature data and sample data in different slots. If `add.meta=T`, then corresponding sample info such as total number of UMI will be calcualated and outputed. Here, since data was downsampled and not in standard 10x genomics output format, we defined `is.10x=F` and `add.meta=F`.
+Read 10x genomics data with function `readscRNAseqData `in scMINER package. This function could help read data from either 10x genomics standard output(usually contains three individual files: matrix.mtx, barcodes.tsv, features.tsv), or other text files by passing arguments to `read.delim()`. 
+
+This function helps create a Sparse matrix object using Expressionset prototype, If set `CreateSparseEset=T`. Otherwise, it will create a list object that stores expression data, feature data and sample data under three separate slots. If `add.meta=T`, then additional sample info such as total number of UMI will be calcualated and outputed in sample data. Here, since data was downsampled and not in standard 10x genomics output format, we defined `is.10x=F`,`CreateSparseEset = F`, and `add.meta=F`.
 
 ```R
-d.12k <- readscRNAseqData(file="PBMC_demo_input.txt",is.10x = F,CreateSparseEset = FALSE, add.meta=F)
+d.12k <- readscRNAseqData(file="PBMC_demo_input.txt",is.10x = F,CreateSparseEset = F, add.meta=F)
 ```
 
-After confriming your data was loaded properly, you can now create Sparse Matrix expression by using `CreateSparseEset`function:
+After loading data to environment properly, you can now create Sparse Matrix expression by using `CreateSparseEset`function:
 
 ```R
-eset.12k<-CreateSparseEset(data=d.12k,feature.data = d.68k$feature.data,add.meta = T)
+eset.12k<-CreateSparseEset(data=d.12k, add.meta = T)
 ```
 
 ### Quality control and data filtering
-Quality control assessments could be done using `draw.scRNAseq.QC` step, this will output a html report generated through Rmarkdown, which includes essential figures at both gene and cell level. Suggested cutoff will be returned as a list if `output.cutoff` was set to be `TRUE`. 
+Quality control assessments could be done using `draw.scRNAseq.QC` function, which outputs a html report generated through Rmarkdown. The report includes three essential quality control figures at both gene and cell level. Suggested cutoff will be returned as a list if set `output.cutoff=TRUE`.
 
 ```R
 cutoffs <- draw.scRNAseq.QC(SparseEset=eset.12k, 
@@ -46,25 +47,26 @@ cutoffs <- draw.scRNAseq.QC(SparseEset=eset.12k,
                           group = "group", # this indicate which meta data information will be use in x axis to group violin plots
                           output.cutoff = TRUE)
 ```
-The first plot is a histogram which helps visualize distribution of expressed genes among each cells.
+The first plot is a histogram which helps visualize distribution of expressed genes among each cells. Blue veritcal line shows the recommended cutoff. Genes expressed lower number of cells than threshold should be filtered.
+
 <center><img src="./plots/1_1_Gene_QCmetrics_before_filtering.png" alt="drawing" width="600"></center>
 
-The second plot help visualize total UMI count, and total number of gene expressed in violin plots.
+The second plot helps visualize total UMI count, and total number of gene expressed in violin plots. Horizontal blue line indicates suggested high/low cutoffs. Suggested thresholds were computed based on Median ± 3 * MAD (Maximum absolute deviance). Actual threshold numbers are also printed right above blue lines in green labels.
 ![](./plots/1_2_Cell_QC_1.png)
 
-Third plot visualizes mitochondria percentage, and spike-in percentage for each cell in scatter plot.
+The third plot visualizes mitochondrial gene expression percentage, and spike-in genes expression percentage for each cell V.S. total number of UMI in scatter plots. Cells with high percentage of mitochondrial gene expression but low total number of UMI count are often considered as low quality.
 ![](./plots/1_3_Cell_QC_2.png)
 
 
-Then you could run cell filtering with function `preMICA.filtering`, if input `cutoffs` was directly from the output of draw.scRNAseq.QC functon. You could also manually change cutoffs by re-assign thresholds in `cutoffs` list, e.g. set `cutoffs$umi_cf_hi<-Inf` means do not do filtering on outliers which have high total UMI value.
+Then you could perform filtering with function `preMICA.filtering`. We recommend to input `cutoffs` using thresholds list which directly outputted from `draw.scRNAseq.QC` functon. You could also manually change cutoffs by re-assign thresholds in `cutoffs` list, e.g. `cutoffs$umi_cf_hi <- Inf` means not doing filtering on outliers caused by high total UMI value.
 
 ```R
-cutoffs$umi_cf_hi<-Inf #only filter on low total number of UMI
-eset.sel<-preMICA.filtering(SparseEset = eset.12k,cutoffs = cutoffs)
+cutoffs$umi_cf_hi <- Inf  # only filter on low total number of UMI
+eset.sel <- preMICA.filtering(SparseEset = eset.12k, cutoffs = cutoffs)
 ```
  
 ### Normalization and transformation
-In scMINER package, we don't provide methods to conduct normalizaton. You can use your own prefered normalization method. However, **we highly recommend to do CPM and log2 transformation for MICA input**.
+In scMINER package, we don't provide methods to perform data normalizaton. You can use your own prefered normalization method. However, **we highly recommend to do CPM and log2 transformation for MICA input**.
 
 ```R
 norm = 1e6 
@@ -75,30 +77,31 @@ exp.norm <- sweep(exprs(eset.sel), 2, norm/unname(Matrix::colSums(exprs(eset.sel
 exp.log2 <- log(exp.norm+1,base=2)
 
 # save as SparseEset
-eset.norm <- CreateSparseEset(data=exp.log2,meta.data = pData(eset.sel),feature.data = fData(eset.sel),add.meta = F)
+eset.norm <- CreateSparseEset(data=exp.log2, meta.data = pData(eset.sel), feature.data = fData(eset.sel), add.meta = F)
 ```
 
 
 ## Step 2: Perform clustering analysis via MICA
 {: .d-inline-block :}
 
-MICA is implemented in Python. If you would like to install MICA, please refer to [MICA github page](https://github.com/jyyulab/MICA). There are several parameters for you to choose when running MICA. A more comprehensive tutorial could be found [here](./MICA.md). **Here we suggests saving your working directory prior to running MICA**. 
+MICA was implemented in Python. If you would like to install MICA, please refer to [MICA github page](https://github.com/jyyulab/MICA). There are several handlers for you to choose in MICA for better visualization. A more comprehensive tutorial could be found under [Clustering with MICA](./MICA.md) tab . **Here we suggest saving your working directory prior to running MICA**. 
 
 ### Generate MICA input and command
-After reviewing all visualization and finished filtering, you can go ahead and generate clustering (MICA) input with function `generateMICAinput`. This function take a expression matrix as input, and outputs a cell by gene txt file. Please note that `you should always feed MICA the log or log2 transformed data`.
+After reviewing all visualization and finished filtering, you can go ahead and generate clustering (MICA) input with function `generateMICAinput`. This function takes an expression matrix as input, and outputs a cell by gene .txt file. Please note that **you should always feed MICA the log or log2 transformed data**.
 
 ```R
 generateMICAinput(data= exp.log2 ,filename="PBMC12k_MICA_input.txt")
 ```
 
-We also offer a function to generate MICA command without writing your own scripts. If you set `host=lsf`, then you need to define `queue` (required), and `memory` (optional). In `num_cluster`, you can input a vector of number of K to achieve clustering membership for different k simultaneously.
+We also offer a function called `generate_MICA_cmd ` to help write MICA command in a shell script. In order to run MICA on LSF, you need to set `host=lsf`,  define `queue = [your queue]` (required), and `memory` (optional). In `num_cluster`, you can specify a vector of number of K to perform clustering analysis for different number of cluster simultaneously.
 
 ```R
 generate_MICA_cmd(save_sh_at = "./PBMC12k/",
                   input_file = "./PBMC12k/PBMC12k_MICA_input.txt",
                   project_name = "PBMC12k",
                   num_cluster = c(8,9,10,12,13,14,15),
-                  host = "lsf", queue = [your_queue_name],
+                  host = "lsf", queue = [your_queue],
+                  memory = c(8000, 12000, 16000, 16000),
                   output_path = "./",queue = "standard")
 ```
 
@@ -107,22 +110,23 @@ generate_MICA_cmd(save_sh_at = "./PBMC12k/",
 ## Step 3: Cell type annotation after clustering
 {: .d-inline-block :}
 
-First, after clustering via MICA, you can load MICA output (in .txt) as well as input expression matrix in R under an `expressionSet`. This is going to be the major data structure we used for downstream analysis in R.
+### Read MICA output
+{: no_toc }
+
+After clustering via MICA, with function `readMICAoutput`, you can load MICA output (in .txt) as well as your input expression matrix in R to an `expressionSet` object. `ExpressionSet` is the major data structure we used for downstream analysis in R.
 
 > **Note: All functions are designed compatible for both expressionSet and SparseExpressionSet** 
 
-### Read MICA output
-{: no_toc }
-Users can start with one MICA membership and study your optimal number of cluster with cell type specific markers.
+Users shall start with one particular MICA membership and study your optimal number of cluster with cell type signatures. By setting `load_clust_label` as TRUE, clustering label will be saved under `eset$label`.
 
 ```R
-eset.12k <- readMICAoutput(Obj = d.sel,load_clust_label = TRUE, output_file = "MICA/PBMC12k_k8_tsne_ClusterMem.txt")
+eset.12k <- readMICAoutput(Obj = d.sel, load_clust_label = TRUE, output_file = "MICA/PBMC12k_k8_tsne_ClusterMem.txt")
 ```
 
-To visualize MICA label or other metadata, one can use function `MICAplot`. Users are required to specify X and Y cordinates in this function. This function will output a ggplot style visualization. Other meta data could also be visulized with this function, via changing `label` parameter.
+In order to visualize MICA labels or other metadata on tSNE/UMAP coordinates, your can use function `MICAplot`. Users are required to specify `X` and `Y` coordinates in this function. Other meta data could also be visualized by changing `label` handler. This function outputs a ggplot object. 
 
 ```R
-MICAplot(input_eset = eset.12k,visualize = 'tSNE',X = "X",Y="Y",label = "label",pct = 0.5)
+MICAplot(input_eset = eset.12k,visualize = 'tSNE',X = "X", Y="Y",label = "label",pct = 0.5)
 ```
 
 <center><img src="./plots/3_0_MICA_k8.png" alt="MICA" width="600"></center>
@@ -181,7 +185,7 @@ p<-marker_bbplot(ref=ref,eset=eset.12k)
 
 
 
-Before dive into next step, we recommend assign your celltype as factors in your expression set.
+Before diving into network generation section, please assign your celltype as factors in your expression set. **Please do not include "_" in your cell type names since it will cause mis-parsing in later analysis**.
 
 ```R
 indx<-factor(x=c("NaiveT","Tmem","CD8em","CD8eff","Bcell","NK","DC","Mo"),
@@ -194,9 +198,9 @@ eset.12k$celltype <- indx[eset.12k$label]
 {: no_toc }
 
 ### Generate SJARACNe input
-Prior to generate cell type/group/cluster specific network, group information should be stored under `pData([your_expressionSet])`. And R function `generateSJAracneInput` will help to partition input expression matrix and conduct essential filtering, (filter about 0 expressed genes in cluster) to ensure a reliable network construction. `funcType` is required to specify what kind of network to generate. A reference Transcription factor list will be loaded automatically without manual input. However, you do need to define your species using under `ref`.
+Before generating cell type/group/cluster specific network, group information should be stored under `pData([your_expressionSet])`. An R function `generateSJAracneInput` will help to partition input expression matrix and perform essential filtering(filter out 0 expressed genes in cluster) to ensure a reliable network construction. `funcType` is required to specify what kind of network to generate. A reference transcription factor list will be loaded automatically without manual input. However, you do need to define species information for your data using under `ref`.
 
-This function will help create one directory for each group, containing required input for SJARACNe such as filtered expression matrix in .exp format and filtered TF list in .txt format. 
+This function will help create one directory for each group/cell type, containing required input for SJARACNe such as filtered expression matrix in .exp format and filtered TF list in .txt format. 
 
 ```R
 generateSJARACNeInput(
