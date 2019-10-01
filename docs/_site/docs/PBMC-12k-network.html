@@ -109,10 +109,10 @@
         
         <div id="main-content" class="page-content" role="main">
           <h1 class="no_toc" id="advanced-analysis">Advanced analysis</h1>
-<p>Here we demonstrate our advanced downstream analysis pipeline using PBMC (10x genmomics) scRNA-seq data after completing driver estimation following tutorial under tab <code class="highlighter-rouge">step by step demo with PBMC data</code></p>
+<p>Here we demonstrate our advanced downstream analysis pipeline using PBMC (10x genmomics) scRNA-seq data after following driver estimation tutorial under tab <code class="highlighter-rouge">step by step user guide</code></p>
 
 <h2 id="network-visualization">Network visualization</h2>
-<p>scMINER incorporates a handful of network visualization/exploration function adapted from <a href="https://jyyulab.github.io/NetBID/">NetBID2</a>, a powerful tool for data-driven network-based bayesian Inference of drivers. scMINER also offered several wrapper of basic visualization functions in NetBID2 for better usability.</p>
+<p>scMINER incorporates a handful of network visualization/exploration function adapted from <a href="https://jyyulab.github.io/NetBID/">NetBID2</a>, a powerful tool for data-driven network-based bayesian Inference of drivers. scMINER also offered several wrappers of basic visualization functions in NetBID2 for better usability.</p>
 
 <h3 id="single-network-visualization">Single network visualization</h3>
 <p>In scMINER, you can visualize your driver and its targets by function <code class="highlighter-rouge">draw.network</code>. It was adapted from function <code class="highlighter-rouge">draw.targetNet</code> and <code class="highlighter-rouge">draw.targetNet.TWO</code> from <code class="highlighter-rouge">NetBID2</code>. This function can help visualize a driver’s targets as well as the relationship(edge) between source and target genes, by taking Mutual information as edge weight, and spearman correlation as direction.</p>
@@ -127,7 +127,13 @@
 <center><img src="./plots/LEF1.TF_in_NaiveT_network.png" alt="drawing" width="600" /></center>
 
 <h3 id="subnetwork-structure-visualization-between-two-networks">Subnetwork structure visualization between two networks</h3>
-<p>You can also use <code class="highlighter-rouge">draw.network</code> function to visualize two networks and their subnetwork structure. This could be used for identify common targets from two top driver from the same network, or identify network rewiring event of same driver in different cell type network. Here below is an example for later case.</p>
+<p>You can also use <code class="highlighter-rouge">draw.network</code> function to visualize two networks and their subnetwork structure. This could be used for:</p>
+<ul>
+  <li>Identify common targets from two top driver from the same network</li>
+  <li>Identify network rewiring event of same driver in different cell type network.</li>
+</ul>
+
+<p>Here below is an example for later case:</p>
 
 <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">draw.network</span><span class="p">(</span><span class="n">net1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">net1</span><span class="p">,</span><span class="n">net2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">net2</span><span class="p">,</span><span class="w">
 		</span><span class="n">src1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"BATF"</span><span class="p">,</span><span class="n">src2</span><span class="o">=</span><span class="s2">"BATF"</span><span class="p">,</span><span class="w"> 
@@ -143,12 +149,26 @@
 <h3 id="gene-set-overlap-with-targets-visualized-by-bubble-plot">Gene set overlap with targets visualized by bubble plot</h3>
 <p>When picking candidate hidden drivers, it would be extremly helpful if we could identify the potential biological pathways this driver regulates. With SJARACNe infered network, we can assess as well as  visualizethe overlap between knowledge-based gene sets and driver’s targets via function <code class="highlighter-rouge">draw.bubblePlot</code>. This function returns a bubble plot indiating results from Fisher exact test.</p>
 
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">
-</span><span class="n">TF_list</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">TopMasterRegulator</span><span class="p">(</span><span class="n">DAG_result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DAG_result</span><span class="p">,</span><span class="w">
+<p>Before using<code class="highlighter-rouge">draw.bubblePlot</code> function, you have to load genesets in your working environment by function <code class="highlighter-rouge">gs.preload()</code></p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gs.preload</span><span class="p">(</span><span class="n">use_spe</span><span class="o">=</span><span class="s1">'Homo sapiens'</span><span class="p">,</span><span class="n">update</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Then you can use function <code class="highlighter-rouge">TopMasterRegulator</code> to pull out top hidden driver candidates from your Differential activity analysis results. Or write your own fucntions to hand pick candidate to visualize. Here we provide an example of using function <code class="highlighter-rouge">TopMasterRegulator</code>.</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">TF_list</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">TopMasterRegulator</span><span class="p">(</span><span class="n">DAG_result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DAG_result</span><span class="p">,</span><span class="w">
                               </span><span class="n">celltype</span><span class="o">=</span><span class="s2">"NaiveT"</span><span class="p">,</span><span class="w">
                               </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="n">degree_filter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">50</span><span class="p">,</span><span class="m">800</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+<p>Next generate your ID to symbol conversion table, since all gene sets are curated at gene symbol level. Here in our data, we used ensembl_id as our default ID for network construction. In order to match your ID with gene symbols, you can use function:</p>
 
-</span><span class="n">draw.bubblePlot</span><span class="p">(</span><span class="n">driver_list</span><span class="o">=</span><span class="w"> </span><span class="n">TF_list</span><span class="p">,</span><span class="w">
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tbl</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_IDtransfer2symbol2type</span><span class="p">(</span><span class="n">from_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ensembl_gene_id"</span><span class="p">,</span><span class="w">
+		</span><span class="n">use_genes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rownames</span><span class="p">(</span><span class="n">eset.12k</span><span class="p">),</span><span class="n">ignore_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Here we provide an example for ploting out overlap between target list of top drivers in Naive T cells, and knowledge based gene sets from “Hallmark”,”KEGG” and “GO”.</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">draw.bubblePlot</span><span class="p">(</span><span class="n">driver_list</span><span class="o">=</span><span class="w"> </span><span class="n">TF_list</span><span class="p">,</span><span class="w">
                 </span><span class="n">show_label</span><span class="o">=</span><span class="n">DAG_result</span><span class="p">[</span><span class="n">TF_list</span><span class="p">,</span><span class="s2">"geneSymbol"</span><span class="p">],</span><span class="w">
                 </span><span class="n">Z_val</span><span class="o">=</span><span class="n">DAG_result</span><span class="p">[</span><span class="n">TF_list</span><span class="p">,</span><span class="s2">"Z_NaiveT"</span><span class="p">],</span><span class="w">
                 </span><span class="n">driver_type</span><span class="o">=</span><span class="kc">NULL</span><span class="p">,</span><span class="w">
@@ -162,7 +182,7 @@
 
 </span></code></pre></div></div>
 
-<center><img src="./plots/NaiveT_bubblePlot.png" alt="drawing" width="600" /></center>
+<center><img src="./plots/NaiveT_bubblePlot.png" alt="gsbbp" /></center>
 
 <hr />
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## R session info

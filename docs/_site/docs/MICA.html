@@ -109,7 +109,7 @@
         
         <div id="main-content" class="page-content" role="main">
           <h1 class="no_toc" id="clustering-analysis-with-mica">Clustering Analysis with MICA</h1>
-<p class="fs-6 fw-300">MICA(Mutual Information based Clustering Analysis) is a nonlinear clustering analysis tool designed for scRNA-seq data. To install MIE (Mutual inforamtion estimator for distance matrix generation, module required for MICA) and MICA, please refer our <a href="https://github.com/jyyulab/MIE">MIE</a> and <a href="https://github.com/jyyulab/MICA">MICA</a> github page.</p>
+<p class="fs-6 fw-300">MICA(Mutual Information based Clustering Analysis) is a nonlinear clustering analysis tool designed for scRNA-seq data. Here we provide a user guide to perform MICA clustering on both local node or LSF platform. To install, please infer our <a href="https://github.com/jyyulab/MICA">MICA</a> github page.</p>
 
 <h2 class="no_toc text-delta" id="table-of-contents">Table of contents</h2>
 
@@ -144,7 +144,7 @@
 </ol>
 
 <h2 id="preprocssing">Preprocssing</h2>
-<p>MICA module was implemented in python, which only includes clustering analysis. For preprocessing, MICA is compatitble with most published scRNA-seq preprocessing pipeline. However, we highly recommend users to follow our preprocessing framework utilizing <code class="highlighter-rouge">scMINER</code> R package.For detailed information, please see complementary tutorial in tab <code class="highlighter-rouge">Step by step demo with PBMC data</code>.</p>
+<p>MICA module was implemented in python, which only includes clustering analysis. For preprocessing, MICA is compatitble with most published scRNA-seq preprocessing pipeline. However, we highly recommend users to follow our preprocessing framework using <code class="highlighter-rouge">scMINER</code> R package. For detailed information, please see complementary tutorial in tab <code class="highlighter-rouge">Step by step user guide</code>.</p>
 
 <blockquote>
   <p><strong>MICA only takes cell by gene txt file as input, we strongly recommend using <code class="highlighter-rouge">generateMICAinput</code> function to convert your input data to MICA standard input text file in R.</strong></p>

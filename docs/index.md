@@ -6,7 +6,7 @@ permalink: /
 ---
 
 
-# scMINER: Single Cell Mutual Information-based Network Engineering Ranger
+# scMINER: Single-Cell Mutual Information-based Network Engineering Ranger
 
 
 {:.no_toc}
