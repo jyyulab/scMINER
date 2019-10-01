@@ -220,7 +220,7 @@ mica LSF <span class="se">\</span>
   <li><code class="highlighter-rouge">[Project_name]_k[number]_tsne.png</code>  –visualization of clustering result (default as tSNE)</li>
 </ol>
 
-<p><img src="./plots/pbmc_12k_k8_tsne.png" width="600" /></p>
+<p><img src="./plots/pbmc_12k_k8_tsne.png" width="550" /></p>
 
 <ol>
   <li><code class="highlighter-rouge">[Project_name]_dist.h5</code>  – h5 file containing distance matrix calculated.</li>
@@ -231,32 +231,30 @@ mica LSF <span class="se">\</span>
 <h2 id="useful-parameters">Useful parameters</h2>
 
 <h3 id="visualize-with-u-map-or-t-sne">Visualize with U-map or t-SNE</h3>
-<p>MICA incorporate <a href="https://umap-learn.readthedocs.io/en/latest/parameters.html">UMAP</a> as optional clustering visualization, with <code class="highlighter-rouge">min_dist</code> parameter set to <code class="highlighter-rouge">0.25</code>, this controls how points packed together. Low values of min_dist will result in clumpier embeddings. You can tune this parameter with :</p>
+<p>tSNE visualization is our default visualization method in the pipeline, however MICA also incorporate <a href="https://umap-learn.readthedocs.io/en/latest/parameters.html">UMAP</a> as optional clustering visualization. You can set visualization method to umap by</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>--visualization umap #(all lower cap, no "-")
+</code></pre></div></div>
+
+<p>Also umap parameter could be tuned with <code class="highlighter-rouge">--min_dist</code> as below. It controls how points packed together. Low values of min_dist will result in clumpier embeddings:</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>--min_dist 0.1 (or other number ranging from 0-1) 
 </code></pre></div></div>
 
-<p>tSNE visualization is our default visualization method in the pipeline, if you want to use t-SNE, just set :</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>--visualization tsne (all lower cap, no "-")
-</code></pre></div></div>
-<p>and you can also set parameter (perplexity) for tsne using</p>
+<p>and you can also set parameter (perplexity) for tsne visualization using</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-pp 20 (or any other integers larger than 5)
 </code></pre></div></div>
 
 <h3 id="try-other-dimension-reduction-methods">Try other dimension reduction methods</h3>
-<p>MICA also incorporated other dimension reduction methods such as pca or lpl, 
-you can use them via adding parameter:</p>
+<p>MICA also incorporated other dimension reduction methods such as Principle component analysis(PCA) or Laplace transform (lpl), you can use them via adding parameter:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-dr PCA  (or: MDS | PCA | LPL | LPCA) 
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-dr PCA  # or: MDS | PCA | LPL | LPCA
 </code></pre></div></div>
 
 <h3 id="try-other-distance-matrix-calculation-methods">Try other distance matrix calculation methods</h3>
-<p>MICA also incorporated other dimension reduction methods such as pca or lpl, 
-you can use them via adding parameter:</p>
+<p>We integrated other distance matrix calculation methods as optional, such as euclidean distance, spearman correlation and pearson correlation. You can use them via adding parameter, default is MI(mutual information):</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>--dist MI  (or: euclidean | spearman | pearson)
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>--dist MI  # or: euclidean | spearman | pearson
 </code></pre></div></div>
 
 <h2 id="post-clustering-analysis">Post-clustering analysis</h2>
