@@ -1,10 +1,10 @@
 ---
 layout: default
-title: Run MICA locally
+title: Clustering by MICA
 nav_order: 3
 ---
 
-# Clustering Analysis with MICA on local nodes
+# Clustering Analysis with MICA
 {:.no_toc}
 MICA(Mutual Information based Clustering Analysis) is a nonlinear clustering analysis tool designed for scRNA-seq data. To install MIE (Mutual inforamtion estimator for distance matrix generation, module required for MICA) and MICA, please refer our [MIE](https://github.com/jyyulab/MIE) and [MICA](https://github.com/jyyulab/MICA) github page.  
 {: .fs-6 .fw-300 }
@@ -20,7 +20,7 @@ MICA(Mutual Information based Clustering Analysis) is a nonlinear clustering ana
 Preprocessing is fairly simple for MICA analysis. You can use our customized script in R, with function `draw.scRNAseq.QC` and `preMICA.filtering` in scMINER R package. For detailed information, please see complementary tutorial in tab `Sample Analysis with PBMC(12k) scRNA-seq data`.
 
 ## Basic usage
-MICA is implemented in python, in order to run MICA troublefree, you could use function `generate_MICA_rmd` in R package `scMINER` to generate essential command for running MICA locally:
+MICA is implemented in python. For those who are not familiar with python a well-designed function in scMINER R package could help generate command for   you could use function `generate_MICA_rmd` in R package `scMINER` to generate essential command for running MICA locally:
 
 In R console: 
 ```R
@@ -34,7 +34,7 @@ scMINER::generate_MICA_cmd(save_sh_at, #path to save shell script
 ```
 
 
-or, you can edit create your own shell script to run MICA like below: 
+or, you can create your own shell script to run MICA like below: 
 
 ```SHELL
 #!/usr/bin/env bash
