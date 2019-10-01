@@ -26,7 +26,6 @@ MICA is a non-linear clustering analysis algorithm that incorporated:
 3. Consensus clustering from multiple individual runs of kmeans to generate robust clustering results.  
 
 
-
 ## Preprocssing
 MICA module was implemented in python, which only includes clustering analysis. For preprocessing, MICA is compatitble with most published scRNA-seq preprocessing pipeline. However, we highly recommend users to follow our preprocessing framework utilizing `scMINER` R package.For detailed information, please see complementary tutorial in tab `Step by step demo with PBMC data`. 
 
@@ -108,7 +107,7 @@ Each assigned number of k will output one folder containing following files:
 
 1. `[Project_name]_k[number]_tsne.png`  --visualization of clustering result (default as tSNE)
 
-  <img src="./plots/pbmc_12k_k8_tsne.png" width="600"/> 
+  <img src="./plots/pbmc_12k_k8_tsne.png" width="550"/> 
 
 2. `[Project_name]_dist.h5`  -- h5 file containing distance matrix calculated.
 3. `[Project_name]_mds.pdf`  -- pdf file of t-SNE visualization of mds transformed distance matrix, with perplexity set to 30
@@ -118,37 +117,35 @@ Each assigned number of k will output one folder containing following files:
 ## Useful parameters
 
 ### Visualize with U-map or t-SNE
-MICA incorporate [UMAP](https://umap-learn.readthedocs.io/en/latest/parameters.html) as optional clustering visualization, with `min_dist` parameter set to `0.25`, this controls how points packed together. Low values of min_dist will result in clumpier embeddings. You can tune this parameter with :
+tSNE visualization is our default visualization method in the pipeline, however MICA also incorporate [UMAP](https://umap-learn.readthedocs.io/en/latest/parameters.html) as optional clustering visualization. You can set visualization method to umap by
+```
+--visualization umap #(all lower cap, no "-")
+```
+
+Also umap parameter could be tuned with `--min_dist` as below. It controls how points packed together. Low values of min_dist will result in clumpier embeddings:
 
 ```
 --min_dist 0.1 (or other number ranging from 0-1) 
 ```
 
-tSNE visualization is our default visualization method in the pipeline, if you want to use t-SNE, just set :
-
-```
---visualization tsne (all lower cap, no "-")
-```
-and you can also set parameter (perplexity) for tsne using
+and you can also set parameter (perplexity) for tsne visualization using
 
 ```
 -pp 20 (or any other integers larger than 5)
 ```
 
 ### Try other dimension reduction methods
-MICA also incorporated other dimension reduction methods such as pca or lpl, 
-you can use them via adding parameter:
+MICA also incorporated other dimension reduction methods such as Principle component analysis(PCA) or Laplace transform (lpl), you can use them via adding parameter:
 
 ```
--dr PCA  (or: MDS | PCA | LPL | LPCA) 
+-dr PCA  # or: MDS | PCA | LPL | LPCA
 ```
 
 ### Try other distance matrix calculation methods
-MICA also incorporated other dimension reduction methods such as pca or lpl, 
-you can use them via adding parameter:
+We integrated other distance matrix calculation methods as optional, such as euclidean distance, spearman correlation and pearson correlation. You can use them via adding parameter, default is MI(mutual information):
 
 ```
---dist MI  (or: euclidean | spearman | pearson)
+--dist MI  # or: euclidean | spearman | pearson
 ```
 
 ## Post-clustering analysis

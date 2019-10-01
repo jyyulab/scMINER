@@ -283,7 +283,7 @@ p <- feature_vlnplot(eset=acs.12k,target=c("LEF1","TCF7","BATF","TCF7","TBX21","
 						group_tag = "celltype",feature="geneSymbol", ncol = 2)
 ```
 
-<center>![](./plots/4_2_Known_MR_vlnplot.png)</center>
+<center><img src="./plots/4_2_Known_MR_vlnplot.png" alt="Driver heatmap" width="600"></center>
 
 
 In order to conduct more advanced network analysis utilizing SJARACNe generated cell type specific networks, please infer 	[`Advanced analysis`](./PBMC-12k-network.md) tab.
