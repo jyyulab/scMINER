@@ -1,30 +1,72 @@
 ---
 layout: default
-title: Cell-type specific network analysis
+title: Advanced analysis
 nav_order: 6
 ---
 
-# Analysis on cell-type specific network
+# Advanced analysis
 {:.no_toc}
-Here we demonstrate our advanced downstream analysis pipeline using PBMC (10x genmomics) scRNA-seq data [link to data matrix]. Full data contains 68k cells(link to 10x website), in order to provide a quicker guidance, we've down sampled this data to 12k cells. This tutorial provide a guidance for study master regulators utilzing cell-type specific networks. 
+Here we demonstrate our advanced downstream analysis pipeline using PBMC (10x genmomics) scRNA-seq data after completing driver estimation following tutorial under tab `step by step demo with PBMC data`
 
-Original data website can be downloaded [here](https://support.10xgenomics.com/single-cell-gene-expression/datasets/1.1.0/fresh_68k_pbmc_donor_a).
+## Network visualization
+scMINER incorporates a handful of network visualization/exploration function adapted from [NetBID2](https://github.com/jyyulab/NetBID2), a powerful tool for data-driven network-based bayesian Inference of drivers. scMINER also offered several wrapper of basic visualization functions in NetBID2 for better usability. 
+
+### Single network visualization
+In scMINER, you can visualize your driver and its targets by function `draw.network`. It was adapted from function `draw.targetNet` and `draw.targetNet.TWO` from `NetBID2`. This function can help visualize a driver's targets as well as the relationship(edge) between source and target genes, by taking Mutual information as edge weight, and spearman correlation as direction.
+
+```R
+draw.network(net1 = net,src1 = "LEF1", #driver name
+	ifSymbol = TRUE, #if your source driver name is a Symbol 
+	ifWeighted = TRUE, #if plot edge with weight and direction
+	pdf_name = "LEF1.TF_in_NaiveT_network.pdf",
+	n_layer=4)
+
+```
+
+![](./plots/LEF1.TF_in_NaiveT_network.png)
+
+### Subnetwork structure visualization between two networks
+You can also use `draw.network` function to visualize two networks and their subnetwork structure. This could be used for identify common targets from two top driver from the same network, or identify network rewiring event of same driver in different cell type network. Here below is an example for later case.
+
+```R
+draw.network(net1 = net1,net2 = net2,
+		src1 = "BATF",src2="BATF", 
+		source1_z=-3, source2_z=4,
+		ifSymbol = TRUE,ifWeighted = TRUE,
+		pdf_name = "BATF.TF_in_2_network.pdf",
+		n_layer=4)
+```
+
+![](./plots/BATF.TF_in_2_network.png)
 
 
+## Biological function anlaysis for drivers 
 
-##Network visualization
-###
-1. network/two network visualizaton
-2. 
+### Gene set overlap with targets visualized by bubble plot
+When picking candidate hidden drivers, it would be extremly helpful if we could identify the potential biological pathways this driver regulates. With SJARACNe infered network, we can assess as well as  visualizethe overlap between knowledge-based gene sets and driver's targets via function `draw.bubblePlot`. This function returns a bubble plot indiating results from Fisher exact test. 
+
+```R 
+
+TF_list <- TopMasterRegulator(DAG_result = DAG_result,
+                              celltype="NaiveT",
+                              n = 10, degree_filter = c(50,800))
+
+draw.bubblePlot(driver_list= TF_list,
+                show_label=DAG_result[TF_list,"geneSymbol"],
+                Z_val=DAG_result[TF_list,"Z_NaiveT"],
+                driver_type=NULL,
+                target_list=net1$target_list,
+                transfer2symbol2type=tbl,
+                bg_list=fData(eset.12k)$geneSymbol,
+                min_gs_size=50,max_gs_size=600, 
+                top_geneset_number=8,top_driver_number=10,use_gs = c("H","C5","CP:KEGG"),
+                pdf_file = 'NaiveT_bubblePlot.pdf',
+                main='Bubbleplot for top driver targets in NaiveT')
+
+```
 
 
-
-
-
-
-
-
-
+![](./plots/NaiveT_bubblePlot.png)
 
 
 

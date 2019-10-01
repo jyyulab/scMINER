@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=Edge">
   
 
-  <title>Sample Analysis with PBMC(12k) scRNA-seq data - </title>
+  <title>Step by step demo with PBMC(12k) data - </title>
   <link rel="stylesheet" href="http://localhost:4000/assets/css/just-the-docs.css">
 
   
@@ -42,7 +42,7 @@
         
           <li class="navigation-list-item">
             
-            <a href="http://localhost:4000/" class="navigation-list-link">Welcome to scMINER</a>
+            <a href="http://localhost:4000/" class="navigation-list-link">Welcome</a>
             
           </li>
         
@@ -52,7 +52,7 @@
         
           <li class="navigation-list-item">
             
-            <a href="http://localhost:4000/docs/MICA.html" class="navigation-list-link">Run MICA locally</a>
+            <a href="http://localhost:4000/docs/Installation.html" class="navigation-list-link">Installation</a>
             
           </li>
         
@@ -62,7 +62,7 @@
         
           <li class="navigation-list-item">
             
-            <a href="http://localhost:4000/docs/MICA_LSF.html" class="navigation-list-link">Run MICA on LSF</a>
+            <a href="http://localhost:4000/docs/MICA.html" class="navigation-list-link">Clustering with MICA</a>
             
           </li>
         
@@ -72,7 +72,7 @@
         
           <li class="navigation-list-item active">
             
-            <a href="http://localhost:4000/docs/PBMC-12k.html" class="navigation-list-link active">Sample Analysis with PBMC(12k) scRNA-seq data</a>
+            <a href="http://localhost:4000/docs/PBMC-12k.html" class="navigation-list-link active">Step by step demo with PBMC(12k) data</a>
             
           </li>
         
@@ -82,7 +82,7 @@
         
           <li class="navigation-list-item">
             
-            <a href="http://localhost:4000/docs/PBMC-12k-network.html" class="navigation-list-link">Cell-type specific network analysis</a>
+            <a href="http://localhost:4000/docs/PBMC-12k-network.html" class="navigation-list-link">Advanced analysis</a>
             
           </li>
         
@@ -109,82 +109,75 @@
         
         <div id="main-content" class="page-content" role="main">
           <h1 class="no_toc" id="analysis-on-pbmc12k-scrna-seq-data-via-scminer">Analysis on PBMC(12k) scRNA-seq data via scMINER</h1>
-<p>Here we demonstrate our pipeline using PBMC (10x genmomics) scRNA-seq data [link to data matrix]. Full data contains 68k cells(link to 10x website), in order to provide a quicker guidance, we’ve down sampled this data to 12k cells.
-Original data website can be downloaded <a href="https://support.10xgenomics.com/single-cell-gene-expression/datasets/1.1.0/fresh_68k_pbmc_donor_a">here</a>.</p>
 
 <h2 class="no_toc text-delta" id="table-of-contents">Table of contents</h2>
 
 <ol id="markdown-toc">
-  <li><a href="#installation" id="markdown-toc-installation">Installation</a></li>
-  <li><a href="#scrna-seq-data-preprocessing" id="markdown-toc-scrna-seq-data-preprocessing">scRNA-seq data preprocessing</a>    <ol>
+  <li><a href="#demo-data" id="markdown-toc-demo-data">Demo data</a></li>
+  <li><a href="#step1-data-preprocessing" id="markdown-toc-step1-data-preprocessing">Step1: Data preprocessing</a>    <ol>
       <li><a href="#read-10x-genomics-data" id="markdown-toc-read-10x-genomics-data">Read 10x genomics data</a></li>
-      <li><a href="#down-sampling" id="markdown-toc-down-sampling">Down sampling</a></li>
       <li><a href="#quality-control-and-data-filtering" id="markdown-toc-quality-control-and-data-filtering">Quality control and data filtering</a></li>
       <li><a href="#normalization-and-transformation" id="markdown-toc-normalization-and-transformation">Normalization and transformation</a></li>
       <li><a href="#generate-mica-input-and-command" id="markdown-toc-generate-mica-input-and-command">Generate MICA input and command</a></li>
     </ol>
   </li>
-  <li><a href="#run-mica-clustering" id="markdown-toc-run-mica-clustering">Run MICA clustering</a></li>
-  <li><a href="#cell-type-analysis-from-mica-output" id="markdown-toc-cell-type-analysis-from-mica-output">Cell type analysis from MICA output</a>    <ol>
+  <li><a href="#step2-perform-clustering-analysis-via-mica" id="markdown-toc-step2-perform-clustering-analysis-via-mica">Step2: Perform clustering analysis via MICA</a></li>
+  <li><a href="#step3-cell-type-annotation-after-clustering" id="markdown-toc-step3-cell-type-annotation-after-clustering">Step3: Cell type annotation after clustering</a>    <ol>
       <li><a href="#reading-mica-output" id="markdown-toc-reading-mica-output">Reading MICA output</a></li>
       <li><a href="#marker-gene-highlighting" id="markdown-toc-marker-gene-highlighting">Marker gene highlighting</a></li>
       <li><a href="#assign-cell-type-to-cluster" id="markdown-toc-assign-cell-type-to-cluster">Assign cell type to cluster</a></li>
     </ol>
   </li>
-  <li><a href="#network-generation-via-sjaracne" id="markdown-toc-network-generation-via-sjaracne">Network generation via SJARACNe</a></li>
-  <li><a href="#find-cell-type-specific-master-regulator" id="markdown-toc-find-cell-type-specific-master-regulator">Find cell type specific master regulator</a>    <ol>
-      <li><a href="#calculate-inferred-activity" id="markdown-toc-calculate-inferred-activity">Calculate Inferred activity</a></li>
-      <li><a href="#find-differential-activity-tf" id="markdown-toc-find-differential-activity-tf">Find Differential activity TF</a></li>
+  <li><a href="#step4-network-generation-via-sjaracne" id="markdown-toc-step4-network-generation-via-sjaracne">Step4: Network generation via SJARACNe</a>    <ol>
+      <li><a href="#generate-sjaracne-input" id="markdown-toc-generate-sjaracne-input">Generate SJARACNe input</a></li>
+      <li><a href="#run-sjaracne" id="markdown-toc-run-sjaracne">Run SJARACNe</a></li>
+    </ol>
+  </li>
+  <li><a href="#step5-identify-cell-type-specific-hidden-driver" id="markdown-toc-step5-identify-cell-type-specific-hidden-driver">Step5: Identify cell type specific hidden driver</a>    <ol>
+      <li><a href="#calculate-activity" id="markdown-toc-calculate-activity">Calculate activity</a></li>
+      <li><a href="#driver-estimation-by-differential-activity-analysis" id="markdown-toc-driver-estimation-by-differential-activity-analysis">Driver estimation by differential activity analysis</a></li>
     </ol>
   </li>
   <li><a href="#r-session-info" id="markdown-toc-r-session-info">R session Info</a></li>
 </ol>
 
 <hr />
-<h2 id="installation">Installation</h2>
+<h2 id="demo-data">Demo data</h2>
+<p>Here we demonstrate our pipeline using PBMC (10x genmomics) scRNA-seq data. Full data contains 68k cells, in order to provide a quicker guidance, we’ve down sampled this data to 12k cells.
+Original data website can be downloaded <a href="https://support.10xgenomics.com/single-cell-gene-expression/datasets/1.1.0/fresh_68k_pbmc_donor_a">here</a>.</p>
 
-<p>scMINER is based on python and R, with a single R package glued all essential functions together.</p>
-
-<h2 id="scrna-seq-data-preprocessing">scRNA-seq data preprocessing</h2>
-<p>This can be done by any scRNA-seq preprocessing pipeline. We encourage user to feed in all genes from your data for MICA, instead of highly variable genes only. Here, in order to stick to the focus, we only demonstrate a quick function to conduct gene/cell filtering, without any data exploratory visualization.</p>
+<h2 id="step1-data-preprocessing">Step1: Data preprocessing</h2>
 
 <h3 id="read-10x-genomics-data">Read 10x genomics data</h3>
-<p>Read 10x genomics data wih function embeded in scMINER package. This function could help read either 10x genomics standard output, as well as other text files types by passing arguments to <code class="highlighter-rouge">read.delim()</code>. If set <code class="highlighter-rouge">CreateSparseEset=T</code> This will help create a Sparse matrix object using Expressionset prototype, otherwise, it will create a list Object that stores expression data, feature data and sample data in different slots. If <code class="highlighter-rouge">add.meta=T</code>, then corresponding sample info such as total number of UMI will be calcualated and outputed.</p>
+<p>Read 10x genomics data with function in scMINER package. This function could help read either 10x genomics standard output, as well as other text files types by passing arguments to <code class="highlighter-rouge">read.delim()</code>. If set <code class="highlighter-rouge">CreateSparseEset=T</code> This will help create a Sparse matrix object using Expressionset prototype, otherwise, it will create a list Object that stores expression data, feature data and sample data in different slots. If <code class="highlighter-rouge">add.meta=T</code>, then corresponding sample info such as total number of UMI will be calcualated and outputed. Here, since data was downsampled and not in standard 10x genomics output format, we defined <code class="highlighter-rouge">is.10x=F</code> and <code class="highlighter-rouge">add.meta=F</code>.</p>
 
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">d</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">d</span><span class="m">.68</span><span class="n">k</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">readscRNAseqData</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="s2">"../PBMC68k_input/"</span><span class="p">,</span><span class="n">is.10x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="n">CreateSparseEset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">F</span><span class="p">,</span><span class="w"> </span><span class="n">add.meta</span><span class="o">=</span><span class="nb">F</span><span class="p">)</span><span class="w">
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">d</span><span class="m">.12</span><span class="n">k</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">readscRNAseqData</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="s2">"PBMC_demo_input.txt"</span><span class="p">,</span><span class="n">is.10x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">F</span><span class="p">,</span><span class="n">CreateSparseEset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="n">add.meta</span><span class="o">=</span><span class="nb">F</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<h3 id="down-sampling">Down sampling</h3>
-<p>In order to provide a quicker guidance, we’ve down sampled this data to 12k cells.</p>
-
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">set.seed</span><span class="p">(</span><span class="m">1</span><span class="p">)</span><span class="w">
-</span><span class="n">d</span><span class="m">.12</span><span class="n">k</span><span class="o">&lt;-</span><span class="n">d</span><span class="p">[,</span><span class="n">sample</span><span class="p">(</span><span class="n">colnames</span><span class="p">(</span><span class="n">d</span><span class="p">),</span><span class="m">12000</span><span class="p">)]</span><span class="w">
-</span><span class="nf">dim</span><span class="p">(</span><span class="n">d</span><span class="m">.12</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="c1">#[1] 32738 12000</span><span class="w">
-</span></code></pre></div></div>
-<p>You can also create Sparse Matrix expression by using <code class="highlighter-rouge">CreateSparseEset</code>function:</p>
+<p>After confriming your data was loaded properly, you can now create Sparse Matrix expression by using <code class="highlighter-rouge">CreateSparseEset</code>function:</p>
 
 <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">eset.12k</span><span class="o">&lt;-</span><span class="n">CreateSparseEset</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="m">.12</span><span class="n">k</span><span class="p">,</span><span class="n">feature.data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="m">.68</span><span class="n">k</span><span class="o">$</span><span class="n">feature.data</span><span class="p">,</span><span class="n">add.meta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">T</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
 <h3 id="quality-control-and-data-filtering">Quality control and data filtering</h3>
-<p>Quality control assessments could be done using <code class="highlighter-rouge">draw.scRNAseq.QC</code> step, this will output a Rmarkdown generated report, including essential figures for at both gene and cell level. Suggested cutoff will be returned as a list if <code class="highlighter-rouge">output.cutoff</code> was set to be <code class="highlighter-rouge">TRUE</code>.</p>
+<p>Quality control assessments could be done using <code class="highlighter-rouge">draw.scRNAseq.QC</code> step, this will output a html report generated through Rmarkdown, which includes essential figures at both gene and cell level. Suggested cutoff will be returned as a list if <code class="highlighter-rouge">output.cutoff</code> was set to be <code class="highlighter-rouge">TRUE</code>.</p>
 
 <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cutoffs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">draw.scRNAseq.QC</span><span class="p">(</span><span class="n">SparseEset</span><span class="o">=</span><span class="n">eset.12k</span><span class="p">,</span><span class="w"> 
                           </span><span class="n">project.name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"PBMC12k"</span><span class="p">,</span><span class="w">
                           </span><span class="n">plot.dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"./QC/"</span><span class="p">,</span><span class="w">
-                          </span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"group"</span><span class="p">,</span><span class="w">
+                          </span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"group"</span><span class="p">,</span><span class="w"> </span><span class="c1"># this indicate which meta data information will be use in x axis to group violin plots</span><span class="w">
                           </span><span class="n">output.cutoff</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
+<p>The first plot is a histogram which helps visualize distribution of expressed genes among each cells.
+<img src="./plots/1_1_Gene_QCmetrics_before_filtering.png" alt="drawing" width="550" /></p>
 
-<p><img src="./plots/1_1_Gene_QCmetrics_before_filtering.png" alt="drawing" width="550" /></p>
-
-<p>Second plot will visualize total UMI count, and total number of gene expressed.
+<p>The second plot help visualize total UMI count, and total number of gene expressed in violin plots.
 <img src="./plots/1_2_Cell_QC_1.png" alt="" /></p>
 
-<p>Third plot will visualize mitochondria percentage, and spike-in percentage for each cell.
+<p>Third plot visualizes mitochondria percentage, and spike-in percentage for each cell in scatter plot.
 <img src="./plots/1_3_Cell_QC_2.png" alt="" /></p>
 
-<p>Then you could run cell filtering as simple as below, if feed cutoffs calculated previously from draw.scRNAseq.QC functon. You could also manually change cutoffs by reassign numbers in <code class="highlighter-rouge">cutoffs</code> list, e.g. set <code class="highlighter-rouge">cutoffs$umi_cf_hi&lt;-Inf</code> means do not do filtering on high total UMI value.</p>
+<p>Then you could run cell filtering with function <code class="highlighter-rouge">preMICA.filtering</code>, if input <code class="highlighter-rouge">cutoffs</code> was directly from the output of draw.scRNAseq.QC functon. You could also manually change cutoffs by re-assign thresholds in <code class="highlighter-rouge">cutoffs</code> list, e.g. set <code class="highlighter-rouge">cutoffs$umi_cf_hi&lt;-Inf</code> means do not do filtering on outliers which have high total UMI value.</p>
 
 <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cutoffs</span><span class="o">$</span><span class="n">umi_cf_hi</span><span class="o">&lt;-</span><span class="kc">Inf</span><span class="w"> </span><span class="c1">#only filter on low total number of UMI</span><span class="w">
 </span><span class="n">eset.sel</span><span class="o">&lt;-</span><span class="n">preMICA.filtering</span><span class="p">(</span><span class="n">SparseEset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eset.12k</span><span class="p">,</span><span class="n">cutoffs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cutoffs</span><span class="p">)</span><span class="w">
@@ -192,51 +185,52 @@ Original data website can be downloaded <a href="https://support.10xgenomics.com
 </span></code></pre></div></div>
 
 <h3 id="normalization-and-transformation">Normalization and transformation</h3>
-<p>In MICA, we don’t provide a vriety of methods to do normalizaton, you can use your own prefered normalization method. Here we provide an example of doing CPM and log2 transformation.</p>
+<p>In scMINER package, we don’t provide methods to conduct normalizaton. You can use your own prefered normalization method. However, we highly recommend to do CPM and log2 transformation for MICA input.</p>
 
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">norm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1e6</span><span class="w">
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">norm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1e6</span><span class="w"> 
 </span><span class="n">exp.norm</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sweep</span><span class="p">(</span><span class="n">exprs</span><span class="p">(</span><span class="n">eset.sel</span><span class="p">),</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">norm</span><span class="o">/</span><span class="n">unname</span><span class="p">(</span><span class="n">Matrix</span><span class="o">::</span><span class="n">colSums</span><span class="p">(</span><span class="n">exprs</span><span class="p">(</span><span class="n">eset.sel</span><span class="p">))),</span><span class="w"> </span><span class="s1">'*'</span><span class="p">)</span><span class="w">
 
 </span><span class="c1"># log transformation</span><span class="w">
+</span><span class="c1"># Required for MICA</span><span class="w">
 </span><span class="n">exp.log2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span><span class="n">exp.norm</span><span class="m">+1</span><span class="p">,</span><span class="n">base</span><span class="o">=</span><span class="m">2</span><span class="p">)</span><span class="w">
 
 </span><span class="c1"># save as SparseEset</span><span class="w">
-</span><span class="n">eset.norm</span><span class="o">&lt;-</span><span class="n">CreateSparseEset</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">exp.log2</span><span class="p">,</span><span class="n">meta.data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pData</span><span class="p">(</span><span class="n">eset.sel</span><span class="p">),</span><span class="n">feature.data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fData</span><span class="p">(</span><span class="n">eset.sel</span><span class="p">),</span><span class="n">add.meta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">F</span><span class="p">)</span><span class="w">
+</span><span class="n">eset.norm</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">CreateSparseEset</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">exp.log2</span><span class="p">,</span><span class="n">meta.data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pData</span><span class="p">(</span><span class="n">eset.sel</span><span class="p">),</span><span class="n">feature.data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fData</span><span class="p">(</span><span class="n">eset.sel</span><span class="p">),</span><span class="n">add.meta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">F</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
 <h3 id="generate-mica-input-and-command">Generate MICA input and command</h3>
-<p>After reviewing all visualization and conduct filtering, you can go ahead and generate clustering(MICA) input, which will be a cell by gene txt file. If your data was not generated by 10x genomics, you can prepare your own filtering and use this step for clustering Input generation, please note that <code class="highlighter-rouge">you should always feed MICA the log or log2 transformed data</code>.</p>
+<p>After reviewing all visualization and finished filtering, you can go ahead and generate clustering (MICA) input via <code class="highlighter-rouge">generateMICAinput</code>. This function take a expression matrix as input, and outputs a cell by gene txt file. Please note that <code class="highlighter-rouge">you should always feed MICA the log or log2 transformed data</code>.</p>
 
 <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">generateMICAinput</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="w"> </span><span class="n">exp.log2</span><span class="w"> </span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s2">"PBMC12k_MICA_input.txt"</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
-<p>This will output a txt file containing filtered expression matrix for MICA. 
-We also provide a function for you to generate MICA command without writing your own scripts. If you set <code class="highlighter-rouge">host=lsf</code>, then you need to define <code class="highlighter-rouge">queue</code> required, and <code class="highlighter-rouge">memory</code> (optional). In <code class="highlighter-rouge">num_cluster</code>, you can input a vector of number of K to achieve clustering membership for different k simultaneously.</p>
 
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">generate_MICA_cmd</span><span class="p">(</span><span class="n">save_sh_at</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"./PBMC12k_v3/"</span><span class="p">,</span><span class="w">
-                  </span><span class="n">input_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"./PBMC12k_v3/PBMC12k_MICA_input.txt"</span><span class="p">,</span><span class="w">
-                  </span><span class="n">project_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"PBMC12k"</span><span class="p">,</span><span class="n">num_cluster</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">8</span><span class="p">,</span><span class="m">9</span><span class="p">,</span><span class="m">10</span><span class="p">,</span><span class="m">12</span><span class="p">,</span><span class="m">13</span><span class="p">,</span><span class="m">14</span><span class="p">,</span><span class="m">15</span><span class="p">),</span><span class="w">
+<p>We also offer a function to generate MICA command without writing your own scripts. If you set <code class="highlighter-rouge">host=lsf</code>, then you need to define <code class="highlighter-rouge">queue</code> (required), and <code class="highlighter-rouge">memory</code> (optional). In <code class="highlighter-rouge">num_cluster</code>, you can input a vector of number of K to achieve clustering membership for different k simultaneously.</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">generate_MICA_cmd</span><span class="p">(</span><span class="n">save_sh_at</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"./PBMC12k/"</span><span class="p">,</span><span class="w">
+                  </span><span class="n">input_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"./PBMC12k/PBMC12k_MICA_input.txt"</span><span class="p">,</span><span class="w">
+                  </span><span class="n">project_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"PBMC12k"</span><span class="p">,</span><span class="w">
+                  </span><span class="n">num_cluster</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">8</span><span class="p">,</span><span class="m">9</span><span class="p">,</span><span class="m">10</span><span class="p">,</span><span class="m">12</span><span class="p">,</span><span class="m">13</span><span class="p">,</span><span class="m">14</span><span class="p">,</span><span class="m">15</span><span class="p">),</span><span class="w">
                   </span><span class="n">host</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"lsf"</span><span class="p">,</span><span class="w"> </span><span class="n">queue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">your_queue_name</span><span class="p">],</span><span class="w">
                   </span><span class="n">output_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"./"</span><span class="p">,</span><span class="n">queue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"standard"</span><span class="p">)</span><span class="w">
 
 </span></code></pre></div></div>
 
-<h2 id="run-mica-clustering">Run MICA clustering</h2>
+<h2 id="step2-perform-clustering-analysis-via-mica">Step2: Perform clustering analysis via MICA</h2>
 
-<p>MICA is implemented in Python. If you would like to install MICA, please infer <a href="https://github.com/jyyulab/MICA">MICA github page</a>.There are several parameters for you to choose when running MICA. A more comprehensive tutorial could be found <a href="./MICA.md">here for local</a> and <a href="./MICA_LSF.md">here for lsf</a>.Here recommend save your working directory before running MICA.</p>
+<p>MICA is implemented in Python. If you would like to install MICA, please refer to <a href="https://github.com/jyyulab/MICA">MICA github page</a>. There are several parameters for you to choose when running MICA. A more comprehensive tutorial could be found <a href="./MICA.md">here for local</a> and <a href="./MICA_LSF.md">here for lsf</a>. Here we suggests saving your working directory prior to running MICA.</p>
 
-<h2 class="d-inline-block" id="cell-type-analysis-from-mica-output">Cell type analysis from MICA output</h2>
+<h2 class="d-inline-block" id="step3-cell-type-annotation-after-clustering">Step3: Cell type annotation after clustering</h2>
 
 <p>First, after clustering via MICA(see [MICA] (/docs/MICA.html), you can load MICA output (in .txt) as well as input expression matrix in R under an <code class="highlighter-rouge">expressionSet</code>. This is going to be the major data structure we used for downstream analysis in R.</p>
 
 <h3 id="reading-mica-output">Reading MICA output</h3>
-<p>You can start with one MICA membership and study your optimal number of cluster with cell type specific markers.</p>
+<p>Users can start with one MICA membership and study your optimal number of cluster with cell type specific markers.</p>
 
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">eset.12k</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">readMICAoutput</span><span class="p">(</span><span class="n">Obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d.sel</span><span class="p">,</span><span class="n">load_clust_label</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> 
-</span><span class="n">output_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"MICA/PBMC12k_k8_tsne_ClusterMem.txt"</span><span class="p">)</span><span class="w">
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">eset.12k</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">readMICAoutput</span><span class="p">(</span><span class="n">Obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d.sel</span><span class="p">,</span><span class="n">load_clust_label</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">output_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"MICA/PBMC12k_k8_tsne_ClusterMem.txt"</span><span class="p">)</span><span class="w">
 
 </span></code></pre></div></div>
 
-<p>To visualize MICA label or other metadata, you can use function <code class="highlighter-rouge">MICAplot</code>.</p>
+<p>To visualize MICA label or other metadata, one can use function <code class="highlighter-rouge">MICAplot</code>. Users are required to specify X and Y cordinates in this function. This function will output a ggplot style visualization. Other meta data could also be visulized with this function, via changing <code class="highlighter-rouge">label</code> parameter.</p>
 
 <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">MICAplot</span><span class="p">(</span><span class="n">input_eset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eset.12k</span><span class="p">,</span><span class="n">visualize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'tSNE'</span><span class="p">,</span><span class="n">X</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"X"</span><span class="p">,</span><span class="n">Y</span><span class="o">=</span><span class="s2">"Y"</span><span class="p">,</span><span class="n">label</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"label"</span><span class="p">,</span><span class="n">pct</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.5</span><span class="p">)</span><span class="w">
 
@@ -245,7 +239,7 @@ We also provide a function for you to generate MICA command without writing your
 
 <h3 id="marker-gene-highlighting">Marker gene highlighting</h3>
 
-<p>Picked marker genes could be visualized on t-SNE scatterplot, heatmap or violinplot. This will help pick up a reasonable number of cluster.</p>
+<p>Picked marker genes could be visualized on t-SNE scatterplot, violin plot or heatmap via function <code class="highlighter-rouge">feature_highlighting</code>, <code class="highlighter-rouge">feature_vlnplot</code> and <code class="highlighter-rouge">feature_heatmap</code>. This will not only help cluster annotation, but also identify optimal number of clusters as well.</p>
 
 <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gn.sel</span><span class="o">&lt;-</span><span class="nf">c</span><span class="p">(</span><span class="s2">"CD3D"</span><span class="p">,</span><span class="s2">"CD27"</span><span class="p">,</span><span class="s2">"IL7R"</span><span class="p">,</span><span class="s2">"SELL"</span><span class="p">,</span><span class="s2">"CCR7"</span><span class="p">,</span><span class="s2">"IL32"</span><span class="p">,</span><span class="s2">"GZMA"</span><span class="p">,</span><span class="w">
           </span><span class="s2">"GZMK"</span><span class="p">,</span><span class="s2">"DUSP2"</span><span class="p">,</span><span class="s2">"CD8A"</span><span class="p">,</span><span class="s2">"GZMH"</span><span class="p">,</span><span class="s2">"GZMB"</span><span class="p">,</span><span class="s2">"CD79A"</span><span class="p">,</span><span class="s2">"CD79B"</span><span class="p">,</span><span class="s2">"CD86"</span><span class="p">,</span><span class="s2">"CD14"</span><span class="p">)</span><span class="w">
@@ -269,9 +263,9 @@ We also provide a function for you to generate MICA command without writing your
 
 <h3 id="assign-cell-type-to-cluster">Assign cell type to cluster</h3>
 
-<p>Here we curated a reference signature list of 8 immune cell types(link) for cell type annotation. In <code class="highlighter-rouge">marker_bbplot</code> function, we calculated cell type scores for each clusters, and visualize scores using heatmap.</p>
+<p>In order to help assign cell types to each cluster in a more systemmatic way, we introduced <code class="highlighter-rouge">marker_bbplot</code> function. This function calculated cell type scores for each clusters, and visualize scores using bubble plot, with color scale indicates marker score while circle(bubble) stand for sizes. However, this fucntion requires a pre-defined marker gene lists as input, here we curated a list of well-known marker genes of 9 common immune celltypes as <code class="highlighter-rouge">ref</code>. Users are required to follow below format in order to run this function properly.</p>
 
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ref</span><span class="o">&lt;-</span><span class="n">read.xlsx</span><span class="p">(</span><span class="s2">"Immune_signatures.xlsx"</span><span class="p">)</span><span class="w">
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ref</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">read.xlsx</span><span class="p">(</span><span class="s2">"Immune_signatures.xlsx"</span><span class="p">)</span><span class="w">
 </span><span class="n">head</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span><span class="w">
 </span><span class="o">&gt;</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span><span class="w">
   </span><span class="n">celltype</span><span class="w"> </span><span class="n">markers</span><span class="w"> </span><span class="n">weight</span><span class="w">
@@ -294,14 +288,25 @@ We also provide a function for you to generate MICA command without writing your
 </span><span class="n">eset.12k</span><span class="o">$</span><span class="n">celltype</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">indx</span><span class="p">[</span><span class="n">eset.12k</span><span class="o">$</span><span class="n">label</span><span class="p">]</span><span class="w">
 </span></code></pre></div></div>
 
-<h2 id="network-generation-via-sjaracne">Network generation via SJARACNe</h2>
+<h2 id="step4-network-generation-via-sjaracne">Step4: Network generation via SJARACNe</h2>
 
-<p>In order to generate cell type/group/cluster specific network, group information should be stored under <code class="highlighter-rouge">pData([your_expressionSet])</code>. And R function <code class="highlighter-rouge">generateSJAracneInput</code> will help to partition your expression matrix and conduct a loose filtering of your scRNA-seq data(filter about 0 expressed genes in cluster). Besides, a reference TF list should be provided as <code class="highlighter-rouge">tf.ref</code> to guide hub gene selection. Each group will create one directory which contains filtered expression matrix in .exp format, as long as the filtered TF list in .txt.</p>
+<h3 id="generate-sjaracne-input">Generate SJARACNe input</h3>
+<p>Prior to generate cell type/group/cluster specific network, group information should be stored under <code class="highlighter-rouge">pData([your_expressionSet])</code>. And R function <code class="highlighter-rouge">generateSJAracneInput</code> will help to partition input expression matrix and conduct essential filtering, (filter about 0 expressed genes in cluster) to ensure a reliable network construction. <code class="highlighter-rouge">funcType</code> is required to specify what kind of network to generate. A reference Transcription factor list will be loaded automatically without manual input. However, you do need to define your species using under <code class="highlighter-rouge">ref</code>.</p>
 
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">generateSJAracneInput</span><span class="p">(</span><span class="n">eset</span><span class="o">=</span><span class="n">eset.12k</span><span class="p">,</span><span class="n">tf.ref</span><span class="o">=</span><span class="n">tf.ref</span><span class="p">,</span><span class="n">wd.src</span><span class="o">=</span><span class="s2">"Sjaracne/"</span><span class="p">,</span><span class="w"> </span><span class="n">group_tag</span><span class="o">=</span><span class="s2">"celltype"</span><span class="p">)</span><span class="w">
+<p>This function will help create one directory for each group, containing required input for SJARACNe such as filtered expression matrix in .exp format and filtered TF list in .txt format.</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">generateSJARACNeInput</span><span class="p">(</span><span class="n">eset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eset.12k</span><span class="p">,</span><span class="w">
+						  </span><span class="n">funcType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"TF"</span><span class="p">,</span><span class="w"> 
+						  </span><span class="n">ref</span><span class="o">=</span><span class="w"> </span><span class="s2">"hg"</span><span class="p">,</span><span class="w">  </span><span class="c1">#human</span><span class="w">
+                      </span><span class="n">wd.src</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"SJARACNE"</span><span class="p">,</span><span class="w">  </span><span class="c1">#Output directory</span><span class="w">
+                      </span><span class="n">group_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"celltype"</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<p><em>Warning:</em> SJARACNe has not been integrated into scMINER yet, please consult <a href="https://github.com/jyyulab/SJARACNe">here</a> for installation and basic usage. Here recommend save your working directory before running SJARACNe.</p>
+<h3 id="run-sjaracne">Run SJARACNe</h3>
+
+<p>SJARACNe works as a separate module which implemented in python, please consult <a href="https://github.com/jyyulab/SJARACNe">here</a> for installation and basic usage. We strongly suggest saving your working directory before running SJARACNe.</p>
+
+<p>Here we provide an example to run SJARACNe for all celltypes/clusters. After SJARACNe was sucessfully completed, you will be able to get one network for each cell and functional type.</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">indir</span><span class="o">=</span>~/PBMC12K/SJARACNE_PBMC12K/
 
@@ -312,37 +317,44 @@ We also provide a function for you to generate MICA command without writing your
 
 </code></pre></div></div>
 
-<h2 id="find-cell-type-specific-master-regulator">Find cell type specific master regulator</h2>
+<h2 id="step5-identify-cell-type-specific-hidden-driver">Step5: Identify cell type specific hidden driver</h2>
 
-<p>Identify master regulator from content based network is the key step in scMINER to help understanding your scRNA-seq data.</p>
+<p>Identify hidden driver from content-based network is the key step in scMINER to help understand your scRNA-seq data, and provide biological insight.</p>
 
-<h3 id="calculate-inferred-activity">Calculate Inferred activity</h3>
-<p>TF acitivities are calculated by integrating expression profile of their targets. Targets identified from SJARACNe of perticular TF was normalized and averaged to infer TF activity.</p>
+<h3 id="calculate-activity">Calculate activity</h3>
+<p>Activity calculation is the basis of driver estimation in scMINER. To infer driver activity, expression profile of their targets are intergrated via function <code class="highlighter-rouge">GetActivityFromSJARACNe</code>. This function takes SJARACNe output path and expression set as input, and return an activity set as well as structured network files if set 	<code class="highlighter-rouge">save_network_files=TRUE</code>.</p>
 
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">acs.12k</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">GetActivityFromSJARANCE</span><span class="p">(</span><span class="w">
-			 </span><span class="n">SJaracne_output_path</span><span class="o">=</span><span class="s2">"Sjaracne/"</span><span class="p">,</span><span class="w">
-			 </span><span class="n">SJaracne_input_eset</span><span class="o">=</span><span class="n">eset.demo</span><span class="p">,</span><span class="w">
-			 </span><span class="n">activity.method</span><span class="o">=</span><span class="s2">"unweighted"</span><span class="p">,</span><span class="w"> 
-			 </span><span class="n">activity.norm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> 
-			 </span><span class="n">group_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"celltype"</span><span class="p">,</span><span class="w">
-			 </span><span class="n">save_network_file</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="n">save_path</span><span class="o">=</span><span class="kc">NA</span><span class="p">)</span><span class="w">
+<p>Since scRNA-seq data are extremly sparse and noisy, we strongly recommend to set <code class="highlighter-rouge">activity.method</code> as <code class="highlighter-rouge">'unweighted'</code>.</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">acs.12k</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">GetActivityFromSJARACNe</span><span class="p">(</span><span class="w">
+    </span><span class="n">SJARACNe_output_path</span><span class="w"> </span><span class="o">=</span><span class="s2">"SJARACNE/"</span><span class="p">,</span><span class="w">
+    </span><span class="n">SJARACNe_input_eset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eset.12k</span><span class="p">,</span><span class="w">
+    </span><span class="n">activity.method</span><span class="o">=</span><span class="s2">"unweighted"</span><span class="p">,</span><span class="w"> </span><span class="c1"># we highly recommend using 'unweighted' as activity calculation method</span><span class="w">
+    </span><span class="n">activity.norm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">group_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"celltype"</span><span class="p">,</span><span class="w"> </span><span class="c1"># which group was used to partition expression profiles</span><span class="w">
+    </span><span class="n">save_network_file</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="c1"># whether or not save network for each group</span><span class="w">
+    </span><span class="n">save_path</span><span class="o">=</span><span class="s2">"./networks/"</span><span class="p">)</span><span class="w"> </span><span class="c1">#default as false, but recommended to be TRUE</span><span class="w">
+
 </span></code></pre></div></div>
 
-<h3 id="find-differential-activity-tf">Find Differential activity TF</h3>
+<h3 id="driver-estimation-by-differential-activity-analysis">Driver estimation by differential activity analysis</h3>
 
-<p>The function <code class="highlighter-rouge">FindDAG</code> was designed for identify highly differentiated TF from SJARACNe inferred activity matrix. In order to do so, we did two sided student’s t-test to compare mean acitivty from one cell type V.S. the others.</p>
+<p>The function <code class="highlighter-rouge">FindDAG</code> was designed to identify highly differentiated TF from SJARACNe inferred activity matrix. In order to do so, we did two sided student’s t-test to compare mean acitivty from one cell type V.S. the others.</p>
 
 <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">DAG_result</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">FindDAG</span><span class="p">(</span><span class="n">eset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">acs.demo</span><span class="p">,</span><span class="n">group_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"celltype"</span><span class="p">)</span><span class="w">
 
 </span></code></pre></div></div>
-<p>This function will output a full matrix that contians all TF occurred in original dataset, statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help idenify master regulators. You can save it in txt or xlsx for checking.</p>
 
-<p>While you can also visualize top master regulator candidates in heatmap or violinplots. Only png as plotting device is supported.</p>
+<p>This function will output a full matrix that contians all TF occurred in original dataset, statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help idenify hidden drivers. You can save it in txt or xlsx for checking.</p>
 
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">TF_list</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">TopMasterRegulator</span><span class="p">(</span><span class="n">DAG_result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DAG_result</span><span class="p">,</span><span class="w">
+<p>We also offer a function called <code class="highlighter-rouge">TopDriversfromDAG</code> to help print top drivers in each cell type to console you specified. This function is helpful for downstream analysis.</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">TF_list</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">TopDriversfromDAG</span><span class="p">(</span><span class="n">DAG_result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DAG_result</span><span class="p">,</span><span class="w">
                               </span><span class="n">celltype</span><span class="o">=</span><span class="n">levels</span><span class="p">(</span><span class="n">acs.12k</span><span class="o">$</span><span class="n">celltype</span><span class="p">),</span><span class="w"> </span><span class="c1"># ensure cluster order</span><span class="w">
                               </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="n">degree_filter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">50</span><span class="p">,</span><span class="m">500</span><span class="p">))</span><span class="w">
 </span></code></pre></div></div>
+
+<p>In scMINER, we provide a handful of visualizations to compare driver activity from different cell type/ clusters. Here we demo 2 basic functions: <code class="highlighter-rouge">feature_heatmap</code> and <code class="highlighter-rouge">feature_vlnplot</code>. These functions could be used on either expression and activty matrix.</p>
 
 <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">feature_heatmap</span><span class="p">(</span><span class="n">eset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">acs.12k</span><span class="p">,</span><span class="n">target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TF_list</span><span class="p">,</span><span class="n">group_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"celltype"</span><span class="p">,</span><span class="n">feature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"geneSymbol"</span><span class="p">,</span><span class="w">
              </span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6</span><span class="p">,</span><span class="n">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6</span><span class="p">,</span><span class="w"> </span><span class="n">save_plot</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">cluster_rows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w">
@@ -352,11 +364,11 @@ We also provide a function for you to generate MICA command without writing your
 
 <p><img src="./plots/4_1_TopTFHeatmap.png" alt="" /></p>
 
-<p>You can also check some known master regulators as postivie control of your network analysis:</p>
-
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">feature_vlnplot</span><span class="p">(</span><span class="n">eset</span><span class="o">=</span><span class="n">acs.12k</span><span class="p">,</span><span class="n">target</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"LEF1.TF"</span><span class="p">,</span><span class="s2">"TCF7.TF"</span><span class="p">,</span><span class="s2">"BATF.TF"</span><span class="p">,</span><span class="s2">"TCF7.TF"</span><span class="p">,</span><span class="s2">"TBX21.TF"</span><span class="p">,</span><span class="w">
-								</span><span class="s2">"IRF8.TF"</span><span class="p">,</span><span class="s2">"SPIB.TF"</span><span class="p">,</span><span class="s2">"BATF3.TF"</span><span class="p">,</span><span class="s2">"CEBPA.TF"</span><span class="p">),</span><span class="w"> 
-					</span><span class="n">ylabel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Activity"</span><span class="p">,</span><span class="n">group_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"celltype"</span><span class="p">,</span><span class="n">drawquantiles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="n">ncol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w">
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#check postive controls</span><span class="w">
+</span><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">feature_vlnplot</span><span class="p">(</span><span class="n">eset</span><span class="o">=</span><span class="n">acs.12k</span><span class="p">,</span><span class="w">
+</span><span class="n">target</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"LEF1"</span><span class="p">,</span><span class="s2">"TCF7"</span><span class="p">,</span><span class="s2">"BATF"</span><span class="p">,</span><span class="s2">"TCF7"</span><span class="p">,</span><span class="s2">"TBX21"</span><span class="p">,</span><span class="s2">"IRF8"</span><span class="p">,</span><span class="s2">"SPIB"</span><span class="p">,</span><span class="s2">"BATF3"</span><span class="p">,</span><span class="s2">"CEBPA"</span><span class="p">),</span><span class="w"> 
+						</span><span class="n">ylabel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Activity"</span><span class="p">,</span><span class="w">
+						</span><span class="n">group_tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"celltype"</span><span class="p">,</span><span class="n">feature</span><span class="o">=</span><span class="s2">"geneSymbol"</span><span class="p">,</span><span class="w"> </span><span class="n">ncol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
 <p><img src="./plots/4_2_Known_MR_vlnplot.png" alt="" /></p>

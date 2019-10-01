@@ -1,14 +1,11 @@
 ---
 layout: default
-title: Sample Analysis with PBMC(12k) scRNA-seq data
+title: Step by step demo with PBMC(12k) data
 nav_order: 5
 ---
 
 # Analysis on PBMC(12k) scRNA-seq data via scMINER
 {:.no_toc}
-Here we demonstrate our pipeline using PBMC (10x genmomics) scRNA-seq data [link to data matrix]. Full data contains 68k cells(link to 10x website), in order to provide a quicker guidance, we've down sampled this data to 12k cells.
-Original data website can be downloaded [here](https://support.10xgenomics.com/single-cell-gene-expression/datasets/1.1.0/fresh_68k_pbmc_donor_a).
-
 
 ## Table of contents
 {: .no_toc .text-delta }
@@ -17,57 +14,46 @@ Original data website can be downloaded [here](https://support.10xgenomics.com/s
 {:toc}
 
 ---
-## Installation
+## Demo data
+Here we demonstrate our pipeline using PBMC (10x genmomics) scRNA-seq data. Full data contains 68k cells, in order to provide a quicker guidance, we've down sampled this data to 12k cells.
+Original data website can be downloaded [here](https://support.10xgenomics.com/single-cell-gene-expression/datasets/1.1.0/fresh_68k_pbmc_donor_a).
 
-scMINER is based on python and R, with a single R package glued all essential functions together.
-
-
-## scRNA-seq data preprocessing
-This can be done by any scRNA-seq preprocessing pipeline. We encourage user to feed in all genes from your data for MICA, instead of highly variable genes only. Here, in order to stick to the focus, we only demonstrate a quick function to conduct gene/cell filtering, without any data exploratory visualization.
+## Step1: Data preprocessing
 
 ### Read 10x genomics data
-Read 10x genomics data wih function embeded in scMINER package. This function could help read either 10x genomics standard output, as well as other text files types by passing arguments to `read.delim()`. If set `CreateSparseEset=T` This will help create a Sparse matrix object using Expressionset prototype, otherwise, it will create a list Object that stores expression data, feature data and sample data in different slots. If `add.meta=T`, then corresponding sample info such as total number of UMI will be calcualated and outputed.
+Read 10x genomics data with function in scMINER package. This function could help read either 10x genomics standard output, as well as other text files types by passing arguments to `read.delim()`. If set `CreateSparseEset=T` This will help create a Sparse matrix object using Expressionset prototype, otherwise, it will create a list Object that stores expression data, feature data and sample data in different slots. If `add.meta=T`, then corresponding sample info such as total number of UMI will be calcualated and outputed. Here, since data was downsampled and not in standard 10x genomics output format, we defined `is.10x=F` and `add.meta=F`.
 
 ```R
-d <- d.68k <- readscRNAseqData(file="../PBMC68k_input/",is.10x = TRUE,CreateSparseEset = F, add.meta=F)
+d.12k <- readscRNAseqData(file="PBMC_demo_input.txt",is.10x = F,CreateSparseEset = FALSE, add.meta=F)
 ```
 
-### Down sampling
-In order to provide a quicker guidance, we've down sampled this data to 12k cells.
-
-```R
-set.seed(1)
-d.12k<-d[,sample(colnames(d),12000)]
-dim(d.12k) #[1] 32738 12000
-```
-You can also create Sparse Matrix expression by using `CreateSparseEset`function:
+After confriming your data was loaded properly, you can now create Sparse Matrix expression by using `CreateSparseEset`function:
 
 ```R
 eset.12k<-CreateSparseEset(data=d.12k,feature.data = d.68k$feature.data,add.meta = T)
 ```
 
 ### Quality control and data filtering
-Quality control assessments could be done using `draw.scRNAseq.QC` step, this will output a Rmarkdown generated report, including essential figures for at both gene and cell level. Suggested cutoff will be returned as a list if `output.cutoff` was set to be `TRUE`. 
+Quality control assessments could be done using `draw.scRNAseq.QC` step, this will output a html report generated through Rmarkdown, which includes essential figures at both gene and cell level. Suggested cutoff will be returned as a list if `output.cutoff` was set to be `TRUE`. 
 
 ```R
 cutoffs <- draw.scRNAseq.QC(SparseEset=eset.12k, 
                           project.name = "PBMC12k",
                           plot.dir = "./QC/",
-                          group = "group",
+                          group = "group", # this indicate which meta data information will be use in x axis to group violin plots
                           output.cutoff = TRUE)
 ```
-
-
+The first plot is a histogram which helps visualize distribution of expressed genes among each cells.
 <img src="./plots/1_1_Gene_QCmetrics_before_filtering.png" alt="drawing" width="550"/>
 
-Second plot will visualize total UMI count, and total number of gene expressed.
+The second plot help visualize total UMI count, and total number of gene expressed in violin plots.
 ![](./plots/1_2_Cell_QC_1.png)
 
-Third plot will visualize mitochondria percentage, and spike-in percentage for each cell.
+Third plot visualizes mitochondria percentage, and spike-in percentage for each cell in scatter plot.
 ![](./plots/1_3_Cell_QC_2.png)
 
 
-Then you could run cell filtering as simple as below, if feed cutoffs calculated previously from draw.scRNAseq.QC functon. You could also manually change cutoffs by reassign numbers in `cutoffs` list, e.g. set `cutoffs$umi_cf_hi<-Inf` means do not do filtering on high total UMI value.
+Then you could run cell filtering with function `preMICA.filtering`, if input `cutoffs` was directly from the output of draw.scRNAseq.QC functon. You could also manually change cutoffs by re-assign thresholds in `cutoffs` list, e.g. set `cutoffs$umi_cf_hi<-Inf` means do not do filtering on outliers which have high total UMI value.
 
 ```R
 cutoffs$umi_cf_hi<-Inf #only filter on low total number of UMI
@@ -75,60 +61,60 @@ eset.sel<-preMICA.filtering(SparseEset = eset.12k,cutoffs = cutoffs)
 
 ```
  
-
 ### Normalization and transformation
-In MICA, we don't provide a vriety of methods to do normalizaton, you can use your own prefered normalization method. Here we provide an example of doing CPM and log2 transformation. 
+In scMINER package, we don't provide methods to conduct normalizaton. You can use your own prefered normalization method. However, we highly recommend to do CPM and log2 transformation for MICA input.
 
 ```R
-norm = 1e6
+norm = 1e6 
 exp.norm <- sweep(exprs(eset.sel), 2, norm/unname(Matrix::colSums(exprs(eset.sel))), '*')
 
 # log transformation
+# Required for MICA
 exp.log2 <- log(exp.norm+1,base=2)
 
 # save as SparseEset
-eset.norm<-CreateSparseEset(data=exp.log2,meta.data = pData(eset.sel),feature.data = fData(eset.sel),add.meta = F)
+eset.norm <- CreateSparseEset(data=exp.log2,meta.data = pData(eset.sel),feature.data = fData(eset.sel),add.meta = F)
 ```
 
 ### Generate MICA input and command
-After reviewing all visualization and conduct filtering, you can go ahead and generate clustering(MICA) input, which will be a cell by gene txt file. If your data was not generated by 10x genomics, you can prepare your own filtering and use this step for clustering Input generation, please note that `you should always feed MICA the log or log2 transformed data`.
+After reviewing all visualization and finished filtering, you can go ahead and generate clustering (MICA) input via `generateMICAinput`. This function take a expression matrix as input, and outputs a cell by gene txt file. Please note that `you should always feed MICA the log or log2 transformed data`.
 
 ```R
 generateMICAinput(data= exp.log2 ,filename="PBMC12k_MICA_input.txt")
 ```
-This will output a txt file containing filtered expression matrix for MICA. 
-We also provide a function for you to generate MICA command without writing your own scripts. If you set `host=lsf`, then you need to define `queue` required, and `memory` (optional). In `num_cluster`, you can input a vector of number of K to achieve clustering membership for different k simultaneously.
+
+We also offer a function to generate MICA command without writing your own scripts. If you set `host=lsf`, then you need to define `queue` (required), and `memory` (optional). In `num_cluster`, you can input a vector of number of K to achieve clustering membership for different k simultaneously.
 
 ```R
-generate_MICA_cmd(save_sh_at = "./PBMC12k_v3/",
-                  input_file = "./PBMC12k_v3/PBMC12k_MICA_input.txt",
-                  project_name = "PBMC12k",num_cluster = c(8,9,10,12,13,14,15),
+generate_MICA_cmd(save_sh_at = "./PBMC12k/",
+                  input_file = "./PBMC12k/PBMC12k_MICA_input.txt",
+                  project_name = "PBMC12k",
+                  num_cluster = c(8,9,10,12,13,14,15),
                   host = "lsf", queue = [your_queue_name],
                   output_path = "./",queue = "standard")
 
 ```
 
-## Run MICA clustering 
+## Step2: Perform clustering analysis via MICA
 
-MICA is implemented in Python. If you would like to install MICA, please infer [MICA github page](https://github.com/jyyulab/MICA).There are several parameters for you to choose when running MICA. A more comprehensive tutorial could be found [here for local](./MICA.md) and [here for lsf](./MICA_LSF.md).Here recommend save your working directory before running MICA. 
+MICA is implemented in Python. If you would like to install MICA, please refer to [MICA github page](https://github.com/jyyulab/MICA). There are several parameters for you to choose when running MICA. A more comprehensive tutorial could be found [here for local](./MICA.md) and [here for lsf](./MICA_LSF.md). Here we suggests saving your working directory prior to running MICA. 
 
 
-## Cell type analysis from MICA output
+## Step3: Cell type annotation after clustering
 {: .d-inline-block :}
 
 First, after clustering via MICA(see [MICA] ({{site.baseurl}}{% link docs/MICA.md %}), you can load MICA output (in .txt) as well as input expression matrix in R under an `expressionSet`. This is going to be the major data structure we used for downstream analysis in R.
 
 ### Reading MICA output
 {: no_toc }
-You can start with one MICA membership and study your optimal number of cluster with cell type specific markers.
+Users can start with one MICA membership and study your optimal number of cluster with cell type specific markers.
 
 ```R
-eset.12k <- readMICAoutput(Obj = d.sel,load_clust_label = TRUE, 
-output_file = "MICA/PBMC12k_k8_tsne_ClusterMem.txt")
+eset.12k <- readMICAoutput(Obj = d.sel,load_clust_label = TRUE, output_file = "MICA/PBMC12k_k8_tsne_ClusterMem.txt")
 
 ```
 
-To visualize MICA label or other metadata, you can use function `MICAplot`.
+To visualize MICA label or other metadata, one can use function `MICAplot`. Users are required to specify X and Y cordinates in this function. This function will output a ggplot style visualization. Other meta data could also be visulized with this function, via changing `label` parameter.
 
 ```R
 MICAplot(input_eset = eset.12k,visualize = 'tSNE',X = "X",Y="Y",label = "label",pct = 0.5)
@@ -136,10 +122,10 @@ MICAplot(input_eset = eset.12k,visualize = 'tSNE',X = "X",Y="Y",label = "label",
 ```
 ![](./plots/3_0_MICA_k8.png)
 
-### Marker gene highlighting
+### Marker gene highlighting 
 {: no_toc }
 
-Picked marker genes could be visualized on t-SNE scatterplot, heatmap or violinplot. This will help pick up a reasonable number of cluster.
+Picked marker genes could be visualized on t-SNE scatterplot, violin plot or heatmap via function `feature_highlighting`, `feature_vlnplot` and `feature_heatmap`. This will not only help cluster annotation, but also identify optimal number of clusters as well.
 
 ```R
 gn.sel<-c("CD3D","CD27","IL7R","SELL","CCR7","IL32","GZMA",
@@ -171,10 +157,10 @@ feature_heatmap(eset = eset.12k,target = gn.sel,group_tag = "label",
 ### Assign cell type to cluster
 {: no_toc }
 
-Here we curated a reference signature list of 8 immune cell types(link) for cell type annotation. In `marker_bbplot` function, we calculated cell type scores for each clusters, and visualize scores using heatmap. 
+In order to help assign cell types to each cluster in a more systemmatic way, we introduced `marker_bbplot` function. This function calculated cell type scores for each clusters, and visualize scores using bubble plot, with color scale indicates marker score while circle(bubble) stand for sizes. However, this fucntion requires a pre-defined marker gene lists as input, here we curated a list of well-known marker genes of 9 common immune celltypes as `ref`. Users are required to follow below format in order to run this function properly.
 
 ```R
-ref<-read.xlsx("Immune_signatures.xlsx")
+ref <- read.xlsx("Immune_signatures.xlsx")
 head(ref)
 > head(ref)
   celltype markers weight
@@ -190,6 +176,8 @@ p<-marker_bbplot(ref=ref,eset=eset.12k)
 ```
 ![](./plots/3_4_MICA_cluster_score.png)
 
+
+
 We recommend assign your celltype as factors in your expression set.
 
 ```R
@@ -200,18 +188,27 @@ eset.12k$celltype <- indx[eset.12k$label]
 
 
 
-## Network generation via SJARACNe
+## Step4: Network generation via SJARACNe
 {: no_toc }
 
-In order to generate cell type/group/cluster specific network, group information should be stored under `pData([your_expressionSet])`. And R function `generateSJAracneInput` will help to partition your expression matrix and conduct a loose filtering of your scRNA-seq data(filter about 0 expressed genes in cluster). Besides, a reference TF list should be provided as `tf.ref` to guide hub gene selection. Each group will create one directory which contains filtered expression matrix in .exp format, as long as the filtered TF list in .txt. 
+### Generate SJARACNe input
+Prior to generate cell type/group/cluster specific network, group information should be stored under `pData([your_expressionSet])`. And R function `generateSJAracneInput` will help to partition input expression matrix and conduct essential filtering, (filter about 0 expressed genes in cluster) to ensure a reliable network construction. `funcType` is required to specify what kind of network to generate. A reference Transcription factor list will be loaded automatically without manual input. However, you do need to define your species using under `ref`.
+
+This function will help create one directory for each group, containing required input for SJARACNe such as filtered expression matrix in .exp format and filtered TF list in .txt format. 
 
 ```R
-generateSJAracneInput(eset=eset.12k,tf.ref=tf.ref,wd.src="Sjaracne/", group_tag="celltype")
+generateSJARACNeInput(eset = eset.12k,
+						  funcType = "TF", 
+						  ref= "hg",  #human
+                      wd.src = "SJARACNE",  #Output directory
+                      group_tag = "celltype")
 ```
 
-_Warning:_ SJARACNe has not been integrated into scMINER yet, please consult [here](https://github.com/jyyulab/SJARACNe) for installation and basic usage. Here recommend save your working directory before running SJARACNe. 
+### Run SJARACNe
 
+SJARACNe works as a separate module which implemented in python, please consult [here](https://github.com/jyyulab/SJARACNe) for installation and basic usage. We strongly suggest saving your working directory before running SJARACNe. 
 
+Here we provide an example to run SJARACNe for all celltypes/clusters. After SJARACNe was sucessfully completed, you will be able to get one network for each cell and functional type.
 
 ```shell
 indir=~/PBMC12K/SJARACNE_PBMC12K/
@@ -224,45 +221,54 @@ done
 ```
 
 
-## Find cell type specific master regulator 
+## Step5: Identify cell type specific hidden driver
 {: no_toc }
 
-Identify master regulator from content based network is the key step in scMINER to help understanding your scRNA-seq data.  
+Identify hidden driver from content-based network is the key step in scMINER to help understand your scRNA-seq data, and provide biological insight. 
 
-
-### Calculate Inferred activity
+### Calculate activity
 {: no_toc }
-TF acitivities are calculated by integrating expression profile of their targets. Targets identified from SJARACNe of perticular TF was normalized and averaged to infer TF activity.
+Activity calculation is the basis of driver estimation in scMINER. To infer driver activity, expression profile of their targets are intergrated via function `GetActivityFromSJARACNe`. This function takes SJARACNe output path and expression set as input, and return an activity set as well as structured network files if set 	`save_network_files=TRUE`. 
+
+Since scRNA-seq data are extremly sparse and noisy, we strongly recommend to set `activity.method` as `'unweighted'`. 
 
 ```R
-acs.12k <- GetActivityFromSJARANCE(
-			 SJaracne_output_path="Sjaracne/",
-			 SJaracne_input_eset=eset.demo,
-			 activity.method="unweighted", 
-			 activity.norm=TRUE, 
-			 group_tag = "celltype",
-			 save_network_file=FALSE, save_path=NA)
+acs.12k <- GetActivityFromSJARACNe(
+    SJARACNe_output_path ="SJARACNE/",
+    SJARACNe_input_eset = eset.12k,
+    activity.method="unweighted", # we highly recommend using 'unweighted' as activity calculation method
+    activity.norm=TRUE, 
+    group_tag = "celltype", # which group was used to partition expression profiles
+    save_network_file=TRUE, # whether or not save network for each group
+    save_path="./networks/") #default as false, but recommended to be TRUE
+
 ```
 
 
-### Find Differential activity TF
+### Driver estimation by differential activity analysis
 {: no_toc }
 
-The function `FindDAG` was designed for identify highly differentiated TF from SJARACNe inferred activity matrix. In order to do so, we did two sided student's t-test to compare mean acitivty from one cell type V.S. the others. 
+The function `FindDAG` was designed to identify highly differentiated TF from SJARACNe inferred activity matrix. In order to do so, we did two sided student's t-test to compare mean acitivty from one cell type V.S. the others. 
 
 ```R
 DAG_result <- FindDAG(eset = acs.demo,group_tag = "celltype")
 
 ```
-This function will output a full matrix that contians all TF occurred in original dataset, statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help idenify master regulators. You can save it in txt or xlsx for checking.
 
-While you can also visualize top master regulator candidates in heatmap or violinplots. Only png as plotting device is supported.
+This function will output a full matrix that contians all TF occurred in original dataset, statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help idenify hidden drivers. You can save it in txt or xlsx for checking. 
+
+We also offer a function called `TopDriversfromDAG` to help print top drivers in each cell type to console you specified. This function is helpful for downstream analysis.
+
+
 
 ```R
-TF_list <- TopMasterRegulator(DAG_result = DAG_result,
+TF_list <- TopDriversfromDAG(DAG_result = DAG_result,
                               celltype=levels(acs.12k$celltype), # ensure cluster order
                               n = 5, degree_filter = c(50,500))
 ```
+
+
+In scMINER, we provide a handful of visualizations to compare driver activity from different cell type/ clusters. Here we demo 2 basic functions: `feature_heatmap` and `feature_vlnplot`. These functions could be used on either expression and activty matrix.
 
 ```R
 feature_heatmap(eset = acs.12k,target = TF_list,group_tag = "celltype",feature = "geneSymbol",
@@ -273,19 +279,18 @@ feature_heatmap(eset = acs.12k,target = TF_list,group_tag = "celltype",feature =
 
 ![](./plots/4_1_TopTFHeatmap.png)
 
-
-You can also check some known master regulators as postivie control of your network analysis: 
-
 ```R
-p <- feature_vlnplot(eset=acs.12k,target=c("LEF1.TF","TCF7.TF","BATF.TF","TCF7.TF","TBX21.TF",
-								"IRF8.TF","SPIB.TF","BATF3.TF","CEBPA.TF"), 
-					ylabel = "Activity",group_tag = "celltype",drawquantiles = FALSE, ncol = 2)
+#check postive controls
+p <- feature_vlnplot(eset=acs.12k,
+target=c("LEF1","TCF7","BATF","TCF7","TBX21","IRF8","SPIB","BATF3","CEBPA"), 
+						ylabel = "Activity",
+						group_tag = "celltype",feature="geneSymbol", ncol = 2)
 ```
-
 
 ![](./plots/4_2_Known_MR_vlnplot.png)
 
 In order to conduct more advanced network analysis utilizing SJARACNe generated cell type specific networks, please infer 	`Cell-type spefic network analysis tab`.
+
 
 
 ---
