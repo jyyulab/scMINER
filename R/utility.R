@@ -18,6 +18,7 @@ readscRNAseqData <- function(file,is.10x=TRUE,CreateSparseEset=TRUE, add.meta=F,
 
     barcodes <- read.table(file.path(data.path,"barcodes.tsv"),header=FALSE,stringsAsFactors = FALSE)
     colnames(barcodes)[1]<-"CellNames"
+    rownames(barcodes)<-barcodes[,1]
 
     if(file.exists(file.path(data.path,"genes.tsv"))){
       genes <- read.table(file.path(data.path,"genes.tsv"),header=FALSE,stringsAsFactors = FALSE)

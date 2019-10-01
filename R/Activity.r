@@ -378,8 +378,9 @@ DAG_ttest<-function(d,group){
               CI.low = res$conf.int[1],
               CI.high = res$conf.int[2],
               MeanAct.Aim = unname(res$estimate[1]),
-              MeanAct.Ctrl = unname(res$estimate[2])
-    )
+              MeanAct.Ctrl = unname(res$estimate[2]))
+
+    rs.t<-c(rs.t, log2FC=rs.t$MeanAct.Aim-rs.t$MeanAct.Ctrl)
 
   }else{
     rs.t <- c(id = d$acs.id,
@@ -390,13 +391,17 @@ DAG_ttest<-function(d,group){
               CI.high = NA,
               MeanAct.Aim = mean(filter(d.tmp,group=="Aim")$acs),
               MeanAct.Ctrl = mean(filter(d.tmp,group=="Ctrl")$acs))
+    rs.t<-c(rs.t, log2FC=rs.t$MeanAct.Aim-rs.t$MeanAct.Ctrl)
   }
+
+  rs.t<-c(rs.t, log2FC=rs.t$MeanAct.Aim-rs.t$MeanAct.Ctrl)
+
   return(rs.t)
 }
 
 
 
-#
+
 #' Find differential activity genes from activity matrix
 #'
 #' @description  This function is a wraper of (/code {DAG_test}),
@@ -444,6 +449,10 @@ FindDAG<-function(eset=NULL,group_tag="celltype",group_case=NULL){
 
       da <- plyr::ddply(d,'id','DAG_ttest',group=d.label)
 
+      da$pval<-sapply(da$pval,function(xx){ifelse(xx!=0, xx,.Machine$double.xmin)})
+
+      DAG_result$Z<-abs(qnorm(da$pval)/2)*sign(da$t.stat)
+
       da <- da[,setdiff(colnames(da),"MeanAct.Ctrl")]
 
       colnames(da)[-1] <- paste0(colnames(da)[-1],'_',xx)
@@ -459,8 +468,9 @@ FindDAG<-function(eset=NULL,group_tag="celltype",group_case=NULL){
                         starts_with("degree"),
                         starts_with("t"),
                         starts_with("pval"),
-                        starts_with("z"),
-                        starts_with("MeanAct")
+                        starts_with("Z"),
+                        starts_with("MeanAct"),
+                        starts_with("log2FC"),
     )
   }
   return(rs)
