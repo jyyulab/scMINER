@@ -72,7 +72,7 @@
         
           <li class="navigation-list-item">
             
-            <a href="http://localhost:4000/docs/PBMC-12k.html" class="navigation-list-link">Step by step demo with PBMC(12k) data</a>
+            <a href="http://localhost:4000/docs/PBMC-12k.html" class="navigation-list-link">Step by step user guidance</a>
             
           </li>
         
@@ -112,7 +112,7 @@
 <p>Here we demonstrate our advanced downstream analysis pipeline using PBMC (10x genmomics) scRNA-seq data after completing driver estimation following tutorial under tab <code class="highlighter-rouge">step by step demo with PBMC data</code></p>
 
 <h2 id="network-visualization">Network visualization</h2>
-<p>scMINER incorporates a handful of network visualization/exploration function adapted from <a href="https://github.com/jyyulab/NetBID2">NetBID2</a>, a powerful tool for data-driven network-based bayesian Inference of drivers. scMINER also offered several wrapper of basic visualization functions in NetBID2 for better usability.</p>
+<p>scMINER incorporates a handful of network visualization/exploration function adapted from <a href="https://jyyulab.github.io/NetBID/">NetBID2</a>, a powerful tool for data-driven network-based bayesian Inference of drivers. scMINER also offered several wrapper of basic visualization functions in NetBID2 for better usability.</p>
 
 <h3 id="single-network-visualization">Single network visualization</h3>
 <p>In scMINER, you can visualize your driver and its targets by function <code class="highlighter-rouge">draw.network</code>. It was adapted from function <code class="highlighter-rouge">draw.targetNet</code> and <code class="highlighter-rouge">draw.targetNet.TWO</code> from <code class="highlighter-rouge">NetBID2</code>. This function can help visualize a driver’s targets as well as the relationship(edge) between source and target genes, by taking Mutual information as edge weight, and spearman correlation as direction.</p>
@@ -124,8 +124,7 @@
 	</span><span class="n">n_layer</span><span class="o">=</span><span class="m">4</span><span class="p">)</span><span class="w">
 
 </span></code></pre></div></div>
-
-<p><img src="./plots/LEF1.TF_in_NaiveT_network.png" alt="" /></p>
+<center><img src="./plots/LEF1.TF_in_NaiveT_network.png" alt="drawing" width="600" /></center>
 
 <h3 id="subnetwork-structure-visualization-between-two-networks">Subnetwork structure visualization between two networks</h3>
 <p>You can also use <code class="highlighter-rouge">draw.network</code> function to visualize two networks and their subnetwork structure. This could be used for identify common targets from two top driver from the same network, or identify network rewiring event of same driver in different cell type network. Here below is an example for later case.</p>
@@ -137,8 +136,7 @@
 		</span><span class="n">pdf_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"BATF.TF_in_2_network.pdf"</span><span class="p">,</span><span class="w">
 		</span><span class="n">n_layer</span><span class="o">=</span><span class="m">4</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
-
-<p><img src="./plots/BATF.TF_in_2_network.png" alt="" /></p>
+<center><img src="./plots/BATF.TF_in_2_network.png" alt="drawing" width="600" /></center>
 
 <h2 id="biological-function-anlaysis-for-drivers">Biological function anlaysis for drivers</h2>
 
@@ -164,7 +162,7 @@
 
 </span></code></pre></div></div>
 
-<p><img src="./plots/NaiveT_bubblePlot.png" alt="" /></p>
+<center><img src="./plots/NaiveT_bubblePlot.png" alt="drawing" width="600" /></center>
 
 <hr />
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## R session info

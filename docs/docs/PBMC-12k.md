@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Step by step demo with PBMC(12k) data
+title: Step by step user guidance
 nav_order: 5
 ---
 
@@ -15,10 +15,13 @@ nav_order: 5
 
 ---
 ## Demo data
+{: .d-inline-block :}
+
 Here we demonstrate our pipeline using PBMC (10x genmomics) scRNA-seq data. Full data contains 68k cells, in order to provide a quicker guidance, we've down sampled this data to 12k cells.
 Original data website can be downloaded [here](https://support.10xgenomics.com/single-cell-gene-expression/datasets/1.1.0/fresh_68k_pbmc_donor_a).
 
-## Step1: Data preprocessing
+## Step 1: Data preprocessing
+{: .d-inline-block :}
 
 ### Read 10x genomics data
 Read 10x genomics data with function in scMINER package. This function could help read either 10x genomics standard output, as well as other text files types by passing arguments to `read.delim()`. If set `CreateSparseEset=T` This will help create a Sparse matrix object using Expressionset prototype, otherwise, it will create a list Object that stores expression data, feature data and sample data in different slots. If `add.meta=T`, then corresponding sample info such as total number of UMI will be calcualated and outputed. Here, since data was downsampled and not in standard 10x genomics output format, we defined `is.10x=F` and `add.meta=F`.
@@ -44,7 +47,7 @@ cutoffs <- draw.scRNAseq.QC(SparseEset=eset.12k,
                           output.cutoff = TRUE)
 ```
 The first plot is a histogram which helps visualize distribution of expressed genes among each cells.
-<img src="./plots/1_1_Gene_QCmetrics_before_filtering.png" alt="drawing" width="550"/>
+<center><img src="./plots/1_1_Gene_QCmetrics_before_filtering.png" alt="drawing" width="600"></center>
 
 The second plot help visualize total UMI count, and total number of gene expressed in violin plots.
 ![](./plots/1_2_Cell_QC_1.png)
@@ -61,7 +64,7 @@ eset.sel<-preMICA.filtering(SparseEset = eset.12k,cutoffs = cutoffs)
 ```
  
 ### Normalization and transformation
-In scMINER package, we don't provide methods to conduct normalizaton. You can use your own prefered normalization method. However, we highly recommend to do CPM and log2 transformation for MICA input.
+In scMINER package, we don't provide methods to conduct normalizaton. You can use your own prefered normalization method. However, **we highly recommend to do CPM and log2 transformation for MICA input**.
 
 ```R
 norm = 1e6 
@@ -75,8 +78,14 @@ exp.log2 <- log(exp.norm+1,base=2)
 eset.norm <- CreateSparseEset(data=exp.log2,meta.data = pData(eset.sel),feature.data = fData(eset.sel),add.meta = F)
 ```
 
+
+## Step 2: Perform clustering analysis via MICA
+{: .d-inline-block :}
+
+MICA is implemented in Python. If you would like to install MICA, please refer to [MICA github page](https://github.com/jyyulab/MICA). There are several parameters for you to choose when running MICA. A more comprehensive tutorial could be found [here](./MICA.md). **Here we suggests saving your working directory prior to running MICA**. 
+
 ### Generate MICA input and command
-After reviewing all visualization and finished filtering, you can go ahead and generate clustering (MICA) input via `generateMICAinput`. This function take a expression matrix as input, and outputs a cell by gene txt file. Please note that `you should always feed MICA the log or log2 transformed data`.
+After reviewing all visualization and finished filtering, you can go ahead and generate clustering (MICA) input with function `generateMICAinput`. This function take a expression matrix as input, and outputs a cell by gene txt file. Please note that `you should always feed MICA the log or log2 transformed data`.
 
 ```R
 generateMICAinput(data= exp.log2 ,filename="PBMC12k_MICA_input.txt")
@@ -93,17 +102,16 @@ generate_MICA_cmd(save_sh_at = "./PBMC12k/",
                   output_path = "./",queue = "standard")
 ```
 
-## Step2: Perform clustering analysis via MICA
-
-MICA is implemented in Python. If you would like to install MICA, please refer to [MICA github page](https://github.com/jyyulab/MICA). There are several parameters for you to choose when running MICA. A more comprehensive tutorial could be found [here for local](./MICA.md) and [here for lsf](./MICA_LSF.md). Here we suggests saving your working directory prior to running MICA. 
 
 
-## Step3: Cell type annotation after clustering
+## Step 3: Cell type annotation after clustering
 {: .d-inline-block :}
 
-First, after clustering via MICA(see [MICA] ({{site.baseurl}}{% link docs/MICA.md %}), you can load MICA output (in .txt) as well as input expression matrix in R under an `expressionSet`. This is going to be the major data structure we used for downstream analysis in R.
+First, after clustering via MICA, you can load MICA output (in .txt) as well as input expression matrix in R under an `expressionSet`. This is going to be the major data structure we used for downstream analysis in R.
 
-### Reading MICA output
+> **Note: All functions are designed compatible for both expressionSet and SparseExpressionSet** 
+
+### Read MICA output
 {: no_toc }
 Users can start with one MICA membership and study your optimal number of cluster with cell type specific markers.
 
@@ -116,9 +124,10 @@ To visualize MICA label or other metadata, one can use function `MICAplot`. User
 ```R
 MICAplot(input_eset = eset.12k,visualize = 'tSNE',X = "X",Y="Y",label = "label",pct = 0.5)
 ```
-![](./plots/3_0_MICA_k8.png)
 
-### Marker gene highlighting 
+<center><img src="./plots/3_0_MICA_k8.png" alt="MICA" width="600"></center>
+
+### Marker gene visualization 
 {: no_toc }
 
 Picked marker genes could be visualized on t-SNE scatterplot, violin plot or heatmap via function `feature_highlighting`, `feature_vlnplot` and `feature_heatmap`. This will not only help cluster annotation, but also identify optimal number of clusters as well.
@@ -130,14 +139,14 @@ gn.sel<-c("CD3D","CD27","IL7R","SELL","CCR7","IL32","GZMA",
 p <- feature_highlighting(input_eset = eset.12k,target = gn.sel,
 	ylabel = "log2Exp", x="X",y="Y",title.size = 12)
 ```
-![](./plots/3_1_gene_highlighting.png)
 
+<center><img src="./plots/3_1_gene_highlighting.png" alt="Scatterplot" width="600"></center>
 
 ```R
 p <- feature_vlnplot(eset.12k,target=gn.sel,feature = "geneSymbol",
 group_tag = "label",ncol = 4,ylabel = "log2Exp")
 ```
-![](./plots/3_2_gene_highlighting_vlnplot.png)
+<center><img src="./plots/3_2_gene_highlighting_vlnplot.png" alt="violinplot" width="600"></center>
 
 
 ```R
@@ -145,15 +154,14 @@ feature_heatmap(eset = eset.12k,target = gn.sel,group_tag = "label",
 			 save_plot = TRUE,width = 6,height = 6,
              name = "log2_expression",plot_name="./GeneHeatmap.png")
 ```
-
-![](./plots/3_3_Marker_heatmaps.png)
+<center><img src="./plots/3_3_Marker_heatmaps.png" alt="heatmaps" width="600"></center>
 
 
 
 ### Assign cell type to cluster
 {: no_toc }
 
-In order to help assign cell types to each cluster in a more systemmatic way, we introduced `marker_bbplot` function. This function calculated cell type scores for each clusters, and visualize scores using bubble plot, with color scale indicates marker score while circle(bubble) stand for sizes. However, this fucntion requires a pre-defined marker gene lists as input, here we curated a list of well-known marker genes of 9 common immune celltypes as `ref`. Users are required to follow below format in order to run this function properly.
+In order to help assign cell types to each cluster in a more systemmatic way, we introduced `marker_bbplot` function. This function calculated cell type scores for each clusters, and visualize scores using bubble plot, with color scale indicates marker score while circle(bubble) stand for sizes. However, this fucntion requires a pre-defined marker gene lists as input, here we curated a list of well-known marker genes of 9 common immune celltypes as `ref`. **Users are required to follow below header format in order to run this function properly**.
 
 ```R
 ref <- read.xlsx("Immune_signatures.xlsx")
@@ -169,11 +177,11 @@ head(ref)
 
 p<-marker_bbplot(ref=ref,eset=eset.12k)
 ```
-![](./plots/3_4_MICA_cluster_score.png)
+<center><img src="./plots/3_4_MICA_cluster_score.png" alt="Markerbbp" width="600"/></center>
 
 
 
-We recommend assign your celltype as factors in your expression set.
+Before dive into next step, we recommend assign your celltype as factors in your expression set.
 
 ```R
 indx<-factor(x=c("NaiveT","Tmem","CD8em","CD8eff","Bcell","NK","DC","Mo"),
@@ -182,7 +190,7 @@ eset.12k$celltype <- indx[eset.12k$label]
 ```
 
 
-## Step4: Network generation via SJARACNe
+## Step 4: Network generation via SJARACNe
 {: no_toc }
 
 ### Generate SJARACNe input
@@ -191,11 +199,11 @@ Prior to generate cell type/group/cluster specific network, group information sh
 This function will help create one directory for each group, containing required input for SJARACNe such as filtered expression matrix in .exp format and filtered TF list in .txt format. 
 
 ```R
-generateSJARACNeInput(eset = eset.12k,
-						  funcType = "TF", 
-						  ref= "hg",  #human
-                      wd.src = "SJARACNE",  #Output directory
-                      group_tag = "celltype")
+generateSJARACNeInput(
+	eset = eset.12k,funcType = "TF", 
+	ref = "hg",  #human
+	wd.src = "SJARACNE",  #Output directory
+	group_tag = "celltype")
 ```
 
 ### Run SJARACNe
@@ -204,7 +212,7 @@ SJARACNe works as a separate module which implemented in python, please consult 
 
 Here we provide an example to run SJARACNe for all celltypes/clusters. After SJARACNe was sucessfully completed, you will be able to get one network for each cell and functional type.
 
-```shell
+```
 indir=~/PBMC12K/SJARACNE_PBMC12K/
 
 for i in $(ls -d */ | cut -f1 -d'/');do
@@ -214,7 +222,7 @@ done
 ```
 
 
-## Step5: Identify cell type specific hidden driver
+## Step 5: Identify cell type specific hidden driver
 {: no_toc }
 
 Identify hidden driver from content-based network is the key step in scMINER to help understand your scRNA-seq data, and provide biological insight. 
@@ -266,20 +274,19 @@ feature_heatmap(eset = acs.12k,target = TF_list,group_tag = "celltype",feature =
              width = 6,height = 6, save_plot=TRUE, cluster_rows = FALSE,
              name = "Activity",plot_name="./21_TopTFHeatmap.png")
 ```
-
-![](./plots/4_1_TopTFHeatmap.png)
+<center><img src="./plots/4_1_TopTFHeatmap.png" alt="Driver heatmap" width="550"></center>
 
 ```R
 #check postive controls
-p <- feature_vlnplot(eset=acs.12k,
-target=c("LEF1","TCF7","BATF","TCF7","TBX21","IRF8","SPIB","BATF3","CEBPA"), 
+p <- feature_vlnplot(eset=acs.12k,target=c("LEF1","TCF7","BATF","TCF7","TBX21","IRF8","SPIB","BATF3","CEBPA"), 
 						ylabel = "Activity",
 						group_tag = "celltype",feature="geneSymbol", ncol = 2)
 ```
 
-![](./plots/4_2_Known_MR_vlnplot.png)
+<center>![](./plots/4_2_Known_MR_vlnplot.png)</center>
 
-In order to conduct more advanced network analysis utilizing SJARACNe generated cell type specific networks, please infer 	`Cell-type spefic network analysis tab`.
+
+In order to conduct more advanced network analysis utilizing SJARACNe generated cell type specific networks, please infer 	[`Advanced analysis`](./PBMC-12k-network.md) tab.
 
 
 

@@ -30,11 +30,13 @@ MICA is a non-linear clustering analysis algorithm that incorporated:
 ## Preprocssing
 MICA module was implemented in python, which only includes clustering analysis. For preprocessing, MICA is compatitble with most published scRNA-seq preprocessing pipeline. However, we highly recommend users to follow our preprocessing framework utilizing `scMINER` R package.For detailed information, please see complementary tutorial in tab `Step by step demo with PBMC data`. 
 
-> **notes** MICA only takes cell by gene txt file as input, we strongly recommend using `generateMICAinput` function to convert your input data to MICA standard input text file in R.
+> **MICA only takes cell by gene txt file as input, we strongly recommend using `generateMICAinput` function to convert your input data to MICA standard input text file in R.**
 
 
 ## Basic usage
-For those who are not familiar with python, we designed a easy function in `scMINER` R package called `generate_MICA_rmd`to help users generate MICA command. 
+MICA incorprated [_Common workflow languages_](https://www.commonwl.org/) for portablity and scalability purposes. We adopted [_cwltool_](https://github.com/common-workflow-language/cwltool) as runner for local host and [_cwlexec_](https://github.com/IBMSpectrumComputing/cwlexec) for LSF platform. While it might introduce some differences for intermediate files, final results will not be affected.
+
+To ensure a user friendly interface, we designed function `generate_MICA_rmd` to help users generate complimentary commands for MICA execution. Below are two examples when running MICA on local or LSF host respectively.
 
 ### On local host
 To perform MICA on local host, you need to specify `host= "local"`
@@ -42,16 +44,16 @@ To perform MICA on local host, you need to specify `host= "local"`
 ```R
 scMINER::generate_MICA_cmd(save_sh_at, #path to save shell script 
                   			input_file, #your MICA input file
-                  			project_name, 
+                  			project_name,  
                   			num_cluster, #a vector of numerical number
                   			output_path, #path to MICA output
                   			host="local", 
-		                    visualization="tsne" #or "umap")
+		                        visualization="tsne" #or "umap")
 ```
 
 or, you can create your own shell script as:
 
-```SHELL
+```
 #!/usr/bin/env bash
 mica local \
 -i ./test_data/inputs/PBMC_Demo_MICA_input_mini.txt \
@@ -59,10 +61,11 @@ mica local \
 -k 3 4 \
 -o ./test_data/outputs/test_local/ \
 ```
-To execute your shell script locally, you can
-```SHELL
-sh your_mica_cmd.sh
 
+To execute your shell script locally, you can
+
+```
+sh your_mica_cmd.sh
 ```
 
 ### On LSF
@@ -82,17 +85,19 @@ scMINER::generateMICAcmd(save_sh_at, #path to save shell script
 
 Or, you can create your shell script as:
 
-```SHELL
+```
 #!/usr/bin/env bash
 mica LSF \
 -i ./test_data/inputs/PBMC_Demo_MICA_input_mini.txt \
+-r 8000 12000 12000 16000
+-q [your queue]
 -p "test_local" \
 -k 3 4 \
 -o ./test_data/outputs/test_local/ \
 ```
 
 To execute your shell script on LSF, we suggest
-```SHELL
+```
 bsub < your_mica_cmd.sh
 ```
 
@@ -115,18 +120,18 @@ Each assigned number of k will output one folder containing following files:
 ### Visualize with U-map or t-SNE
 MICA incorporate [UMAP](https://umap-learn.readthedocs.io/en/latest/parameters.html) as optional clustering visualization, with `min_dist` parameter set to `0.25`, this controls how points packed together. Low values of min_dist will result in clumpier embeddings. You can tune this parameter with :
 
-```SHELL
+```
 --min_dist 0.1 (or other number ranging from 0-1) 
 ```
 
 tSNE visualization is our default visualization method in the pipeline, if you want to use t-SNE, just set :
 
-```SHELL
+```
 --visualization tsne (all lower cap, no "-")
 ```
 and you can also set parameter (perplexity) for tsne using
 
-```SHELL
+```
 -pp 20 (or any other integers larger than 5)
 ```
 
@@ -134,7 +139,7 @@ and you can also set parameter (perplexity) for tsne using
 MICA also incorporated other dimension reduction methods such as pca or lpl, 
 you can use them via adding parameter:
 
-```SHELL
+```
 -dr PCA  (or: MDS | PCA | LPL | LPCA) 
 ```
 
@@ -142,7 +147,7 @@ you can use them via adding parameter:
 MICA also incorporated other dimension reduction methods such as pca or lpl, 
 you can use them via adding parameter:
 
-```SHELL
+```
 --dist MI  (or: euclidean | spearman | pearson)
 ```
 
