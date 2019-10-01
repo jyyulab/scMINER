@@ -58,7 +58,6 @@ Then you could run cell filtering with function `preMICA.filtering`, if input `c
 ```R
 cutoffs$umi_cf_hi<-Inf #only filter on low total number of UMI
 eset.sel<-preMICA.filtering(SparseEset = eset.12k,cutoffs = cutoffs)
-
 ```
  
 ### Normalization and transformation
@@ -92,7 +91,6 @@ generate_MICA_cmd(save_sh_at = "./PBMC12k/",
                   num_cluster = c(8,9,10,12,13,14,15),
                   host = "lsf", queue = [your_queue_name],
                   output_path = "./",queue = "standard")
-
 ```
 
 ## Step2: Perform clustering analysis via MICA
@@ -111,14 +109,12 @@ Users can start with one MICA membership and study your optimal number of cluste
 
 ```R
 eset.12k <- readMICAoutput(Obj = d.sel,load_clust_label = TRUE, output_file = "MICA/PBMC12k_k8_tsne_ClusterMem.txt")
-
 ```
 
 To visualize MICA label or other metadata, one can use function `MICAplot`. Users are required to specify X and Y cordinates in this function. This function will output a ggplot style visualization. Other meta data could also be visulized with this function, via changing `label` parameter.
 
 ```R
 MICAplot(input_eset = eset.12k,visualize = 'tSNE',X = "X",Y="Y",label = "label",pct = 0.5)
-
 ```
 ![](./plots/3_0_MICA_k8.png)
 
@@ -131,8 +127,8 @@ Picked marker genes could be visualized on t-SNE scatterplot, violin plot or hea
 gn.sel<-c("CD3D","CD27","IL7R","SELL","CCR7","IL32","GZMA",
           "GZMK","DUSP2","CD8A","GZMH","GZMB","CD79A","CD79B","CD86","CD14")
 
-p <- feature_highlighting(input_eset = eset.12k,target = gn.sel,ylabel = "log2Exp", x="X",y="Y",title.size = 12)
-
+p <- feature_highlighting(input_eset = eset.12k,target = gn.sel,
+	ylabel = "log2Exp", x="X",y="Y",title.size = 12)
 ```
 ![](./plots/3_1_gene_highlighting.png)
 
@@ -172,7 +168,6 @@ head(ref)
 6     Tmem    GZMA     -1
 
 p<-marker_bbplot(ref=ref,eset=eset.12k)
-
 ```
 ![](./plots/3_4_MICA_cluster_score.png)
 
@@ -185,7 +180,6 @@ indx<-factor(x=c("NaiveT","Tmem","CD8em","CD8eff","Bcell","NK","DC","Mo"),
 				levels=c("NaiveT","Tmem","CD8em","CD8eff","Bcell","NK","DC","Mo"))
 eset.12k$celltype <- indx[eset.12k$label]
 ```
-
 
 
 ## Step4: Network generation via SJARACNe
@@ -217,7 +211,6 @@ for i in $(ls -d */ | cut -f1 -d'/');do
 sjaracne ${i} $indir/${i}/*.exp $indir/${i}/tf/*.txt $indir/${i}/tf/ --c_threshold 0.01;
 echo ${i} has been submitted!;
 done
-
 ```
 
 
@@ -241,7 +234,6 @@ acs.12k <- GetActivityFromSJARACNe(
     group_tag = "celltype", # which group was used to partition expression profiles
     save_network_file=TRUE, # whether or not save network for each group
     save_path="./networks/") #default as false, but recommended to be TRUE
-
 ```
 
 
@@ -252,7 +244,6 @@ The function `FindDAG` was designed to identify highly differentiated TF from SJ
 
 ```R
 DAG_result <- FindDAG(eset = acs.demo,group_tag = "celltype")
-
 ```
 
 This function will output a full matrix that contians all TF occurred in original dataset, statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help idenify hidden drivers. You can save it in txt or xlsx for checking. 
@@ -274,7 +265,6 @@ In scMINER, we provide a handful of visualizations to compare driver activity fr
 feature_heatmap(eset = acs.12k,target = TF_list,group_tag = "celltype",feature = "geneSymbol",
              width = 6,height = 6, save_plot=TRUE, cluster_rows = FALSE,
              name = "Activity",plot_name="./21_TopTFHeatmap.png")
-
 ```
 
 ![](./plots/4_1_TopTFHeatmap.png)
