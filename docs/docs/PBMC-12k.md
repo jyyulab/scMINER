@@ -77,7 +77,7 @@ exp.norm <- sweep(exprs(eset.sel), 2, norm/unname(Matrix::colSums(exprs(eset.sel
 exp.log2 <- log(exp.norm+1,base=2)
 
 # save as SparseEset
-eset.norm <- CreateSparseEset(data=exp.log2, meta.data = pData(eset.sel), feature.data = fData(eset.sel), add.meta = F)
+eset.log2 <- CreateSparseEset(data=exp.log2, meta.data = pData(eset.sel), feature.data = fData(eset.sel), add.meta = F)
 ```
 
 
@@ -118,16 +118,16 @@ After clustering via MICA, with function `readMICAoutput`, you can load MICA out
 
 > **Note: All functions are designed compatible for both expressionSet and SparseExpressionSet** 
 
-Users shall start with one particular MICA membership and study your optimal number of cluster with cell type signatures. By setting `load_clust_label` as TRUE, clustering label will be saved under `eset$label`.
+Users shall start with one particular MICA membership and study your optimal number of cluster with cell type signatures. By setting `load_ClusterRes` as TRUE, clustering label will be saved under `eset$ClusterRes`.
 
 ```R
-eset.12k <- readMICAoutput(Obj = d.sel, load_clust_label = TRUE, output_file = "MICA/PBMC12k_k8_tsne_ClusterMem.txt")
+eset <- readMICAoutput(eset = eset.norm, load_ClusterRes = TRUE, output_file = "MICA/PBMC12k_k8_tsne_ClusterMem.txt")
 ```
 
 In order to visualize MICA labels or other metadata on tSNE/UMAP coordinates, your can use function `MICAplot`. Users are required to specify `X` and `Y` coordinates in this function. Other meta data could also be visualized by changing `label` handler. This function outputs a ggplot object. 
 
 ```R
-MICAplot(input_eset = eset.12k,visualize = 'tSNE',X = "X", Y="Y",label = "label",pct = 0.5)
+MICAplot(input_eset = eset,visualize = 'tSNE',X = "X", Y="Y",label = "label",pct = 0.5)
 ```
 
 <center><img src="./plots/3_0_MICA_k8.png" alt="MICA" width="600"></center>
@@ -141,25 +141,25 @@ Picked marker genes could be visualized on t-SNE scatterplot, violin plot or hea
 gn.sel<-c("CD3D","CD27","IL7R","SELL","CCR7","IL32","GZMA",
           "GZMK","DUSP2","CD8A","GZMH","GZMB","CD79A","CD79B","CD86","CD14")
 
-p <- feature_highlighting(input_eset = eset.12k,target = gn.sel,
-	ylabel = "log2Exp", x="X",y="Y",title.size = 12)
+p <- feature_highlighting(input_eset = eset, target = gn.sel, 
+	feature="geneSymbol",ylabel = "log2Exp", x="X",y="Y",pct.size = 0.5)
 ```
 
-<center><img src="./plots/3_1_gene_highlighting.png" alt="Scatterplot" width="600"></center>
+<center><img src="./plots/3_1_gene_highlighting.png" alt="Scatterplot" width="800"></center>
 
 ```R
-p <- feature_vlnplot(eset.12k,target=gn.sel,feature = "geneSymbol",
-group_tag = "label",ncol = 4,ylabel = "log2Exp")
+p <- feature_vlnplot(input_eset=eset,target=gn.sel,feature = "geneSymbol",
+	group_tag = "ClusterRes",ylabel = "log2Exp",ncol = 4)
 ```
-<center><img src="./plots/3_2_gene_highlighting_vlnplot.png" alt="violinplot" width="600"></center>
+<center><img src="./plots/3_2_gene_highlighting_vlnplot.png" alt="violinplot" width="800"></center>
 
 
 ```R
-feature_heatmap(eset = eset.12k,target = gn.sel,group_tag = "label",
-			 save_plot = TRUE,width = 6,height = 6,
+feature_heatmap(eset = eset, target = gn.sel,group_tag = "ClusterRes",
+			 	save_plot = TRUE,width = 6,height = 6,
              name = "log2_expression",plot_name="./GeneHeatmap.png")
 ```
-<center><img src="./plots/3_3_Marker_heatmaps.png" alt="heatmaps" width="600"></center>
+<center><img src="./plots/3_3_Marker_heatmaps.png" alt="heatmaps" width="800"></center>
 
 
 
@@ -180,18 +180,21 @@ head(ref)
 5     Tmem    IL32      1
 6     Tmem    GZMA     -1
 
-p<-marker_bbplot(ref=ref,eset=eset.12k)
+marker_bbplot(ref=ref,eset=eset,width = 6,height=4, feature = "geneSymbol",group_tag = "ClusterRes",
+                   save_plot = TRUE, plot_name = "plots/MICA_cluster_score.png")
+
 ```
-<center><img src="./plots/3_4_MICA_cluster_score.png" alt="Markerbbp" width="600"/></center>
+<center><img src="./plots/3_4_MICA_cluster_score.png" alt="Markerbbp" width="800"/></center>
 
 
 
 Before diving into network generation section, please assign your celltype as factors in your expression set. **Please do not include "_" in your cell type names since it will cause mis-parsing in later analysis**.
 
 ```R
-indx<-factor(x=c("NaiveT","Tmem","CD8em","CD8eff","Bcell","NK","DC","Mo"),
-				levels=c("NaiveT","Tmem","CD8em","CD8eff","Bcell","NK","DC","Mo"))
-eset.12k$celltype <- indx[eset.12k$label]
+indx<-factor(x=c("NaiveT","Tmem","CD8em","CD8eff","NK","Bcell","DC","Mo"),
+             levels=c("NaiveT","Tmem","CD8em","CD8eff","NK","Bcell","DC","Mo"))
+eset$celltype <- indx[eset$ClusterRes]
+
 ```
 
 
@@ -236,7 +239,7 @@ Identify hidden driver from content-based network is the key step in scMINER to 
 {: no_toc }
 Activity calculation is the basis of driver estimation in scMINER. To infer driver activity, expression profile of their targets are intergrated via function `GetActivityFromSJARACNe`. This function takes SJARACNe output path and expression set as input, and return an activity set as well as structured network files if set 	`save_network_files=TRUE`. 
 
-Since scRNA-seq data are extremly sparse and noisy, we strongly recommend to set `activity.method` as `'unweighted'`. 
+Since scRNA-seq data are extremly sparse and noisy, please set `activity.method` as `'unweighted'`. 
 
 ```R
 acs.12k <- GetActivityFromSJARACNe(
@@ -271,7 +274,7 @@ TF_list <- TopDriversfromDAG(DAG_result = DAG_result,
 In scMINER, we provide a handful of visualizations to compare driver activity from different cell type/clusters. Here we demo two basic functions: `feature_heatmap` and `feature_vlnplot`. These functions could be used on either expression and activty matrix.
 
 ```R
-feature_heatmap(eset = acs.12k,target = TF_list,group_tag = "celltype",feature = "geneSymbol",
+feature_heatmap(input_eset = acs.12k,target = TF_list,group_tag = "celltype",feature = "geneSymbol",
              width = 6,height = 6, save_plot=TRUE, cluster_rows = FALSE,
              name = "Activity",plot_name="./21_TopTFHeatmap.png")
 ```
@@ -280,9 +283,8 @@ feature_heatmap(eset = acs.12k,target = TF_list,group_tag = "celltype",feature =
 
 ```R
 #check postive controls
-p <- feature_vlnplot(eset=acs.12k,target=c("LEF1","TCF7","BATF","TCF7","TBX21","IRF8","SPIB","BATF3","CEBPA"), 
-						ylabel = "Activity",
-						group_tag = "celltype",feature="geneSymbol", ncol = 2)
+p<-feature_vlnplot(input_eset = acs.12k,feature = "geneSymbol",target=c("LEF1","TCF7","BATF","TBX21","IRF8","SPIB","BATF3","CEBPA"),
+                    ylabel = "Activity",group_tag = "celltype",ncol=2)
 ```
 <center><img src="./plots/4_2_Known_MR_vlnplot.png" alt="Driver heatmap" width="600"></center>
 

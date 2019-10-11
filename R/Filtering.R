@@ -29,7 +29,7 @@ SJARACNe_filter<-function(eset.sel,tf.ref,sig.ref,wd.src,grp.tag){
   dir.create(dir.cur,recursive = T)
 
   #write exp data to exp format
-  expdata<-data.frame(cbind(isoformId=featureNames(eset.sel),geneSymbol=fData(eset.sel)$geneSymbol,exprs(eset.sel)))
+  expdata<-data.frame(cbind(isoformId=featureNames(eset.sel),geneSymbol=fData(eset.sel)$geneSymbol,as.matrix(exprs(eset.sel))),stringsAsFactors = FALSE)
   f.exp<-file.path(dir.cur,paste(grp.tag,"_",ni,"_",ng,"_",ns,".exp",sep=''));f.exp
   write.table(expdata,file=f.exp,sep="\t",row.names=FALSE,quote=FALSE)
 

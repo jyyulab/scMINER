@@ -75,9 +75,9 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
       f<-output.files[grep(paste0("/",net,"_"),output.files)]
 
       if (length(grep("/tf/",f)!=0))
-        {TF.net<-NetBID2::get.SJAracne.network(file = f[grep("/tf/",f)])}
+        {TF.net<-NetBID2::get.SJAracne.network(network_file = f[grep("/tf/",f)])}
       if(length(grep("/sig/",f)!=0))
-        {SIG.table<-NetBID2::get.SJAracne.network(file= f[grep("/sig/",f)])}
+        {SIG.table<-NetBID2::get.SJAracne.network(network_file= f[grep("/sig/",f)])}
 
       if(save_network_file){
         if(!is.null(TF.table)) save(TF.net,file=file.path(save_path,paste0(net,".TF.network")))
@@ -380,21 +380,18 @@ DAG_ttest<-function(d,group){
               MeanAct.Aim = unname(res$estimate[1]),
               MeanAct.Ctrl = unname(res$estimate[2]))
 
-    rs.t<-c(rs.t, log2FC=rs.t$MeanAct.Aim-rs.t$MeanAct.Ctrl)
-
   }else{
     rs.t <- c(id = d$acs.id,
-              t.stat=NA,
+              t=NA,
               pval = NA,
               df = NA,
               CI.low = NA,
               CI.high = NA,
               MeanAct.Aim = mean(filter(d.tmp,group=="Aim")$acs),
               MeanAct.Ctrl = mean(filter(d.tmp,group=="Ctrl")$acs))
-    rs.t<-c(rs.t, log2FC=rs.t$MeanAct.Aim-rs.t$MeanAct.Ctrl)
   }
 
-  rs.t<-c(rs.t, log2FC=rs.t$MeanAct.Aim-rs.t$MeanAct.Ctrl)
+  rs.t<-c(rs.t, log2FC=rs.t["MeanAct.Aim"]-rs.t["MeanAct.Ctrl"])
 
   return(rs.t)
 }
@@ -451,7 +448,7 @@ FindDAG<-function(eset=NULL,group_tag="celltype",group_case=NULL){
 
       da$pval<-sapply(da$pval,function(xx){ifelse(xx!=0, xx,.Machine$double.xmin)})
 
-      DAG_result$Z<-abs(qnorm(da$pval)/2)*sign(da$t.stat)
+      da$Z<-abs(qnorm(da$pval)/2)*sign(da$t)
 
       da <- da[,setdiff(colnames(da),"MeanAct.Ctrl")]
 
@@ -475,7 +472,6 @@ FindDAG<-function(eset=NULL,group_tag="celltype",group_case=NULL){
   }
   return(rs)
 }
-
 ##
 #' @title TopMasterRegulator
 #' @description Help quick pick top master regulators from previous
@@ -499,7 +495,7 @@ TopMasterRegulator <- function(DAG_result=res,n=5,degree_filter=c(50,500),cellty
 
     if(!is.null(degree_filter)) {
 
-      DAG_result<-DAG_result[which(DAG_result[,paste0("degree_",i)]> degree_filter[1] & DAG_result[,paste0("degree_",i)] <degree_filter[2]),]}
+    DAG_result<-DAG_result[which(DAG_result[,paste0("degree_",i)]> degree_filter[1] & DAG_result[,paste0("degree_",i)] <degree_filter[2]),]}
 
     topDriver<-DAG_result$id[sort(DAG_result[,paste0("t_",i)],decreasing=TRUE,index.return=TRUE,na.last=TRUE)$ix][1:n]
 
@@ -507,6 +503,7 @@ TopMasterRegulator <- function(DAG_result=res,n=5,degree_filter=c(50,500),cellty
 
     cat("Top MR for:" ,i,"\n")
     print(D2print)
+
     res<- c(res,topDriver)
   }
   cat("Done!")

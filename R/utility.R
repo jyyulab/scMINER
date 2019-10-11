@@ -195,13 +195,13 @@ generateMICAcmd<-function(save_sh_at,
 #' @param eset a SparseMatrix Eset
 #' @param input_file input expression txt file of MICA pipeline
 #' @param output_file output ClusterMem.txt file from MICA pipeline
-#' @param load_clust_label logical, if TRUE, clustering results will be store at pData(eset)$label
+#' @param load_ClusterRes logical, if TRUE, clustering results will be store at pData(eset)$label
 #' @param NewSparseEset logical, if TRUE, return a eset obj
 #'
 #'
 #' @return An expressionSet
 #' @export
-readMICAoutput<-function(eset=NULL, input_file, output_file,load_ClusterRes=TRUE){
+readMICAoutput<-function(eset=NULL, input_file, output_file,load_ClusterRes =TRUE){
 
   res <- read.table( output_file, # MICA output text file
                      header = TRUE,
@@ -215,7 +215,7 @@ readMICAoutput<-function(eset=NULL, input_file, output_file,load_ClusterRes=TRUE
     }
   }else{
     cat("Reading Input...","\n")
-    d <- read.table(input_file,header = FALSE,
+    d <- read.delim(input_file,header = FALSE,
                     stringsAsFactors = FALSE,
                     quote = "",
                     check.names = FALSE)
@@ -232,9 +232,9 @@ readMICAoutput<-function(eset=NULL, input_file, output_file,load_ClusterRes=TRUE
     cat("SparseMatrix Expression Set Generated!","\n")
   }
 
-  if(load_clust_label){eset$ClusterRes <- as.factor(res$label);
+  if(load_ClusterRes){eset$ClusterRes <- as.factor(res$label);
   cat("Clustering info is under 'ClusterRes' slot.","\n")}
-
+  return(eset)
 }
 
 
@@ -262,7 +262,7 @@ generateSJARACNeInput<-function(eset,ref=NULL,funcType=NULL,wd.src,group_tag){
   if (!dir.exists(wd.src)) dir.create(wd.src,recursive = T)
 
   if (ref%in%c("hg","mm")){
-    ref_file<-system.file("RData",paste0("tf_sigs_",ref,".RData"),package = "MINIE")
+    ref_file<-system.file("RData",paste0("tf_sigs_",ref,".RData"),package = "scMINER")
     load(ref_file)
     cat("Using references from: ", ref_file,"\n")
     sig.ref <- NULL;tf.ref <- NULL
@@ -298,15 +298,17 @@ generateSJARACNeInput<-function(eset,ref=NULL,funcType=NULL,wd.src,group_tag){
 #' @description  Marker visualizatoin from known markers/signatures, requires knowledge-based marker list as input
 #' @param ref reference dataframe, includes positive or negative markers for different cell types
 #' @param eset expressionSet/SparseExpressionSet object with clustering membership stored in pData
+#' @param group_tag a character, the variable containing clustering label in pData(eset)
 #' @param save_plot logical, whether or not save your plot
 #' @param width default as 8, inch as unit
 #' @param height default as 5, inch as unit
 #' @param plot_name plot name, please include plot type
-#'
+#' @param feature feature type from your reference, should be in colnames(fData(eset))
 #' @return A ggplot object
 #'
 #' @export
-marker_bbplot<-function(ref = NULL,eset = eset.demo,feature='geneSymbol',
+marker_bbplot<-function(ref = NULL,eset = eset.demo,
+                              feature='geneSymbol',group_tag="ClusterRes",
                               save_plot = FALSE,
                               width=8, height=5,
                               plot_name="AnnotationBubbleplot.png"){
@@ -316,10 +318,11 @@ marker_bbplot<-function(ref = NULL,eset = eset.demo,feature='geneSymbol',
 
   if (!feature%in%colnames(fData(eset))) stop('Please check your feature!')
 
-  ref<-filter(ref,markers%in%fData(eset)[,feature])
+  ref<-dplyr::filter(ref,markers%in%fData(eset)[,feature])
   indx<-which(fData(eset)[,feature]%in%ref$markers)
+  if(length(indx)==0) stop("No genes from the reference list could be found in data!","\n")
 
-  exp<-exprs(eset[indx,])
+  exp<-as.matrix(exprs(eset))[indx,]
   rownames(exp)<-fData(eset)[,feature][indx]
 
   celltypes<-unique(ref$celltype)
@@ -327,8 +330,8 @@ marker_bbplot<-function(ref = NULL,eset = eset.demo,feature='geneSymbol',
   ac<-matrix(NA,nrow=ncol(exp),ncol=length(celltypes),dimnames = list(colnames(exp),celltypes))
   for(i in 1:length(celltypes)){
     cat(i,"\n")
-    ref.sel<-filter(ref,celltype==celltypes[i])
-    n <- length(ref.sel$markers)
+    ref.sel<-dplyr::filter(ref,celltype==celltypes[i])
+    n <- length(unique(ref.sel$markers))
 
     if(n>1){
       mat<-t(exp[ref.sel$markers,])%*%as.vector(ref.sel$weight)
@@ -341,12 +344,12 @@ marker_bbplot<-function(ref = NULL,eset = eset.demo,feature='geneSymbol',
   ac_norm<-apply(ac,2,scale) #column normalization
 
   n_mtx<-(ac>0.5)
-  df_n<-data.frame(label=eset$label,n_mtx)
+  df_n<-data.frame(label=pData(eset)[,group_tag],n_mtx)
   df_n<-aggregate(.~label,df_n,mean)
   library(reshape2)
   df_n_melt<-melt(df_n,id.vars = "label")
 
-  df<-data.frame(label=eset$label,ac_norm);
+  df<-data.frame(label=pData(eset)[,group_tag],ac_norm);
   df<-df[,colSums(is.na(df))<nrow(df)];#remove NA columns
   df<-aggregate(.~label,df,mean)
   input<-t(apply(df[,-1],1,scale))#row normalization
