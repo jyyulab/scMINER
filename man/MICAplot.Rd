@@ -4,14 +4,13 @@
 \alias{MICAplot}
 \title{plot MICA}
 \usage{
-MICAplot(input_eset = eset, label = metaName, visualize = NULL,
-  X = NULL, Y = NULL, title.size = 10, title.name = "",
-  pct = 0.5)
+MICAplot(input_eset, label = NULL, visualize = NULL, X = NULL,
+  Y = NULL, title.size = 10, title.name = "", pct = 0.5)
 }
 \arguments{
 \item{input_eset}{ExpressionSet that include visualization coordinates in phenotype data}
 
-\item{label}{Coloring criteria of data points on}
+\item{label}{Coloring criteria of data points, should be a variable stored in pData(input_eset)}
 
 \item{visualize}{character, name of visualization method, this will be used on x or y axis title}
 
@@ -26,5 +25,5 @@ MICAplot(input_eset = eset, label = metaName, visualize = NULL,
 \item{pct}{numerical, size of point, default as 0.5}
 }
 \description{
-This function help to generate a ggplot object for phenotypic visualization
+This function helps to generate a ggplot object for phenotypic visualization
 }

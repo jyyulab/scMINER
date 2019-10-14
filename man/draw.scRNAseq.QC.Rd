@@ -13,9 +13,14 @@ draw.scRNAseq.QC(SparseEset, project.name, plot.dir = "./QC/",
 \item{project.name}{a character, project name to print on report}
 
 \item{plot.dir}{a character, output directory for QC reports}
+
+\item{output.cutoff}{logical, whether or not return a list of suggested thresholds for filtering}
+
+\item{group}{a character, a variable name indicate groupping information (stored in pData) to
+help generate violin plots}
 }
 \value{
-an R markdown QC report
+an R markdown QC report and a list of suggested threshold (if specify)
 }
 \description{
 generated a scRNA-seq quality control report in html with Rmarkdown

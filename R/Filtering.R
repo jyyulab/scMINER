@@ -29,7 +29,7 @@ SJARACNe_filter<-function(eset.sel,tf.ref,sig.ref,wd.src,grp.tag){
   dir.create(dir.cur,recursive = T)
 
   #write exp data to exp format
-  expdata<-data.frame(cbind(isoformId=featureNames(eset.sel),geneSymbol=fData(eset.sel)$geneSymbol,exprs(eset.sel)))
+  expdata<-data.frame(cbind(isoformId=featureNames(eset.sel),geneSymbol=fData(eset.sel)$geneSymbol,as.matrix(exprs(eset.sel))),stringsAsFactors = FALSE)
   f.exp<-file.path(dir.cur,paste(grp.tag,"_",ni,"_",ng,"_",ns,".exp",sep=''));f.exp
   write.table(expdata,file=f.exp,sep="\t",row.names=FALSE,quote=FALSE)
 
@@ -56,7 +56,7 @@ SJARACNe_filter<-function(eset.sel,tf.ref,sig.ref,wd.src,grp.tag){
 #' preMICA.filtering
 #' @title preMICA.filtering
 #' @description scRNA-seq filtering function
-#' @param Obj the list object outputted by draw.scRNAseq.QC
+#' @param SparseEset the sparseEset object outputted from draw.scRNAseq.QC
 #' @param cutoffs a list outputted by draw.scRNAseq.QC, if NULL, manual input will be required
 #' @param gene_filter logical; or a numerical number, indicating lower threshold for gene filtering based on how many non-zero cells each gene expressed in
 #' @param ERCC_filter logical; a numerical number, indicating upper threshold put on ERCC percentage for cell filtering
@@ -78,18 +78,19 @@ preMICA.filtering <- function(SparseEset,
     cat("Pre-filtering dimension: ",dim(SparseEset),"\n")
 
     if(is.null(cutoffs)){
-      if(all(is.logical(gene_filter,ERCC_filter,Mito_filter,nGene_filter,nUMI_filter))){
+      if(all(is.logical(gene_filter),is.logical(ERCC_filter),
+             is.logical(Mito_filter),is.logical(nGene_filter),is.logical(nUMI_filter))){
         stop("No filtering will be conducted due to lack of numerical threshold input.","\n",
              "You can take default cutoff calculated by function draw.scRNAseq.QC and feed them into cutoffs,
              or input them manually in each function parameters.")
         }else{
-          if(any(isTRUE(gene_filter),isTRUE(ERCC_filter),isTRUE(Mito_filter),is.TRUE(nGene_filter),is.TRUE(nUMI_filter)))
+          if(any(isTRUE(gene_filter),isTRUE(ERCC_filter),isTRUE(Mito_filter),isTRUE(nGene_filter),is.TRUE(nUMI_filter)))
             stop("When cutoffs=NULL, please indicate numerical threshold instead of 'TRUE'
                  if you want to do filtering on that particular criteria !","\n")
           cfs<-list()
           if (gene_filter) cfs$nCell_cutoff=gene_filter
           if (nGene_filter) cfs$nGene_cf=nGene_filter
-          if (!isFLASE(nUMI_filter)) cfs$umi_cf_lo=nUMI_filter[1];cfs$umi_cf_hi=nUMI_filter[2]
+          if (!isFALSE(nUMI_filter)) cfs$umi_cf_lo=nUMI_filter[1];cfs$umi_cf_hi=nUMI_filter[2]
           if (ERCC_filter) cfs$ERCC_cf=ERCC_filter
           if (Mito_filter) cfs$mito_cf=Mito_filter
         }

@@ -2,17 +2,20 @@
 % Please edit documentation in R/Plotting.r
 \name{feature_heatmap}
 \alias{feature_heatmap}
-\title{Visualize gene expression level on scRNA-seq data}
+\title{Visualize gene expression level on scRNA-seq data via heatmap}
 \usage{
-feature_heatmap(eset, target, feature = "geneSymbol",
+feature_heatmap(input_eset, target, feature = "geneSymbol",
   group_tag = "label", name = "log2Exp", save_plot = TRUE,
   width = 4, height = 8, cluster_rows = FALSE,
+  colors = rev(colorRampPalette(brewer.pal(10, "RdYlBu"))(256)),
   plot_name = "GeneHeatmap.png", ...)
 }
 \arguments{
-\item{eset}{Input expression set}
+\item{input_eset}{Input expression set}
 
-\item{feature}{character, which feature to visualize}
+\item{target}{a character or a character vector indicating feature names}
+
+\item{feature}{a character, which feature to visualize}
 
 \item{group_tag}{a character, label to visualize on the top of heatmap}
 
@@ -26,7 +29,14 @@ feature_heatmap(eset, target, feature = "geneSymbol",
 
 \item{cluster_rows}{logical, if or not cluster rows}
 
+\item{colors}{color palette}
+
 \item{plot_name}{character, name of heamap}
+
+\item{...}{parameter to be passed to ComplexHeatmap::Heatmap}
+}
+\value{
+a ggplot object
 }
 \description{
 This plot will visualiz feature info in scatter plot by outputing a ggplot object

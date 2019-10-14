@@ -24,6 +24,9 @@ draw.bubblePlot2(df = NULL, xlab, ylab, clab, slab,
 
 \item{plot.title}{string}
 }
+\value{
+a ggplot object
+}
 \description{
 Inner function for simple bubbleplots
 }
