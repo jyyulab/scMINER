@@ -5,8 +5,8 @@
 \title{Generate MICA command script for job submission on local or LSF}
 \usage{
 generateMICAcmd(save_sh_at, input_file, project_name, num_cluster,
-  output_path, host = "lsf", queue = "standard", memory = NULL,
-  threads = 10, bootstrap = 10, dim_reduction_method = "MDS",
+  output_path, host = "lsf", queue = "standard", threads = 10,
+  bootstrap = 10, dim_reduction_method = "MDS",
   visualization = "tsne", perplexity = 30, min_dist = 0.01,
   slice_size = 1000)
 }
@@ -24,8 +24,6 @@ generateMICAcmd(save_sh_at, input_file, project_name, num_cluster,
 \item{host}{character, whether you want to run MICA pipeline on "lsf" or "local"}
 
 \item{queue}{character. If host="lsf", which queue to submit your job, default as NULL}
-
-\item{memory}{a vector of numerical number, default as NULL}
 
 \item{threads}{number of threads for pooling in clustering step, default as 10.}
 

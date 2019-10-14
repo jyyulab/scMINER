@@ -2,11 +2,13 @@
 % Please edit documentation in R/Plotting.r
 \name{feature_highlighting}
 \alias{feature_highlighting}
-\title{Visualize gene expression level on scRNA-seq data}
+\title{feature_highlighting}
 \usage{
-feature_highlighting(input_eset = eset, target, feature = "geneSymbol",
+feature_highlighting(input_eset, target = NULL, feature = "geneSymbol",
   x = "tSNE_1", y = "tSNE_2", ylabel = "Expression",
-  title.size = 5)
+  pct.size = 0.8, title.size = 15, ncol = 4, alpha = 0.8,
+  colors = colorRampPalette(c("#E3E3E3", "#BCA2FC", "#4900FE"),
+  interpolate = "linear")(8))
 }
 \arguments{
 \item{input_eset}{Input expression set}
@@ -21,8 +23,16 @@ feature_highlighting(input_eset = eset, target, feature = "geneSymbol",
 
 \item{ylabel}{a characterm, title of y axis}
 
+\item{pct.size}{numrical, point size}
+
 \item{title.size}{numerical, default as 5}
+
+\item{ncol}{cordinates for y axis}
+
+\item{alpha}{numerical, default as 0.8}
+
+\item{colors}{color palette for feature highlighting}
 }
 \description{
-This plot will visualiz feature info in scatter plot by outputing a ggplot object
+This plot will visualize feature info on scatter plot by outputing a ggplot object
 }

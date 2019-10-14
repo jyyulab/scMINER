@@ -1,7 +1,7 @@
 ##Author:chenxi.qian@stjude.org
 ##Stjude.YuLab
 #'
-#'  GetActivityFromSJARACNe
+#' GetActivityFromSJARACNe
 #'
 #' @description Allocate network information from SJARACNe and calculate activity score for each hub genes.
 #'
@@ -10,12 +10,15 @@
 #' @param group_tag a string, group name stored in pData that defines expression matrix separation
 #' @param activity.method c("weighted,unweighted), default to "unweighted"
 #' @param activity.norm logical, default to TRUE.
+#' @param functype character c("tf","sig"); If NULL, both activity from TF and SIG network will be calculated;
+#' default as NULL
 #' @param save_network_file logical, default to FALSE
 #' @param save_path Path to save network file
 #'
 #' @return An expressionset with activity values
 #'
 #' @examples
+#' \dontrun{
 #' acs.12k <- GetActivityFromSJARACNe(
 #'              SJARACNe_output_path ="./",
 #'              SJARACNe_input_eset = eset.12k,
@@ -24,6 +27,7 @@
 #'              group_tag = "celltype",
 #'              save_network_file=TRUE, #default as false, but recommended to be TRUE
 #'              save_path="./networks")
+#'}
 #'
 #' @keywords GetActivity
 #' @author Chenxi Qian, \email{chenxi.qian@stjude.org}
@@ -36,7 +40,7 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
 							   activity.method="unweighted",
 							   activity.norm=TRUE,
 							   save_network_file=FALSE,
-							   functype=NULL,
+							   functype="tf",
 							   save_path=NA){
   eset<-SJARACNe_input_eset;
 
@@ -283,73 +287,8 @@ get_activity<-function(Net,eset,tag,exp.match=NULL, match.method=NULL,
 }
 
 
-
-
-##Function based MINIE
-##Author:chenxi.qian@stjude.org
-##Stjude.YuLab
-
-###Differential Activity analysis#######
-###Anova####
-#' @export
-HVG_Anova<-function(d,group){
-
-  d.tmp<-unlist(d[,-1])
-  d.tmp<-data.frame(acs=d.tmp,group=group,stringsAsFactors = FALSE)
-  d.sel<-d.tmp[complete.cases(d.tmp),]
-  d.sel$group<-as.factor(d.sel$group)
-
-  n.cases<-nlevels(d.sel$group)
-
-  #print(n.cases)
-  if(n.cases>1){
-    rs.lm<-lm(data = d.sel,formula = acs~group)
-    rs.aov<-Anova(rs.lm,Type="II",white.adjust=TRUE)
-    rs.aov<-c(id=d$acs.id,F.value = (rs.aov$F)[1],pval = (rs.aov$`Pr(>F)`)[1])
-  }else{
-    rs.aov<-c(id=d$acs.id,F.value = NA, pval= NA)
-  }
-
-  rs.acs<-tapply(d.tmp$acs, list(d.tmp$group), mean)
-  names(rs.acs)<-paste0("MeanAct_",names(rs.acs))
-  rs<-c(rs.aov,rs.acs)
-  return(rs)
-}
-
-
-
-#' @export
-FindHVG<-function(eset=acs.demo,group_tag="celltype",
-                  print_screen=TRUE){
-
-  if(!group_tag%in%colnames(pData(eset))) {
-    cat('Please check your group_tag!',"\n")}
-
-  d<-data.frame(id=featureNames(eset),exprs(eset),stringsAsFactors=FALSE)
-
-  rs <- fData(eset);rs$id<-d$id
-
-
-  zz <- file("all.Rout", open = "wt")
-  sink(zz,type="message")
-  da <- plyr::ddply(d,'id','HVG_Anova',group=pData(eset)[,group_tag])
-  sink()
-  unlink("all.Rout")
-
-  rs <-merge(rs,da,by="id")
-
-  if(print_screen){
-    cat("Top 10 highly variable TF...")
-    indx<-sort.int(da$F.value, decreasing = TRUE,na.last = NA,index.return=TRUE)$ix[1:10]
-    cat(da$id[indx],"\n")
-  }
-  return(rs)
-}
-
-
-
 #' DAG_ttest
-#' @description t.test(pairwise/2case)
+#' @description inner function to do t.test(pairwise/2case) from activity matrix
 #' @param d A vector of gene expression
 #' @param group A vector of group information
 #'
@@ -472,6 +411,8 @@ FindDAG<-function(eset=NULL,group_tag="celltype",group_case=NULL){
   }
   return(rs)
 }
+
+
 ##
 #' @title TopMasterRegulator
 #' @description Help quick pick top master regulators from previous
@@ -479,6 +420,7 @@ FindDAG<-function(eset=NULL,group_tag="celltype",group_case=NULL){
 #' @param DAG_result Output table from function FindDAG
 #' @param n threshold to pick top master regulators(top n)
 #' @param degree_filter filter out drivers with target number less than certain value
+#' @param celltype character, output top hits are from which celltype
 #' @return A list of top master regulators among different groups
 #' @export
 TopMasterRegulator <- function(DAG_result=res,n=5,degree_filter=c(50,500),celltype=NULL){

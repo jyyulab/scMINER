@@ -14,12 +14,10 @@ readMICAoutput(eset = NULL, input_file, output_file,
 
 \item{output_file}{output ClusterMem.txt file from MICA pipeline}
 
-\item{load_clust_label}{logical, if TRUE, clustering results will be store at pData(eset)$label}
-
-\item{NewSparseEset}{logical, if TRUE, return a eset obj}
+\item{load_ClusterRes}{logical, if TRUE, clustering results will be store at pData(eset)$label}
 }
 \value{
-An expressionSet
+A sparse expressionSet object
 }
 \description{
 Read MICA input and output to create an expressionSet for downstream analysis

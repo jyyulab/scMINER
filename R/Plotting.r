@@ -1,11 +1,10 @@
-##Function based MINIE
 ##Author:chenxi.qian@stjude.org
 ##Stjude.YuLab
 
 #' @title plot MICA
-#' @description This function help to generate a ggplot object for phenotypic visualization
+#' @description This function helps to generate a ggplot object for phenotypic visualization
 #' @param input_eset ExpressionSet that include visualization coordinates in phenotype data
-#' @param label Coloring criteria of data points on
+#' @param label Coloring criteria of data points, should be a variable stored in pData(input_eset)
 #' @param visualize character, name of visualization method, this will be used on x or y axis title
 #' @param X character, column name of x axis
 #' @param Y character, column name of y axis
@@ -14,11 +13,12 @@
 #' @param pct numerical, size of point, default as 0.5
 #'
 #' @export
-MICAplot<-function(input_eset=eset,label= metaName,visualize=NULL,
+MICAplot<-function(input_eset,
+                   label= NULL,visualize=NULL,
                    X=NULL,Y=NULL,
                    title.size=10,title.name="",pct=0.5){
 
-  if(!label%in%colnames(pData(input_eset))){stop("Label name not contained in phenotype data!","\n")}
+  if(!label%in%colnames(pData(input_eset))){stop("Label name not found in phenotype data!","\n")}
 
   p <- ggplot(data=pData(input_eset),aes_string(x=X,y=Y,color = label))+
        geom_point(size=pct)+
@@ -36,8 +36,8 @@ MICAplot<-function(input_eset=eset,label= metaName,visualize=NULL,
 }
 
 
-#' @title Visualize gene expression level on scRNA-seq data
-#' @description This plot will visualiz feature info in scatter plot by outputing a ggplot object
+#' @title feature_highlighting
+#' @description This plot will visualize feature info on scatter plot by outputing a ggplot object
 #' @param input_eset Input expression set
 #' @param feature character, which feature to visualize
 #' @param target a character vector, the list of feature to visualize
@@ -51,7 +51,7 @@ MICAplot<-function(input_eset=eset,label= metaName,visualize=NULL,
 #' @param pct.size numrical, point size
 #'
 #' @export
-feature_highlighting<-function(input_eset=eset,target=NULL,
+feature_highlighting<-function(input_eset,target=NULL,
                                feature="geneSymbol",
                                x="tSNE_1",y="tSNE_2",
                                ylabel="Expression",pct.size=0.8,
@@ -97,7 +97,7 @@ feature_highlighting<-function(input_eset=eset,target=NULL,
 }
 
 
-#' @title Visualize gene expression level on scRNA-seq data
+#' @title feature_vlnplot
 #' @description This plot will visualize feature info in violin plot by outputing a ggplot object
 #' @param input_eset Input expression set
 #' @param feature character, which feature to visualize
@@ -109,7 +109,7 @@ feature_highlighting<-function(input_eset=eset,target=NULL,
 #' @param ncol cordinates for y axis
 #'
 #' @export
-feature_vlnplot <- function(input_eset= eset,group_tag="celltype",
+feature_vlnplot <- function(input_eset, group_tag="celltype",
                          target=NULL,feature="geneSymbol",
                          ylabel="Expression",ncol=3,
                          boxplot=FALSE,title.size=5){
@@ -152,11 +152,12 @@ feature_vlnplot <- function(input_eset= eset,group_tag="celltype",
 }
 
 
-#' @title Visualize gene expression level on scRNA-seq data
+#' @title Visualize gene expression level on scRNA-seq data via heatmap
 #' @description This plot will visualiz feature info in scatter plot by outputing a ggplot object
 #' @param input_eset Input expression set
+#' @param feature a character, which feature to visualize
+#' @param target a character or a character vector indicating feature names
 #' @param group_tag a character, label to visualize on the top of heatmap
-#' @param feature character, which feature to visualize
 #' @param name character, name of value visualized in color scale
 #' @param cluster_rows logical, if or not cluster rows
 #' @param colors color palette
@@ -164,12 +165,15 @@ feature_vlnplot <- function(input_eset= eset,group_tag="celltype",
 #' @param save_plot logical, whether to save plots or not
 #' @param width numerical
 #' @param height numerical
+#' @param ... parameter to be passed to ComplexHeatmap::Heatmap
+#' @return a ggplot object
 #'
 #' @export
 feature_heatmap <- function(input_eset,target,feature="geneSymbol",
                          group_tag="label",name="log2Exp",
                          save_plot=TRUE,width=4,height=8,
-                         cluster_rows=FALSE,colors=rev(colorRampPalette(brewer.pal(10, "RdYlBu"))(256)),
+                         cluster_rows=FALSE,
+                         colors=rev(colorRampPalette(brewer.pal(10, "RdYlBu"))(256)),
                          plot_name="GeneHeatmap.png",
                          ...){
 
@@ -189,7 +193,7 @@ feature_heatmap <- function(input_eset,target,feature="geneSymbol",
 
   #Define color annotations
   n<-length(unique(lab.ordered))
-  ncols <- hue_pal()(n)
+  ncols <- scales::hue_pal()(n)
   names(ncols) <- unique(lab.ordered)
   myanndf = HeatmapAnnotation(df = df,col=list(scMINER = ncols))
   mycolors = colors
@@ -221,7 +225,7 @@ feature_heatmap <- function(input_eset,target,feature="geneSymbol",
 #' @param low.col string,default as "#004C99"
 #' @param high.col string, default as "CC0000
 #' @param plot.title string
-#'
+#' @return a ggplot object
 #' @export
 draw.bubblePlot2<-function(df=NULL,xlab,ylab,clab,slab,
                            low.col="#004C99",high.col="#CC0000",plot.title=NULL){
@@ -249,10 +253,15 @@ draw.bubblePlot2<-function(df=NULL,xlab,ylab,clab,slab,
 #' @param SparseEset an SparseEset generated by CreateSparseEset
 #' @param project.name a character, project name to print on report
 #' @param plot.dir a character, output directory for QC reports
+#' @param output.cutoff logical, whether or not return a list of suggested thresholds for filtering
+#' @param group a character, a variable name indicate groupping information (stored in pData) to
+#' help generate violin plots
 #'
-#' @return an R markdown QC report
+#' @return an R markdown QC report and a list of suggested threshold (if specify)
 #' @export
-draw.scRNAseq.QC<-function(SparseEset,project.name,plot.dir="./QC/",output.cutoff=TRUE,group="group"){
+draw.scRNAseq.QC<-function(SparseEset,project.name,
+                           plot.dir="./QC/",
+                           output.cutoff=TRUE,group="group"){
   if(!dir.exists(plot.dir)) {dir.create(plot.dir)}
 
   #Calcualte Cutoffs

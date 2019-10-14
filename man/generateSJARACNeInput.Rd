@@ -2,7 +2,7 @@
 % Please edit documentation in R/utility.R
 \name{generateSJARACNeInput}
 \alias{generateSJARACNeInput}
-\title{generateSJARACNeInput}
+\title{Generate SJARACNE input with designed folder structure}
 \usage{
 generateSJARACNeInput(eset, ref = NULL, funcType = NULL, wd.src,
   group_tag)
@@ -25,8 +25,13 @@ SJARACNe input files for each subgroups
 This function helps to generate appropriate input files for SJARACNe pipeline.
 It can take transcription factor/signaling gene reference from internal(stored in package) or external (manual define)
 }
+\details{
+generateSJARACNeInput
+}
 \examples{
 \dontrun{
-generateSJARACNeInput(eset = eset.demo,ref = "hg",wd.src = "./",group_tag = "celltype")}
+generateSJARACNeInput(eset = eset.demo ,ref = "hg",funcType="TF",
+wd.src = "./",group_tag = "celltype")
+}
 }
 \keyword{SJARACNe}
