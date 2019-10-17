@@ -1,0 +1,38 @@
+I"a<h1 id="installation">Installation</h1>
+
+<h3 id="dependencies">Dependencies</h3>
+<p>The entry point of scMINER is a R package, which includes some of its major functions such as QC, … etc. It has been</p>
+
+<p>need R version 3.5.1 or higher 
+is depend on <a href="https://www.python.org/downloads/">python3</a> and <a href="https://www.r-project.org/">R</a>, 
+which consists of three individual modules: scMINER R package, MICA and SJARACNe python package.</p>
+
+<h3 id="local-installation">Local installation:</h3>
+<ul>
+  <li>Install <a href="https://github.com/jyyulab/scMINER">scMINER</a> from github:</li>
+</ul>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#install dev_tool first install.packages(devtools)</span><span class="w">
+</span><span class="n">devtools</span><span class="o">::</span><span class="n">install_github</span><span class="p">(</span><span class="s2">"jyyulab/scMINER"</span><span class="p">)</span><span class="w"> 
+</span><span class="c1">#or</span><span class="w">
+</span><span class="n">devtools</span><span class="o">::</span><span class="n">install_local</span><span class="p">(</span><span class="s1">'scMINER_0.0.1.tar.gz'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<ul>
+  <li>Install <a href="https://github.com/jyyulab/MICA">MICA</a> from source:</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ git clone https://github.com/jyyulab/MICA
+$ cd MICA
+$ python setup.py install
+</code></pre></div></div>
+
+<ul>
+  <li>Install <a href="https://github.com/jyyulab/SJARACNe">SJARACNe</a> from source:</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ git clone https://github.com/jyyulab/SJARACNe
+$ cd SJARACNe
+$ python setup.py install
+</code></pre></div></div>
+:ET

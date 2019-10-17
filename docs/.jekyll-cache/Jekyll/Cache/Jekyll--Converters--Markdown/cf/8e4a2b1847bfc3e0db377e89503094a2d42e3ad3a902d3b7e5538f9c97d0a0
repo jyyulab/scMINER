@@ -1,0 +1,49 @@
+I"½
+<h1 id="installation">Installation</h1>
+
+<h2 id="dependencies">Dependencies</h2>
+<p>The entry point of scMINER is a R package, which includes some of the major functions such as QC, â€¦ etc. It has been
+throughly tested in R 3.5.1. So it is highly recommended to have <strong>R version 3.5.1 or higher</strong> in your environment. 
+scMINER also includes two independent python packages <a href="https://github.com/jyyulab/MICA">MICA</a> and 
+<a href="https://github.com/jyyulab/SJARACNe">SJARACNe</a>, for which <strong>python 3.6.1 or higher</strong> is required.</p>
+
+<h2 id="installing-scminer">Installing scMINER</h2>
+
+<h3 id="install-scminer-r-package-from-github">Install <a href="https://github.com/jyyulab/scMINER">scMINER</a> R package from github</h3>
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#install dev_tool first install.packages(devtools)</span><span class="w">
+</span><span class="n">devtools</span><span class="o">::</span><span class="n">install_github</span><span class="p">(</span><span class="s2">"jyyulab/scMINER"</span><span class="p">)</span><span class="w"> 
+</span><span class="c1">#or</span><span class="w">
+</span><span class="n">devtools</span><span class="o">::</span><span class="n">install_local</span><span class="p">(</span><span class="s1">'scMINER_0.0.1.tar.gz'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="install-mica">Install <a href="https://github.com/jyyulab/MICA">MICA</a></h3>
+
+<ul>
+  <li>Installing the official package from PyPi:
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span>MICA
+</code></pre></div>    </div>
+  </li>
+  <li>Or you can install from source:
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/jyyulab/MICA
+<span class="nb">cd </span>MICA
+python setup.py <span class="nb">install</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="install-sjaracne">Install <a href="https://github.com/jyyulab/SJARACNe">SJARACNe</a></h3>
+
+<ul>
+  <li>Installing the official package from PyPi:
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span>SJARACNe
+</code></pre></div>    </div>
+  </li>
+  <li>Or you can install from source:
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/jyyulab/SJARACNe
+<span class="nb">cd </span>SJARACNe
+python setup.py build
+python setup.py <span class="nb">install</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+:ET
