@@ -12,5 +12,5 @@ DAG_ttest(d, group)
 \item{group}{A vector of group information}
 }
 \description{
-t.test(pairwise/2case)
+inner function to do t.test(pairwise/2case) from activity matrix
 }

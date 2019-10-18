@@ -7,7 +7,7 @@
 GetActivityFromSJARACNe(SJARACNe_output_path = NA,
   SJARACNe_input_eset = NA, group_tag = NA,
   activity.method = "unweighted", activity.norm = TRUE,
-  save_network_file = FALSE, functype = NULL, save_path = NA)
+  save_network_file = FALSE, functype = "tf", save_path = NA)
 }
 \arguments{
 \item{SJARACNe_output_path}{Path to SJARACNe output folder(s)}
@@ -22,6 +22,9 @@ GetActivityFromSJARACNe(SJARACNe_output_path = NA,
 
 \item{save_network_file}{logical, default to FALSE}
 
+\item{functype}{character c("tf","sig"); If NULL, both activity from TF and SIG network will be calculated;
+default as NULL}
+
 \item{save_path}{Path to save network file}
 }
 \value{
@@ -31,6 +34,7 @@ An expressionset with activity values
 Allocate network information from SJARACNe and calculate activity score for each hub genes.
 }
 \examples{
+\dontrun{
 acs.12k <- GetActivityFromSJARACNe(
              SJARACNe_output_path ="./",
              SJARACNe_input_eset = eset.12k,
@@ -39,6 +43,7 @@ acs.12k <- GetActivityFromSJARACNe(
              group_tag = "celltype",
              save_network_file=TRUE, #default as false, but recommended to be TRUE
              save_path="./networks")
+}
 
 }
 \author{

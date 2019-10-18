@@ -6,7 +6,7 @@
 #' @param is.10x logical, whether or not inputs are from CellRanger standard output
 #' @param CreateSparseEset logical, whether or not create sparse matrix incorporated expression set
 #' @param add.meta logical, whether or not calculate metadata info from expression matrixm, this is not suggested before merging/downsampling your data
-#' @param ... paramters pass to read.delim if is.10x = FALSE
+#' @param ... parameters pass to read.delim if is.10x = FALSE
 #'
 #' @return A list or sparse matrix expression set
 #' @export
@@ -52,7 +52,7 @@ readscRNAseqData <- function(file,is.10x=TRUE,CreateSparseEset=TRUE, add.meta=F,
 
 #' generateMICAinput
 #'
-#' @description This utility function helps generate MICA input from a data matrix with rownames and colnames
+#' @description A utility function that helps generate MICA input from a data matrix with rownames and colnames
 #' @param d matrix with colnames as cell/sample info, rownames as gene/feature info
 #' @param filename filename of your MICA input file, supported format: txt
 #'
@@ -89,7 +89,6 @@ generateMICAinput <- function(d,filename){
 #'
 #' @param host character, whether you want to run MICA pipeline on "lsf" or "local"
 #' @param queue character. If host="lsf", which queue to submit your job, default as NULL
-#' @param memory a vector of numerical number, default as NULL
 #' @param threads number of threads for pooling in clustering step, default as 10.
 #' @param bootstrap number of iterations of k-means process, default as 10.
 #' @param dim_reduction_method character, default as "mds". Other supported methods include "pca" and "lpl".
@@ -118,6 +117,7 @@ generateMICAcmd<-function(save_sh_at,
                             num_cluster,
                             output_path,
                             host="lsf",
+                            queue="standard",
                             threads=10,
                             bootstrap=10,
                             dim_reduction_method="MDS",
@@ -155,9 +155,7 @@ generateMICAcmd<-function(save_sh_at,
       '#BSUB -eo ',project_name,'.sh.err \n',
       '#BSUB -R \"rusage[mem=2000]\" \n',
       queue.bash,
-      "mica lsf ",
-      ifelse(is.null(memory),"",paste0("-r ",paste0(memory, collapse = ""), " ")),
-      ifelse(is.null(queue),"",paste0("-q ", queue, " ")))
+      "mica lsf ")
 
   } else if (tolower(host)=="local") {
     sh.scminer<-paste0(
@@ -194,15 +192,12 @@ generateMICAcmd<-function(save_sh_at,
 #'
 #' @description Read MICA input and output to create an expressionSet for downstream analysis
 #'
-#'
 #' @param eset a SparseMatrix Eset
 #' @param input_file input expression txt file of MICA pipeline
 #' @param output_file output ClusterMem.txt file from MICA pipeline
 #' @param load_ClusterRes logical, if TRUE, clustering results will be store at pData(eset)$label
-#' @param NewSparseEset logical, if TRUE, return a eset obj
 #'
-#'
-#' @return An expressionSet
+#' @return A sparse expressionSet object
 #' @export
 readMICAoutput<-function(eset=NULL, input_file, output_file,load_ClusterRes =TRUE){
 
@@ -244,7 +239,7 @@ readMICAoutput<-function(eset=NULL, input_file, output_file,load_ClusterRes =TRU
 
 #' generateSJARACNeInput
 #'
-#'
+#' @title Generate SJARACNE input with designed folder structure
 #' @description This function helps to generate appropriate input files for SJARACNe pipeline.
 #' It can take transcription factor/signaling gene reference from internal(stored in package) or external (manual define)
 #'
@@ -258,7 +253,9 @@ readMICAoutput<-function(eset=NULL, input_file, output_file,load_ClusterRes =TRU
 #' @keywords SJARACNe
 #' @examples
 #' \dontrun{
-#' generateSJARACNeInput(eset = eset.demo,ref = "hg",wd.src = "./",group_tag = "celltype")}
+#' generateSJARACNeInput(eset = eset.demo ,ref = "hg",funcType="TF",
+#' wd.src = "./",group_tag = "celltype")
+#' }
 #' @export
 generateSJARACNeInput<-function(eset,ref=NULL,funcType=NULL,wd.src,group_tag){
 
@@ -297,10 +294,10 @@ generateSJARACNeInput<-function(eset,ref=NULL,funcType=NULL,wd.src,group_tag){
 
 
 
-#' @title marker_bbplot
+#' @title Generate visualization for marker scores via bubble plot
 #' @description  Marker visualizatoin from known markers/signatures, requires knowledge-based marker list as input
 #' @param ref reference dataframe, includes positive or negative markers for different cell types
-#' @param eset expressionSet/SparseExpressionSet object with clustering membership stored in pData
+#' @param input_eset expressionSet/SparseExpressionSet object with clustering membership stored in pData
 #' @param group_tag a character, the variable containing clustering label in pData(eset)
 #' @param save_plot logical, whether or not save your plot
 #' @param width default as 8, inch as unit
@@ -310,7 +307,7 @@ generateSJARACNeInput<-function(eset,ref=NULL,funcType=NULL,wd.src,group_tag){
 #' @return A ggplot object
 #'
 #' @export
-marker_bbplot<-function(ref = NULL,eset = eset.demo,
+marker_bbplot<-function(ref = NULL,input_eset,
                               feature='geneSymbol',group_tag="ClusterRes",
                               save_plot = FALSE,
                               width=8, height=5,
@@ -320,7 +317,7 @@ marker_bbplot<-function(ref = NULL,eset = eset.demo,
   #filter reference marker sets
 
   if (!feature%in%colnames(fData(eset))) stop('Please check your feature!')
-
+  colnames(ref)<-c("celltype","markers","weight")
   ref<-dplyr::filter(ref,markers%in%fData(eset)[,feature])
   indx<-which(fData(eset)[,feature]%in%ref$markers)
   if(length(indx)==0) stop("No genes from the reference list could be found in data!","\n")
@@ -373,7 +370,7 @@ marker_bbplot<-function(ref = NULL,eset = eset.demo,
                         plot.title="Cell type annotation for each cluster")
   }
 
-  if(save_plot){ggsave(plot = p, filename = plot_name , unit="in",
+  if(save_plot){ggsave(plot = p, filename = plot_name , units="in",
                        width = width,height = height,dpi = 300)}
   return(p)
 }

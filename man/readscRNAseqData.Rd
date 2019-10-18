@@ -17,7 +17,7 @@ or data path to data txt/csv/tsv file}
 
 \item{add.meta}{logical, whether or not calculate metadata info from expression matrixm, this is not suggested before merging/downsampling your data}
 
-\item{...}{paramters pass to read.delim if is.10x = FALSE}
+\item{...}{parameters pass to read.delim if is.10x = FALSE}
 }
 \value{
 A list or sparse matrix expression set

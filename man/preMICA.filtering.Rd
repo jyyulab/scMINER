@@ -9,6 +9,8 @@ preMICA.filtering(SparseEset, cutoffs, gene_filter = T,
   Mito_filter = T)
 }
 \arguments{
+\item{SparseEset}{the sparseEset object outputted from draw.scRNAseq.QC}
+
 \item{cutoffs}{a list outputted by draw.scRNAseq.QC, if NULL, manual input will be required}
 
 \item{gene_filter}{logical; or a numerical number, indicating lower threshold for gene filtering based on how many non-zero cells each gene expressed in}
@@ -20,8 +22,6 @@ preMICA.filtering(SparseEset, cutoffs, gene_filter = T,
 \item{ERCC_filter}{logical; a numerical number, indicating upper threshold put on ERCC percentage for cell filtering}
 
 \item{Mito_filter}{logical;a numerical number, indicating upper threshold put on Mitochondrial gene expression fraction for cell filtering}
-
-\item{Obj}{the list object outputted by draw.scRNAseq.QC}
 }
 \value{
 A Sparse expression set

@@ -2,16 +2,20 @@
 % Please edit documentation in R/utility.R
 \name{marker_bbplot}
 \alias{marker_bbplot}
-\title{marker_bbplot}
+\title{Generate visualization for marker scores via bubble plot}
 \usage{
-marker_bbplot(ref = NULL, eset = eset.demo, feature = "geneSymbol",
-  save_plot = FALSE, width = 8, height = 5,
-  plot_name = "AnnotationBubbleplot.png")
+marker_bbplot(ref = NULL, input_eset, feature = "geneSymbol",
+  group_tag = "ClusterRes", save_plot = FALSE, width = 8,
+  height = 5, plot_name = "AnnotationBubbleplot.png")
 }
 \arguments{
 \item{ref}{reference dataframe, includes positive or negative markers for different cell types}
 
-\item{eset}{expressionSet/SparseExpressionSet object with clustering membership stored in pData}
+\item{input_eset}{expressionSet/SparseExpressionSet object with clustering membership stored in pData}
+
+\item{feature}{feature type from your reference, should be in colnames(fData(eset))}
+
+\item{group_tag}{a character, the variable containing clustering label in pData(eset)}
 
 \item{save_plot}{logical, whether or not save your plot}
 

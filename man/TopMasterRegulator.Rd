@@ -13,6 +13,8 @@ TopMasterRegulator(DAG_result = res, n = 5, degree_filter = c(50,
 \item{n}{threshold to pick top master regulators(top n)}
 
 \item{degree_filter}{filter out drivers with target number less than certain value}
+
+\item{celltype}{character, output top hits are from which celltype}
 }
 \value{
 A list of top master regulators among different groups

@@ -2,14 +2,14 @@
 % Please edit documentation in R/Plotting.r
 \name{feature_vlnplot}
 \alias{feature_vlnplot}
-\title{Visualize gene expression level on scRNA-seq data}
+\title{feature_vlnplot}
 \usage{
-feature_vlnplot(eset, group_tag = "celltype", target,
+feature_vlnplot(input_eset, group_tag = "celltype", target = NULL,
   feature = "geneSymbol", ylabel = "Expression", ncol = 3,
   boxplot = FALSE, title.size = 5)
 }
 \arguments{
-\item{eset}{Input expression set}
+\item{input_eset}{Input expression set}
 
 \item{group_tag}{character, which group info}
 
@@ -18,6 +18,8 @@ feature_vlnplot(eset, group_tag = "celltype", target,
 \item{feature}{character, which feature to visualize}
 
 \item{ylabel}{a character, title of y axis}
+
+\item{ncol}{cordinates for y axis}
 
 \item{boxplot}{logical, whether to plot boxplot on violinplot}
 
