@@ -81,7 +81,7 @@ scMINER::generateMICAcmd(save_sh_at, #path to save shell script
                             visualization="tsne")
 ```
 
-Or, you can create your shell script as below, if you would like to specify your config file, please use `-c`.
+Or, you can create your shell script as below, if you would like to specify your config file, please use `-j`.
 
 ```
 #!/usr/bin/env bash
@@ -91,7 +91,6 @@ mica LSF \
 -p "test_local" \
 -k 3 4 \
 -o ./test_data/outputs/test_local/ 
--c [path to your config file]
 
 ```
 

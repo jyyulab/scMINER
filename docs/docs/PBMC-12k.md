@@ -34,6 +34,7 @@ d.12k <- readscRNAseqData(file="../PBMC12k_input/",is.10x = T,CreateSparseEset =
 After loading data to environment properly, you can now create Sparse Matrix expression by using `CreateSparseEset`function:
 
 ```R
+
 eset.12k<-CreateSparseEset(data=d.12k$raw.data,feature.data = d.12k$feature.data, add.meta = T)
 
 eset.12k$group<-sapply(strsplit(eset.12k$cellName,"-"),"[",2) #user define, optional
@@ -98,14 +99,16 @@ generateMICAinput(data= exp.log2 ,filename="PBMC12k_MICA_input.txt")
 ```
 
 
-We also offer a function called `generate_MICA_cmd ` to help write MICA command in a shell script. In order to run MICA on LSF, you need to set `host=lsf`,  define `queue = [your queue]` (required), and `memory` (optional). In `num_cluster`, you can specify a vector of number of K to perform clustering analysis for different number of cluster simultaneously.
+We also offer a function called `generate_MICA_cmd ` to help write MICA command in a shell script. In order to run MICA on LSF, you need to set `host=lsf`,  define `queue = [your queue]` (required), and `config_file=[path to your customized config file]`(optional, default as NULL). In `num_cluster`, you can specify a vector of number of K to perform clustering analysis for different number of cluster simultaneously. 
 
 ```R
-generateMICAcmd(save_sh_at = "./PBMC12k/",
-                input_file = "./PBMC12k/PBMC12k_MICA_input.txt",
+generateMICAcmd(save_sh_at = "./",
+                input_file = "./PBMC12k_MICA_input.txt",
                 project_name = "PBMC12k",
                 num_cluster = c(8,9,10,12,13,14,15),
+                output_path= "./",
                 host = "lsf",
+                queue = "standard",
                 output_path = "./")
 ```
 

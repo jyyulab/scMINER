@@ -75,21 +75,20 @@ generateMICAinput <- function(d,filename){
 }
 
 
-
 #' Generate MICA command script for job submission on local or LSF
 #'
 #' @description Generate command for running MICA locally or on LSF.
 #' MICA is a high-performance clustering analysis method that was implemented in python and cwl.
 #'
-#' @param save_sh_at character, path to save your MICA command file;
-#' @param input_file character, path to actual input file for MICA, usually use \code{generateMICAinput} to generete file with desired format.
+#' @param save_sh_at path to save your MICA command file;
+#' @param input_file path to actual input file for MICA, usually use \code{generateMICAinput} to generete file with desired format.
 #' @param project_name character, name of your project, will be used for naming of output data
 #' @param num_cluster a vector or a numerical number, the number of clusters
-#' @param output_path character, path to MICA output file
-#'
+#' @param output_path path to MICA output file
 #' @param host character, whether you want to run MICA pipeline on "lsf" or "local"
-#' @param queue character. If host="lsf", which queue to submit your job, default as NULL
-#' @param threads number of threads for pooling in clustering step, default as 10.
+#' @param queue character. If host="lsf", which queue to submit your run_MICA.sh, default as NULL
+#' @param config_file path to your customized config file; if use default file, then keep as NULL; defualt as NULL.
+#' @param threads number of threads for pooling in clustering step, default as 6
 #' @param bootstrap number of iterations of k-means process, default as 10.
 #' @param dim_reduction_method character, default as "mds". Other supported methods include "pca" and "lpl".
 #' @param visualization character, visualization method used for visualize final clustering results. default as "tsne", other supported methods includes "umap"
@@ -104,8 +103,8 @@ generateMICAinput <- function(d,filename){
 #' generateMICAcmd<-function("./cmd", #path to save shell script
 #'                             "MICA_input.txt", #your MICA input file
 #'                             "test",
-#'                             c(3,4,5), #a vector of numerical number
-#'                             "./",
+#'                             num_cluster=c(3,4,5), #a vector of numerical number
+#'                             output_path="./",
 #'                             host="lsf", #or local
 #'                             dim_reduction_method="MDS",
 #'                             visualization="tsne")
@@ -113,12 +112,13 @@ generateMICAinput <- function(d,filename){
 #' @export
 generateMICAcmd<-function(save_sh_at,
                             input_file,
-                            project_name,
-                            num_cluster,
+                            project_name="test",
+                            num_cluster=c(3,4,5),
                             output_path,
                             host="lsf",
                             queue="standard",
-                            threads=10,
+                            config_file=NULL,
+                            threads=6,
                             bootstrap=10,
                             dim_reduction_method="MDS",
                             visualization="tsne",
@@ -137,7 +137,7 @@ generateMICAcmd<-function(save_sh_at,
 
   if (tolower(host)=="lsf"){
 
-    cat("For lsf usage, if you need to change configuration file,
+    cat("For lsf usage, if you need to specify your own configuration file,
     please take https://github.com/jyyulab/MICA/blob/master/MICA/config/config_cwlexec.json as your reference.","\n")
 
     project<-ifelse(is.null(project_name),'',paste('#BSUB -P ',project_name,' \n'))
@@ -155,12 +155,14 @@ generateMICAcmd<-function(save_sh_at,
       '#BSUB -eo ',project_name,'.sh.err \n',
       '#BSUB -R \"rusage[mem=2000]\" \n',
       queue.bash,
-      "mica lsf ")
+      "mica lsf ",
+      ifelse(is.null(config_file),"",paste0("-j ", normalizePath(config_file), " ")))
 
   } else if (tolower(host)=="local") {
     sh.scminer<-paste0(
       '#!/bin/env bash\n' ,
-      "mica local ")
+      "mica local ",
+      ifelse(is.null(bootstrap),"",paste0("-b ",bootstrap," ")))
   }
 
   #add generic attributes
