@@ -86,6 +86,7 @@ generateMICAinput <- function(d,filename){
 #' @param project_name character, name of your project, will be used for naming of output data
 #' @param num_cluster a vector or a numerical number, the number of clusters
 #' @param output_path character, path to MICA output file
+#'
 #' @param host character, whether you want to run MICA pipeline on "lsf" or "local"
 #' @param queue character. If host="lsf", which queue to submit your job, default as NULL
 #' @param memory a vector of numerical number, default as NULL
@@ -107,8 +108,6 @@ generateMICAinput <- function(d,filename){
 #'                             c(3,4,5), #a vector of numerical number
 #'                             "./",
 #'                             host="lsf", #or local
-#'                             queue=NULL, #your queue to submit the job
-#'                             memory=NULL, #specify if you use LSF
 #'                             dim_reduction_method="MDS",
 #'                             visualization="tsne")
 #'}
@@ -119,8 +118,6 @@ generateMICAcmd<-function(save_sh_at,
                             num_cluster,
                             output_path,
                             host="lsf",
-                            queue="standard",
-                            memory=NULL,
                             threads=10,
                             bootstrap=10,
                             dim_reduction_method="MDS",
@@ -132,14 +129,17 @@ generateMICAcmd<-function(save_sh_at,
   #sanity check
   if(!dir.exists(save_sh_at)) dir.create(save_sh_at)
   if(!dir.exists(output_path)) dir.create(output_path)
+
   if(!file.exists(input_file)) stop("Input file not found!")
 
   file.sh<-file.path(save_sh_at,paste0("01_run_MICA_",project_name,'.sh'))
   if(file.exists(file.sh)) stop("File already existed!")
 
-  sink(file.sh)
-
   if (tolower(host)=="lsf"){
+
+    cat("For lsf usage, if you need to change configuration file,
+    please take https://github.com/jyyulab/MICA/blob/master/MICA/config/config_cwlexec.json as your reference.","\n")
+
     project<-ifelse(is.null(project_name),'',paste('#BSUB -P ',project_name,' \n'))
     queue.bash<-ifelse(is.null(queue),'',paste('#BSUB -q ', queue,' \n'))
 
@@ -158,6 +158,7 @@ generateMICAcmd<-function(save_sh_at,
       "mica lsf ",
       ifelse(is.null(memory),"",paste0("-r ",paste0(memory, collapse = ""), " ")),
       ifelse(is.null(queue),"",paste0("-q ", queue, " ")))
+
   } else if (tolower(host)=="local") {
     sh.scminer<-paste0(
       '#!/bin/env bash\n' ,
@@ -178,6 +179,8 @@ generateMICAcmd<-function(save_sh_at,
     ifelse(is.null(slice_size),"",paste0("-sn ", slice_size," ")),
     ifelse(is.null(threads),"",paste0("-t ", threads," "))
   )
+
+  sink(file.sh)
   cat(sh.scminer)
   sink()
 

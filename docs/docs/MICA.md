@@ -47,7 +47,7 @@ scMINER::generate_MICA_cmd(save_sh_at, #path to save shell script
                   			num_cluster, #a vector of numerical number
                   			output_path, #path to MICA output
                   			host="local", 
-		                        visualization="tsne" #or "umap")
+		                    visualization="tsne" #or "umap")
 ```
 
 or, you can create your own shell script as:
@@ -68,7 +68,8 @@ sh your_mica_cmd.sh
 ```
 
 ### On LSF
-To perform MICA on LSF, you have to specify `host="lsf"`, which queue to submit your job `queue=[your_queue]`, and also memory requested for MICA.
+To perform MICA on LSF, you have to specify `host="lsf"`. Cwlexec takes a config json file to specify parameters for batch job submission. After MICA was installed, you are able to find the default config file in site package folder under `MICA/MICA/config/config_cwlexec.json`. 
+
 ```R
 scMINER::generateMICAcmd(save_sh_at, #path to save shell script 
                             input_file, #your MICA input file
@@ -76,23 +77,22 @@ scMINER::generateMICAcmd(save_sh_at, #path to save shell script
                             num_cluster, #a vector of numerical number
                             output_path, 
                             host="lsf", #or local
-                            queue=NULL, #your queue to submit the job
-                            memory=NULL, #specify if you use LSF, a vector of 4 numerical number
                             dim_reduction_method="MDS", 
                             visualization="tsne")
 ```
 
-Or, you can create your shell script as:
+Or, you can create your shell script as below, if you would like to specify your config file, please use `-c`.
 
 ```
 #!/usr/bin/env bash
 mica LSF \
 -i ./test_data/inputs/PBMC_Demo_MICA_input_mini.txt \
--r 8000 12000 12000 16000
--q [your queue]
+-j [your_config_file]\
 -p "test_local" \
 -k 3 4 \
--o ./test_data/outputs/test_local/ \
+-o ./test_data/outputs/test_local/ 
+-c [path to your config file]
+
 ```
 
 To execute your shell script on LSF, we suggest
