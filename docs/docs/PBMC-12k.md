@@ -256,7 +256,7 @@ Identify hidden driver from content-based network is the key step in scMINER to 
 
 ### Calculate activity
 {: no_toc }
-Activity calculation is the basis of driver estimation in scMINER. To infer driver activity, expression profile of their targets are intergrated via function `GetActivityFromSJARACNe`. This function takes SJARACNe output path and expression set as input, and return an activity set as well as structured network files if set 	`save_network_files=TRUE`. 
+Activity calculation is the basis of driver estimation in scMINER. To infer driver activity, expression profile of their targets are intergrated via function `GetActivityFromSJARACNe`. This function takes SJARACNe output path and expression set as input, and return an activity set as well as structured network files if set `save_network_files=TRUE`. **Please note that this function could only work if you used `generateSJARACNeInput` to create SJARACNe input directory and files.**
 
 Since scRNA-seq data are extremly sparse and noisy, please set `activity.method` as `'unweighted'`. 
 
@@ -275,16 +275,16 @@ acs.12k <- GetActivityFromSJARACNe(
 ### Driver estimation by differential activity analysis
 {: no_toc }
 
-The function `FindDAG` was designed to perform differnetial activity analysis from SJARACNe inferred activity matrix. In this function, two-sided student's t-test will be performed to compare mean activity from one cell type V.S. the others. It will return a data frame that includes all TF occurred in original data. Statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help identify hidden drivers. You can save it to file in order to check them manually. 
+The function `get.DA` was designed to perform differnetial activity analysis from SJARACNe inferred activity matrix. In this function, two-sided student's t-test will be performed to compare mean activity from one cell type V.S. the others. It will return a data frame that includes all TF occurred in original data. Statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help identify hidden drivers. You can save it to file in order to check them manually. 
 
 ```R
-DAG_result <- FindDAG(input_eset = acs.12k,group_tag = "celltype")
+DAG_result <- get.DA(input_eset = acs.12k,group_tag = "celltype")
 ```
 
-We also offer a function called `TopDriversfromDAG` to help picking top drivers for each cell type. You can specify `n` as maximum number of top drivers to pick, and `degree_filter` to restrict number of targets.
+We also offer a function called `get.Topdrivers` to help picking top drivers for each cell type. You can specify `n` as maximum number of top drivers to pick, and `degree_filter` to restrict number of targets. 
 
 ```R
-TF_list <- TopDriversfromDAG(DAG_result = DAG_result,
+TF_list <-get.Topdrivers(DAG_result = DAG_result,
                              celltype = levels(acs.12k$celltype), # ensure cluster order
                              n = 5, degree_filter = c(50,600))
 ```
@@ -293,12 +293,11 @@ TF_list <- TopDriversfromDAG(DAG_result = DAG_result,
 In scMINER, we provide a handful of visualizations to compare driver activity from different cell type/clusters. Here we demo two basic functions: `feature_heatmap` and `feature_vlnplot`. These functions could be used on either expression and activty matrix.
 
 ```R
-feature_heatmap(input_eset = acs.12k,target = TF_list,group_tag = "celltype",feature = "geneSymbol",
+feature_heatmap(input_eset = acs.12k, target = TF_list, group_tag = "celltype",feature = "geneSymbol",
                 width = 6,height = 6, save_plot=TRUE, cluster_rows = FALSE,
                 name = "Activity",plot_name="./21_TopTFHeatmap.png")
 ```
 <center><img src="./plots/4_1_TopTFHeatmap.png" alt="Driver heatmap" width="550"></center>
-
 
 ```R
 #check postive controls

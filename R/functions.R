@@ -590,12 +590,13 @@ draw.marker.bbp<-function(ref = NULL,input_eset,
 #' @export
 GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
 							   SJARACNe_input_eset=NA,
+							   functype="tf",
 							   group_tag=NA,
 							   activity.method="unweighted",
 							   activity.norm=TRUE,
 							   save_network_file=FALSE,
-							   functype="tf",
-							   save_path=NA){
+							   save_path=NULL){
+
   eset<-SJARACNe_input_eset;
 
   if(!group_tag%in%colnames(pData(eset))){
@@ -633,12 +634,12 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
       f<-output.files[grep(paste0("/",net,"_"),output.files)]
 
       if (length(grep("/tf/",f)!=0))
-        {TF.net<-NetBID2::get.SJAracne.network(network_file = f[grep("/tf/",f)])}
+        {TF.table<-NetBID2::get.SJAracne.network(network_file = f[grep("/tf/",f)])}
       if(length(grep("/sig/",f)!=0))
         {SIG.table<-NetBID2::get.SJAracne.network(network_file= f[grep("/sig/",f)])}
 
       if(save_network_file){
-        if(!is.null(TF.table)) save(TF.net,file=file.path(save_path,paste0(net,".TF.network")))
+        if(!is.null(TF.table)) save(TF.table,file=file.path(save_path,paste0(net,".TF.network")))
         if(!is.null(SIG.table)) save(SIG.table,file=file.path(save_path,paste0(net,".TF.network")))
         cat("Network saved for ", net,"\n")
       }
@@ -646,7 +647,7 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
   	  cat("Calculate Activity for ",net,"!",'\n')
   	  eset.sel<-eset[,pData(eset)[,group_tag]==net]
 
-      acs1<-get_activity(Net = TF.net$network_dat,tag = "TF",normalize=activity.norm,
+      acs1<-get_activity(Net = TF.table$network_dat,tag = "TF",normalize=activity.norm,
     					   eset = eset.sel, activity.method = activity.method)
 
       acs2<-get_activity(Net = SIG.table$network_dat,tag = "SIG",normalize=activity.norm,
@@ -1027,7 +1028,7 @@ get.DA<-function(input_eset=NULL,group_tag="celltype",group_case=NULL, group_ctr
 #' @param celltype character, output top hits are from which celltype
 #' @return A list of top master regulators among different groups
 #' @export
-get.Topdrivers <- function(DAG_result=res,n=5,degree_filter=c(50,500),celltype=NULL){
+get.Topdrivers <- function(DAG_result= DAG_result, n=5, degree_filter=c(50,500), celltype=NULL){
 
   rownames(DAG_result)<-DAG_result$id
   cols <- colnames(DAG_result)

@@ -124,17 +124,17 @@ pd<-pData(eset)
 p1 <- ggplot(pd,aes_string(x=group,y="nUMI.total",fill=group)) +
       theme_classic()+
       geom_violin(scale="width", na.rm=TRUE)+
-      geom_jitter(size=0.4, alpha=0.6,width=0.5)+
+      geom_jitter(size=0.4, alpha=0.3,width=0.4)+
       geom_boxplot(width=0.3,outlier.size = 0.25, outlier.stroke = 0.5,fill="white")+
       labs(x=" ",y="nUMI",title="") +
       theme(legend.position="none",plot.title=element_text(size=8))
   if(params$output.cutoff){
     p1<- p1 + geom_hline(yintercept = cfs$umi_cf_lo, data = as.data.frame(cfs$umi_cf_lo),
                  color="blue",size=2,alpha = 0.3) +
-              geom_label(aes(1,cfs$umi_cf_lo,label = cfs$umi_cf_lo, vjust = -1),size=2,colour="white")+
+              geom_label(aes(1,cfs$umi_cf_lo,label = cfs$umi_cf_lo, vjust = -1),size=3,colour="white")+
               geom_hline(yintercept = cfs$umi_cf_hi, data = as.data.frame(cfs$umi_cf_hi),
                  color="blue",size=2,alpha = 0.3) +
-              geom_label(aes(1,cfs$umi_cf_hi,label = cfs$umi_cf_hi, vjust = 1),size=2,colour="white")
+              geom_label(aes(1,cfs$umi_cf_hi,label = cfs$umi_cf_hi, vjust = 1),size=3,colour="white")
     }
 
 p2 <- ggplot(pd,aes_string(x=group, y="nGene",fill=group)) +
@@ -213,7 +213,8 @@ p.cell.2
 #### 2.2 Basic summary
 ```{r Output Basic statistics, echo=FALSE}
   
-df<-apply(pData(eset)[,c("nCell","nGene","nUMI.total","percent.mito","percent.spikeIn")],2,summary)
+df<-apply(pData(eset)[,c("nGene","nUMI.total","percent.mito","percent.spikeIn")],2,summary)
+df<-cbind(summary(fData(eset)[,"nCells"]),df)
 
 para_table <- df
 colnames(para_table) <- c("# Cells per Gene", "# Identified Genes", "# Identified UMIs", "% Mitochondrial Genes","% SpikeIn Genes")
