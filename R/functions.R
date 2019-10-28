@@ -259,7 +259,7 @@ generateMICAinput <- function(d,filename){
 #'
 #' @param save_sh_at path to save your MICA command file;
 #' @param input_file path to actual input file for MICA, usually use \code{generateMICAinput} to generete file with desired format.
-#' @param project_name character, name of your project, will be used for naming of output data
+#' @param project_name character, name of your project, will be used for naming output data
 #' @param num_cluster a vector or a numerical number, the number of clusters
 #' @param output_path path to MICA output file
 #' @param host character, whether you want to run MICA pipeline on "lsf" or "local"
@@ -304,19 +304,20 @@ generateMICAcmd<-function(save_sh_at,
   #sanity check
   if(!dir.exists(save_sh_at)) dir.create(save_sh_at)
   if(!dir.exists(output_path)) dir.create(output_path)
-
   if(!file.exists(input_file)) stop("Input file not found!")
-
   file.sh<-file.path(save_sh_at,paste0("01_run_MICA_",project_name,'.sh'))
   if(file.exists(file.sh)) stop("File already existed!")
 
+  #add host specific attributes
   if (tolower(host)=="lsf"){
-
     cat("For lsf usage, if you need to specify your own configuration file,
     please take https://github.com/jyyulab/MICA/blob/master/MICA/config/config_cwlexec.json as your reference.","\n")
 
     project<-ifelse(is.null(project_name),'',paste('#BSUB -P ',project_name,' \n'))
     queue.bash<-ifelse(is.null(queue),'',paste('#BSUB -q ', queue,' \n'))
+    config.bash<-ifelse(is.null(config_file),
+                        paste0("-j ", system.file("config_template", "config_cwlexec.json", package = "scMINER"), " "),
+                        paste0("-j ", normalizePath(config_file), " "))
 
     job<-ifelse(is.null(project_name),
           '#BSUB -J MICA',
@@ -331,7 +332,7 @@ generateMICAcmd<-function(save_sh_at,
       '#BSUB -R \"rusage[mem=2000]\" \n',
       queue.bash,
       "mica lsf ",
-      ifelse(is.null(config_file),"",paste0("-j ", normalizePath(config_file), " ")))
+      config.bash)
 
   } else if (tolower(host)=="local") {
     sh.scminer<-paste0(

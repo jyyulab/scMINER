@@ -1,0 +1,23 @@
+{
+    "queue": "standard",
+    "rerunnable": true,
+    "project": "MICA",
+    "steps": {
+        "prep": {
+            "res_req": "rusage[mem=16000MB]"
+        },
+        "calc_pairwise_MI": {
+            "res_req": "rusage[mem=2000MB]"
+        },
+        "mergeAndnorm": {
+            "res_req": "rusage[mem=12000MB]"
+        },
+        "dimension_reduce": {
+            "res_req": "rusage[mem=16000MB]"
+        },
+        "clustering": {
+            "processors": "8",
+            "res_req": "span[ptile=8] rusage[mem=2000MB]"
+        }
+    }
+}
