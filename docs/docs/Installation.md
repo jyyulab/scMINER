@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Installation
+title: Installing scMINER
 nav_order: 2
 
 ---
