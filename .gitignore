@@ -4,3 +4,4 @@ docs/.jekyll-cache
 .Rhistory
 .RData
 .Ruserdata
+.idea/*
