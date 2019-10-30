@@ -1,195 +1,25 @@
-<!DOCTYPE html>
-
-<html lang="en-us">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-  
-
-  <title>Advanced analysis - </title>
-  <link rel="stylesheet" href="http://localhost:4000/assets/css/just-the-docs.css">
-
-  
-
-  
-  <script type="text/javascript" src="http://localhost:4000/assets/js/just-the-docs.js"></script>
-
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-
-<body>
-
-  <div class="page-wrap">
-    <div class="side-bar">
-      <a href="http://localhost:4000" class="site-title fs-6 lh-tight"></a>
-      <span class="fs-3"><button class="js-main-nav-trigger navigation-list-toggle btn btn-outline" type="button" data-text-toggle="Hide">Menu</button></span>
-      <div class="navigation main-nav js-main-nav">
-        <nav role="navigation" aria-label="Main navigation">
-  <ul class="navigation-list">
-    
-    
-      
-        
-          <li class="navigation-list-item active">
-            
-            <a href="http://localhost:4000/docs/index-test.html" class="navigation-list-link"></a>
-            
-          </li>
-        
-      
-    
-      
-        
-          <li class="navigation-list-item">
-            
-            <a href="http://localhost:4000/" class="navigation-list-link">Welcome</a>
-            
-          </li>
-        
-      
-    
-      
-        
-          <li class="navigation-list-item">
-            
-            <a href="http://localhost:4000/docs/Installation.html" class="navigation-list-link">Installation</a>
-            
-          </li>
-        
-      
-    
-      
-        
-          <li class="navigation-list-item">
-            
-            <a href="http://localhost:4000/docs/MICA.html" class="navigation-list-link">Clustering with MICA</a>
-            
-          </li>
-        
-      
-    
-      
-        
-          <li class="navigation-list-item">
-            
-            <a href="http://localhost:4000/docs/PBMC-12k.html" class="navigation-list-link">Step by step user guidance</a>
-            
-          </li>
-        
-      
-    
-      
-        
-          <li class="navigation-list-item active">
-            
-            <a href="http://localhost:4000/docs/PBMC-12k-network.html" class="navigation-list-link active">Advanced analysis</a>
-            
-          </li>
-        
-      
-    
-      
-        
-          <li class="navigation-list-item">
-            
-            <a href="http://localhost:4000/docs/About.html" class="navigation-list-link">About</a>
-            
-          </li>
-        
-      
-    
-  </ul>
-</nav>
-
-      </div>
-      <footer role="contentinfo" class="site-footer">
-        <p class="text-small text-grey-dk-000 mb-0">This site uses <a href="https://github.com/pmarsceill/just-the-docs">Just the Docs</a>, a documentation theme for Jekyll.</p>
-      </footer>
-    </div>
-    <div class="main-content-wrap js-main-content" tabindex="0">
-      <div class="page-header">
-        <div class="main-content">
-          
-          
-        </div>
-      </div>
-      <div class="main-content">
-        
-          
-        
-        <div id="main-content" class="page-content" role="main">
-          <h1 class="no_toc" id="advanced-analysis">Advanced analysis</h1>
-<p>Here we demonstrate our advanced downstream analysis pipeline using PBMC (10x genmomics) scRNA-seq data after following driver estimation tutorial under <a href="./PBMC-12k.md">step by step user guide</a>.</p>
-
-<h2 id="network-visualization">Network visualization</h2>
-<p>scMINER incorporates a handful of network visualization/exploration function adapted from <a href="https://jyyulab.github.io/NetBID/">NetBID2</a>, a powerful tool for data-driven network-based bayesian Inference of drivers. scMINER also offered several wrappers of basic visualization functions in NetBID2 for better usability.</p>
-
-<h3 id="load-networks">Load networks</h3>
-<p>You can retrieve your network and store them in a network structure with function <code class="highlighter-rouge">NetBID2::get.SJAracne.network</code>.</p>
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">net1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">NetBID2</span><span class="o">::</span><span class="n">get.SJAracne.network</span><span class="p">(</span><span class="s1">'SJARACNE/NaiveT_8469_8468_4421/tf/SJARACNE_NaiveT_8469_8468_4421/SJARACNE_out.final/consensus_network_ncol_.txt'</span><span class="p">)</span><span class="w">
+<!DOCTYPE html> <html lang="en-US"> <head> <meta charset="UTF-8"> <meta http-equiv="X-UA-Compatible" content="IE=Edge"> <title>Advanced analysis - </title> <link rel="shortcut icon" href="http://localhost:4000/favicon.ico" type="image/x-icon"> <link rel="stylesheet" href="http://localhost:4000/assets/css/just-the-docs.css"> <script type="text/javascript" src="http://localhost:4000/assets/js/vendor/lunr.min.js"></script> <script type="text/javascript" src="http://localhost:4000/assets/js/just-the-docs.js"></script> <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- Begin Jekyll SEO tag v2.6.1 --> <title>Advanced analysis</title> <meta name="generator" content="Jekyll v4.0.0" /> <meta property="og:title" content="Advanced analysis" /> <meta property="og:locale" content="en_US" /> <link rel="canonical" href="http://localhost:4000/docs/PBMC-12k-network.html" /> <meta property="og:url" content="http://localhost:4000/docs/PBMC-12k-network.html" /> <script type="application/ld+json"> {"@type":"WebPage","headline":"Advanced analysis","url":"http://localhost:4000/docs/PBMC-12k-network.html","@context":"https://schema.org"}</script> <!-- End Jekyll SEO tag --> </head> <body> <svg xmlns="http://www.w3.org/2000/svg" style="display: none;"> <symbol id="link" viewBox="0 0 16 16"> <title>Link</title> <path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path> </symbol> </svg> <div class="page-wrap"> <div class="side-bar"> <div class="site-header"> <a href="http://localhost:4000" class="site-title lh-tight"> </a> <button class="menu-button fs-3 js-main-nav-trigger" data-text-toggle="Hide" type="button">Menu</button> </div> <div class="navigation main-nav js-main-nav"> <nav role="navigation" aria-label="Main navigation"> <ul class="navigation-list"><li class="navigation-list-item active"><a href="http://localhost:4000/docs/index-test.html" class="navigation-list-link"></a></li><li class="navigation-list-item"><a href="http://localhost:4000/" class="navigation-list-link">Welcome</a></li><li class="navigation-list-item"><a href="http://localhost:4000/docs/Installation.html" class="navigation-list-link">Installation</a></li><li class="navigation-list-item"><a href="http://localhost:4000/docs/MICA.html" class="navigation-list-link">Clustering with MICA</a></li><li class="navigation-list-item"><a href="http://localhost:4000/docs/PBMC-12k.html" class="navigation-list-link">Step by step user guidance</a></li><li class="navigation-list-item active"><a href="http://localhost:4000/docs/PBMC-12k-network.html" class="navigation-list-link active">Advanced analysis</a></li><li class="navigation-list-item"><a href="http://localhost:4000/docs/About.html" class="navigation-list-link">About</a></li></ul> </nav> </div> <footer class="site-footer"> <p class="text-small text-grey-dk-000 mb-4">This site uses <a href="https://github.com/pmarsceill/just-the-docs">Just the Docs</a>, a documentation theme for Jekyll.</p> </footer> </div> <div class="main-content-wrap js-main-content" tabindex="0"> <div class="main-content"> <div class="page-header js-page-header"> <div class="search"> <div class="search-input-wrap"> <input type="text" class="js-search-input search-input" tabindex="0" placeholder="Search " aria-label="Search " autocomplete="off"> <svg width="14" height="14" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" class="search-icon"><title>Search</title><g fill-rule="nonzero"><path d="M17.332 20.735c-5.537 0-10-4.6-10-10.247 0-5.646 4.463-10.247 10-10.247 5.536 0 10 4.601 10 10.247s-4.464 10.247-10 10.247zm0-4c3.3 0 6-2.783 6-6.247 0-3.463-2.7-6.247-6-6.247s-6 2.784-6 6.247c0 3.464 2.7 6.247 6 6.247z"/><path d="M11.672 13.791L.192 25.271 3.02 28.1 14.5 16.62z"/></g></svg> </div> <div class="js-search-results search-results-wrap"></div> </div> </div> <div class="page"> <div id="main-content" class="page-content" role="main"> <h1 class="no_toc" id="advanced-analysis"> <a href="#advanced-analysis" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#link"></use></svg></a> Advanced analysis </h1> <p>Here we demonstrate our advanced downstream analysis pipeline using PBMC (10x genmomics) scRNA-seq data after following driver estimation tutorial under <a href="./PBMC-12k.md">step by step user guide</a>.</p> <h2 id="network-visualization"> <a href="#network-visualization" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#link"></use></svg></a> Network visualization </h2> <p>scMINER incorporates a handful of network visualization/exploration function adapted from <a href="https://jyyulab.github.io/NetBID/">NetBID2</a>, a powerful tool for data-driven network-based bayesian Inference of drivers. scMINER also offered several wrappers of basic visualization functions in NetBID2 for better usability.</p> <h3 id="load-networks"> <a href="#load-networks" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#link"></use></svg></a> Load networks </h3> <p>You can retrieve your network and store them in a network structure with function <code class="highlighter-rouge">NetBID2::get.SJAracne.network</code>.</p> <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">net1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">NetBID2</span><span class="o">::</span><span class="n">get.SJAracne.network</span><span class="p">(</span><span class="s1">'SJARACNE/NaiveT_8469_8468_4421/tf/SJARACNE_NaiveT_8469_8468_4421/SJARACNE_out.final/consensus_network_ncol_.txt'</span><span class="p">)</span><span class="w">
 </span><span class="n">net2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">NetBID2</span><span class="o">::</span><span class="n">get.SJAracne.network</span><span class="p">(</span><span class="s1">'SJARACNE/Tmem_8489_8488_2482/tf/SJARACNE_Tmem_8489_8488_2482/SJARACNE_out.final/consensus_network_ncol_.txt'</span><span class="p">)</span><span class="w">
-</span></code></pre></div></div>
-
-<p>Or, if you followed our analysis pipeline under <a href="./PBMC-12k.md">step by step user guide</a>, you should be able to load 
-your network files under <code class="highlighter-rouge">./networks</code> folder:</p>
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">load</span><span class="p">(</span><span class="s2">"./networks/NaiveT_TF.network"</span><span class="p">)</span><span class="w">
-</span></code></pre></div></div>
-
-<h3 id="single-network-visualization">Single network visualization</h3>
-<p>In scMINER, you can visualize your driver and its targets by function <code class="highlighter-rouge">draw.network</code>. It was adapted from function <code class="highlighter-rouge">draw.targetNet</code> and <code class="highlighter-rouge">draw.targetNet.TWO</code> from <code class="highlighter-rouge">NetBID2</code>. This function can help visualize a driver’s targets as well as the relationship(edge) between source and target genes, by taking Mutual information as edge weight, and spearman correlation as direction.</p>
-
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">draw.network</span><span class="p">(</span><span class="n">net1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">net</span><span class="p">,</span><span class="n">src1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"LEF1"</span><span class="p">,</span><span class="w"> </span><span class="c1">#driver name</span><span class="w">
+</span></code></pre></div></div> <p>Or, if you followed our analysis pipeline under <a href="./PBMC-12k.md">step by step user guide</a>, you should be able to load your network files under <code class="highlighter-rouge">./networks</code> folder:</p> <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">load</span><span class="p">(</span><span class="s2">"./networks/NaiveT_TF.network"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div> <h3 id="single-network-visualization"> <a href="#single-network-visualization" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#link"></use></svg></a> Single network visualization </h3> <p>In scMINER, you can visualize your driver and its targets by function <code class="highlighter-rouge">draw.network</code>. It was adapted from function <code class="highlighter-rouge">draw.targetNet</code> and <code class="highlighter-rouge">draw.targetNet.TWO</code> from <code class="highlighter-rouge">NetBID2</code>. This function can help visualize a driver’s targets as well as the relationship(edge) between source and target genes, by taking Mutual information as edge weight, and spearman correlation as direction.</p> <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">draw.network</span><span class="p">(</span><span class="n">net1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">net</span><span class="p">,</span><span class="n">src1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"LEF1"</span><span class="p">,</span><span class="w"> </span><span class="c1">#driver name</span><span class="w">
 	</span><span class="n">ifSymbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="c1">#if your source driver name is a Symbol </span><span class="w">
 	</span><span class="n">ifWeighted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="c1">#if plot edge with weight and direction</span><span class="w">
 	</span><span class="n">pdf_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"LEF1.TF_in_NaiveT_network.pdf"</span><span class="p">,</span><span class="w">
 	</span><span class="n">n_layer</span><span class="o">=</span><span class="m">4</span><span class="p">)</span><span class="w">
 
-</span></code></pre></div></div>
-<center><img src="./plots/LEF1.TF_in_NaiveT_network.png" alt="drawing" width="600" /></center>
-
-<h3 id="subnetwork-structure-visualization-between-two-networks">Subnetwork structure visualization between two networks</h3>
-<p>You can also use <code class="highlighter-rouge">draw.network</code> function to visualize two networks and their subnetwork structure. This could be used for:</p>
-<ul>
-  <li>Identify common targets from two top driver from the same network</li>
-  <li>Identify network rewiring event of same driver in different cell type network.</li>
-</ul>
-
-<p>Here below is an example for later case:</p>
-
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">draw.network</span><span class="p">(</span><span class="n">net1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">net1</span><span class="p">,</span><span class="n">net2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">net2</span><span class="p">,</span><span class="w">
+</span></code></pre></div></div> <center><img src="./plots/LEF1.TF_in_NaiveT_network.png" alt="drawing" width="600" /></center> <h3 id="subnetwork-structure-visualization-between-two-networks"> <a href="#subnetwork-structure-visualization-between-two-networks" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#link"></use></svg></a> Subnetwork structure visualization between two networks </h3> <p>You can also use <code class="highlighter-rouge">draw.network</code> function to visualize two networks and their subnetwork structure. This could be used for:</p> <ul> <li>Identify common targets from two top driver from the same network</li> <li>Identify network rewiring event of same driver in different cell type network.</li> </ul> <p>Here below is an example for later case:</p> <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">draw.network</span><span class="p">(</span><span class="n">net1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">net1</span><span class="p">,</span><span class="n">net2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">net2</span><span class="p">,</span><span class="w">
 		</span><span class="n">src1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"BATF"</span><span class="p">,</span><span class="n">src2</span><span class="o">=</span><span class="s2">"BATF"</span><span class="p">,</span><span class="w"> 
 		</span><span class="n">source1_z</span><span class="o">=</span><span class="m">-3</span><span class="p">,</span><span class="w"> </span><span class="n">source2_z</span><span class="o">=</span><span class="m">4</span><span class="p">,</span><span class="w">
 		</span><span class="n">ifSymbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="n">ifWeighted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="w">
 		</span><span class="n">pdf_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"BATF.TF_in_2_network.pdf"</span><span class="p">,</span><span class="w">
 		</span><span class="n">n_layer</span><span class="o">=</span><span class="m">4</span><span class="p">)</span><span class="w">
-</span></code></pre></div></div>
-<center><img src="./plots/BATF.TF_in_2_network.png" alt="drawing" width="600" /></center>
-
-<h2 id="biological-function-anlaysis-for-drivers">Biological function anlaysis for drivers</h2>
-
-<h3 id="gene-set-overlap-with-targets-visualized-by-bubble-plot">Gene set overlap with targets visualized by bubble plot</h3>
-<p>When picking candidate hidden drivers, it would be extremly helpful if we could identify the potential biological pathways this driver regulates. With SJARACNe infered network, we can assess as well as  visualizethe overlap between knowledge-based gene sets and driver’s targets via function <code class="highlighter-rouge">draw.bubblePlot</code>. This function returns a bubble plot indiating results from Fisher exact test.</p>
-
-<p>Before using<code class="highlighter-rouge">draw.bubblePlot</code> function, you have to load genesets in your working environment by function <code class="highlighter-rouge">gs.preload()</code></p>
-
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gs.preload</span><span class="p">(</span><span class="n">use_spe</span><span class="o">=</span><span class="s1">'Homo sapiens'</span><span class="p">,</span><span class="n">update</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span><span class="w">
-</span></code></pre></div></div>
-
-<p>Then you can use function <code class="highlighter-rouge">TopMasterRegulator</code> to pull out top hidden driver candidates from your Differential activity analysis results. Or write your own fucntions to hand pick candidate to visualize. Here we provide an example of using function <code class="highlighter-rouge">TopMasterRegulator</code>.</p>
-
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">TF_list</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">TopMasterRegulator</span><span class="p">(</span><span class="n">DAG_result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DAG_result</span><span class="p">,</span><span class="w">
+</span></code></pre></div></div> <center><img src="./plots/BATF.TF_in_2_network.png" alt="drawing" width="600" /></center> <h2 id="biological-function-anlaysis-for-drivers"> <a href="#biological-function-anlaysis-for-drivers" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#link"></use></svg></a> Biological function anlaysis for drivers </h2> <h3 id="gene-set-overlap-with-targets-visualized-by-bubble-plot"> <a href="#gene-set-overlap-with-targets-visualized-by-bubble-plot" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#link"></use></svg></a> Gene set overlap with targets visualized by bubble plot </h3> <p>When picking candidate hidden drivers, it would be extremly helpful if we could identify the potential biological pathways this driver regulates. With SJARACNe infered network, we can assess as well as visualizethe overlap between knowledge-based gene sets and driver’s targets via function <code class="highlighter-rouge">draw.bubblePlot</code>. This function returns a bubble plot indiating results from Fisher exact test.</p> <p>Before using<code class="highlighter-rouge">draw.bubblePlot</code> function, you have to load genesets in your working environment by function <code class="highlighter-rouge">gs.preload()</code></p> <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gs.preload</span><span class="p">(</span><span class="n">use_spe</span><span class="o">=</span><span class="s1">'Homo sapiens'</span><span class="p">,</span><span class="n">update</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div> <p>Then you can use function <code class="highlighter-rouge">TopMasterRegulator</code> to pull out top hidden driver candidates from your Differential activity analysis results. Or write your own fucntions to hand pick candidate to visualize. Here we provide an example of using function <code class="highlighter-rouge">TopMasterRegulator</code>.</p> <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">TF_list</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">TopMasterRegulator</span><span class="p">(</span><span class="n">DAG_result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DAG_result</span><span class="p">,</span><span class="w">
                               </span><span class="n">celltype</span><span class="o">=</span><span class="s2">"NaiveT"</span><span class="p">,</span><span class="w">
                               </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="n">degree_filter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">50</span><span class="p">,</span><span class="m">800</span><span class="p">))</span><span class="w">
-</span></code></pre></div></div>
-<p>Next generate your ID to symbol conversion table, since all gene sets are curated at gene symbol level. Here in our data, we used ensembl_id as our default ID for network construction. In order to match your ID with gene symbols, you can use function:</p>
-
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tbl</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_IDtransfer2symbol2type</span><span class="p">(</span><span class="n">from_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ensembl_gene_id"</span><span class="p">,</span><span class="w">
+</span></code></pre></div></div> <p>Next generate your ID to symbol conversion table, since all gene sets are curated at gene symbol level. Here in our data, we used ensembl_id as our default ID for network construction. In order to match your ID with gene symbols, you can use function:</p> <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tbl</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get_IDtransfer2symbol2type</span><span class="p">(</span><span class="n">from_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ensembl_gene_id"</span><span class="p">,</span><span class="w">
 		</span><span class="n">use_genes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rownames</span><span class="p">(</span><span class="n">eset.12k</span><span class="p">),</span><span class="n">ignore_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
-</span></code></pre></div></div>
-
-<p>Here we provide an example for ploting overlap between target list of top drivers in Naive T cells, and knowledge based gene sets from “Hallmark”,”KEGG” and “GO”.</p>
-
-<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">draw.bubblePlot</span><span class="p">(</span><span class="n">driver_list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TF_list</span><span class="p">,</span><span class="w">
+</span></code></pre></div></div> <p>Here we provide an example for ploting overlap between target list of top drivers in Naive T cells, and knowledge based gene sets from “Hallmark”,”KEGG” and “GO”.</p> <div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">draw.bubblePlot</span><span class="p">(</span><span class="n">driver_list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TF_list</span><span class="p">,</span><span class="w">
                 </span><span class="n">show_label</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DAG_result</span><span class="p">[</span><span class="n">TF_list</span><span class="p">,</span><span class="s2">"geneSymbol"</span><span class="p">],</span><span class="w">
                 </span><span class="n">Z_val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DAG_result</span><span class="p">[</span><span class="n">TF_list</span><span class="p">,</span><span class="s2">"Z_NaiveT"</span><span class="p">],</span><span class="w">
                 </span><span class="n">driver_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">,</span><span class="w">
@@ -201,11 +31,7 @@ your network files under <code class="highlighter-rouge">./networks</code> folde
                 </span><span class="n">pdf_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'NaiveT_bubblePlot.pdf'</span><span class="p">,</span><span class="w">
                 </span><span class="n">main</span><span class="w"> </span><span class="o">=</span><span class="s1">'Bubbleplot for top driver targets in NaiveT'</span><span class="p">)</span><span class="w">
 
-</span></code></pre></div></div>
-<center><img src="./plots/NaiveT_bubblePlot.png" alt="gsbbp" /></center>
-
-<hr />
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; sessionInfo()
+</span></code></pre></div></div> <center><img src="./plots/NaiveT_bubblePlot.png" alt="gsbbp" /></center> <hr /> <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; sessionInfo()
 R version 3.6.1 (2019-07-05)
 Platform: x86_64-apple-darwin15.6.0 (64-bit)
 Running under: macOS Mojave 10.14.3
@@ -245,15 +71,4 @@ loaded via a namespace (and not attached):
  [89] corpcor_1.6.9          httpuv_1.5.2           R6_2.4.0               latticeExtra_0.6-28    promises_1.0.1         gridExtra_2.3          boot_1.3-23            assertthat_0.2.1      
  [97] rhdf5_2.28.0           openssl_1.4.1          rjson_0.2.20           withr_2.1.2            GenomeInfoDbData_1.2.1 hms_0.5.1              rpart_4.1-15           tidyr_1.0.0           
 [105] minqa_1.2.4            misc3d_0.8-4           numDeriv_2016.8-1.1    shiny_1.3.2            base64enc_0.1-3       
-</code></pre></div></div>
-<hr />
-
-
-          
-        </div>
-      </div>
-    </div>
-  </div>
-
-</body>
-</html>
+</code></pre></div></div><hr /> <hr> <footer role="contentinfo"> <p class="text-small text-grey-dk-000 mb-0">Copyright &copy; 2019 Yu Lab. Distributed by an <a href="https://github.com/jyyulab/scMINER/blob/master/LICENSE.txt">Apache License 2.0.</a></p> </footer> </div> </div> </div> </div> </body> </html>

@@ -1,3 +1,6 @@
+docs/.jekyll-cache/
+.idea/*
+docs/_site/
 .DS_Store
 .Rproj.user
 .Rhistory
