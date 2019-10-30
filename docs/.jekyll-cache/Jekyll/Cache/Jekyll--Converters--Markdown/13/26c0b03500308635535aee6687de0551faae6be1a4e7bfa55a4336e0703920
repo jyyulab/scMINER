@@ -1,0 +1,153 @@
+I"Q0<h1 class="no_toc" id="clustering-analysis-with-mica">Clustering Analysis with MICA</h1>
+<p class="fs-6 fw-300">MICA(Mutual Information based Clustering Analysis) is a nonlinear clustering analysis tool designed for scRNA-seq data. Here we provide a user guide to perform MICA clustering on both local node or LSF platform. To install, please infer our <a href="https://github.com/jyyulab/MICA">MICA</a> github page.</p>
+
+<h2 class="no_toc text-delta" id="table-of-contents">Table of contents</h2>
+
+<ol id="markdown-toc">
+  <li><a href="#overview" id="markdown-toc-overview">Overview</a></li>
+  <li><a href="#preprocssing" id="markdown-toc-preprocssing">Preprocssing</a></li>
+  <li><a href="#basic-usage" id="markdown-toc-basic-usage">Basic usage</a>    <ol>
+      <li><a href="#on-local-host" id="markdown-toc-on-local-host">On local host</a></li>
+      <li><a href="#on-lsf" id="markdown-toc-on-lsf">On LSF</a></li>
+    </ol>
+  </li>
+  <li><a href="#mica-outputs" id="markdown-toc-mica-outputs">MICA Outputs</a></li>
+  <li><a href="#useful-parameters" id="markdown-toc-useful-parameters">Useful parameters</a>    <ol>
+      <li><a href="#visualize-with-u-map-or-t-sne" id="markdown-toc-visualize-with-u-map-or-t-sne">Visualize with U-map or t-SNE</a></li>
+      <li><a href="#try-other-dimension-reduction-methods" id="markdown-toc-try-other-dimension-reduction-methods">Try other dimension reduction methods</a></li>
+      <li><a href="#try-other-distance-matrix-calculation-methods" id="markdown-toc-try-other-distance-matrix-calculation-methods">Try other distance matrix calculation methods</a></li>
+    </ol>
+  </li>
+  <li><a href="#post-clustering-analysis" id="markdown-toc-post-clustering-analysis">Post-clustering analysis</a></li>
+</ol>
+
+<hr />
+
+<h2 id="overview">Overview</h2>
+
+<p><img src="plots/MICA_Overview.png" alt="drawing" width="700" /></p>
+
+<p>MICA is a non-linear clustering analysis algorithm that incorporated:</p>
+<ol>
+  <li>Fast mutual information estimation to construct cell-cell similarity matrix.</li>
+  <li>Multidimensional scaling for stabilized dimension reduction.</li>
+  <li>Consensus clustering from multiple individual runs of kmeans to generate robust clustering results.</li>
+</ol>
+
+<h2 id="preprocssing">Preprocssing</h2>
+<p>MICA module was implemented in python, which only includes clustering analysis. For preprocessing, MICA is compatitble with most published scRNA-seq preprocessing pipeline. However, we highly recommend users to follow our preprocessing framework using <code class="highlighter-rouge">scMINER</code> R package. For detailed information, please see complementary tutorial in tab <code class="highlighter-rouge">Step by step user guide</code>.</p>
+
+<blockquote>
+  <p><strong>MICA only takes cell by gene txt file as input, we strongly recommend using <code class="highlighter-rouge">generateMICAinput</code> function to convert your input data to MICA standard input text file in R.</strong></p>
+</blockquote>
+
+<h2 id="basic-usage">Basic usage</h2>
+<p>MICA incorprated <a href="https://www.commonwl.org/"><em>Common workflow languages</em></a> for portablity and scalability purposes. We adopted <a href="https://github.com/common-workflow-language/cwltool"><em>cwltool</em></a> as runner for local host and <a href="https://github.com/IBMSpectrumComputing/cwlexec"><em>cwlexec</em></a> for LSF platform. While it might introduce some differences for intermediate files, final results will not be affected.</p>
+
+<p>To ensure a user friendly interface, we designed function <code class="highlighter-rouge">generate_MICA_rmd</code> to help users generate complimentary commands for MICA execution. Below are two examples when running MICA on local or LSF host respectively.</p>
+
+<h3 id="on-local-host">On local host</h3>
+<p>To perform MICA on local host, you need to specify <code class="highlighter-rouge">host= "local"</code></p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">scMINER</span><span class="o">::</span><span class="n">generate_MICA_cmd</span><span class="p">(</span><span class="n">save_sh_at</span><span class="p">,</span><span class="w"> </span><span class="c1">#path to save shell script </span><span class="w">
+                  			</span><span class="n">input_file</span><span class="p">,</span><span class="w"> </span><span class="c1">#your MICA input file</span><span class="w">
+                  			</span><span class="n">project_name</span><span class="p">,</span><span class="w">  
+                  			</span><span class="n">num_cluster</span><span class="p">,</span><span class="w"> </span><span class="c1">#a vector of numerical number</span><span class="w">
+                  			</span><span class="n">output_path</span><span class="p">,</span><span class="w"> </span><span class="c1">#path to MICA output</span><span class="w">
+                  			</span><span class="n">host</span><span class="o">=</span><span class="s2">"local"</span><span class="p">,</span><span class="w"> 
+		                        </span><span class="n">visualization</span><span class="o">=</span><span class="s2">"tsne"</span><span class="w"> </span><span class="c1">#or "umap")</span><span class="w">
+</span></code></pre></div></div>
+
+<p>or, you can create your own shell script as:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/usr/bin/env bash</span>
+mica <span class="nb">local</span> <span class="se">\</span>
+<span class="nt">-i</span> ./test_data/inputs/PBMC_Demo_MICA_input_mini.txt <span class="se">\</span>
+<span class="nt">-p</span> <span class="s2">"test_local"</span> <span class="se">\</span>
+<span class="nt">-k</span> 3 4 <span class="se">\</span>
+<span class="nt">-o</span> ./test_data/outputs/test_local/ <span class="se">\</span>
+</code></pre></div></div>
+
+<p>To execute your shell script locally, you can</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sh your_mica_cmd.sh
+</code></pre></div></div>
+
+<h3 id="on-lsf">On LSF</h3>
+<p>To perform MICA on LSF, you have to specify <code class="highlighter-rouge">host="lsf"</code>, which queue to submit your job <code class="highlighter-rouge">queue=[your_queue]</code>, and also memory requested for MICA.</p>
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">scMINER</span><span class="o">::</span><span class="n">generateMICAcmd</span><span class="p">(</span><span class="n">save_sh_at</span><span class="p">,</span><span class="w"> </span><span class="c1">#path to save shell script </span><span class="w">
+                            </span><span class="n">input_file</span><span class="p">,</span><span class="w"> </span><span class="c1">#your MICA input file</span><span class="w">
+                            </span><span class="n">project_name</span><span class="p">,</span><span class="w"> 
+                            </span><span class="n">num_cluster</span><span class="p">,</span><span class="w"> </span><span class="c1">#a vector of numerical number</span><span class="w">
+                            </span><span class="n">output_path</span><span class="p">,</span><span class="w"> 
+                            </span><span class="n">host</span><span class="o">=</span><span class="s2">"lsf"</span><span class="p">,</span><span class="w"> </span><span class="c1">#or local</span><span class="w">
+                            </span><span class="n">queue</span><span class="o">=</span><span class="kc">NULL</span><span class="p">,</span><span class="w"> </span><span class="c1">#your queue to submit the job</span><span class="w">
+                            </span><span class="n">memory</span><span class="o">=</span><span class="kc">NULL</span><span class="p">,</span><span class="w"> </span><span class="c1">#specify if you use LSF, a vector of 4 numerical number</span><span class="w">
+                            </span><span class="n">dim_reduction_method</span><span class="o">=</span><span class="s2">"MDS"</span><span class="p">,</span><span class="w"> 
+                            </span><span class="n">visualization</span><span class="o">=</span><span class="s2">"tsne"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Or, you can create your shell script as:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/usr/bin/env bash</span>
+mica LSF <span class="se">\</span>
+<span class="nt">-i</span> ./test_data/inputs/PBMC_Demo_MICA_input_mini.txt <span class="se">\</span>
+<span class="nt">-r</span> 8000 12000 12000 16000
+<span class="nt">-q</span> <span class="o">[</span>your queue]
+<span class="nt">-p</span> <span class="s2">"test_local"</span> <span class="se">\</span>
+<span class="nt">-k</span> 3 4 <span class="se">\</span>
+<span class="nt">-o</span> ./test_data/outputs/test_local/ <span class="se">\</span>
+</code></pre></div></div>
+
+<p>To execute your shell script on LSF, we suggest</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bsub &lt; your_mica_cmd.sh
+</code></pre></div></div>
+
+<h2 id="mica-outputs">MICA Outputs</h2>
+
+<p>Each assigned number of k will output one folder containing following files:</p>
+
+<ol>
+  <li><code class="highlighter-rouge">[Project_name]_k[number]_tsne.png</code>  –visualization of clustering result (default as tSNE)</li>
+</ol>
+
+<p><img src="./plots/pbmc_12k_k8_tsne.png" width="550" /></p>
+
+<ol>
+  <li><code class="highlighter-rouge">[Project_name]_dist.h5</code>  – h5 file containing distance matrix calculated.</li>
+  <li><code class="highlighter-rouge">[Project_name]_mds.pdf</code>  – pdf file of t-SNE visualization of mds transformed distance matrix, with perplexity set to 30</li>
+  <li><code class="highlighter-rouge">[Project_name]_tsne_ClusterMem.txt</code>  – txt file containing visualization coordinates and clustering labels</li>
+</ol>
+
+<h2 id="useful-parameters">Useful parameters</h2>
+
+<h3 id="visualize-with-u-map-or-t-sne">Visualize with U-map or t-SNE</h3>
+<p>tSNE visualization is our default visualization method in the pipeline, however MICA also incorporate <a href="https://umap-learn.readthedocs.io/en/latest/parameters.html">UMAP</a> as optional clustering visualization. You can set visualization method to umap by</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>--visualization umap #(all lower cap, no "-")
+</code></pre></div></div>
+
+<p>Also umap parameter could be tuned with <code class="highlighter-rouge">--min_dist</code> as below. It controls how points packed together. Low values of min_dist will result in clumpier embeddings:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>--min_dist 0.1 (or other number ranging from 0-1) 
+</code></pre></div></div>
+
+<p>and you can also set parameter (perplexity) for tsne visualization using</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-pp 20 (or any other integers larger than 5)
+</code></pre></div></div>
+
+<h3 id="try-other-dimension-reduction-methods">Try other dimension reduction methods</h3>
+<p>MICA also incorporated other dimension reduction methods such as Principle component analysis(PCA) or Laplace transform (lpl), you can use them via adding parameter:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-dr PCA  # or: MDS | PCA | LPL | LPCA
+</code></pre></div></div>
+
+<h3 id="try-other-distance-matrix-calculation-methods">Try other distance matrix calculation methods</h3>
+<p>We integrated other distance matrix calculation methods as optional, such as euclidean distance, spearman correlation and pearson correlation. You can use them via adding parameter, default is MI(mutual information):</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>--dist MI  # or: euclidean | spearman | pearson
+</code></pre></div></div>
+
+<h2 id="post-clustering-analysis">Post-clustering analysis</h2>
+<p>We offer a handful of useful functions in <code class="highlighter-rouge">scMINER</code> ranging from visualization to driver estimation, to help you explore your scRNA-seq data in a system biology way after clustering.</p>
+:ET
