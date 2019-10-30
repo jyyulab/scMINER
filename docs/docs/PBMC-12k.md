@@ -28,13 +28,21 @@ Read 10x genomics data with function `readscRNAseqData `in scMINER package. This
 This function helps create a Sparse matrix object using Expressionset prototype, If set `CreateSparseEset=T`. Otherwise, it will create a list object that stores expression data, feature data and sample data under three separate slots. If `add.meta=T`, then additional sample info such as total number of UMI will be calcualated and outputed in sample data. Here, we defined `is.10x=T`,`CreateSparseEset = F`, and `add.meta=F`.
 
 ```R
-d.12k <- readscRNAseqData(file="../PBMC12k_input/",is.10x = T,CreateSparseEset = F, add.meta=F)
+#do not create SpearseEset or add meta this time
+#please confirm that data was sucessfully read
+d.12k <- readscRNAseqData(file="../PBMC12k_input/",is.10x = T, CreateSparseEset = F, add.meta=F)
 ```
 
 After loading data to environment properly, you can now create Sparse Matrix expression by using `CreateSparseEset`function:
 
 ```R
-eset.12k <- CreateSparseEset(data=d.12k, add.meta = T)
+# please set add.meta=T if you want to run our quality control pipeline
+eset.12k<-CreateSparseEset(data=d.12k$raw.data,feature.data = d.12k$feature.data, add.meta = T)
+
+# Define your group information:
+# If there is no additional sample info available now, you can just put a character here
+eset.12k$group<-sapply(strsplit(eset.12k$cellName,"-"),"[",2) #user define, optional
+
 ```
 
 ### Quality control and data filtering
@@ -45,13 +53,13 @@ cutoffs <- draw.scRNAseq.QC(SparseEset=eset.12k,
                           project.name = "PBMC12k",
                           plot.dir = "./QC/",
                           group = "group", # this indicate which meta data information will be use in x axis to group violin plots
-                          output.cutoff = TRUE)
+                          output.cutoff = TRUE) #whether or not to output suggested cutoffs
 ```
 The first plot is a histogram which helps visualize distribution of expressed genes among each cells. Blue veritcal line shows the recommended cutoff. Genes expressed lower number of cells than threshold should be filtered.
 
 <center><img src="./plots/1_1_Gene_QCmetrics_before_filtering.png" alt="drawing" width="700"></center>
 
-The second plot helps visualize total UMI count, and total number of gene expressed in violin plots. Horizontal blue line indicates suggested high/low cutoffs. Suggested thresholds were computed based on Median ± 3 * MAD (Maximum absolute deviance). Actual threshold numbers are also printed right above blue lines in green labels.
+The second plot helps visualize total UMI count, and total number of gene expressed in violin plots. Horizontal blue line indicates suggested high/low cutoffs. Suggested thresholds were computed based on Median ± 3 * MAD (Maximum absolute deviance). Suggested threshold numbers are also printed right above blue lines in labels.
 ![](./plots/1_2_Cell_QC_1.png)
 
 The third plot visualizes mitochondrial gene expression percentage, and spike-in genes expression percentage for each cell V.S. total number of UMI in scatter plots. Cells with high percentage of mitochondrial gene expression but low total number of UMI count are often considered as low quality.
@@ -61,12 +69,15 @@ The third plot visualizes mitochondrial gene expression percentage, and spike-in
 Then you could perform filtering with function `preMICA.filtering`. We recommend to input `cutoffs` using thresholds list which directly outputted from `draw.scRNAseq.QC` functon. You could also manually change cutoffs by re-assign thresholds in `cutoffs` list, e.g. `cutoffs$umi_cf_hi <- Inf` means not doing filtering on outliers caused by high total UMI value.
 
 ```R
+#manually adjust your thresholds
 cutoffs$umi_cf_hi <- Inf  # only filter on low total number of UMI
-eset.sel <- preMICA.filtering(SparseEset = eset.12k, cutoffs = cutoffs)
+
+# do filtering
+eset.sel <- preMICA.filtering(SparseEset = eset.12k, cutoffs = cutoffs) 
 ```
  
 ### Normalization and transformation
-In scMINER package, we don't provide methods to perform data normalizaton. You can use your own prefered normalization method. However, **we highly recommend to do CPM and log2 transformation for MICA input**.
+In scMINER package, we don't offer functions to perform data normalizaton. You can use your own prefered normalization method. However, **we usually  do CPM and log2 transformation (required) for MICA input**.
 
 ```R
 norm = 1e6 
@@ -78,6 +89,7 @@ exp.log2 <- log(exp.norm+1,base=2)
 
 # save as SparseEset
 eset.log2 <- CreateSparseEset(data=exp.log2, meta.data = pData(eset.sel), feature.data = fData(eset.sel), add.meta = F)
+
 ```
 
 
@@ -91,19 +103,23 @@ After reviewing all visualizations and finished filtering, you can go ahead and 
 
 ```R
 generateMICAinput(data= exp.log2 ,filename="PBMC12k_MICA_input.txt")
+
+# clean your working environment
+rm(exp.log2);rm(exp.norm);
 ```
 
 
-We also offer a function called `generate_MICA_cmd ` to help write MICA command in a shell script. In order to run MICA on LSF, you need to set `host=lsf`,  define `queue = [your queue]` (required), and `memory` (optional). In `num_cluster`, you can specify a vector of number of K to perform clustering analysis for different number of cluster simultaneously.
+We also offer a function called `generate_MICA_cmd ` to help write MICA command in a shell script. In order to run MICA on LSF, you need to set `host=lsf`,  define `queue = [your queue]` (required), and `config_file=[path to your customized config file]`(optional, default as NULL). In `num_cluster`, you can specify a vector of number of K to perform clustering analysis for different number of cluster simultaneously. 
 
 ```R
-generate_MICA_cmd(save_sh_at = "./PBMC12k/",
-                  input_file = "./PBMC12k/PBMC12k_MICA_input.txt",
-                  project_name = "PBMC12k",
-                  num_cluster = c(8,9,10,12,13,14,15),
-                  host = "lsf", queue = [your_queue],
-                  memory = c(8000, 12000, 16000, 16000),
-                  output_path = "./",queue = "standard")
+generateMICAcmd(save_sh_at = "./",
+                input_file = "./PBMC12k_MICA_input.txt",
+                project_name = "PBMC12k",
+                num_cluster = c(8,9,10,12,13,14,15),
+                output_path= "./",
+                host = "lsf",
+                queue = "standard",
+                output_path = "./")
 ```
 
 
@@ -121,13 +137,16 @@ After clustering via MICA, with function `readMICAoutput`, you can load MICA out
 Users shall start with one particular MICA membership and study your optimal number of cluster with cell type signatures. By setting `load_ClusterRes` as TRUE, clustering label will be saved under `eset$ClusterRes`.
 
 ```R
-eset <- readMICAoutput(eset = eset.norm, load_ClusterRes = TRUE, output_file = "MICA/PBMC12k_k8_tsne_ClusterMem.txt")
+eset <- readMICAoutput(eset = eset.log2, load_ClusterRes = TRUE, output_file = "MICA/PBMC12k_k8_tsne_ClusterMem.txt")
 ```
 
 In order to visualize MICA labels or other metadata on tSNE/UMAP coordinates, your can use function `MICAplot`. Users are required to specify `X` and `Y` coordinates in this function. Other meta data could also be visualized by changing `label` handler. This function outputs a ggplot object. 
 
 ```R
-MICAplot(input_eset = eset,visualize = 'tSNE',X = "X", Y="Y",label = "label",pct = 0.5)
+MICAplot(input_eset = eset,
+		   visualize = 'tSNE', # label to print on x or y axis
+		   X = "X", Y="Y", # which meta variable was treated as x or y coordinates
+		   label = "ClusterRes", pct = 0.5)
 ```
 
 <center><img src="./plots/3_0_MICA_k8.png" alt="MICA" width="600"></center>
@@ -135,14 +154,14 @@ MICAplot(input_eset = eset,visualize = 'tSNE',X = "X", Y="Y",label = "label",pct
 ### Marker gene visualization 
 {: no_toc }
 
-Picked marker genes could be visualized on t-SNE scatterplot, violin plot or heatmap via function `feature_highlighting`, `feature_vlnplot` and `feature_heatmap`. This will not only help cluster annotation, but also identify optimal number of clusters as well.
+Picked marker genes could be visualized on t-SNE scatterplot, violin plot or heatmap via function `feature_highlighting`, `feature_vlnplot` and `feature_heatmap`. This will not only help cluster annotation, but identify optimal number of clusters as well.
 
 ```R
 gn.sel<-c("CD3D","CD27","IL7R","SELL","CCR7","IL32","GZMA",
           "GZMK","DUSP2","CD8A","GZMH","GZMB","CD79A","CD79B","CD86","CD14")
 
 p <- feature_highlighting(input_eset = eset, target = gn.sel, 
-	feature="geneSymbol",ylabel = "log2Exp", x="X",y="Y",pct.size = 0.5)
+		feature="geneSymbol",ylabel = "log2Exp", x="X",y="Y",pct.size = 0.5)
 ```
 
 <center><img src="./plots/3_1_gene_highlighting.png" alt="Scatterplot" width="800"></center>
@@ -155,7 +174,7 @@ p <- feature_vlnplot(input_eset=eset,target=gn.sel,feature = "geneSymbol",
 
 
 ```R
-feature_heatmap(eset = eset, target = gn.sel,group_tag = "ClusterRes",
+feature_heatmap(input_eset = eset, target = gn.sel,group_tag = "ClusterRes",
 			 	save_plot = TRUE,width = 6,height = 6,
              name = "log2_expression",plot_name="./GeneHeatmap.png")
 ```
@@ -180,7 +199,7 @@ head(ref)
 5     Tmem    IL32      1
 6     Tmem    GZMA     -1
 
-marker_bbplot(ref=ref,eset=eset,width = 6,height=4, feature = "geneSymbol",group_tag = "ClusterRes",
+draw.marker.bbp(ref=ref,eset=eset,width = 6,height=4, feature = "geneSymbol",group_tag = "ClusterRes",
                    save_plot = TRUE, plot_name = "plots/MICA_cluster_score.png")
 
 ```
@@ -208,7 +227,7 @@ This function will help create one directory for each group/cell type, containin
 
 ```R
 generateSJARACNeInput(
-	eset = eset.12k,funcType = "TF", 
+	input_eset = eset, funcType = "TF", 
 	ref = "hg",  #human
 	wd.src = "SJARACNE",  #Output directory
 	group_tag = "celltype")
@@ -237,14 +256,14 @@ Identify hidden driver from content-based network is the key step in scMINER to 
 
 ### Calculate activity
 {: no_toc }
-Activity calculation is the basis of driver estimation in scMINER. To infer driver activity, expression profile of their targets are intergrated via function `GetActivityFromSJARACNe`. This function takes SJARACNe output path and expression set as input, and return an activity set as well as structured network files if set 	`save_network_files=TRUE`. 
+Activity calculation is the basis of driver estimation in scMINER. To infer driver activity, expression profile of their targets are intergrated via function `GetActivityFromSJARACNe`. This function takes SJARACNe output path and expression set as input, and return an activity set as well as structured network files if set `save_network_files=TRUE`. **Please note that this function could only work if you used `generateSJARACNeInput` to create SJARACNe input directory and files.**
 
 Since scRNA-seq data are extremly sparse and noisy, please set `activity.method` as `'unweighted'`. 
 
 ```R
 acs.12k <- GetActivityFromSJARACNe(
     SJARACNe_output_path ="SJARACNE/",
-    SJARACNe_input_eset = eset.12k,
+    SJARACNe_input_eset = eset,
     activity.method="unweighted", # we highly recommend using 'unweighted' as activity calculation method
     activity.norm=TRUE, 
     group_tag = "celltype", # which group was used to partition expression profiles
@@ -256,30 +275,29 @@ acs.12k <- GetActivityFromSJARACNe(
 ### Driver estimation by differential activity analysis
 {: no_toc }
 
-The function `FindDAG` was designed to perform differnetial activity analysis from SJARACNe inferred activity matrix. In this function, two-sided student's t-test will be performed to compare mean activity from one cell type V.S. the others. It will return a data frame that includes all TF occurred in original data. Statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help identify hidden drivers. You can save it to file in order to check them manually. 
+The function `get.DA` was designed to perform differnetial activity analysis from SJARACNe inferred activity matrix. In this function, two-sided student's t-test will be performed to compare mean activity from one cell type V.S. the others. It will return a data frame that includes all TF occurred in original data. Statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help identify hidden drivers. You can save it to file in order to check them manually. 
 
 ```R
-DAG_result <- FindDAG(eset = acs.demo,group_tag = "celltype")
+DAG_result <- get.DA(input_eset = acs.12k,group_tag = "celltype")
 ```
 
-We also offer a function called `TopDriversfromDAG` to help picking top drivers for each cell type. You can specify `n` as maximum number of top drivers to pick, and `degree_filter` to restrict number of targets.
+We also offer a function called `get.Topdrivers` to help picking top drivers for each cell type. You can specify `n` as maximum number of top drivers to pick, and `degree_filter` to restrict number of targets. 
 
 ```R
-TF_list <- TopDriversfromDAG(DAG_result = DAG_result,
-                              celltype = levels(acs.12k$celltype), # ensure cluster order
-                              n = 5, degree_filter = c(50,600))
+TF_list <-get.Topdrivers(DAG_result = DAG_result,
+                             celltype = levels(acs.12k$celltype), # ensure cluster order
+                             n = 5, degree_filter = c(50,600))
 ```
 
 
 In scMINER, we provide a handful of visualizations to compare driver activity from different cell type/clusters. Here we demo two basic functions: `feature_heatmap` and `feature_vlnplot`. These functions could be used on either expression and activty matrix.
 
 ```R
-feature_heatmap(input_eset = acs.12k,target = TF_list,group_tag = "celltype",feature = "geneSymbol",
-             width = 6,height = 6, save_plot=TRUE, cluster_rows = FALSE,
-             name = "Activity",plot_name="./21_TopTFHeatmap.png")
+feature_heatmap(input_eset = acs.12k, target = TF_list, group_tag = "celltype",feature = "geneSymbol",
+                width = 6,height = 6, save_plot=TRUE, cluster_rows = FALSE,
+                name = "Activity",plot_name="./21_TopTFHeatmap.png")
 ```
 <center><img src="./plots/4_1_TopTFHeatmap.png" alt="Driver heatmap" width="550"></center>
-
 
 ```R
 #check postive controls
