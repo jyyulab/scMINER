@@ -55,7 +55,7 @@ cutoffs <- draw.scRNAseq.QC(SparseEset=eset.12k,
                           group = "group", # this indicate which meta data information will be use in x axis to group violin plots
                           output.cutoff = TRUE) #whether or not to output suggested cutoffs
 ```
-The first plot is a histogram which helps visualize distribution of expressed genes among each cells. Blue veritcal line shows the recommended cutoff. Genes expressed lower number of cells than threshold should be filtered.
+The first plot is a histogram which helps visualize distribution of expressed genes among each cells. Blue veritcal line shows the recommended cutoff, which is calculated by 0.5% * number of cells. Genes expressed lower number of cells than threshold should be filtered.
 
 <center><img src="./plots/1_1_Gene_QCmetrics_before_filtering.png" alt="drawing" width="700"></center>
 
@@ -102,7 +102,7 @@ MICA was implemented in Python. If you would like to install MICA, please refer 
 After reviewing all visualizations and finished filtering, you can go ahead and generate clustering (MICA) input with function `generateMICAinput`. This function takes an expression matrix as input, and outputs a cell by gene .txt file. Please note that **you should always feed MICA the log or log2 transformed data**.
 
 ```R
-generateMICAinput(data= exp.log2 ,filename="PBMC12k_MICA_input.txt")
+generateMICAinput(d = exp.log2 ,filename="PBMC12k_MICA_input.txt")
 
 # clean your working environment
 rm(exp.log2);rm(exp.norm);

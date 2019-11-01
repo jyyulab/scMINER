@@ -1,5 +1,7 @@
-#'@import Biobase ggplot2 kableExtra knitr openxlsx NetBID2 ComplexHeatmap
+#'@import Biobase ggplot2 kableExtra knitr limma
 #'@importFrom reshape2 melt
+#'@importFrom ComplexHeatmap HeatmapAnnotation Heatmap
+#'@importFrom igraph graph_from_data_frame set_edge_attr
 #'@importFrom rmarkdown render pandoc_available html_document
 #'@importFrom utils read.delim write.table
 #'@importFrom Matrix rowSums colSums readMM t
@@ -7,8 +9,7 @@
 #'@importFrom plyr ddply
 #'@importFrom methods as new
 #'@importFrom stats IQR aggregate as.dendrogram as.dist cutree density dist fisher.test gaussian glm mad t.test hclust kmeans ks.test lm median model.matrix na.omit order.dendrogram p.adjust pchisq pnorm prcomp pt qnorm quantile sd splinefun complete.cases
-#'@importFrom utils read.delim write.table read.table read.delim2
-#'@importFrom NetBID2 get.SJAracne.network
+#'@importFrom utils read.delim write.table read.table
 #'@importFrom grDevices colorRampPalette dev.off png
 #'@importFrom RColorBrewer brewer.pal
 #'@importFrom scales hue_pal
@@ -25,7 +26,6 @@
 # library(Matrix)
 # library(stats) ##  t.test
 # library(methods)
-# library(openxlsx)
 # library(dplyr) #for easy filtering and apply function
 # library(plyr)
 #
@@ -35,7 +35,6 @@
 # library(kableExtra) #for Rmarkdown
 # library(knitr) #for Rmarkdown
 #
-# library(NetBID2)
 
 #####
 #' @title SparseExpressionSet
@@ -151,7 +150,7 @@ CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T
 
 
 #' readscRNAseqData
-#' @description read scRNA-seq data, a wrapper of conventional data reading (read.delim2) and 10x genomics data standarad output reading
+#' @description read scRNA-seq data, a wrapper of conventional data reading (read.delim) and 10x genomics data standarad output reading
 #'
 #' @param file data path to 10x genomics output folder, which normally contains 3 files (matrix.mtx, gene or feature.tsv and barcode.csv),
 #'  or data path to data txt/csv/tsv file
@@ -220,7 +219,7 @@ readscRNAseqData <- function(file,is.10x=TRUE,CreateSparseEset=TRUE, add.meta=F,
            feature.data=genes)}
   }
   else{
-    d<- read.delim2(file=file,...)
+    d<- read.delim(file=file,...)
   }
   return(d)
 }
@@ -555,6 +554,7 @@ draw.marker.bbp<-function(ref = NULL,input_eset,
 }
 
 
+
 ##################
 #' GetActivityFromSJARACNe
 #'
@@ -635,9 +635,9 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
       f<-output.files[grep(paste0("/",net,"_"),output.files)]
 
       if (length(grep("/tf/",f)!=0))
-        {TF.table<-NetBID2::get.SJAracne.network(network_file = f[grep("/tf/",f)])}
+        {TF.table<-NetBID2::get.network.scMINER(network_file = f[grep("/tf/",f)])}
       if(length(grep("/sig/",f)!=0))
-        {SIG.table<-NetBID2::get.SJAracne.network(network_file= f[grep("/sig/",f)])}
+        {SIG.table<-NetBID2::get.network.scMINER(network_file= f[grep("/sig/",f)])}
 
       if(save_network_file){
         if(!is.null(TF.table)) save(TF.table,file=file.path(save_path,paste0(net,".TF.network")))
@@ -892,11 +892,9 @@ DAG_ttest<-function(d,group){
 }
 
 
-
-
 #' @title Find differential activity genes from activity matrix
 #'
-#' @description  \code{get.DA} is a wraper of (\code{DAG_test}, and \code{getDE.limma.2G}),
+#' @description  \code{get.DA} is a wraper of (\code{DAG_test}, and \code{getDE.limma}),
 #'  which helps to conduct two_sided t.test on all genes in specific group VS Others
 #'  to find differential activity genes, a table with essential statistics will be outputted.
 #'
@@ -908,7 +906,7 @@ DAG_ttest<-function(d,group){
 #' @param method a character from c("t.test", "limma"), which method will be used to identify differential activity gene
 #' @return output would be a data.frame containing: t.statistics, p.value, log2FC, z.score, and mean Activity value
 #'
-#' @seealso DAG_ttest; getDE.limma.2G
+#' @seealso DAG_ttest; getDE.limma
 #' @examples
 #' \dontrun{get.DA(eset, group_tag="group")}
 #'  # Try find DAG for only group 1
@@ -945,7 +943,7 @@ get.DA<-function(input_eset=NULL,group_tag="celltype",group_case=NULL, group_ctr
       da <- plyr::ddply(d,'id','DAG_ttest',group=input_eset$da_group)
       rs <- merge(rs,da,by="id")}
     else{
-      da <- NetBID2::getDE.limma.2G(eset=input_eset,
+      da <- NetBID2::getDE.limma(eset=input_eset,
                                     G1_name=group_case,G0_name = "Others",
                                     G1=colnames(input_eset[,which(input_eset$da_group=="Aim")]),
                                     G0=colnames(input_eset[,which(input_eset$da_group=="Ctrl")]),
@@ -989,7 +987,7 @@ get.DA<-function(input_eset=NULL,group_tag="celltype",group_case=NULL, group_ctr
     }else {
     #use limma
       da.list <- lapply(unique(pData(input_eset)[,group_tag]),function(xx){
-        da <- NetBID2::getDE.limma.2G(eset=input_eset,
+        da <- NetBID2::getDE.limma(eset=input_eset,
                                       G1_name=xx,G0_name = "Others",
                                       G1=colnames(input_eset[,which(pData(input_eset)[,group_tag]==xx)]),
                                       G0=colnames(input_eset[,which(pData(input_eset)[,group_tag]!=xx)]),

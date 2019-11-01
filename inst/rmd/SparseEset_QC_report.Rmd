@@ -111,7 +111,7 @@ colnames(gene_table) <- c("Number", "Percent") #rename
 gene_table %>% kable("html") %>% 
   kable_styling(bootstrap_options = "striped", font_size = 14) %>% 
   column_spec(2:3, bold = T, color = "Red") %>% 
-  add_footnote(paste0("Genes expressed in less than 5% (", 
+  add_footnote(paste0("Genes expressed in less than 0.5% (", 
                       cfs$nCell_cutoff, ") cells will be removed."),  
                notation = "number")
 
