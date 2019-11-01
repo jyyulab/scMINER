@@ -12,21 +12,23 @@ RoxygenNote: 6.1.1
 Depends: 
     R (>= 3.6.0),
     Biobase (>= 2.38.0),
-    ggplot2,
+    ggplot2 (>= 3.2.1),
     RColorBrewer (>= 1.1-2),
-    reshape2,
+    reshape2 (>= 1.4.3),
     rmarkdown (>= 1.11),
     kableExtra (>= 1.1.0),
-    dplyr,
-    knitr,
-    NetBID2,
-    grDevices,
-    scales,
+    dplyr (>= 0.8.3),
+    knitr (>= 1.25),
+    grDevices(>= 3.6.1),
+    scales (>= 1.0.0),
+    limma (>= 3.40.6)
 Imports:
-    Matrix,
-    plyr,
-    stats,
-    methods,
-    ComplexHeatmap,
-    openxlsx (>= 4.1.0)
-
+    Matrix (>= 1.2.17),
+    plyr (>= 1.8.4),
+    stats (>= 3.6.1),
+    methods (>= 3.6.1),
+    ComplexHeatmap (>= 2.0.0),
+    igraph (>= 1.2.4.1)
+Suggests:
+    openxlsx (>= 4.1.0),
+    NetBID2 (>= 2.0.1)

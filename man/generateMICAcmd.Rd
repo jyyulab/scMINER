@@ -15,7 +15,7 @@ generateMICAcmd(save_sh_at, input_file, project_name = "test",
 
 \item{input_file}{path to actual input file for MICA, usually use \code{generateMICAinput} to generete file with desired format.}
 
-\item{project_name}{character, name of your project, will be used for naming of output data}
+\item{project_name}{character, name of your project, will be used for naming output data}
 
 \item{num_cluster}{a vector or a numerical number, the number of clusters}
 

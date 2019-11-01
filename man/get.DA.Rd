@@ -23,7 +23,7 @@ column name in pData(input_eset) that indicates group info}
 output would be a data.frame containing: t.statistics, p.value, log2FC, z.score, and mean Activity value
 }
 \description{
-\code{get.DA} is a wraper of (\code{DAG_test}, and \code{getDE.limma.2G}),
+\code{get.DA} is a wraper of (\code{DAG_test}, and \code{getDE.limma}),
  which helps to conduct two_sided t.test on all genes in specific group VS Others
  to find differential activity genes, a table with essential statistics will be outputted.
 }
@@ -33,5 +33,5 @@ output would be a data.frame containing: t.statistics, p.value, log2FC, z.score,
  \dontrun{get.DA(eset, group_tag="group",group_case="group1")}
 }
 \seealso{
-DAG_ttest; getDE.limma.2G
+DAG_ttest; getDE.limma
 }

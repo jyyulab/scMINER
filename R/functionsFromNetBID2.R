@@ -26,12 +26,14 @@ check_options <- function(para_name,option_list,envir){
 #' "MI", mutual information; "spearman", spearman correlation coefficient.
 #'
 #' @examples
+#' \dontrun{
 #' tf.network.file <- sprintf('%s/demo1/network/SJAR/project_2019-02-14/%s/%s',
 #'                    system.file(package = "NetBID2"),
 #'                    'output_tf_sjaracne_project_2019-02-14_out_.final',
 #'                    'consensus_network_ncol_.txt')
 #' net_dat      <- read.delim(file=tf.network.file,stringsAsFactors = FALSE)
 #' target_list  <- ConvertNet2List(net_dat)
+#' }
 #' @export
 ConvertNet2List <- function(net_dat=NULL) {
   all_input_para <- c('net_dat')
@@ -117,6 +119,7 @@ get.network.scMINER<- function(network_file=NULL){
 #'
 #'
 #' @examples
+#' \dontrun{
 #' analysis.par <- list()
 #' analysis.par$out.dir.DATA <- system.file('demo1','driver/DATA/',package = "NetBID2")
 #' NetBID.loadRData(analysis.par=analysis.par,step='ms-tab')
@@ -132,6 +135,7 @@ get.network.scMINER<- function(network_file=NULL){
 #'                                 G1=G1,G0=G0,
 #'                                 G1_name=each_subtype,
 #'                                 G0_name='other')
+#' }
 #' @export
 getDE.limma <- function(eset=NULL, G1=NULL, G0=NULL,G1_name=NULL,G0_name=NULL,verbose=TRUE,random_effect=NULL) {
   #
@@ -154,10 +158,8 @@ getDE.limma <- function(eset=NULL, G1=NULL, G0=NULL,G1_name=NULL,G0_name=NULL,ve
   #
   all_samples <- colnames(Biobase::exprs(eset))
   use_samples <- c(G0, G1)
-  phe <- as.data.frame(Biobase::pData(eset)[use_samples, ,drop=FALSE]);
-  rownames(phe) <- use_samples
-  new_eset <- generate.eset(exp_mat=Biobase::exprs(eset)[, use_samples,drop=F],phenotype_info=phe,
-                            feature_info=Biobase::fData(eset))
+
+  new_eset<-eset[,use_samples]
   new_mat  <- Biobase::exprs(new_eset)
   ##
   design.mat <-as.data.frame(matrix(NA, nrow = base::length(use_samples), ncol = 1))
@@ -184,7 +186,7 @@ getDE.limma <- function(eset=NULL, G1=NULL, G0=NULL,G1_name=NULL,G0_name=NULL,ve
   ##
   tT <- limma::topTable(fit2, adjust.method = "fdr", number = Inf,coef=1)
   if(nrow(tT)==1){
-    rownames(tΩT) <- rownames(new_mat)
+    rownames(tT) <- rownames(new_mat)
   }
   tT <- base::cbind(ID=rownames(tT),tT,stringsAsFactors=FALSE)
   tT <- tT[rownames(new_mat),,drop=FALSE]

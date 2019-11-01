@@ -5,7 +5,8 @@
 \title{plot MICA clustering results or other meta variables}
 \usage{
 MICAplot(input_eset, label = NULL, visualize = NULL, X = NULL,
-  Y = NULL, title.size = 10, title.name = "", pct = 0.5)
+  Y = NULL, show_label = TRUE, title.size = 10, title.name = "",
+  pct = 0.5)
 }
 \arguments{
 \item{input_eset}{ExpressionSet that include visualization coordinates in phenotype data}
@@ -17,6 +18,8 @@ MICAplot(input_eset, label = NULL, visualize = NULL, X = NULL,
 \item{X}{character, column name of x axis}
 
 \item{Y}{character, column name of y axis}
+
+\item{show_label}{logical, whether or not to show label on tSNE plot}
 
 \item{title.size}{numerical, size of plot title, default as 10}
 

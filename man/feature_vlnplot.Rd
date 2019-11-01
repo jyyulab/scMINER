@@ -11,7 +11,7 @@ feature_vlnplot(input_eset, group_tag = "celltype", target = NULL,
 \arguments{
 \item{input_eset}{Input expression set}
 
-\item{group_tag}{character, which group info}
+\item{group_tag}{character, which group info to visualize as y axis}
 
 \item{target}{a character vector, the list of feature to visualize}
 

@@ -1,7 +1,7 @@
 #'@import Biobase ggplot2 kableExtra knitr limma
 #'@importFrom reshape2 melt
 #'@importFrom ComplexHeatmap HeatmapAnnotation Heatmap
-#'@importFrom igraph graph_from_data_frame set_edge_attr
+#'@importFrom igraph graph_from_data_frame set_edge_attr E
 #'@importFrom rmarkdown render pandoc_available html_document
 #'@importFrom utils read.delim write.table
 #'@importFrom Matrix rowSums colSums readMM t
@@ -27,14 +27,13 @@
 # library(stats) ##  t.test
 # library(methods)
 # library(dplyr) #for easy filtering and apply function
-# library(plyr)
+# library(plyr) #for ddply
 #
 # library(Biobase) ## basic functions for bioconductor
 #
 # library(rmarkdown)
 # library(kableExtra) #for Rmarkdown
 # library(knitr) #for Rmarkdown
-#
 
 #####
 #' @title SparseExpressionSet
@@ -60,8 +59,9 @@ CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T
 
   if(!class(data)[1]%in%c("dgCMatrix","dgTMatrix","matrix","dgeMatrix")){
     stop("Input format should %in% c( 'matrix','dgTMatrix','dgCMatrix','dgeMatrix,'Matrix')","\n")
-    if(class(data)%in%"matrix")
+    if(class(data)%in%"matrix"){
       data<-as(data,"sparseMatrix")
+      }
   }
 
   if(!is.null(feature.data)){
@@ -135,8 +135,8 @@ CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T
                 phenoData= new("AnnotatedDataFrame",data=meta.data),
                 featureData= new("AnnotatedDataFrame",data=feature.data))
   }else{
-    cat("Creating SparseMatrix Object..","\n")
 
+    cat("Creating SparseMatrix Object..","\n")
     Obj <- new( "SparseExpressionSet",
                 assayData = assayDataNew("environment", exprs=data),
                 phenoData= new("AnnotatedDataFrame",data=meta.data),
@@ -402,7 +402,7 @@ readMICAoutput<-function(eset=NULL, input_file, output_file,load_ClusterRes =TRU
     pd<-data.frame(row.names=colnames(input),cellNames=colnames(input),
                    X=res[,2],Y=res[,3],stringsAsFactors=FALSE)
 
-    eset<-CreateSparseEset(data=input,meta.data=pd)
+    eset<-CreateSparseEset(data=input,meta.data=pd,add.meta = F)
     cat("SparseMatrix Expression Set Generated!","\n")
   }
 
@@ -604,9 +604,13 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
 	  stop('Check your group_tag please.','\n')
 	}
 
+  if(!activity.method%in%c("weighted", "unweighted")){
+    stop('Check your group_tag please.','\n')
+  }
+
   #retrieve networks
 	output.files<-list.files(path=SJARACNe_output_path,
-						pattern="consensus_network_3col_.txt",recursive = TRUE,full.names = TRUE)
+						pattern="consensus_network_ncol_.txt",recursive = TRUE,full.names = TRUE)
 
 	if(length(output.files)==0) stop ("Please check your SJARACNe output path!",'\n')
 
@@ -635,9 +639,9 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
       f<-output.files[grep(paste0("/",net,"_"),output.files)]
 
       if (length(grep("/tf/",f)!=0))
-        {TF.table<-NetBID2::get.network.scMINER(network_file = f[grep("/tf/",f)])}
+        {TF.table<-get.network.scMINER(network_file = f[grep("/tf/",f)])}
       if(length(grep("/sig/",f)!=0))
-        {SIG.table<-NetBID2::get.network.scMINER(network_file= f[grep("/sig/",f)])}
+        {SIG.table<-get.network.scMINER(network_file= f[grep("/sig/",f)])}
 
       if(save_network_file){
         if(!is.null(TF.table)) save(TF.table,file=file.path(save_path,paste0(net,".TF.network")))
@@ -733,14 +737,17 @@ es <- function(z,es.method="mean"){
 
 
 ####inner function to calculate activity
-get_activity<-function(Net,eset,tag,exp.match=NULL, match.method=NULL,
+get_activity<-function(Net,eset,tag,use.symbol=FALSE,
                        es.method="mean", activity.method="weighted",
                        normalize=TRUE,test=FALSE,sep.symbol="."){
   library(dplyr)
   if(is.null(Net)) {return(NULL)}
 
-  if(is.null(exp.match)) src<-unique(Net$source)
-  else src<-unique(Net$source.symbol)
+  if(!(use.symbol)) src<-unique(Net$source)
+  else{ src<-unique(Net$source.symbol)
+        if(!"geneSymbol"%in%colnames(fData(eset))) stop("please check your geneSymbol in fData!")
+        else { cat("Using geneSymbol to retrieve network")}
+  }
 
   gsc<-vector("list", length(src))
   names(gsc)<-paste(src, tag, sep = sep.symbol)
@@ -760,18 +767,16 @@ get_activity<-function(Net,eset,tag,exp.match=NULL, match.method=NULL,
 
   for(i in 1:length(gsc)){
     #NetBID based geneset
-    if(is.null(exp.match)){
-      tmp<-filter(Net, Net$source==src[i]);tmp<-tmp[!duplicated(tmp$target),]
-      gsc[[i]]<-unique(as.character(tmp$target))#network from file
-
-    }
-    else{
+    if(use.symbol){
       tmp<-filter(Net, Net$source.symbol==src[i]);tmp<-tmp[!duplicated(tmp$target.symbol),]
       gsc[[i]]<-unique(as.character(tmp$target.symbol))
-      gsc[[i]]<-as.character(exp.match[toupper(exp.match$symbol.new) %in% toupper(gsc[[i]]), "exp.rowname"])
+    }
+    else{
+      tmp<-filter(Net, Net$source==src[i]);tmp<-tmp[!duplicated(tmp$target),]
+      gsc[[i]]<-unique(as.character(tmp$target))#network from file
     }
 
-    #update the overlap between NetBID based geneset and real expression data
+    #update the overlap between NetBID based geneset and original expression data
     if(length(intersect(featureNames(eset),gsc[[i]]))==0) stop("Please check your featureNames!")
       else{
         eset.sel<-eset[featureNames(eset)%in%gsc[[i]],]
@@ -786,11 +791,12 @@ get_activity<-function(Net,eset,tag,exp.match=NULL, match.method=NULL,
 
       if(activity.method == 'unweighted') ac[,i]<-apply(exp[gsc[[i]],], 2, es, es.method)
 
-      else if (activity.method == 'weighted' && is.null(exp.match)){
+      else if (activity.method == 'weighted'){
 
         fd.sel<-data.frame(fn=featureNames(eset.sel),
                            geneSymbol=fData(eset.sel)$geneSymbol,
                            stringsAsFactors=FALSE)
+
         tmp<-merge(fd.sel,tmp,by.x="fn",by.y="target",sort = FALSE)
 
         #if(!all(rownames(exp[gsc[[i]],])==fd.sel$fn)) stop("MI is not coordinate with Feature names! \n")
@@ -800,41 +806,11 @@ get_activity<-function(Net,eset,tag,exp.match=NULL, match.method=NULL,
         tmp$MI.sign<-as.numeric(tmp$MI)*(tmp$p.sign)
 
         mat<-t(exp[gsc[[i]],])%*%(tmp$MI.sign)
-        #mat<-t(exp[gsc[[i]],])%*%tmp$MI
         MI.sum<-sum(tmp$MI)
         ac[,i]<-mat[,1]/MI.sum
 
         if (test)
         {ac[,i]<-mat[,1]}
-      }
-
-
-      else if(activity.method == 'weighted' && !is.null(exp.match) && match.method == 'topMI'){
-        tmp<-arrange(tmp, target.symbol, desc(MI))
-        tmp<-tmp[!duplicated(tmp$target.symbol),]
-        tmp$p.sign<-sign(as.numeric(tmp$spearman))
-        tmp$p.sign[tmp$p.sign == 0]<-1
-        tmp$MI.sign<-as.numeric(tmp$MI)*tmp$p.sign
-        match.mat<-exp.match[exp.match$exp.rowname %in% gsc[[i]],]
-        match.mat<-left_join(match.mat, tmp, by =c('symbol.new'='target.symbol'))
-        match.mat<-na.omit(match.mat)
-        gsc[[i]] <- as.character(match.mat$exp.rowname)
-        mat<-t(exp[gsc[[i]],])%*%match.mat$MI.sign
-        ac[,i]<-mat[,1]/length(gsc[[i]])
-      }
-      else if(activity.method == 'weighted' && !is.null(exp.match) && match.method == 'avg.signed.MI'){
-
-        tmp$p.sign<-sign(as.numeric(tmp$spearman))
-        tmp$MI.sign<-as.numeric(tmp$MI)*tmp$p.sign
-        tmp$p.sign[tmp$p.sign == 0]<-1
-        tmp<-aggregate(MI.sign ~ target.symbol, data = tmp, mean)
-        #generate MI.sign vector match to the exp rows
-        match.mat<-exp.match[exp.match$exp.rowname %in% gsc[[i]],]
-        match.mat<-left_join(match.mat, tmp, by =c('symbol.new'='target.symbol'))
-        match.mat<-na.omit(match.mat)
-        gsc[[i]] <- as.character(match.mat$exp.rowname)
-        mat<-t(exp[gsc[[i]],])%*%match.mat$MI.sign
-        ac[,i]<-mat[,1]/length(gsc[[i]])
       }
       colnames(ac)[i]<-name
     }
@@ -923,12 +899,12 @@ get.DA<-function(input_eset=NULL,group_tag="celltype",group_case=NULL, group_ctr
 
 
   if(!is.null(group_case)){
-    if(!group_case%in%pData(input_eset)[,"group_tag"]){
+    if(!group_case%in%pData(input_eset)[,group_tag]){
       stop('Please check your group_case.',"\n")
     }
 
     if(!is.null(group_ctrl)){
-      if(!group_case%in%pData(input_eset)[,"group_tag"]){
+      if(!group_case%in%pData(input_eset)[,group_tag]){
         stop('Please check your group_ctrl',"\n")
         }
       input_eset<-input_eset[,which(pData(input_eset)[,group_tag]%in%c(group_case,group_ctrl))]
@@ -943,7 +919,7 @@ get.DA<-function(input_eset=NULL,group_tag="celltype",group_case=NULL, group_ctr
       da <- plyr::ddply(d,'id','DAG_ttest',group=input_eset$da_group)
       rs <- merge(rs,da,by="id")}
     else{
-      da <- NetBID2::getDE.limma(eset=input_eset,
+      da <- getDE.limma(eset=input_eset,
                                     G1_name=group_case,G0_name = "Others",
                                     G1=colnames(input_eset[,which(input_eset$da_group=="Aim")]),
                                     G0=colnames(input_eset[,which(input_eset$da_group=="Ctrl")]),
@@ -987,7 +963,7 @@ get.DA<-function(input_eset=NULL,group_tag="celltype",group_case=NULL, group_ctr
     }else {
     #use limma
       da.list <- lapply(unique(pData(input_eset)[,group_tag]),function(xx){
-        da <- NetBID2::getDE.limma(eset=input_eset,
+        da <- getDE.limma(eset=input_eset,
                                       G1_name=xx,G0_name = "Others",
                                       G1=colnames(input_eset[,which(pData(input_eset)[,group_tag]==xx)]),
                                       G0=colnames(input_eset[,which(pData(input_eset)[,group_tag]!=xx)]),
@@ -1201,6 +1177,7 @@ preMICA.filtering <- function(SparseEset,
 #' @param visualize character, name of visualization method, this will be used as x or y axis label
 #' @param X character, column name of x axis
 #' @param Y character, column name of y axis
+#' @param show_label logical, whether or not to show label on tSNE plot
 #' @param title.size numerical, size of plot title, default as 10
 #' @param title.name character, title of plot, default as NULL
 #' @param pct numerical, size of point, default as 0.5
@@ -1208,7 +1185,7 @@ preMICA.filtering <- function(SparseEset,
 #' @export
 MICAplot<-function(input_eset,
                    label= NULL,visualize=NULL,
-                   X=NULL,Y=NULL,
+                   X=NULL,Y=NULL,show_label=TRUE,
                    title.size=10,title.name="",pct=0.5){
 
   if(!label%in%colnames(pData(input_eset))){stop("Label name not found in phenotype data!","\n")}
@@ -1239,6 +1216,7 @@ MICAplot<-function(input_eset,
 #' @param x cordinates for x axis
 #' @param y cordinates for y axis
 #' @param visualize character, name of visualization method, this will be used as x or y axis label
+#' @param wrap_by character, variable to wrap plot with
 #' @param ncol cordinates for y axis
 #' @param alpha numerical, default as 0.8
 #' @param colors color palette for feature highlighting
@@ -1247,7 +1225,7 @@ MICAplot<-function(input_eset,
 #' @export
 feature_highlighting<-function(input_eset,target=NULL,
                                feature="geneSymbol",
-                               x="X",y="Y",visualize="tSNE",
+                               x="X",y="Y",visualize="tSNE",wrap_by=NULL,
                                ylabel="Expression",pct.size=0.8,
                                title.size=15,ncol=4, alpha=0.8,
                                colors=colorRampPalette(c("#E3E3E3", "#BCA2FC","#4900FE"),interpolate="linear")(8)){
@@ -1255,8 +1233,11 @@ feature_highlighting<-function(input_eset,target=NULL,
   # change it to expr is ok
   input<-as.matrix(exprs(input_eset))
   indx<-which(fData(input_eset)[,feature]%in%target)
+  if(length(indx)==0) stop("Target feature not found.")
+
   gn<-fData(input_eset)[,feature][indx]
-  projection<-pData(input_eset)[colnames(input),c(x,y)]
+  id.vars<-c(x,y,wrap_by)
+  projection<-pData(input_eset)[colnames(input),id.vars]
 
   #gene expression visualized as columns
   if (length(indx)!=1) {
@@ -1264,21 +1245,23 @@ feature_highlighting<-function(input_eset,target=NULL,
     colnames(target_values)<-gn
 
     proj_target <- cbind(projection,target_values)
-    proj_target_melt <- reshape2::melt(proj_target, id.vars=c(x, y))
+    proj_target_melt <- reshape2::melt(proj_target, id.vars=id.vars)
 
     p<- ggplot(proj_target_melt, aes_string(x, y)) +
         theme_classic()+
-        facet_wrap(~variable,scales = "free",ncol = ncol)+
+        facet_wrap(c("variable",wrap_by),scales = "free",ncol = ncol)
         labs(title="")
 
     }else{
       target_values <- input[indx,]
       proj_target <- cbind(projection,target=target_values)
-      proj_target_melt <- reshape2::melt(proj_target, id.vars=c(x, y))
+      proj_target_melt <- reshape2::melt(proj_target, id.vars=id.vars)
 
       p<- ggplot(proj_target_melt, aes_string(x, y)) +
           theme_classic()+
           labs(title=target,scales = "free")
+
+      if(!is.null(wrap_by)) p <- p + facet_wrap(c(wrap_by),scales = "free",ncol = ncol)
       }#indx = 1
 
    p<- p + geom_point(aes(colour=value),size=pct.size,alpha=alpha) +
@@ -1289,7 +1272,8 @@ feature_highlighting<-function(input_eset,target=NULL,
        xlab(label = paste0(toString(visualize),"_1"))+
        ylab(label = paste0(toString(visualize),"_2"))+
        labs(color=ylabel)
-  return(p)
+
+   return(p)
 }
 
 
@@ -1299,9 +1283,9 @@ feature_highlighting<-function(input_eset,target=NULL,
 #' @param feature character, which feature to visualize
 #' @param target a character vector, the list of feature to visualize
 #' @param stat a character, whether to plot median or mean by a black dot on violinplot
+#' @param group_tag character, which group info to visualize as y axis
 #' @param ylabel a character, title of y axis
 #' @param boxplot logical, whether to plot boxplot on violinplot
-#' @param group_tag character, which group info
 #' @param title.size numerical, default as 5
 #' @param ncol cordinates for y axis
 #'
@@ -1317,6 +1301,7 @@ feature_vlnplot <- function(input_eset, group_tag="celltype",
   gn<-fData(input_eset)[,feature][indx]
 
   label <- as.factor(pData(input_eset)[,group_tag])
+
   # Gene expression visualized as columns
   if (length(target)!=1) {
     target_values <- t(as.matrix(input[indx,]))

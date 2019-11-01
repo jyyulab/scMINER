@@ -23,5 +23,5 @@ or data path to data txt/csv/tsv file}
 A list or sparse matrix expression set
 }
 \description{
-read scRNA-seq data, a wrapper of conventional data reading (read.delim2) and 10x genomics data standarad output reading
+read scRNA-seq data, a wrapper of conventional data reading (read.delim) and 10x genomics data standarad output reading
 }
