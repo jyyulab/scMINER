@@ -1284,6 +1284,8 @@ feature_highlighting<-function(input_eset,target=NULL,
 #' @param target a character vector, the list of feature to visualize
 #' @param stat a character, whether to plot median or mean by a black dot on violinplot
 #' @param group_tag character, which group info to visualize as y axis
+#' @param color_by character, which group info to define color
+#' @param colors character vector, default as NULL, will use ggplot default color palette
 #' @param ylabel a character, title of y axis
 #' @param boxplot logical, whether to plot boxplot on violinplot
 #' @param title.size numerical, default as 5
@@ -1291,8 +1293,9 @@ feature_highlighting<-function(input_eset,target=NULL,
 #'
 #' @export
 feature_vlnplot <- function(input_eset, group_tag="celltype",
-                         target=NULL,feature="geneSymbol",
+                         target=NULL,feature="geneSymbol",color_by="cluster",
                          ylabel="Expression",ncol=3,stat="median",
+                         colors=NULL,
                          boxplot=FALSE,title.size=5){
 
   # extract input information
@@ -1315,9 +1318,9 @@ feature_vlnplot <- function(input_eset, group_tag="celltype",
 
   df_melt <- reshape2::melt(df, id.vars="cluster")
 
-  p <- ggplot(df_melt, aes(x=cluster, y=value, fill=cluster))+
+  p <- ggplot(df_melt, aes(x=cluster, y=value))+
        theme_classic()+
-       geom_violin(trim=TRUE,scale="width",na.rm = TRUE,size=0.1,width=0.5)
+       geom_violin(aes_string(fill=color_by),trim=TRUE,scale="width",na.rm = TRUE,size=0.1,width=0.5)
 
   if(!is.null(stat)){
     if (stat=="median") p <- p + stat_summary(fun.y=median, geom="point", size=1.2, color="black")
