@@ -1,6 +1,7 @@
 ---
 layout: default
-title: Step by step user guidance
+title: Guided analysis on PBMC(12k)
+parent: Guided tutorials
 nav_order: 5
 ---
 
@@ -60,10 +61,10 @@ The first plot is a histogram which helps visualize distribution of expressed ge
 <center><img src="./plots/1_1_Gene_QCmetrics_before_filtering.png" alt="drawing" width="700"></center>
 
 The second plot helps visualize total UMI count, and total number of gene expressed in violin plots. Horizontal blue line indicates suggested high/low cutoffs. Suggested thresholds were computed based on Median ± 3 * MAD (Maximum absolute deviance). Suggested threshold numbers are also printed right above blue lines in labels.
-![](./plots/1_2_Cell_QC_1.png)
+![](../plots/1_2_Cell_QC_1.png)
 
 The third plot visualizes mitochondrial gene expression percentage, and spike-in genes expression percentage for each cell V.S. total number of UMI in scatter plots. Cells with high percentage of mitochondrial gene expression but low total number of UMI count are often considered as low quality.
-![](./plots/1_3_Cell_QC_2.png)
+![](../plots/1_3_Cell_QC_2.png)
 
 
 Then you could perform filtering with function `preMICA.filtering`. We recommend to input `cutoffs` using thresholds list which directly outputted from `draw.scRNAseq.QC` functon. You could also manually change cutoffs by re-assign thresholds in `cutoffs` list, e.g. `cutoffs$umi_cf_hi <- Inf` means not doing filtering on outliers caused by high total UMI value.
@@ -99,7 +100,7 @@ eset.log2 <- CreateSparseEset(data=exp.log2, meta.data = pData(eset.sel), featur
 MICA was implemented in Python. If you would like to install MICA, please refer to [MICA github page](https://github.com/jyyulab/MICA). There are several handlers for you to choose in MICA for better visualization. A more comprehensive tutorial could be found under [Clustering with MICA](./MICA.md) tab . **Here we suggest saving your working directory prior to running MICA**. 
 
 ### Generate MICA input and command
-After reviewing all visualizations and finished filtering, you can go ahead and generate clustering (MICA) input with function `generateMICAinput`. This function takes an expression matrix as input, and outputs a cell by gene .txt file. Please note that **you should always feed MICA the log or log2 transformed data**.
+After reviewing all visualizations and finished filtering, you can go ahead and generate clustering (MICA) input with function `generateMICAinput`. This function takes an expression matrix as input, and outputs a cell by gene .txt or .h5 file. Please note that **you should always feed MICA the log or log2 transformed data**.
 
 ```R
 generateMICAinput(d = exp.log2 ,filename="PBMC12k_MICA_input.txt")
@@ -144,12 +145,11 @@ In order to visualize MICA labels or other metadata on tSNE/UMAP coordinates, yo
 
 ```R
 MICAplot(input_eset = eset,
-		   visualize = 'tSNE', # label to print on x or y axis
 		   X = "X", Y="Y", # which meta variable was treated as x or y coordinates
-		   label = "ClusterRes", pct = 0.5)
+		   color_by = "ClusterRes", pct = 0.5)
 ```
 
-<center><img src="./plots/3_0_MICA_k8.png" alt="MICA" width="600"></center>
+<center><img src="../plots/3_0_MICA_k8.png" alt="MICA" width="600"></center>
 
 ### Marker gene visualization 
 {: no_toc }
@@ -164,21 +164,21 @@ p <- feature_highlighting(input_eset = eset, target = gn.sel,
 		feature="geneSymbol",ylabel = "log2Exp", x="X",y="Y",pct.size = 0.5)
 ```
 
-<center><img src="./plots/3_1_gene_highlighting.png" alt="Scatterplot" width="800"></center>
+<center><img src="../plots/3_1_gene_highlighting.png" alt="Scatterplot" width="800"></center>
 
 ```R
 p <- feature_vlnplot(input_eset=eset,target=gn.sel,feature = "geneSymbol",
-	group_tag = "ClusterRes",ylabel = "log2Exp",ncol = 4)
+	group_by = "ClusterRes",ylabel = "log2Exp",ncol = 4)
 ```
-<center><img src="./plots/3_2_gene_highlighting_vlnplot.png" alt="violinplot" width="800"></center>
+<center><img src="../plots/3_2_gene_highlighting_vlnplot.png" alt="violinplot" width="800"></center>
 
 
 ```R
-feature_heatmap(input_eset = eset, target = gn.sel,group_tag = "ClusterRes",
+feature_heatmap(input_eset = eset, target = gn.sel, group_by = "ClusterRes",
 			 	save_plot = TRUE,width = 6,height = 6,
              name = "log2_expression",plot_name="./GeneHeatmap.png")
 ```
-<center><img src="./plots/3_3_Marker_heatmaps.png" alt="heatmaps" width="800"></center>
+<center><img src="../plots/3_3_Marker_heatmaps.png" alt="heatmaps" width="800"></center>
 
 
 
@@ -199,15 +199,15 @@ head(ref)
 5     Tmem    IL32      1
 6     Tmem    GZMA     -1
 
-draw.marker.bbp(ref=ref,eset=eset,width = 6,height=4, feature = "geneSymbol",group_tag = "ClusterRes",
+draw.marker.bbp(ref=ref,eset=eset,width = 6,height=4, feature = "geneSymbol",group_name = "ClusterRes",
                    save_plot = TRUE, plot_name = "plots/MICA_cluster_score.png")
 
 ```
-<center><img src="./plots/3_4_MICA_cluster_score.png" alt="Markerbbp" width="800"/></center>
+<center><img src="../plots/3_4_MICA_cluster_score.png" alt="Markerbbp" width="800"/></center>
 
 
 
-Before diving into network generation section, please assign your celltype as factors in your expression set. **Please do not include "_" in your cell type names since it will cause mis-parsing in later analysis**.
+Before diving into network generation section, please assign your celltype as factors in your expression set. Assign cell type as factor will help keep current order of your clusters in following visualizations. **Please do not include "_" in your cell type names since it will cause mis-parsing in later analysis**.
 
 ```R
 indx<-factor(x=c("NaiveT","Tmem","CD8em","CD8eff","NK","Bcell","DC","Mo"),
@@ -297,17 +297,17 @@ feature_heatmap(input_eset = acs.12k, target = TF_list, group_tag = "celltype",f
                 width = 6,height = 6, save_plot=TRUE, cluster_rows = FALSE,
                 name = "Activity",plot_name="./21_TopTFHeatmap.png")
 ```
-<center><img src="./plots/4_1_TopTFHeatmap.png" alt="Driver heatmap" width="550"></center>
+<center><img src="../plots/4_1_TopTFHeatmap.png" alt="Driver heatmap" width="550"></center>
 
 ```R
 #check postive controls
 p<-feature_vlnplot(input_eset = acs.12k,feature = "geneSymbol",target=c("LEF1","TCF7","BATF","TBX21","IRF8","SPIB","BATF3","CEBPA"),
-                    ylabel = "Activity",group_tag = "celltype",ncol=2)
+                    ylabel = "Activity",group_by = "celltype", ncol=2)
 ```
-<center><img src="./plots/4_2_Known_MR_vlnplot.png" alt="Driver heatmap" width="600"></center>
+<center><img src="../plots/4_2_Known_MR_vlnplot.png" alt="Driver heatmap" width="600"></center>
 
 
-In order to perform more advanced network analysis utilizing SJARACNe generated cell type specific networks, please infer detailed guidance under [Advanced analysis](./PBMC-12k-network.md) tab.
+In order to perform more advanced network analysis utilizing SJARACNe generated cell type specific networks, please infer detailed guidance under [Advanced analysis](../Advanced analysis/PBMC-12k-network) tab.
 
 
 

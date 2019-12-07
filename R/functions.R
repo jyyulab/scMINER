@@ -1,6 +1,7 @@
 #'@import Biobase ggplot2 kableExtra knitr limma
 #'@importFrom reshape2 melt
-#'@importFrom ComplexHeatmap HeatmapAnnotation Heatmap
+#'@importFrom rhdf5 h5createFile h5write H5close
+#'@importFrom ComplexHeatmap HeatmapAnnotation Heatmap draw
 #'@importFrom igraph graph_from_data_frame set_edge_attr E
 #'@importFrom rmarkdown render pandoc_available html_document
 #'@importFrom utils read.delim write.table
@@ -60,7 +61,7 @@ CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T
   if(!class(data)[1]%in%c("dgCMatrix","dgTMatrix","matrix","dgeMatrix")){
     stop("Input format should %in% c( 'matrix','dgTMatrix','dgCMatrix','dgeMatrix,'Matrix')","\n")
     if(class(data)%in%"matrix"){
-      data<-as(data,"sparseMatrix")
+      data<-as(data,"dgCMatrix")
       }
   }
 
@@ -226,28 +227,41 @@ readscRNAseqData <- function(file,is.10x=TRUE,CreateSparseEset=TRUE, add.meta=F,
 
 
 
-#' generateMICAinput
+#' Generate MICA input accepted txt or h5 file
 #'
 #' @description A utility function that helps generate MICA input from a data matrix with rownames and colnames
+#' @usage generateMICAinput(d, filename="project_name_MICAinput.h5")
 #' @param d matrix with colnames as cell/sample info, rownames as gene/feature info
-#' @param filename filename of your MICA input file, supported format: txt
+#' @param filename filename of your MICA input file, supported format: txt or h5
+#' @return A txt file or a h5 file that could be read in MICA
 #'
 #' @export
 generateMICAinput <- function(d,filename){
 
-  mica.input <- as.data.frame(as.matrix(Matrix::t(d)))
-  mica.input$ID <- colnames(d)
-  mica.input <- mica.input[,c("ID",rownames(d))]
+  if (length(grep(".txt$",filename))!=0){
+    mica.input <- as.data.frame(as.matrix(Matrix::t(d)))
+    mica.input$ID <- colnames(d)
+    mica.input <- mica.input[,c("ID",rownames(d))]
 
-  if(length(grep("txt",filename))==0){
-    filename<-paste0(filename,".txt")
-  }
-
-  cat("Writing MICA input to table...","\n")
-  write.table(mica.input,file = filename,sep = "\t",
+    cat("Writing MICA input to table...","\n")
+    write.table(mica.input,file = filename,sep = "\t",
               row.names = FALSE,col.names = TRUE,quote = FALSE)
-  cat("Done.","\n")
 
+  }else if(length(grep(".h5$",filename))!=0){
+    mica.input<-as.matrix(d)
+    rhdf5::h5createFile(filename)
+    cat("Writing MICA input to h5 file.","\n")
+
+    rhdf5::h5write(mica.input, filename, "input")
+    rhdf5::h5write(rownames(mica.input), filename, "fn")
+    rhdf5::h5write(colnames(mica.input), filename, "ID")
+    rhdf5::H5close()
+
+  }else{
+      stop("Your filename should be ended with .txt or .h5", "\n")
+    }
+
+  cat("Done.","\n")
 }
 
 
@@ -309,14 +323,15 @@ generateMICAcmd<-function(save_sh_at,
 
   #add host specific attributes
   if (tolower(host)=="lsf"){
-    cat("For lsf usage, if you need to specify your own configuration file,
-    please take https://github.com/jyyulab/MICA/blob/master/MICA/config/config_cwlexec.json as your reference.","\n")
 
     project<-ifelse(is.null(project_name),'',paste('#BSUB -P ',project_name,' \n'))
     queue.bash<-ifelse(is.null(queue),'',paste('#BSUB -q ', queue,' \n'))
-    config.bash<-ifelse(is.null(config_file),
-                        paste0("-j ", system.file("config_template", "config_cwlexec.json", package = "scMINER"), " "),
-                        paste0("-j ", normalizePath(config_file), " "))
+
+    if (is.null(config_file)){
+      cat("Default configuration file will be copied to: ", save_sh_at ,", please adjust accordingly!","\n")
+      file.copy(system.file("config_template", "config_cwlexec.json", package = "scMINER"), paste0(save_sh_at,"/config_cwlexec.json"))
+      config.bash <- paste0(save_sh_at,"/config_cwlexec.json")
+    }else config.bash <- paste0("-j ", normalizePath(config_file), " ")
 
     job<-ifelse(is.null(project_name),
           '#BSUB -J MICA',
@@ -424,16 +439,16 @@ readMICAoutput<-function(eset=NULL, input_file, output_file,load_ClusterRes =TRU
 #' @param ref c("hg", "mm"), could be a manually defined geneSymbol vector
 #' @param funcType c("TF","SIG", NULL), if NULL then both TF and SIG will be considered
 #' @param wd.src output path
-#' @param group_tag name of group for sample identification
+#' @param group_name name of group for sample identification
 #' @return SJARACNe input files for each subgroups
 #' @keywords SJARACNe
 #' @examples
 #' \dontrun{
 #' generateSJARACNeInput(input_eset = eset ,ref = "hg",funcType="TF",
-#' wd.src = "./",group_tag = "celltype")
+#' wd.src = "./",group_name = "celltype")
 #' }
 #' @export
-generateSJARACNeInput<-function(input_eset,ref=NULL,funcType=NULL,wd.src,group_tag){
+generateSJARACNeInput<-function(input_eset,ref=NULL,funcType=NULL,wd.src,group_name){
 
   if (!dir.exists(wd.src)) dir.create(wd.src,recursive = T)
 
@@ -454,14 +469,14 @@ generateSJARACNeInput<-function(input_eset,ref=NULL,funcType=NULL,wd.src,group_t
     else warning("Activity calculations will not be supported!","\n")
   }
 
-  if(group_tag%in%colnames(pData(input_eset))){
-    groups <- unique(pData(input_eset)[,group_tag])
+  if(group_name%in%colnames(pData(input_eset))){
+    groups <- unique(pData(input_eset)[,group_name])
     for (i in 1:length(groups)){
-      grp.tag<-groups[i]; input_eset[,which(pData(input_eset)[,group_tag]==grp.tag)] -> eset.sel
+      grp.tag<-groups[i]; input_eset[,which(pData(input_eset)[,group_name]==grp.tag)] -> eset.sel
       SJARACNe_filter(eset.sel=eset.sel,tf.ref=tf.ref,sig.ref=sig.ref,wd.src=wd.src,grp.tag=grp.tag)
     }#end for
   }else{
-    stop("Lack of group info, please check your group_tag.","\n")
+    stop("Lack of group info, please check your group_name.","\n")
   }#end if
 
   save(input_eset, file=file.path(wd.src,"Input.eset")) # save input file as expressionSet
@@ -470,23 +485,31 @@ generateSJARACNeInput<-function(input_eset,ref=NULL,funcType=NULL,wd.src,group_t
 
 
 
-#' draw.marker.bbp
+#' Visualize marker score of different cell types on bubbleplot
 #'
 #' @title Generate visualization for marker scores via bubble plot
 #' @description  Marker visualizatoin from known markers/signatures, requires knowledge-based marker list as input
-#' @param ref reference dataframe, includes positive or negative markers for different cell types
+#' @param ref reference dataframe, includes positive or negative markers for different cell types;
+#' Specify first column as different cell types, second columns as markers, third columns as weight (postive or negative marker)
 #' @param input_eset expressionSet/SparseExpressionSet object with clustering membership stored in pData
-#' @param group_tag a character, the variable containing clustering label in pData(eset)
-#' @param save_plot logical, whether or not save your plot
+#' @param group_name a character, the variable containing clustering label in pData(eset); or any other group information stored in pData(eset)
+#' @param save_plot logical, whether or not save your plot; if TRUE, plot will be saved as plot_name
 #' @param width default as 8, inch as unit
 #' @param height default as 5, inch as unit
 #' @param plot_name plot name, please include plot type
-#' @param feature feature type from your reference, should be in colnames(fData(eset))
+#' @param feature feature type from second column of your reference , should be in colnames(fData(eset))
 #' @return A ggplot object
+#' @examples
+#' \dontrun{
+#' df.ref=data.frame(celltype="Cd4 T",markers=c("Cd8a","Cd4","Cd3g"),weight=c(-1,1,1))
+#' draw.marker.bbp<-function(ref = df.ref,input_eset, feature='geneSymbol',group_name="ClusterRes", save_plot = FALSE, width=8, height=5)
+#'
+#'
+#' }
 #'
 #' @export
 draw.marker.bbp<-function(ref = NULL,input_eset,
-                              feature='geneSymbol',group_tag="ClusterRes",
+                              feature='geneSymbol',group_name="ClusterRes",
                               save_plot = FALSE,
                               width=8, height=5,
                               plot_name="AnnotationBubbleplot.png"){
@@ -522,12 +545,12 @@ draw.marker.bbp<-function(ref = NULL,input_eset,
   ac_norm<-apply(ac,2,scale) #column normalization
 
   n_mtx<-(ac>0.5)
-  df_n<-data.frame(label=pData(input_eset)[,group_tag],n_mtx)
+  df_n<-data.frame(label=pData(input_eset)[,group_name],n_mtx)
   df_n<-aggregate(.~label,df_n,mean)
   library(reshape2)
   df_n_melt<-melt(df_n,id.vars = "label")
 
-  df<-data.frame(label=pData(input_eset)[,group_tag],ac_norm);
+  df<-data.frame(label=pData(input_eset)[,group_name],ac_norm);
   df<-df[,colSums(is.na(df))<nrow(df)];#remove NA columns
   df<-aggregate(.~label,df,mean)
   input<-t(apply(df[,-1],1,scale))#row normalization
@@ -562,7 +585,7 @@ draw.marker.bbp<-function(ref = NULL,input_eset,
 #'
 #' @param SJARACNe_output_path Path to SJARACNe output folder(s)
 #' @param SJARACNe_input_eset Expressionset that you generate input from
-#' @param group_tag a string, group name stored in pData that defines expression matrix separation
+#' @param group_name a string, group name stored in pData that defines expression matrix separation
 #' @param activity.method c("weighted,unweighted), default to "unweighted"
 #' @param activity.norm logical, default to TRUE.
 #' @param functype character c("tf","sig"); If NULL, both activity from TF and SIG network will be calculated;
@@ -579,7 +602,7 @@ draw.marker.bbp<-function(ref = NULL,input_eset,
 #'              SJARACNe_input_eset = eset.12k,
 #'              activity.method="unweighted",
 #'              activity.norm=TRUE,
-#'              group_tag = "celltype",
+#'              group_name = "celltype",
 #'              save_network_file=TRUE, #default as false, but recommended to be TRUE
 #'              save_path="./networks")
 #'}
@@ -592,7 +615,7 @@ draw.marker.bbp<-function(ref = NULL,input_eset,
 GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
 							   SJARACNe_input_eset=NA,
 							   functype="tf",
-							   group_tag=NA,
+							   group_name=NA,
 							   activity.method="unweighted",
 							   activity.norm=TRUE,
 							   save_network_file=FALSE,
@@ -600,12 +623,12 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
 
   eset<-SJARACNe_input_eset;
 
-  if(!group_tag%in%colnames(pData(eset))){
-	  stop('Check your group_tag please.','\n')
+  if(!group_name%in%colnames(pData(eset))){
+	  stop('Check your group_name please.','\n')
 	}
 
   if(!activity.method%in%c("weighted", "unweighted")){
-    stop('Check your group_tag please.','\n')
+    stop('Check your group_name please.','\n')
   }
 
   #retrieve networks
@@ -650,7 +673,7 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
       }
 
   	  cat("Calculate Activity for ",net,"!",'\n')
-  	  eset.sel<-eset[,pData(eset)[,group_tag]==net]
+  	  eset.sel<-eset[,pData(eset)[,group_name]==net]
 
       acs1<-get_activity(Net = TF.table$network_dat,tag = "TF",normalize=activity.norm,
     					   eset = eset.sel, activity.method = activity.method)
@@ -875,7 +898,7 @@ DAG_ttest<-function(d,group){
 #'  to find differential activity genes, a table with essential statistics will be outputted.
 #'
 #' @param input_eset ExpressionSet that stores group information in pData
-#' @param group_tag a character string, column name in pData(input_eset) that indicates group info
+#' @param group_name a character string, column name in pData(input_eset) that indicates group info
 #' @param group_case NULL(If do get.DA for all group vs others) or a character string (one specific group vs others) of
 #'  column name in pData(input_eset) that indicates group info
 #' @param group_ctrl NULL(If one vs Others); a character indicate case group if do pairwise analysis
@@ -884,36 +907,36 @@ DAG_ttest<-function(d,group){
 #'
 #' @seealso DAG_ttest; getDE.limma
 #' @examples
-#' \dontrun{get.DA(eset, group_tag="group")}
+#' \dontrun{get.DA(eset, group_name="group")}
 #'  # Try find DAG for only group 1
-#'  \dontrun{get.DA(eset, group_tag="group",group_case="group1")}
+#'  \dontrun{get.DA(eset, group_name="group",group_case="group1")}
 #' @export
 
-get.DA<-function(input_eset=NULL,group_tag="celltype",group_case=NULL, group_ctrl=NULL, method="t.test"){
+get.DA<-function(input_eset=NULL,group_name="celltype",group_case=NULL, group_ctrl=NULL, method="t.test"){
 
   d<-data.frame(id = featureNames(input_eset), exprs(input_eset), stringsAsFactors=FALSE)
   rs <- fData(input_eset);rs$id <- d$id
 
-  if(!group_tag%in%colnames(pData(input_eset))) {
-    stop('Please check your group_tag.',"\n")}
+  if(!group_name%in%colnames(pData(input_eset))) {
+    stop('Please check your group_name.',"\n")}
 
 
   if(!is.null(group_case)){
-    if(!group_case%in%pData(input_eset)[,group_tag]){
+    if(!group_case%in%pData(input_eset)[,group_name]){
       stop('Please check your group_case.',"\n")
     }
 
     if(!is.null(group_ctrl)){
-      if(!group_case%in%pData(input_eset)[,group_tag]){
+      if(!group_case%in%pData(input_eset)[,group_name]){
         stop('Please check your group_ctrl',"\n")
         }
-      input_eset<-input_eset[,which(pData(input_eset)[,group_tag]%in%c(group_case,group_ctrl))]
+      input_eset<-input_eset[,which(pData(input_eset)[,group_name]%in%c(group_case,group_ctrl))]
     }else{
       group_ctrl<-"Others"
     }
 
     cat("Find differential activity genes for ", group_case ," vs ",group_ctrl, "only!","\n")
-    input_eset$da_group <- ifelse(pData(input_eset)[,group_tag]==group_case,"Aim","Ctrl") #label info
+    input_eset$da_group <- ifelse(pData(input_eset)[,group_name]==group_case,"Aim","Ctrl") #label info
 
     if(method=="t.test"){
       da <- plyr::ddply(d,'id','DAG_ttest',group=input_eset$da_group)
@@ -932,9 +955,9 @@ get.DA<-function(input_eset=NULL,group_tag="celltype",group_case=NULL, group_ctr
     #do all group cases in all
     if (method=="t.test"){
 
-      da.list <- lapply(unique(pData(input_eset)[,group_tag]),function(xx){
+      da.list <- lapply(unique(pData(input_eset)[,group_name]),function(xx){
 
-        d.label <- ifelse(pData(input_eset)[,group_tag] == xx, "Aim", "Ctrl") #label info
+        d.label <- ifelse(pData(input_eset)[,group_name] == xx, "Aim", "Ctrl") #label info
 
         da <- plyr::ddply(d,'id','DAG_ttest',group=d.label)
 
@@ -962,11 +985,11 @@ get.DA<-function(input_eset=NULL,group_tag="celltype",group_case=NULL, group_ctr
                         starts_with("log2FC"))
     }else {
     #use limma
-      da.list <- lapply(unique(pData(input_eset)[,group_tag]),function(xx){
+      da.list <- lapply(unique(pData(input_eset)[,group_name]),function(xx){
         da <- getDE.limma(eset=input_eset,
                                       G1_name=xx,G0_name = "Others",
-                                      G1=colnames(input_eset[,which(pData(input_eset)[,group_tag]==xx)]),
-                                      G0=colnames(input_eset[,which(pData(input_eset)[,group_tag]!=xx)]),
+                                      G1=colnames(input_eset[,which(pData(input_eset)[,group_name]==xx)]),
+                                      G0=colnames(input_eset[,which(pData(input_eset)[,group_name]!=xx)]),
                                       verbose=FALSE)
         indx<-match(rs$id, da$ID)
         da<-da[indx,]
@@ -1173,37 +1196,121 @@ preMICA.filtering <- function(SparseEset,
 #' @title plot MICA clustering results or other meta variables
 #' @description This function helps to generate a ggplot object for phenotypic visualization
 #' @param input_eset ExpressionSet that include visualization coordinates in phenotype data
-#' @param label Coloring criteria of data points, should be a variable stored in pData(input_eset)
-#' @param visualize character, name of visualization method, this will be used as x or y axis label
+#' @param color_by Coloring criteria of data points, should be a variable stored in pData(input_eset)
+#' @param colors character, color values, if NULL then use ggplot default color
 #' @param X character, column name of x axis
 #' @param Y character, column name of y axis
 #' @param show_label logical, whether or not to show label on tSNE plot
+#' @param label.size numerical, size of label ploted on figure
 #' @param title.size numerical, size of plot title, default as 10
 #' @param title.name character, title of plot, default as NULL
 #' @param pct numerical, size of point, default as 0.5
+#' @param aplha numerical, indicate point transparency
+#' @example
+#' \dontrun{
 #'
+#' MICAplot<-function(input_eset, color_by= "ClusterRes", colors= NULL, X="tSNE_1",Y="tSNE_2",show_label=TRUE,
+#' title.size=20,title.name="Unsupervised clustering result from MICA",pct=0.5,alpha=1){
+#'
+#'
+#'
+#' }
 #' @export
 MICAplot<-function(input_eset,
-                   label= NULL,visualize=NULL,
-                   X=NULL,Y=NULL,show_label=TRUE,
-                   title.size=10,title.name="",pct=0.5){
+                   color_by= "ClusterRes", colors= NULL,
+                   X=NULL,Y=NULL,show_label=FALSE,label.size=10,
+                   title.size=20,title.name="",pct=0.5,alpha=1){
 
-  if(!label%in%colnames(pData(input_eset))){stop("Label name not found in phenotype data!","\n")}
+  input<-pData(input_eset)
+  if(!color_by%in%colnames(input)){stop("Label name not found in phenotype data!","\n")}
+  if(!X%in%colnames(input)|!Y%in%colnames(input)){stop("Please check your x or y axis assignment!","\n")}
+  p <- ggplot(data=input,aes_string(x=X, y=Y,color = color_by))+
+       geom_point(size=pct, alpha=alpha)+
+       labs(title=title.name, x = X, y= Y)+
+       theme_classic() +
+       theme(plot.title = element_text(size=title.size),
+             axis.text=element_text(size=12),
+             axis.title=element_text(size=14,face="bold"),
+             legend.text = element_text(size=12),
+             legend.title = element_text(size=14,face="bold"))
 
-  p <- ggplot(data=pData(input_eset),aes_string(x=X,y=Y,color = label))+
-       geom_point(size=pct)+
-       labs(title=title.name)+
-       theme_classic()+
-       theme(plot.title = element_text(size = title.size, face = "bold"),
-          axis.title = element_text(size = 10),
-          legend.title = element_text(size = 15))+
-       guides(colour = guide_legend(override.aes = list(size = 10)))+
-       xlab(label = paste0(toString(visualize),"_1"))+
-       ylab(label = paste0(toString(visualize),"_2"))
+  if (show_label){
+    loc <- stats::aggregate(input[,c(X,Y)],by=list(Cluster=input[,color_by]),mean)
+    p <- p + geom_text(data = loc, aes_string(x=X,y=Y,label="Cluster"),
+                       check_overlap = TRUE, na.rm = FALSE,size=label.size,
+                       show.legend = F, inherit.aes = FALSE)
+  }# add number on tsne plot if TRUE
+
+  # add number of cells in each catergory on legend
+  if (class(input$label)!="numerical"){
+    input$label<-input[,color_by]
+    lgnd<-paste0(names(table(input$label))," (",table(input$label),")")
+
+    if (!is.null(colors)){
+      p <- p + scale_color_manual(values=colors, labels=lgnd)
+    }else{
+      p <- p + scale_color_discrete(labels=lgnd)
+    }
+    p <- p + guides(col=guide_legend(override.aes = list(size=10),
+                                     title=paste0(color_by,"\n(",dim(input)[1] ,")")),
+                    ncol=ceiling(length(unique(input$label))/10))
+  }else{
+    if (!is.null(colors)) p <- p + scale_color_gradientn(values=colors)
+    p<- p + guides(colour = guide_legend(override.aes = list(size = 10)))
+  }
+  return(p)
+}
+
+
+###################################
+#' Draw barplot for composition study
+#'
+#' @param input_eset ExpressionSet that include group information in phenotype data
+#' @param group_by Group criteria for bars, should be a variable stored in pData(input_eset)
+#' @param color_by Coloring criteria of bar fractions, should be a variable stored in pData(input_eset)
+#' @param colors color values to feed in scale_fill_manual, default as NULL; If NULL, then default color for ggplot will be used
+#'
+#' @return a ggplot object
+#' @export
+#'
+draw.group.barplot<-function(input_eset,
+                             group_by,
+                             color_by,
+                             colors = NULL){
+
+  input<-pData(input_eset)
+
+  if(group_by%in%colnames(input)){
+    if(color_by%in%colnames(input)){
+      input[,group_by]<-as.factor(input[,group_by])
+      input[,color_by]<-as.factor(input[,color_by])
+    }else{
+      stop ('color_by name not found in pData!','\n')
+    }
+  }else{
+    stop ('group_by name not found in pData!','\n')
+    }
+
+
+  p <- ggplot(data=input, aes_string(group_by))+
+    geom_bar(aes_string(fill=color_by), position="fill")+
+    xlab(label="Condition")+
+    ylab(label="Fraction")+
+    theme_classic()+
+    guides(fill=guide_legend(size=15,title=""))+
+    theme(plot.title = element_text(size=25),
+          axis.text=element_text(size=12),
+          axis.title=element_text(size=14,face="bold"),
+          legend.text = element_text(size=12),
+          legend.title = element_text(size=14,face="bold"))
+
+  if (!is.null(colors)){
+    p <- p + scale_fill_manual(values = colors)
+  }
 
   return(p)
-
 }
+
 
 
 #' @title feature_highlighting
@@ -1215,7 +1322,6 @@ MICAplot<-function(input_eset,
 #' @param title.size numerical, default as 5
 #' @param x cordinates for x axis
 #' @param y cordinates for y axis
-#' @param visualize character, name of visualization method, this will be used as x or y axis label
 #' @param wrap_by character, variable to wrap plot with
 #' @param ncol cordinates for y axis
 #' @param alpha numerical, default as 0.8
@@ -1225,7 +1331,8 @@ MICAplot<-function(input_eset,
 #' @export
 feature_highlighting<-function(input_eset,target=NULL,
                                feature="geneSymbol",
-                               x="X",y="Y",visualize="tSNE",wrap_by=NULL,
+                               x="X",y="Y",
+                               wrap_by=NULL,
                                ylabel="Expression",pct.size=0.8,
                                title.size=15,ncol=4, alpha=0.8,
                                colors=colorRampPalette(c("#E3E3E3", "#BCA2FC","#4900FE"),interpolate="linear")(8)){
@@ -1269,9 +1376,7 @@ feature_highlighting<-function(input_eset,target=NULL,
         theme(plot.title = element_text(size = title.size, face = "bold"),
               axis.title = element_text(size = 10),
               legend.title = element_text(size = 10))+
-       xlab(label = paste0(toString(visualize),"_1"))+
-       ylab(label = paste0(toString(visualize),"_2"))+
-       labs(color=ylabel)
+        labs(color=ylabel)
 
    return(p)
 }
@@ -1282,9 +1387,9 @@ feature_highlighting<-function(input_eset,target=NULL,
 #' @param input_eset Input expression set
 #' @param feature character, which feature to visualize
 #' @param target a character vector, the list of feature to visualize
-#' @param stat a character, whether to plot median or mean by a black dot on violinplot
-#' @param group_tag character, which group info to visualize as y axis
-#' @param color_by character, which group info to define color
+#' @param stat a character, whether to plot median or mean as a black dot on violinplot
+#' @param group_by character, which group info to visualize as x axis
+#' @param color_by character, which group info to define color, if NULL, then violin plots will be colored by 'group_by'
 #' @param colors character vector, default as NULL, will use ggplot default color palette
 #' @param ylabel a character, title of y axis
 #' @param boxplot logical, whether to plot boxplot on violinplot
@@ -1292,48 +1397,58 @@ feature_highlighting<-function(input_eset,target=NULL,
 #' @param ncol cordinates for y axis
 #'
 #' @export
-feature_vlnplot <- function(input_eset, group_tag="celltype",
-                         target=NULL,feature="geneSymbol",color_by="cluster",
-                         ylabel="Expression",ncol=3,stat="median",
-                         colors=NULL,
+feature_vlnplot <- function(input_eset,
+                         target=NULL,feature="geneSymbol",
+                         group_by="celltype",ylabel="Expression",
+                         color_by=NULL,colors=NULL,
+                         ncol=3,stat="median",
                          boxplot=FALSE,title.size=5){
+
+  if(!group_by%in% colnames(pData(input_eset))) stop('Please check your group_by information!','\n')
+  if(!feature%in% colnames(fData(input_eset))) stop('Please check your feature information!','\n')
 
   # extract input information
   input <- exprs(input_eset)
   indx<-which(fData(input_eset)[,feature]%in%target)
   gn<-fData(input_eset)[,feature][indx]
 
-  label <- as.factor(pData(input_eset)[,group_tag])
+  if(length(indx)==0) stop('No target feature found in data!','\n')
+
+  label <- as.factor(pData(input_eset)[,group_by])
+  if (is.null(color_by)) color_by=group_by
+  condition<- as.factor(pData(input_eset)[,color_by])
 
   # Gene expression visualized as columns
   if (length(target)!=1) {
     target_values <- t(as.matrix(input[indx,]))
     colnames(target_values)<-gn
-    df <- data.frame(target_values,cluster=label)
+    df <- data.frame(target_values,cluster=label,condition=condition)
   }else {
     target_values<-input[indx,]
-    df <- data.frame(target_values,cluster=label)
+    df <- data.frame(target_values,cluster=label,condition=condition)
     colnames(df)[1]<-gn
   }
 
-  df_melt <- reshape2::melt(df, id.vars="cluster")
+  df_melt <- reshape2::melt(df, id.vars=c("cluster","condition"))
 
-  p <- ggplot(df_melt, aes(x=cluster, y=value))+
+  p <- ggplot(df_melt, aes(x=cluster, y=value, fill=condition))+
        theme_classic()+
-       geom_violin(aes_string(fill=color_by),trim=TRUE,scale="width",na.rm = TRUE,size=0.1,width=0.5)
+       geom_violin(trim=TRUE,scale="width",na.rm = TRUE,size=0.4)
 
   if(!is.null(stat)){
-    if (stat=="median") p <- p + stat_summary(fun.y=median, geom="point", size=1.2, color="black")
-    else if (stat=="mean") p <-p + stat_summary(fun.y=mean, geom="point", size=1.2, color="black")
+    if (stat=="median") p <- p + stat_summary(fun.y=median, geom="point", size=1.2, color="black",position=position_dodge(width=1))
+    else if (stat=="mean") p <- p + stat_summary(fun.y=mean, geom="point", size=1.2, color="black",position=position_dodge(width=1))
     else cat("Stat not supported, please check your spelling.","\n")}
 
   if(boxplot) p <- p + geom_boxplot(fill="white",width=0.1,size=0.1,outlier.size = 0.001,show.legend = FALSE,na.rm = TRUE)
 
   p <- p + facet_wrap(~variable,scales = "free",ncol = ncol) +
-    labs(x="Cluster",y=ylabel)+
+    labs(x=group_by,y=ylabel)+
     theme(axis.text.x = element_text(size=10),
           plot.title = element_text(size = title.size, face = "bold"),
           strip.background = element_rect(fill="#FFFFFF"))
+
+  if (!is.null(colors)) p <- p+ scale_fill_manual(values=colors)
 
   if (ylabel=="Activity") { p <- p + geom_boxplot(width=0.2,size=0.1,outlier.size = 0.001,show.legend = FALSE,na.rm = TRUE)}
 
@@ -1346,7 +1461,7 @@ feature_vlnplot <- function(input_eset, group_tag="celltype",
 #' @param input_eset Input expression set
 #' @param feature a character, which feature to visualize
 #' @param target a character or a character vector indicating feature names
-#' @param group_tag a character, label to visualize on the top of heatmap
+#' @param group_name a character, label to visualize on the top of heatmap
 #' @param name character, name of value visualized in color scale
 #' @param cluster_rows logical, if or not cluster rows
 #' @param colors color palette
@@ -1359,10 +1474,10 @@ feature_vlnplot <- function(input_eset, group_tag="celltype",
 #'
 #' @export
 feature_heatmap <- function(input_eset,target,feature="geneSymbol",
-                         group_tag="label",name="log2Exp",
+                         group_name="label",name="log2Exp",
                          save_plot=TRUE,width=4,height=8,
-                         cluster_rows=FALSE,
-                         colors=rev(colorRampPalette(brewer.pal(10, "RdYlBu"))(256)),
+                         cluster_rows = FALSE,
+                         colors = rev(colorRampPalette(brewer.pal(10, "RdYlBu"))(256)),
                          plot_name="GeneHeatmap.png",
                          ...){
 
@@ -1372,7 +1487,7 @@ feature_heatmap <- function(input_eset,target,feature="geneSymbol",
 
   exp<-exprs(input_eset)[indx,]
   rownames(exp)<-gn
-  lab<-pData(input_eset)[,group_tag];names(lab) <- sampleNames(input_eset)
+  lab<-pData(input_eset)[,group_name];names(lab) <- sampleNames(input_eset)
 
   #re-order expressionmatrix and label
   ranks<-names(sort(lab,decreasing = FALSE))
@@ -1397,7 +1512,7 @@ feature_heatmap <- function(input_eset,target,feature="geneSymbol",
 
   if(save_plot){
     png(filename = plot_name, width=width,height=height,units ="in",res = 300)
-    draw(hmp)
+    ComplexHeatmap::draw(hmp)
     dev.off()
   }
 

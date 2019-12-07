@@ -4,16 +4,16 @@
 \alias{MICAplot}
 \title{plot MICA clustering results or other meta variables}
 \usage{
-MICAplot(input_eset, label = NULL, visualize = NULL, X = NULL,
-  Y = NULL, show_label = TRUE, title.size = 10, title.name = "",
-  pct = 0.5)
+MICAplot(input_eset, color_by = "ClusterRes", colors = NULL,
+  X = NULL, Y = NULL, show_label = FALSE, title.size = 20,
+  title.name = "", pct = 0.5, alpha = 1)
 }
 \arguments{
 \item{input_eset}{ExpressionSet that include visualization coordinates in phenotype data}
 
-\item{label}{Coloring criteria of data points, should be a variable stored in pData(input_eset)}
+\item{color_by}{Coloring criteria of data points, should be a variable stored in pData(input_eset)}
 
-\item{visualize}{character, name of visualization method, this will be used as x or y axis label}
+\item{colors}{character, color values, if NULL then use ggplot default color}
 
 \item{X}{character, column name of x axis}
 
@@ -26,6 +26,8 @@ MICAplot(input_eset, label = NULL, visualize = NULL, X = NULL,
 \item{title.name}{character, title of plot, default as NULL}
 
 \item{pct}{numerical, size of point, default as 0.5}
+
+\item{aplha}{numerical, indicate point transparency}
 }
 \description{
 This function helps to generate a ggplot object for phenotypic visualization

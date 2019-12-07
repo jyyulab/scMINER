@@ -28,7 +28,8 @@ Imports:
     stats (>= 3.6.1),
     methods (>= 3.6.1),
     ComplexHeatmap (>= 2.0.0),
-    igraph (>= 1.2.4.1)
+    igraph (>= 1.2.4.1),
+    rhdf5 (>= 2.28.1)
 Suggests:
     openxlsx (>= 4.1.0),
     NetBID2 (>= 2.0.1)

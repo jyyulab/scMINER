@@ -4,24 +4,29 @@
 \alias{feature_vlnplot}
 \title{feature_vlnplot}
 \usage{
-feature_vlnplot(input_eset, group_tag = "celltype", target = NULL,
-  feature = "geneSymbol", ylabel = "Expression", ncol = 3,
-  stat = "median", boxplot = FALSE, title.size = 5)
+feature_vlnplot(input_eset, target = NULL, feature = "geneSymbol",
+  group_by = "celltype", ylabel = "Expression",
+  color_by = "celltype", colors = NULL, ncol = 3, stat = "median",
+  boxplot = FALSE, title.size = 5)
 }
 \arguments{
 \item{input_eset}{Input expression set}
-
-\item{group_tag}{character, which group info to visualize as y axis}
 
 \item{target}{a character vector, the list of feature to visualize}
 
 \item{feature}{character, which feature to visualize}
 
+\item{group_by}{character, which group info to visualize as x axis}
+
 \item{ylabel}{a character, title of y axis}
+
+\item{color_by}{character, which group info to define color, default is group_by}
+
+\item{colors}{character vector, default as NULL, will use ggplot default color palette}
 
 \item{ncol}{cordinates for y axis}
 
-\item{stat}{a character, whether to plot median or mean by a black dot on violinplot}
+\item{stat}{a character, whether to plot median or mean as a black dot on violinplot}
 
 \item{boxplot}{logical, whether to plot boxplot on violinplot}
 

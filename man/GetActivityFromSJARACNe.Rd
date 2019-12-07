@@ -5,7 +5,7 @@
 \title{GetActivityFromSJARACNe}
 \usage{
 GetActivityFromSJARACNe(SJARACNe_output_path = NA,
-  SJARACNe_input_eset = NA, functype = "tf", group_tag = NA,
+  SJARACNe_input_eset = NA, functype = "tf", group_name = NA,
   activity.method = "unweighted", activity.norm = TRUE,
   save_network_file = FALSE, save_path = NULL)
 }
@@ -17,7 +17,7 @@ GetActivityFromSJARACNe(SJARACNe_output_path = NA,
 \item{functype}{character c("tf","sig"); If NULL, both activity from TF and SIG network will be calculated;
 default as NULL}
 
-\item{group_tag}{a string, group name stored in pData that defines expression matrix separation}
+\item{group_name}{a string, group name stored in pData that defines expression matrix separation}
 
 \item{activity.method}{c("weighted,unweighted), default to "unweighted"}
 
@@ -40,7 +40,7 @@ acs.12k <- GetActivityFromSJARACNe(
              SJARACNe_input_eset = eset.12k,
              activity.method="unweighted",
              activity.norm=TRUE,
-             group_tag = "celltype",
+             group_name = "celltype",
              save_network_file=TRUE, #default as false, but recommended to be TRUE
              save_path="./networks")
 }

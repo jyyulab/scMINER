@@ -2,6 +2,7 @@
 layout: default
 title: Advanced analysis
 nav_order: 6
+
 ---
 
 # Advanced analysis
@@ -21,7 +22,7 @@ net2 <- NetBID2::get.SJAracne.network('SJARACNE/Tmem_8489_8488_2482/tf/SJARACNE_
 Or, if you followed our analysis pipeline under [step by step user guide](./PBMC-12k.md), you should be able to load 
 your network files under `./networks` folder:
 ```R
-load("./networks/NaiveT_TF.network")
+load("../plots/NaiveT_TF.network")
 ```
 
 ### Single network visualization
@@ -35,7 +36,7 @@ draw.network(net1 = net,src1 = "LEF1", #driver name
 	n_layer=4)
 
 ```
-<center><img src="./plots/LEF1.TF_in_NaiveT_network.png" alt="drawing" width="600"></center>
+<center><img src="../plots/LEF1.TF_in_NaiveT_network.png" alt="drawing" width="600"></center>
 
 
 ### Subnetwork structure visualization between two networks
@@ -54,7 +55,7 @@ draw.network(net1 = net1,net2 = net2,
 		pdf_name = "BATF.TF_in_2_network.pdf",
 		n_layer=4)
 ```
-<center><img src="./plots/BATF.TF_in_2_network.png" alt="drawing" width="600"></center>
+<center><img src="../plots/BATF.TF_in_2_network.png" alt="drawing" width="600"></center>
 
 
 
@@ -99,7 +100,7 @@ draw.bubblePlot(driver_list = TF_list,
                 main ='Bubbleplot for top driver targets in NaiveT')
 
 ```
-<center><img src="./plots/NaiveT_bubblePlot.png" alt="gsbbp"></center>
+<center><img src="../plots/NaiveT_bubblePlot.png" alt="gsbbp"></center>
 
 
 

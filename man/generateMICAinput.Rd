@@ -2,14 +2,17 @@
 % Please edit documentation in R/functions.R
 \name{generateMICAinput}
 \alias{generateMICAinput}
-\title{generateMICAinput}
+\title{Generate MICA input accepted txt or h5 file}
 \usage{
-generateMICAinput(d, filename)
+generateMICAinput(d, filename="project_name_MICAinput.h5")
 }
 \arguments{
 \item{d}{matrix with colnames as cell/sample info, rownames as gene/feature info}
 
-\item{filename}{filename of your MICA input file, supported format: txt}
+\item{filename}{filename of your MICA input file, supported format: txt or h5}
+}
+\value{
+A txt file or a h5 file that could be read in MICA
 }
 \description{
 A utility function that helps generate MICA input from a data matrix with rownames and colnames

@@ -7,7 +7,7 @@ nav_order: 3
 # Clustering Analysis with MICA
 {:.no_toc}
 MICA(Mutual Information based Clustering Analysis) is a nonlinear clustering analysis tool designed for scRNA-seq data. Here we provide a user guide to perform MICA clustering on both local node or LSF platform. To install, please infer our [MICA](https://github.com/jyyulab/MICA) github page. 
-{: .fs-6 .fw-300 }
+{: .fw-300 }
 
 ## Table of contents
 {: .no_toc .text-delta }

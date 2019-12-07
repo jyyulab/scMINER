@@ -5,7 +5,7 @@
 \title{Visualize gene expression level on scRNA-seq data via heatmap}
 \usage{
 feature_heatmap(input_eset, target, feature = "geneSymbol",
-  group_tag = "label", name = "log2Exp", save_plot = TRUE,
+  group_name = "label", name = "log2Exp", save_plot = TRUE,
   width = 4, height = 8, cluster_rows = FALSE,
   colors = rev(colorRampPalette(brewer.pal(10, "RdYlBu"))(256)),
   plot_name = "GeneHeatmap.png", ...)
@@ -17,7 +17,7 @@ feature_heatmap(input_eset, target, feature = "geneSymbol",
 
 \item{feature}{a character, which feature to visualize}
 
-\item{group_tag}{a character, label to visualize on the top of heatmap}
+\item{group_name}{a character, label to visualize on the top of heatmap}
 
 \item{name}{character, name of value visualized in color scale}
 

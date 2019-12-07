@@ -5,7 +5,7 @@
 \title{Generate visualization for marker scores via bubble plot}
 \usage{
 draw.marker.bbp(ref = NULL, input_eset, feature = "geneSymbol",
-  group_tag = "ClusterRes", save_plot = FALSE, width = 8,
+  group_name = "ClusterRes", save_plot = FALSE, width = 8,
   height = 5, plot_name = "AnnotationBubbleplot.png")
 }
 \arguments{
@@ -15,7 +15,7 @@ draw.marker.bbp(ref = NULL, input_eset, feature = "geneSymbol",
 
 \item{feature}{feature type from your reference, should be in colnames(fData(eset))}
 
-\item{group_tag}{a character, the variable containing clustering label in pData(eset)}
+\item{group_name}{a character, the variable containing clustering label in pData(eset)}
 
 \item{save_plot}{logical, whether or not save your plot}
 

@@ -5,7 +5,7 @@
 \title{Generate SJARACNE input with designed folder structure}
 \usage{
 generateSJARACNeInput(input_eset, ref = NULL, funcType = NULL, wd.src,
-  group_tag)
+  group_name)
 }
 \arguments{
 \item{input_eset}{An expressionSet}
@@ -16,7 +16,7 @@ generateSJARACNeInput(input_eset, ref = NULL, funcType = NULL, wd.src,
 
 \item{wd.src}{output path}
 
-\item{group_tag}{name of group for sample identification}
+\item{group_name}{name of group for sample identification}
 }
 \value{
 SJARACNe input files for each subgroups
@@ -31,7 +31,7 @@ generateSJARACNeInput
 \examples{
 \dontrun{
 generateSJARACNeInput(input_eset = eset ,ref = "hg",funcType="TF",
-wd.src = "./",group_tag = "celltype")
+wd.src = "./",group_name = "celltype")
 }
 }
 \keyword{SJARACNe}

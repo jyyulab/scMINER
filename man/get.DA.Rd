@@ -4,13 +4,13 @@
 \alias{get.DA}
 \title{Find differential activity genes from activity matrix}
 \usage{
-get.DA(input_eset = NULL, group_tag = "celltype", group_case = NULL,
+get.DA(input_eset = NULL, group_name = "celltype", group_case = NULL,
   group_ctrl = NULL, method = "t.test")
 }
 \arguments{
 \item{input_eset}{ExpressionSet that stores group information in pData}
 
-\item{group_tag}{a character string, column name in pData(input_eset) that indicates group info}
+\item{group_name}{a character string, column name in pData(input_eset) that indicates group info}
 
 \item{group_case}{NULL(If do get.DA for all group vs others) or a character string (one specific group vs others) of
 column name in pData(input_eset) that indicates group info}
@@ -28,9 +28,9 @@ output would be a data.frame containing: t.statistics, p.value, log2FC, z.score,
  to find differential activity genes, a table with essential statistics will be outputted.
 }
 \examples{
-\dontrun{get.DA(eset, group_tag="group")}
+\dontrun{get.DA(eset, group_name="group")}
  # Try find DAG for only group 1
- \dontrun{get.DA(eset, group_tag="group",group_case="group1")}
+ \dontrun{get.DA(eset, group_name="group",group_case="group1")}
 }
 \seealso{
 DAG_ttest; getDE.limma

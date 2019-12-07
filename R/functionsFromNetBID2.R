@@ -207,3 +207,93 @@ getDE.limma <- function(eset=NULL, G1=NULL, G0=NULL,G1_name=NULL,G0_name=NULL,ve
   tT <- tT[order(tT$P.Value, decreasing = FALSE), ]
   return(tT)
 }
+
+
+
+
+#' Combine P Values Using Fisher's Method or Stouffer's Method
+#'
+#' \code{combinePvalVector} is a function to combine multiple comparison's P values using Fisher's method or Stouffer's method.
+#'
+#' @param pvals a vector of numerics, the P values from multiple comparison need to be combined.
+#' @param method character, users can choose between "Stouffer" and "Fisher". Default is "Stouffer".
+#' @param signed logical, if TRUE, will give a sign to the P value to indicate the direction of testing.
+#' Default is TRUE.
+#' @param twosided logical, if TRUE, P value is calculated in a one-tailed test.
+#' If FALSE, P value is calculated in a two-tailed test, and it falls within the range 0 to 0.5.
+#' Default is TRUE.
+#' @return Return a vector contains the "Z-statistics" and "P.Value".
+#' @examples
+#' combinePvalVector(c(0.1,1e-3,1e-5))
+#' combinePvalVector(c(0.1,1e-3,-1e-5))
+#' @export
+combinePvalVector <-function(pvals,
+           method = 'Stouffer',
+           signed = TRUE,
+           twosided = TRUE) {
+
+    #remove NA pvalues
+    pvals <- pvals[!is.na(pvals) & !is.null(pvals)]
+    pvals[which(abs(pvals)<=0)] <- .Machine$double.xmin
+    if (sum(is.na(pvals)) >= 1) {
+      stat <- NA
+      pval <- NA
+    } else{
+      if (twosided & (sum(pvals > 1 | pvals < -1) >= 1))
+        stop('pvalues must between 0 and 1!\n')
+      if (!twosided & (sum(pvals > 0.5 | pvals < -0.5) >= 1))
+        stop('One-sided pvalues must between 0 and 0.5!\n')
+
+      if (!signed) {
+        pvals <- abs(pvals)
+      }
+
+      signs <- sign(pvals)
+      signs[signs == 0] <- 1
+
+      if (grepl('Fisher', method, ignore.case = TRUE)) {
+        if (twosided & signed) {
+          neg.pvals <- pos.pvals <- abs(pvals) / 2
+          pos.pvals[signs < 0] <- 1 - pos.pvals[signs < 0]
+          neg.pvals[signs > 0] <- 1 - neg.pvals[signs > 0]
+        } else{
+          neg.pvals <- pos.pvals <- abs(pvals)
+        }
+        pvals <-
+          c(1, -1) * c(
+            pchisq(
+              -2 * sum(log(as.numeric(pos.pvals))),
+              df = 2 * base::length(pvals),
+              lower.tail = FALSE
+            ) / 2,
+            pchisq(
+              -2 * sum(log(as.numeric(neg.pvals))),
+              df = 2 * base::length(pvals),
+              lower.tail = FALSE
+            ) / 2
+          )
+        pval <- base::min(abs(pvals))[1]
+        #if two pvals are equal, pick up the first one
+        stat <-
+          sign(pvals[abs(pvals) == pval])[1] * qnorm(pval, lower.tail = F)[1]
+        pval <- 2 * pval
+      }
+      else if (grepl('Stou', method, ignore.case = TRUE)) {
+        if (twosided) {
+          zs <- signs * qnorm(abs(pvals) / 2, lower.tail = FALSE)
+          stat <- sum(zs) / sqrt(base::length(zs))
+          pval <- 2 * pnorm(abs(stat), lower.tail = FALSE)
+        }
+        else{
+          zs <- signs * qnorm(abs(pvals), lower.tail = FALSE)
+          stat <- sum(zs) / sqrt(base::length(zs))
+          pval <- pnorm(abs(stat), lower.tail = FALSE)
+        }
+      }
+      else{
+        stop('Only \"Fisher\" or \"Stouffer\" method is supported!!!\n')
+      }
+    }
+    return(c(`Z-statistics` = stat, `P.Value` = pval))
+  }
+
