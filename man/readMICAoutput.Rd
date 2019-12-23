@@ -4,8 +4,7 @@
 \alias{readMICAoutput}
 \title{readMICAoutput}
 \usage{
-readMICAoutput(eset = NULL, input_file, output_file,
-  load_ClusterRes = TRUE)
+readMICAoutput(eset = NULL, input_file, output_file, load_ClusterRes = TRUE)
 }
 \arguments{
 \item{eset}{a SparseMatrix Eset}

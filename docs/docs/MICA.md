@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Clustering with MICA
-nav_order: 3
+
 ---
 
 # Clustering Analysis with MICA
@@ -35,7 +35,7 @@ MICA module was implemented in python, which only includes clustering analysis. 
 ## Basic usage
 MICA incorprated [_Common workflow languages_](https://www.commonwl.org/) for portablity and scalability purposes. We adopted [_cwltool_](https://github.com/common-workflow-language/cwltool) as runner for local host and [_cwlexec_](https://github.com/IBMSpectrumComputing/cwlexec) for LSF platform. While it might introduce some differences for intermediate files, final results will not be affected.
 
-To ensure a user friendly interface, we designed function `generate_MICA_rmd` to help users generate complimentary commands for MICA execution. Below are two examples when running MICA on local or LSF host respectively.
+To ensure a user friendly interface, we designed function `generateMICArmd` to help users generate complimentary commands for MICA execution. Below are two examples when running MICA on local or LSF host respectively.
 
 ### On local host
 To perform MICA on local host, you need to specify `host= "local"`

@@ -4,9 +4,19 @@
 \alias{MICAplot}
 \title{plot MICA clustering results or other meta variables}
 \usage{
-MICAplot(input_eset, color_by = "ClusterRes", colors = NULL,
-  X = NULL, Y = NULL, show_label = FALSE, title.size = 20,
-  title.name = "", pct = 0.5, alpha = 1)
+MICAplot(
+  input_eset,
+  color_by = "ClusterRes",
+  colors = NULL,
+  X = NULL,
+  Y = NULL,
+  show_label = FALSE,
+  label.size = 10,
+  title.size = 20,
+  title.name = "",
+  pct = 0.5,
+  alpha = 1
+)
 }
 \arguments{
 \item{input_eset}{ExpressionSet that include visualization coordinates in phenotype data}
@@ -20,6 +30,8 @@ MICAplot(input_eset, color_by = "ClusterRes", colors = NULL,
 \item{Y}{character, column name of y axis}
 
 \item{show_label}{logical, whether or not to show label on tSNE plot}
+
+\item{label.size}{numerical, size of label ploted on figure}
 
 \item{title.size}{numerical, size of plot title, default as 10}
 

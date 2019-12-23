@@ -8,7 +8,7 @@ Description: single-cell Mutual Information Network Engineered Ranger: Analysis 
 License: Apache License
 Encoding: UTF-8
 LazyData: TRUE 
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Depends: 
     R (>= 3.6.0),
     Biobase (>= 2.38.0),

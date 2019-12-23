@@ -4,8 +4,13 @@
 \alias{readscRNAseqData}
 \title{readscRNAseqData}
 \usage{
-readscRNAseqData(file, is.10x = TRUE, CreateSparseEset = TRUE,
-  add.meta = F, ...)
+readscRNAseqData(
+  file,
+  is.10x = TRUE,
+  CreateSparseEset = TRUE,
+  add.meta = F,
+  ...
+)
 }
 \arguments{
 \item{file}{data path to 10x genomics output folder, which normally contains 3 files (matrix.mtx, gene or feature.tsv and barcode.csv),

@@ -78,13 +78,24 @@ python setup.py build
 python setup.py install
 ```
 
-## Data import 
+## Interoperability
+### SparseExpressionSet
+
+Majority of data processing/visualizaiton in scMINER are completed under R environment, utilizing SparseExpressionSet object. It is a customized data object adapted from `ExpressionSet` class. The only thing that is different between these two classes is users are able to store sparsematrix (class dgTmatrix, etc.) in the object, for scRNA-seq data, it will boost up computational performances.
 
 
+To import scRNA-seq data to R, we provide an easy function `readscRNAseqData `:  
 
+For standard 10x genomics output, you can set `is.10x=TRUE`, it will take matrix.mtx, feature.tsv, barcodes.tsv as input.  
+You may want to set `CreateSparseEset = F` at the very beginning in order to manually check if your data was correctly imported. Imported data will be stored in a list.
 
+```R
+d.12k <- readscRNAseqData(file="../PBMC12k_input/", is.10x = T, CreateSparseEset = F, add.meta = F)
+```
 
+If your data is not directly from 10x genomics standard output, but random public dataset or even in other object format -- just make sure you have your expression matrix as a matrix or sparsematrix, feature data and phenotype data as data frame, then use `CreaseSparseEset` function to create scMINER object. By doing this step, **no** filtering, transformation, or preprocessing is performed.
 
+```R
+eset.12k<-CreateSparseEset(data=d.12k$raw.data,feature.data = d.12k$feature.data, add.meta = T)
+```
 
-
-## SparseExpressionSet

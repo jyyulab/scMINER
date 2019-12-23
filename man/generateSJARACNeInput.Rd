@@ -4,8 +4,13 @@
 \alias{generateSJARACNeInput}
 \title{Generate SJARACNE input with designed folder structure}
 \usage{
-generateSJARACNeInput(input_eset, ref = NULL, funcType = NULL, wd.src,
-  group_name)
+generateSJARACNeInput(
+  input_eset,
+  ref = NULL,
+  funcType = NULL,
+  wd.src,
+  group_name
+)
 }
 \arguments{
 \item{input_eset}{An expressionSet}

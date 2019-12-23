@@ -4,11 +4,21 @@
 \alias{feature_highlighting}
 \title{feature_highlighting}
 \usage{
-feature_highlighting(input_eset, target = NULL, feature = "geneSymbol",
-  x = "X", y = "Y", visualize = "tSNE", wrap_by = NULL,
-  ylabel = "Expression", pct.size = 0.8, title.size = 15, ncol = 4,
-  alpha = 0.8, colors = colorRampPalette(c("#E3E3E3", "#BCA2FC",
-  "#4900FE"), interpolate = "linear")(8))
+feature_highlighting(
+  input_eset,
+  target = NULL,
+  feature = "geneSymbol",
+  x = "X",
+  y = "Y",
+  wrap_by = NULL,
+  ylabel = "Expression",
+  pct.size = 0.8,
+  title.size = 15,
+  ncol = 4,
+  alpha = 0.8,
+  colors = colorRampPalette(c("#E3E3E3", "#BCA2FC", "#4900FE"), interpolate =
+    "linear")(8)
+)
 }
 \arguments{
 \item{input_eset}{Input expression set}
@@ -20,8 +30,6 @@ feature_highlighting(input_eset, target = NULL, feature = "geneSymbol",
 \item{x}{cordinates for x axis}
 
 \item{y}{cordinates for y axis}
-
-\item{visualize}{character, name of visualization method, this will be used as x or y axis label}
 
 \item{wrap_by}{character, variable to wrap plot with}
 

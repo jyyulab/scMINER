@@ -1104,8 +1104,8 @@ td {
   padding-bottom: 0.5rem;
   padding-left: 0.75rem;
   background-color: white;
-  border-bottom: 0px solid rgba(238, 235, 238, 0.5);
-  border-left: 0px solid #eeebee; }
+  border-bottom: 1px solid rgba(238, 235, 238, 0.5);
+  border-left: 1px solid #eeebee; }
   @media (min-width: 31.25rem) {
     th,
     td {

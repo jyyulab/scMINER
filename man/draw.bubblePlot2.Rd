@@ -4,8 +4,16 @@
 \alias{draw.bubblePlot2}
 \title{Inner function for simple bubbleplots}
 \usage{
-draw.bubblePlot2(df = NULL, xlab, ylab, clab, slab,
-  low.col = "#004C99", high.col = "#CC0000", plot.title = NULL)
+draw.bubblePlot2(
+  df = NULL,
+  xlab,
+  ylab,
+  clab,
+  slab,
+  low.col = "#004C99",
+  high.col = "#CC0000",
+  plot.title = NULL
+)
 }
 \arguments{
 \item{df}{re-structured data.frame for bubble plots}

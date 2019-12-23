@@ -4,8 +4,15 @@
 \alias{getDE.limma}
 \title{Differential Expression Analysis and Differential Activity Analysis Between 2 Sample Groups Using Limma}
 \usage{
-getDE.limma(eset = NULL, G1 = NULL, G0 = NULL, G1_name = NULL,
-  G0_name = NULL, verbose = TRUE, random_effect = NULL)
+getDE.limma(
+  eset = NULL,
+  G1 = NULL,
+  G0 = NULL,
+  G1_name = NULL,
+  G0_name = NULL,
+  verbose = TRUE,
+  random_effect = NULL
+)
 }
 \arguments{
 \item{eset}{ExpressionSet class object, contains gene expression data or driver activity data.}

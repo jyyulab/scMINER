@@ -4,9 +4,15 @@
 \alias{preMICA.filtering}
 \title{preMICA.filtering}
 \usage{
-preMICA.filtering(SparseEset, cutoffs, gene_filter = T,
-  nGene_filter = T, nUMI_filter = T, ERCC_filter = T,
-  Mito_filter = T)
+preMICA.filtering(
+  SparseEset,
+  cutoffs,
+  gene_filter = T,
+  nGene_filter = T,
+  nUMI_filter = T,
+  ERCC_filter = T,
+  Mito_filter = T
+)
 }
 \arguments{
 \item{SparseEset}{the sparseEset object outputted from draw.scRNAseq.QC}

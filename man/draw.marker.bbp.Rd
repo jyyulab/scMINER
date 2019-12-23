@@ -4,20 +4,28 @@
 \alias{draw.marker.bbp}
 \title{Generate visualization for marker scores via bubble plot}
 \usage{
-draw.marker.bbp(ref = NULL, input_eset, feature = "geneSymbol",
-  group_name = "ClusterRes", save_plot = FALSE, width = 8,
-  height = 5, plot_name = "AnnotationBubbleplot.png")
+draw.marker.bbp(
+  ref = NULL,
+  input_eset,
+  feature = "geneSymbol",
+  group_name = "ClusterRes",
+  save_plot = FALSE,
+  width = 8,
+  height = 5,
+  plot_name = "AnnotationBubbleplot.png"
+)
 }
 \arguments{
-\item{ref}{reference dataframe, includes positive or negative markers for different cell types}
+\item{ref}{reference dataframe, includes positive or negative markers for different cell types;
+Specify first column as different cell types, second columns as markers, third columns as weight (postive or negative marker)}
 
 \item{input_eset}{expressionSet/SparseExpressionSet object with clustering membership stored in pData}
 
-\item{feature}{feature type from your reference, should be in colnames(fData(eset))}
+\item{feature}{feature type from second column of your reference , should be in colnames(fData(eset))}
 
-\item{group_name}{a character, the variable containing clustering label in pData(eset)}
+\item{group_name}{a character, the variable containing clustering label in pData(eset); or any other group information stored in pData(eset)}
 
-\item{save_plot}{logical, whether or not save your plot}
+\item{save_plot}{logical, whether or not save your plot; if TRUE, plot will be saved as plot_name}
 
 \item{width}{default as 8, inch as unit}
 
@@ -32,5 +40,14 @@ A ggplot object
 Marker visualizatoin from known markers/signatures, requires knowledge-based marker list as input
 }
 \details{
-draw.marker.bbp
+Visualize marker score of different cell types on bubbleplot
+}
+\examples{
+\dontrun{
+df.ref=data.frame(celltype="Cd4 T",markers=c("Cd8a","Cd4","Cd3g"),weight=c(-1,1,1))
+draw.marker.bbp<-function(ref = df.ref,input_eset, feature='geneSymbol',group_name="ClusterRes", save_plot = FALSE, width=8, height=5)
+
+
+}
+
 }

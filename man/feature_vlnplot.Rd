@@ -4,10 +4,19 @@
 \alias{feature_vlnplot}
 \title{feature_vlnplot}
 \usage{
-feature_vlnplot(input_eset, target = NULL, feature = "geneSymbol",
-  group_by = "celltype", ylabel = "Expression",
-  color_by = "celltype", colors = NULL, ncol = 3, stat = "median",
-  boxplot = FALSE, title.size = 5)
+feature_vlnplot(
+  input_eset,
+  target = NULL,
+  feature = "geneSymbol",
+  group_by = "celltype",
+  ylabel = "Expression",
+  color_by = NULL,
+  colors = NULL,
+  ncol = 3,
+  stat = "median",
+  boxplot = FALSE,
+  title.size = 5
+)
 }
 \arguments{
 \item{input_eset}{Input expression set}
@@ -20,7 +29,7 @@ feature_vlnplot(input_eset, target = NULL, feature = "geneSymbol",
 
 \item{ylabel}{a character, title of y axis}
 
-\item{color_by}{character, which group info to define color, default is group_by}
+\item{color_by}{character, which group info to define color, if NULL, then violin plots will be colored by 'group_by'}
 
 \item{colors}{character vector, default as NULL, will use ggplot default color palette}
 

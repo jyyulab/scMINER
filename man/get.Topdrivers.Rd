@@ -4,8 +4,12 @@
 \alias{get.Topdrivers}
 \title{get.Topdrivers}
 \usage{
-get.Topdrivers(DAG_result = DAG_result, n = 5, degree_filter = c(50,
-  500), celltype = NULL)
+get.Topdrivers(
+  DAG_result = DAG_result,
+  n = 5,
+  degree_filter = c(50, 500),
+  celltype = NULL
+)
 }
 \arguments{
 \item{DAG_result}{Output table from function FindDAG}

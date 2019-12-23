@@ -4,8 +4,12 @@
 \alias{CreateSparseEset}
 \title{CreateSparseEset}
 \usage{
-CreateSparseEset(data = NULL, meta.data = NULL, feature.data = NULL,
-  add.meta = T)
+CreateSparseEset(
+  data = NULL,
+  meta.data = NULL,
+  feature.data = NULL,
+  add.meta = T
+)
 }
 \arguments{
 \item{data}{Sparse expression data, could be from either of these class:c('matrix','dgTMatrix','dgCMatrix').Required}

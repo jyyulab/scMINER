@@ -4,10 +4,16 @@
 \alias{GetActivityFromSJARACNe}
 \title{GetActivityFromSJARACNe}
 \usage{
-GetActivityFromSJARACNe(SJARACNe_output_path = NA,
-  SJARACNe_input_eset = NA, functype = "tf", group_name = NA,
-  activity.method = "unweighted", activity.norm = TRUE,
-  save_network_file = FALSE, save_path = NULL)
+GetActivityFromSJARACNe(
+  SJARACNe_output_path = NA,
+  SJARACNe_input_eset = NA,
+  functype = "tf",
+  group_name = NA,
+  activity.method = "unweighted",
+  activity.norm = TRUE,
+  save_network_file = FALSE,
+  save_path = NULL
+)
 }
 \arguments{
 \item{SJARACNe_output_path}{Path to SJARACNe output folder(s)}

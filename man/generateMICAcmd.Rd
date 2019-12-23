@@ -4,11 +4,22 @@
 \alias{generateMICAcmd}
 \title{Generate MICA command script for job submission on local or LSF}
 \usage{
-generateMICAcmd(save_sh_at, input_file, project_name = "test",
-  num_cluster = c(3, 4, 5), output_path, host = "lsf",
-  queue = "standard", config_file = NULL, bootstrap = 10,
-  dim_reduction_method = "MDS", visualization = "tsne",
-  perplexity = 30, min_dist = 0.01, slice_size = 1000)
+generateMICAcmd(
+  save_sh_at,
+  input_file,
+  project_name = "test",
+  num_cluster = c(3, 4, 5),
+  output_path,
+  host = "lsf",
+  queue = "standard",
+  config_file = NULL,
+  bootstrap = 10,
+  dim_reduction_method = "MDS",
+  visualization = "tsne",
+  perplexity = 30,
+  min_dist = 0.01,
+  slice_size = 1000
+)
 }
 \arguments{
 \item{save_sh_at}{path to save your MICA command file;}

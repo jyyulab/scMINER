@@ -759,52 +759,81 @@ es <- function(z,es.method="mean"){
 }
 
 
-####inner function to calculate activity
-get_activity<-function(Net,eset,tag,use.symbol=FALSE,
-                       es.method="mean", activity.method="weighted",
-                       normalize=TRUE,test=FALSE,sep.symbol="."){
-  library(dplyr)
-  if(is.null(Net)) {return(NULL)}
+#' Calculate activity from network file or gene list
+#'
+#' @param Net Network data frame
+#' @param eset ExpressionSet/SparseExpressionSet with expression data
+#' @param tag If network is TF network or SIG network
+#' @param genelist A list of signature gene list
+#' @param use.symbol logical, in network file, use geneSymbol or use geneID
+#' @param feature character, use which feature as ID in fData(eset)
+#' @param es.method character, which method to use to calculate actiivty value ("mean","maxmean")
+#' @param activity.method character, which method to use to estimate activity ("weighted","unweighted")
+#' @param normalize logical, if normalize or not
+#' @param sep.symbol which symbol to sparate name and tag
+#'
+#' @details
+#' If network object was loaded by get.network.scMINER function, then network dataframe is could be retrieved under network_dat slot.
+#' @return
+#'
+#' @export
+get_activity<-function(Net=NULL,
+                       eset,
+                       tag=NULL,
+                       genelist=NULL,
+                       use.symbol=FALSE,
+                       feature='geneSymbol',
+                       es.method="mean",
+                       activity.method="weighted",
+                       normalize=TRUE,
+                       sep.symbol="."){
 
-  if(!(use.symbol)) src<-unique(Net$source)
-  else{ src<-unique(Net$source.symbol)
-        if(!"geneSymbol"%in%colnames(fData(eset))) stop("please check your geneSymbol in fData!")
-        else { cat("Using geneSymbol to retrieve network")}
-  }
+  if(!feature%in%colnames(fData(eset))) stop("please check your geneSymbol in fData!","\n")
+  else{cat("Using",feature,"to match targets!","\n")}
+
+  if(!is.null(Net)) {
+    if(!(use.symbol)) src<-unique(Net$source)
+    else{src<-unique(Net$source.symbol)}
+  }else if(!is.null(genelist)){
+    if(any(duplicated(names(genelist)))) stop("Please check the names of your gene lists!","\n")
+    src<-names(genelist)
+  }else {return(NULL)}
 
   gsc<-vector("list", length(src))
-  names(gsc)<-paste(src, tag, sep = sep.symbol)
+  if(!is.null(tag)) {names(gsc)<-paste(src, tag, sep = sep.symbol)}
+  else {names(gsc)<-src}
 
   exp<-exprs(eset)
   ac<-matrix(NA, nrow=ncol(eset), ncol=length(gsc), dimnames=list(colnames(eset), names(gsc)))
 
   #z-normalize each sample
-  if(normalize){
-    exp<-apply(exp,2,std)
-    cat("normalized!\n")
-  }
-  else{
-    cat("Non_normalized!\n")
-  }
-
+  if(normalize){exp<-apply(exp,2,std);cat("normalized!\n")}
+  else{cat("Not normalized!", "\n")}
 
   for(i in 1:length(gsc)){
     #NetBID based geneset
-    if(use.symbol){
-      tmp<-filter(Net, Net$source.symbol==src[i]);tmp<-tmp[!duplicated(tmp$target.symbol),]
-      gsc[[i]]<-unique(as.character(tmp$target.symbol))
-    }
-    else{
-      tmp<-filter(Net, Net$source==src[i]);tmp<-tmp[!duplicated(tmp$target),]
-      gsc[[i]]<-unique(as.character(tmp$target))#network from file
+    if(!is.null(Net)){
+      if(use.symbol){
+        tmp<-filter(Net, Net$source.symbol==src[i]);tmp<-tmp[!duplicated(tmp$target.symbol),]
+        gsc[[i]]<-unique(as.character(tmp$target.symbol))
+      }
+      else{
+        tmp<-filter(Net, Net$source==src[i]);tmp<-tmp[!duplicated(tmp$target),]
+        gsc[[i]]<-unique(as.character(tmp$target))#network from file
+      }
+    }else if (!is.null(genelist)){
+      gsc[[i]]<-unique(genelist[[i]])
     }
 
     #update the overlap between NetBID based geneset and original expression data
-    if(length(intersect(featureNames(eset),gsc[[i]]))==0) stop("Please check your featureNames!")
-      else{
-        eset.sel<-eset[featureNames(eset)%in%gsc[[i]],]
-        gsc[[i]]<-featureNames(eset.sel)
+    if(length(intersect(fData(eset)[,feature],gsc[[i]]))==0){
+      cat("Genelist",names(gsc)[i], "has no overlap with eset feature names.","\n")
+      next
       }
+    else{
+      eset.sel<-eset[fData(eset)[,feature]%in%gsc[[i]],]
+      gsc[[i]]<-featureNames(eset.sel)
+    }
 
     #n=degree
     n<-length(gsc[[i]])
@@ -831,9 +860,6 @@ get_activity<-function(Net,eset,tag,use.symbol=FALSE,
         mat<-t(exp[gsc[[i]],])%*%(tmp$MI.sign)
         MI.sum<-sum(tmp$MI)
         ac[,i]<-mat[,1]/MI.sum
-
-        if (test)
-        {ac[,i]<-mat[,1]}
       }
       colnames(ac)[i]<-name
     }
@@ -1591,4 +1617,7 @@ draw.scRNAseq.QC<-function(SparseEset,project.name,
 
   return(cfs)
 }
+
+
+
 

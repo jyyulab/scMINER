@@ -4,11 +4,20 @@
 \alias{feature_heatmap}
 \title{Visualize gene expression level on scRNA-seq data via heatmap}
 \usage{
-feature_heatmap(input_eset, target, feature = "geneSymbol",
-  group_name = "label", name = "log2Exp", save_plot = TRUE,
-  width = 4, height = 8, cluster_rows = FALSE,
+feature_heatmap(
+  input_eset,
+  target,
+  feature = "geneSymbol",
+  group_name = "label",
+  name = "log2Exp",
+  save_plot = TRUE,
+  width = 4,
+  height = 8,
+  cluster_rows = FALSE,
   colors = rev(colorRampPalette(brewer.pal(10, "RdYlBu"))(256)),
-  plot_name = "GeneHeatmap.png", ...)
+  plot_name = "GeneHeatmap.png",
+  ...
+)
 }
 \arguments{
 \item{input_eset}{Input expression set}

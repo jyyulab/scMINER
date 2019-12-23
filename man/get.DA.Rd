@@ -4,8 +4,13 @@
 \alias{get.DA}
 \title{Find differential activity genes from activity matrix}
 \usage{
-get.DA(input_eset = NULL, group_name = "celltype", group_case = NULL,
-  group_ctrl = NULL, method = "t.test")
+get.DA(
+  input_eset = NULL,
+  group_name = "celltype",
+  group_case = NULL,
+  group_ctrl = NULL,
+  method = "t.test"
+)
 }
 \arguments{
 \item{input_eset}{ExpressionSet that stores group information in pData}
