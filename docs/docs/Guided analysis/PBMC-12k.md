@@ -58,7 +58,7 @@ cutoffs <- draw.scRNAseq.QC(SparseEset=eset.12k,
 ```
 The first plot is a histogram which helps visualize distribution of expressed genes among each cells. Blue veritcal line shows the recommended cutoff, which is calculated by 0.5% * number of cells. Genes expressed lower number of cells than threshold should be filtered.
 
-<center><img src="./plots/1_1_Gene_QCmetrics_before_filtering.png" alt="drawing" width="700"></center>
+<center><img src="../plots/1_1_Gene_QCmetrics_before_filtering.png" alt="drawing" width="700"></center>
 
 The second plot helps visualize total UMI count, and total number of gene expressed in violin plots. Horizontal blue line indicates suggested high/low cutoffs. Suggested thresholds were computed based on Median ± 3 * MAD (Maximum absolute deviance). Suggested threshold numbers are also printed right above blue lines in labels.
 ![](../plots/1_2_Cell_QC_1.png)
