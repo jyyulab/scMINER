@@ -118,9 +118,8 @@ generateMICAcmd(save_sh_at = "./",
                 project_name = "PBMC12k",
                 num_cluster = c(8,9,10,12,13,14,15),
                 output_path= "./",
-                host = "lsf",
-                queue = "standard",
-                output_path = "./")
+                host = "local",
+                queue = "standard")
 ```
 
 
