@@ -41,9 +41,9 @@
 #' @exportClass SparseExpressionSet
 #' @importFrom Biobase ExpressionSet
 setClass( "SparseExpressionSet",
-            contains = "ExpressionSet",
-            prototype = prototype( new( "VersionedBiobase",
-              versions = c(classVersion("ExpressionSet"), SparseExpressionSet = "1.0.0" ))))
+          contains = "ExpressionSet",
+          prototype = prototype( new( "VersionedBiobase",
+                                      versions = c(classVersion("ExpressionSet"), SparseExpressionSet = "1.0.0" ))))
 
 
 #' CreateSparseEset
@@ -62,25 +62,25 @@ CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T
     stop("Input format should %in% c( 'matrix','dgTMatrix','dgCMatrix','dgeMatrix,'Matrix')","\n")
     if(class(data)%in%"matrix"){
       data<-as(data,"dgCMatrix")
-      }
+    }
   }
 
   if(!is.null(feature.data)){
-  	if(any(rownames(data)!=rownames(feature.data))){
-  		stop("Row names of feature data doesn't match with expression data row names!","\n")
-  		}
+    if(any(rownames(data)!=rownames(feature.data))){
+      stop("Row names of feature data doesn't match with expression data row names!","\n")
+    }
   } else {
 
     cat("Will take rownames as geneSymbol","\n")
     feature.data<-data.frame(geneSymbol=rownames(data), stringsAsFactors=F)
 
     if(any(duplicated(row.names(data)))){
-    	cat("Found duplicated rownames, convert row.names of data to an arbitrary vector!","\n")
-    	row.names(data)<- NULL
-    	row.names(feature.data)<-NULL
-  	}else{
-  		rownames(feature.data)<-rownames(data)
-  	}
+      cat("Found duplicated rownames, convert row.names of data to an arbitrary vector!","\n")
+      row.names(data)<- NULL
+      row.names(feature.data)<-NULL
+    }else{
+      rownames(feature.data)<-rownames(data)
+    }
   }
 
 
@@ -89,8 +89,8 @@ CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T
       stop("Row names of meta data doesnt match with expression data Column names!","\n")
     }
   } else {
-  	meta.data=data.frame(row.names=colnames(data),
-  		cellName=colnames(data),stringsAsFactors=F)
+    meta.data=data.frame(row.names=colnames(data),
+                         cellName=colnames(data),stringsAsFactors=F)
   }
   cat("Passed sanity check..","\n")
 
@@ -100,7 +100,7 @@ CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T
 
     d<-data;rm(data)
     cells_per_gene <- Matrix::rowSums(d!=0)
-	  feature.data$nCells<-cells_per_gene;
+    feature.data$nCells<-cells_per_gene;
 
     nGene <- sum(cells_per_gene > 0)
     cat("# of non-zero gene:", nGene, "\n")
@@ -142,9 +142,9 @@ CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T
                 assayData = assayDataNew("environment", exprs=data),
                 phenoData= new("AnnotatedDataFrame",data=meta.data),
                 featureData= new("AnnotatedDataFrame",data=feature.data))
-    }
+  }
 
-    return(Obj)
+  return(Obj)
 }
 
 
@@ -199,11 +199,11 @@ readscRNAseqData <- function(file,is.10x=TRUE,CreateSparseEset=TRUE, add.meta=F,
       genes <- read.delim(file.path(data.path,"genes.tsv"),header=FALSE,stringsAsFactors = FALSE, sep = "\t")
       colnames(genes)<-c("ensembl","geneSymbol")
       rownames(genes)<-genes[,1]
-      }else if(file.exists(file.path(data.path, "features.tsv"))){
-        genes <- read.delim(file.path(data.path, "features.tsv"), header=FALSE,stringsAsFactors=FALSE,sep = "\t")
-        colnames(genes)<-c("ensembl","geneSymbol","biotype")
-        rownames(genes)<-genes[,1]
-      }else{
+    }else if(file.exists(file.path(data.path, "features.tsv"))){
+      genes <- read.delim(file.path(data.path, "features.tsv"), header=FALSE,stringsAsFactors=FALSE,sep = "\t")
+      colnames(genes)<-c("ensembl","geneSymbol","biotype")
+      rownames(genes)<-genes[,1]
+    }else{
       cat("Genes/features file not found!","\n")
     }
 
@@ -212,12 +212,12 @@ readscRNAseqData <- function(file,is.10x=TRUE,CreateSparseEset=TRUE, add.meta=F,
 
     if (CreateSparseEset){
       d <- CreateSparseEset(data=data.raw,meta.data=barcodes,
-        feature.data=genes,add.meta = add.meta)
+                            feature.data=genes,add.meta = add.meta)
       cat("Sparse expression set generated!","\n")
     }else{
       d = list(raw.data=data.raw,
-           meta.data=barcodes,
-           feature.data=genes)}
+               meta.data=barcodes,
+               feature.data=genes)}
   }
   else{
     d<- read.delim(file=file,...)
@@ -245,7 +245,7 @@ generateMICAinput <- function(d,filename){
 
     cat("Writing MICA input to table...","\n")
     write.table(mica.input,file = filename,sep = "\t",
-              row.names = FALSE,col.names = TRUE,quote = FALSE)
+                row.names = FALSE,col.names = TRUE,quote = FALSE)
 
   }else if(length(grep(".h5$",filename))!=0){
     mica.input<-as.matrix(d)
@@ -258,8 +258,8 @@ generateMICAinput <- function(d,filename){
     rhdf5::H5close()
 
   }else{
-      stop("Your filename should be ended with .txt or .h5", "\n")
-    }
+    stop("Your filename should be ended with .txt or .h5", "\n")
+  }
 
   cat("Done.","\n")
 }
@@ -300,19 +300,19 @@ generateMICAinput <- function(d,filename){
 #'}
 #' @export
 generateMICAcmd<-function(save_sh_at,
-                            input_file,
-                            project_name="test",
-                            num_cluster=c(3,4,5),
-                            output_path,
-                            host="lsf",
-                            queue="standard",
-                            config_file=NULL,
-                            bootstrap=10,
-                            dim_reduction_method="MDS",
-                            visualization="tsne",
-                            perplexity=30,
-                            min_dist=0.01,
-                            slice_size=1000){
+                          input_file,
+                          project_name="test",
+                          num_cluster=c(3,4,5),
+                          output_path,
+                          host="lsf",
+                          queue="standard",
+                          config_file=NULL,
+                          bootstrap=10,
+                          dim_reduction_method="MDS",
+                          visualization="tsne",
+                          perplexity=30,
+                          min_dist=0.01,
+                          slice_size=1000){
 
   #sanity check
   if(!dir.exists(save_sh_at)) dir.create(save_sh_at)
@@ -334,8 +334,8 @@ generateMICAcmd<-function(save_sh_at,
     }else config.bash <- paste0("-j ", normalizePath(config_file), " ")
 
     job<-ifelse(is.null(project_name),
-          '#BSUB -J MICA',
-          paste0('#BSUB -J ','MICA_',project_name,'\n'))
+                '#BSUB -J MICA',
+                paste0('#BSUB -J ','MICA_',project_name,'\n'))
 
     sh.scminer<-paste0(
       '#!/bin/env bash\n',
@@ -357,16 +357,16 @@ generateMICAcmd<-function(save_sh_at,
 
   #add generic attributes
   sh.scminer<-paste0(sh.scminer,
-    paste0("-i ", normalizePath(input_file), " "),
-    paste0("-p ", project_name, " "),
-    paste0("-k ",  paste0(num_cluster, collapse="", " ")),
-    paste0("-o ",  normalizePath(output_path), " "),
-    ifelse(is.null(bootstrap),"",paste0("-b ",bootstrap," ")),
-    ifelse(is.null(dim_reduction_method),"",paste0("-dr ",dim_reduction_method," ")),
-    ifelse(is.null(visualization),"",paste0("-v ",visualization, " ")),
-    ifelse(is.null(perplexity),"",paste0("-pp ",perplexity," ")),
-    ifelse(is.null(min_dist),"",paste0("-d ",min_dist," ")),
-    ifelse(is.null(slice_size),"",paste0("-sn ", slice_size," "))
+                     paste0("-i ", normalizePath(input_file), " "),
+                     paste0("-p ", project_name, " "),
+                     paste0("-k ",  paste0(num_cluster, collapse="", " ")),
+                     paste0("-o ",  normalizePath(output_path), " "),
+                     ifelse(is.null(bootstrap),"",paste0("-b ",bootstrap," ")),
+                     ifelse(is.null(dim_reduction_method),"",paste0("-dr ",dim_reduction_method," ")),
+                     ifelse(is.null(visualization),"",paste0("-v ",visualization, " ")),
+                     ifelse(is.null(perplexity),"",paste0("-pp ",perplexity," ")),
+                     ifelse(is.null(min_dist),"",paste0("-d ",min_dist," ")),
+                     ifelse(is.null(slice_size),"",paste0("-sn ", slice_size," "))
   )
 
   sink(file.sh)
@@ -509,10 +509,10 @@ generateSJARACNeInput<-function(input_eset,ref=NULL,funcType=NULL,wd.src,group_n
 #'
 #' @export
 draw.marker.bbp<-function(ref = NULL,input_eset,
-                              feature='geneSymbol',group_name="ClusterRes",
-                              save_plot = FALSE,
-                              width=8, height=5,
-                              plot_name="AnnotationBubbleplot.png"){
+                          feature='geneSymbol',group_name="ClusterRes",
+                          save_plot = FALSE,
+                          width=8, height=5,
+                          plot_name="AnnotationBubbleplot.png"){
 
   #exp<-apply(exprs(eset),2,std)
   #filter reference marker sets
@@ -613,118 +613,125 @@ draw.marker.bbp<-function(ref = NULL,input_eset,
 #'
 #' @export
 GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
-							   SJARACNe_input_eset=NA,
-							   functype="tf",
-							   group_name=NA,
-							   activity.method="unweighted",
-							   activity.norm=TRUE,
-							   save_network_file=FALSE,
-							   save_path=NULL){
+                                  SJARACNe_input_eset=NA,
+                                  functype="tf",
+                                  group_name=NA,
+                                  activity.method="unweighted",
+                                  activity.norm=TRUE,
+                                  save_network_file=FALSE,
+                                  save_path=NULL){
 
   eset<-SJARACNe_input_eset;
-
   if(!group_name%in%colnames(pData(eset))){
-	  stop('Check your group_name please.','\n')
-	}
+    stop('Check your group_name please.','\n')
+  }
 
   if(!activity.method%in%c("weighted", "unweighted")){
     stop('Check your group_name please.','\n')
   }
-
   #retrieve networks
-	output.files<-list.files(path=SJARACNe_output_path,
-						pattern="consensus_network_ncol_.txt",recursive = TRUE,full.names = TRUE)
+  output.files<-list.files(path=SJARACNe_output_path,
+                           pattern="consensus_network_ncol_.txt",recursive = TRUE,full.names = TRUE)
 
-	if(length(output.files)==0) stop ("Please check your SJARACNe output path!",'\n')
+  if(length(output.files)==0) stop ("Please check your SJARACNe output path!",'\n')
 
-	if(!is.null(functype)) {
+  # TODO: "/tf/" is not in sjaracne's output directory anymore. Should not format output.files based on that
+  if(!is.null(functype))
     if (!functype%in%c("tf","sig")) stop("Only accept functype %in% c('tf','sig')","\n")
-    else output.files<-output.files[grep(paste0("/",functype,"/"),output.files)]}
+    #else output.files<-output.files[grep(paste0("/",functype,"/"),output.files)]}
 
   net.names<-gsub(SJARACNe_output_path,"",output.files)
-	net.names<-gsub("\\_.*","",net.names);
-	net.names<-gsub("[/]","",net.names)
-	celltypes<-unique(net.names)
+  net.names<-gsub("\\_.*","",net.names);
+  #net.names<-gsub("[/]","",net.names)
+  celltypes<-unique(net.names)
 
-  #initialize actiivty list
-	acs_master<-data.frame(ID=NA,stringsAsFactors=FALSE)
-	deg_master<-data.frame(ID=NA,stringsAsFactors=FALSE)
+  #initialize activity list
+  acs_master<-data.frame(ID=NA,stringsAsFactors=FALSE)
+  deg_master<-data.frame(ID=NA,stringsAsFactors=FALSE)
 
 
-	for( i in 1:length(celltypes)){
+  for( i in 1:length(celltypes)){
 
-	    net<-celltypes[i]
-      cat("Retrieve Network from ",i,net,"\n")
+    net<-celltypes[i]
+    cat("Retrieve Network from ",i,net,"\n")
 
-      TF.table<-NULL
+    TF.table<-NULL
+    SIG.table<-NULL
+    f<-output.files[grep(paste0(net,"_"),output.files)]
+
+    #if (length(grep("/tf/",f)!=0))
+    if(functype=="tf"){
+      TF.table<-get.network.scMINER(network_file = f[grep("consensus*",f)])
       SIG.table<-NULL
+    }
+    #if(length(grep("/sig/",f)!=0))
+    if(functype=="sig"){
+      SIG.table<-get.network.scMINER(network_file= f[grep("consensus*",f)])
+      TF.table<-NULL
+    }
 
-      f<-output.files[grep(paste0("/",net,"_"),output.files)]
+    if(save_network_file){
+      if(!is.null(TF.table)) save(TF.table,file=file.path(save_path,paste0(net,".TF.network")))
+      if(!is.null(SIG.table)) save(SIG.table,file=file.path(save_path,paste0(net,".TF.network")))
+      cat("Network saved for ", net,"\n")
+    }
 
-      if (length(grep("/tf/",f)!=0))
-        {TF.table<-get.network.scMINER(network_file = f[grep("/tf/",f)])}
-      if(length(grep("/sig/",f)!=0))
-        {SIG.table<-get.network.scMINER(network_file= f[grep("/sig/",f)])}
+    cat("Calculate Activity for ",net,"!",'\n')
+    eset.sel<-eset[,pData(eset)[,group_name]==i]
 
-      if(save_network_file){
-        if(!is.null(TF.table)) save(TF.table,file=file.path(save_path,paste0(net,".TF.network")))
-        if(!is.null(SIG.table)) save(SIG.table,file=file.path(save_path,paste0(net,".TF.network")))
-        cat("Network saved for ", net,"\n")
-      }
+    acs1<-get_activity(Net = TF.table$network_dat,tag = "TF",normalize=activity.norm,
+                       eset = eset.sel, activity.method = activity.method, use.symbol=TRUE)
 
-  	  cat("Calculate Activity for ",net,"!",'\n')
-  	  eset.sel<-eset[,pData(eset)[,group_name]==net]
+    acs2<-get_activity(Net = SIG.table$network_dat,tag = "SIG",normalize=activity.norm,
+                       eset = eset.sel, activity.method = activity.method, use.symbol=TRUE)
 
-      acs1<-get_activity(Net = TF.table$network_dat,tag = "TF",normalize=activity.norm,
-    					   eset = eset.sel, activity.method = activity.method)
+    acs<-t(cbind(acs1,acs2));rm(acs1,acs2)
 
-      acs2<-get_activity(Net = SIG.table$network_dat,tag = "SIG",normalize=activity.norm,
-                         eset = eset.sel, activity.method = activity.method)
+    #update full gene list
+    acs.ID <- sapply(strsplit(rownames(acs),"_"),"[",1)
 
-      acs<-t(cbind(acs1,acs2));rm(acs1,acs2)
+    acs.deg <- data.frame(ID=acs.ID,
+                          Degree=as.numeric(sapply(strsplit(rownames(acs),"_"),"[",2)),
+                          stringsAsFactors=FALSE)
 
- 	    #update full gene list
- 	    acs.ID <- sapply(strsplit(rownames(acs),"_"),"[",1)
+    acs.tmp <- acs; rownames(acs.tmp)<-acs.ID
 
-	    acs.deg <- data.frame(ID=acs.ID,
-	  						Degree=as.numeric(sapply(strsplit(rownames(acs),"_"),"[",2)),
-	  						stringsAsFactors=FALSE)
+    acs_master<-merge(acs_master,acs.tmp,by.x="ID",by.y="row.names",all=TRUE)
+    deg_master<-merge(deg_master,acs.deg,by="ID",all=TRUE)
 
-  	  acs.tmp <- acs; rownames(acs.tmp)<-acs.ID
+    colnames(deg_master)[i+1]<-paste0("degree_",net)
 
-  	  acs_master<-merge(acs_master,acs.tmp,by.x="ID",by.y="row.names",all=TRUE)
-  	  deg_master<-merge(deg_master,acs.deg,by="ID",all=TRUE)
+    cat("Activity Done!!","\n")
+    rm(acs)
 
-  	  colnames(deg_master)[i+1]<-paste0("degree_",net)
+    cat('==============================================',"\n")
+    gc()
 
-  	  cat("Activity Done!!","\n")
-  	  rm(acs)
+  }#end for
 
-  	  cat('==============================================',"\n")
-  	  gc()
+  # generate acs expression set
+  deg_master<-filter(deg_master,!is.na(ID))
+  fd <- data.frame(ID=deg_master$ID,
+                   fn=sapply(strsplit(deg_master$ID,"\\."),"[",1),
+                   FuncType=sapply(strsplit(deg_master$ID,"\\."),"[",2),
+                   deg_master[,-1],stringsAsFactors = FALSE)
 
-	}#end for
-
-	# generate acs expression set
-	deg_master<-filter(deg_master,!is.na(ID))
-	fd <- data.frame(ID=deg_master$ID,
-	                 fn=sapply(strsplit(deg_master$ID,"\\."),"[",1),
-	                 FuncType=sapply(strsplit(deg_master$ID,"\\."),"[",2),
-	                 deg_master[,-1],stringsAsFactors = FALSE)
-
-  fd <-merge(fd,fData(eset),by.x="fn",by.y="row.names")
+  # Was not getting any values when "row.names", changed to "geneSymbol" since
+  # "fn" in fd is equivalent to "geneSymbol" in fData(eset) -- unsure if this change
+  # is 100% correct.
+  fd <-merge(fd,fData(eset),by.x="fn",by.y="geneSymbol")
   rownames(fd)<-fd$ID
 
   pd <- pData(eset)
 
-	acs.mtx <- as.matrix(acs_master[,-1])
-	rownames(acs.mtx)<- acs_master$ID
+  acs.mtx <- as.matrix(acs_master[,-1])
+  rownames(acs.mtx)<- acs_master$ID
 
-	acs.mtx<-acs.mtx[,rownames(pd)]
+  acs.mtx<-acs.mtx[,rownames(pd)]
   acs.mtx<-acs.mtx[-which(is.na(rownames(acs.mtx))),]
 
   acs.eset<-new("ExpressionSet",phenoData= new("AnnotatedDataFrame",pd),
-          featureData=new("AnnotatedDataFrame",fd), annotation="",exprs=as.matrix(acs.mtx))
+                featureData=new("AnnotatedDataFrame",fd), annotation="",exprs=as.matrix(acs.mtx))
 
   return(acs.eset)
 }#end activity function
@@ -829,7 +836,7 @@ get_activity<-function(Net=NULL,
     if(length(intersect(fData(eset)[,feature],gsc[[i]]))==0){
       cat("Genelist",names(gsc)[i], "has no overlap with eset feature names.","\n")
       next
-      }
+    }
     else{
       eset.sel<-eset[fData(eset)[,feature]%in%gsc[[i]],]
       gsc[[i]]<-featureNames(eset.sel)
@@ -955,7 +962,7 @@ get.DA<-function(input_eset=NULL,group_name="celltype",group_case=NULL, group_ct
     if(!is.null(group_ctrl)){
       if(!group_case%in%pData(input_eset)[,group_name]){
         stop('Please check your group_ctrl',"\n")
-        }
+      }
       input_eset<-input_eset[,which(pData(input_eset)[,group_name]%in%c(group_case,group_ctrl))]
     }else{
       group_ctrl<-"Others"
@@ -969,10 +976,10 @@ get.DA<-function(input_eset=NULL,group_name="celltype",group_case=NULL, group_ct
       rs <- merge(rs,da,by="id")}
     else{
       da <- getDE.limma(eset=input_eset,
-                                    G1_name=group_case,G0_name = "Others",
-                                    G1=colnames(input_eset[,which(input_eset$da_group=="Aim")]),
-                                    G0=colnames(input_eset[,which(input_eset$da_group=="Ctrl")]),
-                                    verbose=FALSE)
+                        G1_name=group_case,G0_name = "Others",
+                        G1=colnames(input_eset[,which(input_eset$da_group=="Aim")]),
+                        G0=colnames(input_eset[,which(input_eset$da_group=="Ctrl")]),
+                        verbose=FALSE)
     }
   }else{
 
@@ -1001,26 +1008,26 @@ get.DA<-function(input_eset=NULL,group_name="celltype",group_case=NULL, group_ct
       rs.full <- merge(rs,rs.tmp,by='id');rm(rs.tmp)
 
       rs <- dplyr::select(rs.full,
-                        geneSymbol,
-                        id:FuncType,
-                        starts_with("degree"),
-                        starts_with("t"),
-                        starts_with("pval"),
-                        starts_with("Z"),
-                        starts_with("MeanAct"),
-                        starts_with("log2FC"))
+                          geneSymbol,
+                          id:FuncType,
+                          starts_with("degree"),
+                          starts_with("t"),
+                          starts_with("pval"),
+                          starts_with("Z"),
+                          starts_with("MeanAct"),
+                          starts_with("log2FC"))
     }else {
-    #use limma
+      #use limma
       da.list <- lapply(unique(pData(input_eset)[,group_name]),function(xx){
         da <- getDE.limma(eset=input_eset,
-                                      G1_name=xx,G0_name = "Others",
-                                      G1=colnames(input_eset[,which(pData(input_eset)[,group_name]==xx)]),
-                                      G0=colnames(input_eset[,which(pData(input_eset)[,group_name]!=xx)]),
-                                      verbose=FALSE)
+                          G1_name=xx,G0_name = "Others",
+                          G1=colnames(input_eset[,which(pData(input_eset)[,group_name]==xx)]),
+                          G0=colnames(input_eset[,which(pData(input_eset)[,group_name]!=xx)]),
+                          verbose=FALSE)
         indx<-match(rs$id, da$ID)
         da<-da[indx,]
         colnames(da)[-1]<-paste0(colnames(da)[-1],"_",xx,"VSothers") # rm ID column
-      return(da)})
+        return(da)})
 
       rs.tmp <- as.data.frame(da.list,stringsAsFactors=FALSE)
       rs.full <- merge(rs,rs.tmp,by.x='id',by.y="ID");rm(rs.tmp);rm(da.list)
@@ -1164,54 +1171,54 @@ preMICA.filtering <- function(SparseEset,
                               nUMI_filter=T,
                               ERCC_filter=T,
                               Mito_filter=T)
-  {
-    cat("Pre-filtering dimension: ",dim(SparseEset),"\n")
+{
+  cat("Pre-filtering dimension: ",dim(SparseEset),"\n")
 
-    if(is.null(cutoffs)){
-      if(all(is.logical(gene_filter),is.logical(ERCC_filter),
-             is.logical(Mito_filter),is.logical(nGene_filter),is.logical(nUMI_filter))){
-        stop("No filtering will be conducted due to lack of numerical threshold input.","\n",
-             "You can take default cutoff calculated by function draw.scRNAseq.QC and feed them into cutoffs,
+  if(is.null(cutoffs)){
+    if(all(is.logical(gene_filter),is.logical(ERCC_filter),
+           is.logical(Mito_filter),is.logical(nGene_filter),is.logical(nUMI_filter))){
+      stop("No filtering will be conducted due to lack of numerical threshold input.","\n",
+           "You can take default cutoff calculated by function draw.scRNAseq.QC and feed them into cutoffs,
              or input them manually in each function parameters.")
-        }else{
-          if(any(isTRUE(gene_filter),isTRUE(ERCC_filter),isTRUE(Mito_filter),isTRUE(nGene_filter),isTRUE(nUMI_filter)))
-            stop("When cutoffs=NULL, please indicate numerical threshold instead of 'TRUE'
+    }else{
+      if(any(isTRUE(gene_filter),isTRUE(ERCC_filter),isTRUE(Mito_filter),isTRUE(nGene_filter),isTRUE(nUMI_filter)))
+        stop("When cutoffs=NULL, please indicate numerical threshold instead of 'TRUE'
                  if you want to do filtering on that particular criteria !","\n")
-          cfs<-list()
-          if (gene_filter) cfs$nCell_cutoff=gene_filter
-          if (nGene_filter) cfs$nGene_cf=nGene_filter
-          if (!isFALSE(nUMI_filter)) cfs$umi_cf_lo=nUMI_filter[1];cfs$umi_cf_hi=nUMI_filter[2]
-          if (ERCC_filter) cfs$ERCC_cf=ERCC_filter
-          if (Mito_filter) cfs$mito_cf=Mito_filter
-        }
-    }else{cfs<-cutoffs}
+      cfs<-list()
+      if (gene_filter) cfs$nCell_cutoff=gene_filter
+      if (nGene_filter) cfs$nGene_cf=nGene_filter
+      if (!isFALSE(nUMI_filter)) cfs$umi_cf_lo=nUMI_filter[1];cfs$umi_cf_hi=nUMI_filter[2]
+      if (ERCC_filter) cfs$ERCC_cf=ERCC_filter
+      if (Mito_filter) cfs$mito_cf=Mito_filter
+    }
+  }else{cfs<-cutoffs}
 
-    if(isFALSE(nUMI_filter)){cfs$umi_cf_lo=0; cfs$umi_cf_hi=Inf}
-    cell <- which((SparseEset$nUMI.total > cfs$umi_cf_lo) & (SparseEset$nUMI.total < cfs$umi_cf_hi))
-    if(nGene_filter) cell <- intersect(cell, which(SparseEset$nGene > cfs$nGene_cf))
-    if(ERCC_filter&(cfs$ERCC_cf!=0)) cell <- intersect(cell, which(SparseEset$percent.spikeIn < cfs$ERCC_cf))
-    if(Mito_filter&(cfs$mito_cf!=0)) cell <- intersect(cell, which(SparseEset$percent.mito < cfs$mito_cf))
+  if(isFALSE(nUMI_filter)){cfs$umi_cf_lo=0; cfs$umi_cf_hi=Inf}
+  cell <- which((SparseEset$nUMI.total > cfs$umi_cf_lo) & (SparseEset$nUMI.total < cfs$umi_cf_hi))
+  if(nGene_filter) cell <- intersect(cell, which(SparseEset$nGene > cfs$nGene_cf))
+  if(ERCC_filter&(cfs$ERCC_cf!=0)) cell <- intersect(cell, which(SparseEset$percent.spikeIn < cfs$ERCC_cf))
+  if(Mito_filter&(cfs$mito_cf!=0)) cell <- intersect(cell, which(SparseEset$percent.mito < cfs$mito_cf))
 
-    cat("Below threshold were used:","\n")
-    print(cfs)
+  cat("Below threshold were used:","\n")
+  print(cfs)
 
-    #gene filtering
-    if(gene_filter){
-      gene <- unname((which(fData(SparseEset)$nCells >= cfs$nCell_cutoff)))
-      eset.sel<-SparseEset[gene,]
+  #gene filtering
+  if(gene_filter){
+    gene <- unname((which(fData(SparseEset)$nCells >= cfs$nCell_cutoff)))
+    eset.sel<-SparseEset[gene,]
 
-      cat("Gene expressed in less than ", cfs$nCell_cutoff,
-          "cells (",(dim(SparseEset)[1]-length(gene))*100/dim(SparseEset)[1],"% genes) were filtered","\n",
-          "-Filtered expression matrix dimension:",dim(eset.sel),"\n")
-      }else { eset.sel <- SparseEset }
+    cat("Gene expressed in less than ", cfs$nCell_cutoff,
+        "cells (",(dim(SparseEset)[1]-length(gene))*100/dim(SparseEset)[1],"% genes) were filtered","\n",
+        "-Filtered expression matrix dimension:",dim(eset.sel),"\n")
+  }else { eset.sel <- SparseEset }
 
-    eset.sel2 <- eset.sel[,cell]
-    cat("A total of ",dim(SparseEset)[2]-length(cell),
-          "(",(dim(SparseEset)[2]-length(cell))*100/dim(SparseEset)[2],"%) cells were filtered","\n",
-          "-Filtered expression matrix dimension:",dim(eset.sel2),"\n")
+  eset.sel2 <- eset.sel[,cell]
+  cat("A total of ",dim(SparseEset)[2]-length(cell),
+      "(",(dim(SparseEset)[2]-length(cell))*100/dim(SparseEset)[2],"%) cells were filtered","\n",
+      "-Filtered expression matrix dimension:",dim(eset.sel2),"\n")
 
-    cat("Data filtering done!","\n")
-    cat("====================","\n")
+  cat("Data filtering done!","\n")
+  cat("====================","\n")
 
   return(eset.sel2)
 }#end preMICA.filtering
@@ -1251,14 +1258,14 @@ MICAplot<-function(input_eset,
   if(!color_by%in%colnames(input)){stop("Label name not found in phenotype data!","\n")}
   if(!X%in%colnames(input)|!Y%in%colnames(input)){stop("Please check your x or y axis assignment!","\n")}
   p <- ggplot(data=input,aes_string(x=X, y=Y,color = color_by))+
-       geom_point(size=pct, alpha=alpha)+
-       labs(title=title.name, x = X, y= Y)+
-       theme_classic() +
-       theme(plot.title = element_text(size=title.size),
-             axis.text=element_text(size=12),
-             axis.title=element_text(size=14,face="bold"),
-             legend.text = element_text(size=12),
-             legend.title = element_text(size=14,face="bold"))
+    geom_point(size=pct, alpha=alpha)+
+    labs(title=title.name, x = X, y= Y)+
+    theme_classic() +
+    theme(plot.title = element_text(size=title.size),
+          axis.text=element_text(size=12),
+          axis.title=element_text(size=14,face="bold"),
+          legend.text = element_text(size=12),
+          legend.title = element_text(size=14,face="bold"))
 
   if (show_label){
     loc <- stats::aggregate(input[,c(X,Y)],by=list(Cluster=input[,color_by]),mean)
@@ -1315,7 +1322,7 @@ draw.group.barplot<-function(input_eset,
     }
   }else{
     stop ('group_by name not found in pData!','\n')
-    }
+  }
 
 
   p <- ggplot(data=input, aes_string(group_by))+
@@ -1381,30 +1388,30 @@ feature_highlighting<-function(input_eset,target=NULL,
     proj_target_melt <- reshape2::melt(proj_target, id.vars=id.vars)
 
     p<- ggplot(proj_target_melt, aes_string(x, y)) +
-        theme_classic()+
-        facet_wrap(c("variable",wrap_by),scales = "free",ncol = ncol)
-        labs(title="")
+      theme_classic()+
+      facet_wrap(c("variable",wrap_by),scales = "free",ncol = ncol)
+    labs(title="")
 
-    }else{
-      target_values <- input[indx,]
-      proj_target <- cbind(projection,target=target_values)
-      proj_target_melt <- reshape2::melt(proj_target, id.vars=id.vars)
+  }else{
+    target_values <- input[indx,]
+    proj_target <- cbind(projection,target=target_values)
+    proj_target_melt <- reshape2::melt(proj_target, id.vars=id.vars)
 
-      p<- ggplot(proj_target_melt, aes_string(x, y)) +
-          theme_classic()+
-          labs(title=target,scales = "free")
+    p<- ggplot(proj_target_melt, aes_string(x, y)) +
+      theme_classic()+
+      labs(title=target,scales = "free")
 
-      if(!is.null(wrap_by)) p <- p + facet_wrap(c(wrap_by),scales = "free",ncol = ncol)
-      }#indx = 1
+    if(!is.null(wrap_by)) p <- p + facet_wrap(c(wrap_by),scales = "free",ncol = ncol)
+  }#indx = 1
 
-   p<- p + geom_point(aes(colour=value),size=pct.size,alpha=alpha) +
-        scale_colour_gradientn(colors=colors)   +
-        theme(plot.title = element_text(size = title.size, face = "bold"),
-              axis.title = element_text(size = 10),
-              legend.title = element_text(size = 10))+
-        labs(color=ylabel)
+  p<- p + geom_point(aes(colour=value),size=pct.size,alpha=alpha) +
+    scale_colour_gradientn(colors=colors)   +
+    theme(plot.title = element_text(size = title.size, face = "bold"),
+          axis.title = element_text(size = 10),
+          legend.title = element_text(size = 10))+
+    labs(color=ylabel)
 
-   return(p)
+  return(p)
 }
 
 
@@ -1424,11 +1431,11 @@ feature_highlighting<-function(input_eset,target=NULL,
 #'
 #' @export
 feature_vlnplot <- function(input_eset,
-                         target=NULL,feature="geneSymbol",
-                         group_by="celltype",ylabel="Expression",
-                         color_by=NULL,colors=NULL,
-                         ncol=3,stat="median",
-                         boxplot=FALSE,title.size=5){
+                            target=NULL,feature="geneSymbol",
+                            group_by="celltype",ylabel="Expression",
+                            color_by=NULL,colors=NULL,
+                            ncol=3,stat="median",
+                            boxplot=FALSE,title.size=5){
 
   if(!group_by%in% colnames(pData(input_eset))) stop('Please check your group_by information!','\n')
   if(!feature%in% colnames(fData(input_eset))) stop('Please check your feature information!','\n')
@@ -1458,8 +1465,8 @@ feature_vlnplot <- function(input_eset,
   df_melt <- reshape2::melt(df, id.vars=c("cluster","condition"))
 
   p <- ggplot(df_melt, aes(x=cluster, y=value, fill=condition))+
-       theme_classic()+
-       geom_violin(trim=TRUE,scale="width",na.rm = TRUE,size=0.4)
+    theme_classic()+
+    geom_violin(trim=TRUE,scale="width",na.rm = TRUE,size=0.4)
 
   if(!is.null(stat)){
     if (stat=="median") p <- p + stat_summary(fun.y=median, geom="point", size=1.2, color="black",position=position_dodge(width=1))
@@ -1500,12 +1507,12 @@ feature_vlnplot <- function(input_eset,
 #'
 #' @export
 feature_heatmap <- function(input_eset,target,feature="geneSymbol",
-                         group_name="label",name="log2Exp",
-                         save_plot=TRUE,width=4,height=8,
-                         cluster_rows = FALSE,
-                         colors = rev(colorRampPalette(brewer.pal(10, "RdYlBu"))(256)),
-                         plot_name="GeneHeatmap.png",
-                         ...){
+                            group_name="label",name="log2Exp",
+                            save_plot=TRUE,width=4,height=8,
+                            cluster_rows = FALSE,
+                            colors = rev(colorRampPalette(brewer.pal(10, "RdYlBu"))(256)),
+                            plot_name="GeneHeatmap.png",
+                            ...){
 
   input <- exprs(input_eset)
   gn<-intersect(target,fData(input_eset)[,feature])
@@ -1529,12 +1536,12 @@ feature_heatmap <- function(input_eset,target,feature="geneSymbol",
   mycolors = colors
 
   hmp <- Heatmap(exp.ordered, col = mycolors, name = name,
-          show_row_names = TRUE,
-          show_column_names = FALSE,
-          cluster_rows = cluster_rows,
-          cluster_columns = FALSE,
-          top_annotation = myanndf,
-          ...)
+                 show_row_names = TRUE,
+                 show_column_names = FALSE,
+                 cluster_rows = cluster_rows,
+                 cluster_columns = FALSE,
+                 top_annotation = myanndf,
+                 ...)
 
   if(save_plot){
     png(filename = plot_name, width=width,height=height,units ="in",res = 300)
@@ -1561,16 +1568,16 @@ draw.bubblePlot2<-function(df=NULL,xlab,ylab,clab,slab,
                            low.col="#004C99",high.col="#CC0000",plot.title=NULL){
 
   p <- ggplot(df, aes_string(x= xlab, y= ylab)) +
-       theme_classic()+
-       geom_point(aes_string(fill=clab, size= slab),color="black",pch=21)+
-       scale_fill_gradient2(low=low.col,high=high.col)+
-       scale_x_discrete(limits=levels(df[,xlab]))+
-       scale_y_discrete(limits=levels(df[,ylab]))+
-       theme(panel.grid.major= element_line(colour = "grey",size=0.3),
-             panel.grid.minor = element_line(colour = "grey",size=0.3),
-             axis.text.x = element_text(size = 12),
-             axis.text.y = element_text(size = 12))
-      labs(x = xlab, y = ylab, title = plot.title)
+    theme_classic()+
+    geom_point(aes_string(fill=clab, size= slab),color="black",pch=21)+
+    scale_fill_gradient2(low=low.col,high=high.col)+
+    scale_x_discrete(limits=levels(df[,xlab]))+
+    scale_y_discrete(limits=levels(df[,ylab]))+
+    theme(panel.grid.major= element_line(colour = "grey",size=0.3),
+          panel.grid.minor = element_line(colour = "grey",size=0.3),
+          axis.text.x = element_text(size = 12),
+          axis.text.y = element_text(size = 12))
+  labs(x = xlab, y = ylab, title = plot.title)
 
   return(p)
 }
@@ -1604,20 +1611,16 @@ draw.scRNAseq.QC<-function(SparseEset,project.name,
             mito_cf = round(median(pd$percent.mito) + 3 * mad(pd$percent.mito),4))
 
   render(input=system.file("rmd", "SparseEset_QC_report.Rmd", package = "scMINER"),
-           output_dir = plot.dir,
-           output_file = paste0(project.name,"_scRNAseq_QC.html"),
-           clean=TRUE,
-           quiet =FALSE,
-           params=list(
-             Obj=SparseEset,
-             projectName=project.name,
-             cfs=cfs,
-             output.cutoff=output.cutoff,
-             group=group))
+         output_dir = plot.dir,
+         output_file = paste0(project.name,"_scRNAseq_QC.html"),
+         clean=TRUE,
+         quiet =FALSE,
+         params=list(
+           Obj=SparseEset,
+           projectName=project.name,
+           cfs=cfs,
+           output.cutoff=output.cutoff,
+           group=group))
 
   return(cfs)
 }
-
-
-
-
