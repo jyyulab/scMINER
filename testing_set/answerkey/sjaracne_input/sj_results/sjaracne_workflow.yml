@@ -1,0 +1,14 @@
+exp_file:
+  class: File
+  path: /Users/jveloso/scMINER/testing_set/answerkey/sjaracne_input/Group2/2_13336_13329_229.exp
+probe_file:
+  class: File
+  path: /Users/jveloso/scMINER/testing_set/answerkey/sjaracne_input/Group2/tf/2_1213_1213_229_tf.txt
+p_value_consensus: 1e-05
+p_value_bootstrap: 1e-07
+depth: 40
+aracne_config_dir:
+  class: Directory
+  path: /Users/jveloso/anaconda3/envs/py36/lib/python3.6/site-packages/SJARACNe-0.2.0-py3.6.egg/SJARACNe/config
+bootstrap_num: 50
+final_out_dir_name: sj_results
