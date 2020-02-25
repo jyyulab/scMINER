@@ -1,0 +1,15 @@
+infile:
+  class: File
+  path: /Users/jveloso/scMINER/testing_set/answerkey/mica_1k_input.txt
+project_name: test
+k: [4]
+visualization: tsne
+dim_reduction: MDS
+iterations_km: 10
+dims_km: [19]
+dims_plot: 19
+perplexity: 30
+min_dist: 0.01
+slice_size: 200
+thread_number: 10
+dist_metrics: mi
