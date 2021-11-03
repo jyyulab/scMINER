@@ -201,7 +201,7 @@ readscRNAseqData <- function(file,is.10x=TRUE,CreateSparseEset=TRUE, add.meta=F,
       rownames(genes)<-genes[,1]
     }else if(file.exists(file.path(data.path, "features.tsv"))){
       genes <- read.delim(file.path(data.path, "features.tsv"), header=FALSE,stringsAsFactors=FALSE,sep = "\t")
-      colnames(genes)<-c("ensembl","geneSymbol","biotype")
+      colnames(genes)<-c("ensembl","geneSymbol","biotype")[1:ncol(genes)]
       rownames(genes)<-genes[,1]
     }else{
       cat("Genes/features file not found!","\n")
