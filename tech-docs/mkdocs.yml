@@ -19,5 +19,5 @@ nav:
     - 'Driver target function analysis': tutorials/function-analysis.md
     - 'Convert an eset object to a Seurat object': tutorials/convert-object.md
 repo_url: https://github.com/jyyulab/scMINER
-site_author: Liang (Adam) Ding
+site_author: Liang (Adam) Ding, Hao Shi
 copyright: Apache License (Version 2.0)
