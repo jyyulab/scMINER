@@ -23,6 +23,7 @@
 # library(ComplexHeatmap)
 # library(RColorBrewer)## for colors coding
 # library(grDevices)
+# library(anndata)
 #
 # library(Matrix)
 # library(stats) ##  t.test
@@ -33,10 +34,9 @@
 # library(Biobase) ## basic functions for bioconductor
 #
 # library(rmarkdown)
-# library(kableExtra) #for Rmarkdown
-# library(knitr) #for Rmarkdown
-
-#####
+# library(kableExtra) # for Rmarkdown
+# library(knitr)      # for Rmarkdown
+#############
 #' @title SparseExpressionSet
 #' @exportClass SparseExpressionSet
 #' @importFrom Biobase ExpressionSet
@@ -226,8 +226,7 @@ readscRNAseqData <- function(file,is.10x=TRUE,CreateSparseEset=TRUE, add.meta=F,
 }
 
 
-
-#' Generate MICA input accepted txt or h5 file
+#' Generate MICA input accepted txt or h5ad file
 #'
 #' @description A utility function that helps generate MICA input from a data matrix with rownames and colnames
 #' @usage generateMICAinput(d, filename="project_name_MICAinput.h5")
@@ -236,147 +235,25 @@ readscRNAseqData <- function(file,is.10x=TRUE,CreateSparseEset=TRUE, add.meta=F,
 #' @return A txt file or a h5 file that could be read in MICA
 #'
 #' @export
-generateMICAinput <- function(d,filename){
-
-  if (length(grep(".txt$",filename))!=0){
-    mica.input <- as.data.frame(as.matrix(Matrix::t(d)))
-    mica.input$ID <- colnames(d)
-    mica.input <- mica.input[,c("ID",rownames(d))]
-
-    cat("Writing MICA input to table...","\n")
-    write.table(mica.input,file = filename,sep = "\t",
-                row.names = FALSE,col.names = TRUE,quote = FALSE)
-
-  }else if(length(grep(".h5$",filename))!=0){
-    mica.input<-as.matrix(d)
-    rhdf5::h5createFile(filename)
-    cat("Writing MICA input to h5 file.","\n")
-
-    rhdf5::h5write(mica.input, filename, "input")
-    rhdf5::h5write(rownames(mica.input), filename, "fn")
-    rhdf5::h5write(colnames(mica.input), filename, "ID")
-    rhdf5::H5close()
-
+generateMICAinput <- function(eset, filepath){
+  if (length(grep(".txt$", filepath))!=0){
+    mica.input <- as.data.frame(t(as.matrix(exprs(eset))))
+    cat("Writing MICA input to a .txt file...", "\n")
+    write.table(mica.input, file = filepath, sep = "\t",
+                row.names = TRUE, col.names = NA, quote = FALSE)
+  }else if(length(grep(".h5ad$", filepath))!=0){
+    cat("Writing MICA input to a .h5ad file...", "\n")
+    ad <- AnnData(X = t(as.matrix(exprs(eset))),
+                  obs = pData(eset),
+                  var = fData(eset)
+    )
+    write_h5ad(ad, filepath)
   }else{
-    stop("Your filename should be ended with .txt or .h5", "\n")
+    stop("Your filepath should be ended with .txt or .h5ad", "\n")
   }
-
+  
   cat("Done.","\n")
 }
-
-
-#' Generate MICA command script for job submission on local or LSF
-#'
-#' @description Generate command for running MICA locally or on LSF.
-#' MICA is a high-performance clustering analysis method that was implemented in python and cwl.
-#'
-#' @param save_sh_at path to save your MICA command file;
-#' @param input_file path to actual input file for MICA, usually use \code{generateMICAinput} to generete file with desired format.
-#' @param project_name character, name of your project, will be used for naming output data
-#' @param num_cluster a vector or a numerical number, the number of clusters
-#' @param output_path path to MICA output file
-#' @param host character, whether you want to run MICA pipeline on "lsf" or "local"
-#' @param queue character. If host="lsf", which queue to submit your run_MICA.sh, default as NULL
-#' @param config_file path to your customized config file where you could define queue, requeseted memory and processor; if use default file, then keep as NULL; defualt as NULL.
-#' @param bootstrap number of iterations of k-means process, default as 10.
-#' @param dim_reduction_method character, default as "mds". Other supported methods include "pca" and "lpl".
-#' @param visualization character, visualization method used for visualize final clustering results. default as "tsne", other supported methods includes "umap"
-#' @param perplexity numeical. parameter used in tsne visualization to indicate plot density
-#' @param min_dist numerical. parameter used in umap visualization to indicate the distance between neighbours.
-#' @param slice_size numerical. MICA sliced original data matrix into smaller pieces to improve computational efficiency,this parameter was used to indicate how many cells/samples should be grouped together as one downsized sub-matrix.
-#' Default as 1000.
-#'
-#' @return A .sh script with runnable command for MICA execution
-#' @examples
-#' \dontrun{
-#' generateMICAcmd<-function(  save_sh_at="./", #path to save shell script
-#'                             input_file="MICA_input.txt", #your MICA input file
-#'                             project_name="test",
-#'                             num_cluster=c(3,4,5), #a vector of numerical number
-#'                             output_path="./",
-#'                             host="local", #or local
-#'                             dim_reduction_method="MDS",
-#'                             visualization="tsne")
-#'}
-#' @export
-generateMICAcmd<-function(save_sh_at,
-                          input_file,
-                          project_name="test",
-                          num_cluster=c(3,4,5),
-                          output_path,
-                          host="lsf",
-                          queue="standard",
-                          config_file=NULL,
-                          bootstrap=10,
-                          dim_reduction_method="MDS",
-                          visualization="tsne",
-                          perplexity=30,
-                          min_dist=0.01,
-                          slice_size=1000){
-
-  #sanity check
-  if(!dir.exists(save_sh_at)) dir.create(save_sh_at)
-  if(!dir.exists(output_path)) dir.create(output_path)
-  if(!file.exists(input_file)) stop("Input file not found!")
-  file.sh<-file.path(save_sh_at,paste0("01_run_MICA_",project_name,'.sh'))
-  if(file.exists(file.sh)) stop("File already existed!")
-
-  #add host specific attributes
-  if (tolower(host)=="lsf"){
-
-    project<-ifelse(is.null(project_name),'',paste('#BSUB -P ',project_name,' \n'))
-    queue.bash<-ifelse(is.null(queue),'',paste('#BSUB -q ', queue,' \n'))
-
-    if (is.null(config_file)){
-      cat("Default configuration file will be copied to: ", save_sh_at ,", please adjust accordingly!","\n")
-      file.copy(system.file("config_template", "config_cwlexec.json", package = "scMINER"), paste0(save_sh_at,"/config_cwlexec.json"))
-      config.bash <- paste0(save_sh_at,"/config_cwlexec.json")
-    }else config.bash <- paste0("-j ", normalizePath(config_file), " ")
-
-    job<-ifelse(is.null(project_name),
-                '#BSUB -J MICA',
-                paste0('#BSUB -J ','MICA_',project_name,'\n'))
-
-    sh.scminer<-paste0(
-      '#!/bin/env bash\n',
-      project,
-      job,
-      '#BSUB -oo ',project_name,'.sh.out \n',
-      '#BSUB -eo ',project_name,'.sh.err \n',
-      '#BSUB -R \"rusage[mem=2000]\" \n',
-      queue.bash,
-      "mica lsf ",
-      config.bash)
-
-  } else if (tolower(host)=="local") {
-    sh.scminer<-paste0(
-      '#!/bin/env bash\n' ,
-      "mica local ",
-      ifelse(is.null(bootstrap),"",paste0("-b ",bootstrap," ")))
-  }
-
-  #add generic attributes
-  sh.scminer<-paste0(sh.scminer,
-                     paste0("-i ", normalizePath(input_file), " "),
-                     paste0("-p ", project_name, " "),
-                     paste0("-k ",  paste0(num_cluster, collapse="", " ")),
-                     paste0("-o ",  normalizePath(output_path), " "),
-                     ifelse(is.null(bootstrap),"",paste0("-b ",bootstrap," ")),
-                     ifelse(is.null(dim_reduction_method),"",paste0("-dr ",dim_reduction_method," ")),
-                     ifelse(is.null(visualization),"",paste0("-v ",visualization, " ")),
-                     ifelse(is.null(perplexity),"",paste0("-pp ",perplexity," ")),
-                     ifelse(is.null(min_dist),"",paste0("-d ",min_dist," ")),
-                     ifelse(is.null(slice_size),"",paste0("-sn ", slice_size," "))
-  )
-
-  sink(file.sh)
-  cat(sh.scminer)
-  sink()
-
-  cat(basename(file.sh),'is generated!\n')
-
-}
-
 
 
 #' @title readMICAoutput
@@ -403,7 +280,7 @@ readMICAoutput<-function(eset=NULL, input_file, output_file,load_ClusterRes =TRU
       eset$Y=res[,3]
     }
   }else{
-    cat("Reading Input...","\n")
+    cat("Reading input...","\n")
     d <- read.delim(input_file,header = FALSE,
                     stringsAsFactors = FALSE,
                     quote = "",
@@ -503,8 +380,6 @@ generateSJARACNeInput<-function(input_eset,ref=NULL,funcType=NULL,wd.src,group_n
 #' \dontrun{
 #' df.ref=data.frame(celltype="Cd4 T",markers=c("Cd8a","Cd4","Cd3g"),weight=c(-1,1,1))
 #' draw.marker.bbp<-function(ref = df.ref,input_eset, feature='geneSymbol',group_name="ClusterRes", save_plot = FALSE, width=8, height=5)
-#'
-#'
 #' }
 #'
 #' @export

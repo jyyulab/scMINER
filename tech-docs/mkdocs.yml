@@ -1,0 +1,23 @@
+site_name: scMINER
+theme:
+  name: readthedocs
+  highlightjs: true
+  hljs_languages:
+    - yaml
+  analytics:
+    gtag: G-ABC123
+nav:
+  - Home: index.md
+  - Installation: install.md
+  - API: api.md
+  - Contact: contact.md
+  - Tutorials:
+    - 'Basic analysis on PBMC (12k)': tutorials/PBMC-12k.md
+    - 'KO vs. WT analysis on Th17': tutorials/Th17.md
+    - 'MICA advanced analysis': tutorials/MICA-advance.md
+    - 'Network visualization': tutorials/network-visual.md
+    - 'Driver target function analysis': tutorials/function-analysis.md
+    - 'Convert an eset object to a Seurat object': tutorials/convert-object.md
+repo_url: https://github.com/jyyulab/scMINER
+site_author: Liang (Adam) Ding
+copyright: Apache License (Version 2.0)
