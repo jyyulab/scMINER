@@ -1,5 +1,5 @@
-# scMINER Guided Analysis on 12k PBMCs from 10x Genomics
-We demonstrate scMINER's basic analysis using PBMC dataset with 68k cells. To provide a faster guidance, we've downsampled the dataset to 12k cells. The original dataset is freely available from [10x genomics](https://support.10xgenomics.com/single-cell-gene-expression/datasets/1.1.0/fresh_68k_pbmc_donor_a).
+# scMINER Guided Analysis on 14k PBMCs from 10x Genomics
+We demonstrate scMINER's basic analysis using the PBMC dataset with 20k cells [[Zheng et al., 2017](../reference.md#[Zheng et al., 2017])]. We've removed CD34+ cells, CD4+ helper T cells, and total CD8+ cytotoxic cells from the dataset because of low sorting purity or a significant overlap with other immune cells based on the sorting strategy. The original dataset is freely available under accession number [SRP073767](https://www.ncbi.nlm.nih.gov/sra?term=SRP073767).
 
 
 ## Data loading and preprocessing
