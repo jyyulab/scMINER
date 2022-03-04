@@ -70,7 +70,6 @@ CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T
       stop("Row names of feature data doesn't match with expression data row names!","\n")
     }
   } else {
-
     cat("Will take rownames as geneSymbol","\n")
     feature.data<-data.frame(geneSymbol=rownames(data), stringsAsFactors=F)
 
@@ -148,8 +147,6 @@ CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T
 }
 
 
-
-
 #' readscRNAseqData
 #' @description read scRNA-seq data, a wrapper of conventional data reading (read.delim) and 10x genomics data standarad output reading
 #'
@@ -162,16 +159,16 @@ CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T
 #'
 #' @return A list or sparse matrix expression set
 #' @export
-readscRNAseqData <- function(file,is.10x=TRUE,CreateSparseEset=TRUE, add.meta=F,...){
-
+readscRNAseqData <- function(file, is.10x=TRUE, CreateSparseEset=TRUE, add.meta=F, sep=','){
+  
   if(is.10x){
-
+    
     data.path <- file
     cat("Reading 10X genomcis data in",data.path, "\n")
-
+    
     f<-list.files(path=data.path,full.names = T)
     f<-f[grep(".gz$",f)]
-
+    
     if (length(grep(".gz",f))!=0){
       cat("Decompressing .gz files.","\n")
       for (i in f){
@@ -179,13 +176,13 @@ readscRNAseqData <- function(file,is.10x=TRUE,CreateSparseEset=TRUE, add.meta=F,
         system("gunzip ",i)
       }
     }
-
+    
     if (file.exists(file.path(data.path,"matrix.mtx"))){
       data.raw <- Matrix::readMM(file.path(data.path,"matrix.mtx"))
     }else{
       stop("Matrix file not found!","\n")
     }
-
+    
     if(file.exists(file.path(data.path,"barcodes.tsv"))){
       barcodes <- read.delim(file.path(data.path,"barcodes.tsv"), header=FALSE,stringsAsFactors = FALSE,sep = "\t")
       colnames(barcodes)[1]<-"CellNames"
@@ -193,8 +190,8 @@ readscRNAseqData <- function(file,is.10x=TRUE,CreateSparseEset=TRUE, add.meta=F,
     }else{
       stop("Barcodes file not found!","\n")
     }
-
-
+    
+    
     if(file.exists(file.path(data.path,"genes.tsv"))){
       genes <- read.delim(file.path(data.path,"genes.tsv"),header=FALSE,stringsAsFactors = FALSE, sep = "\t")
       colnames(genes)<-c("ensembl","geneSymbol")
@@ -206,10 +203,10 @@ readscRNAseqData <- function(file,is.10x=TRUE,CreateSparseEset=TRUE, add.meta=F,
     }else{
       cat("Genes/features file not found!","\n")
     }
-
+    
     dimnames(data.raw)[[1]] <- rownames(genes)
     dimnames(data.raw)[[2]] <- rownames(barcodes)
-
+    
     if (CreateSparseEset){
       d <- CreateSparseEset(data=data.raw,meta.data=barcodes,
                             feature.data=genes,add.meta = add.meta)
@@ -220,7 +217,7 @@ readscRNAseqData <- function(file,is.10x=TRUE,CreateSparseEset=TRUE, add.meta=F,
                feature.data=genes)}
   }
   else{
-    d<- read.delim(file=file,...)
+    d<- read.delim(file=file, header=TRUE, row.names=1, sep=sep)
   }
   return(d)
 }

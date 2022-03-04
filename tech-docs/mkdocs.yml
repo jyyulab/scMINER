@@ -18,7 +18,7 @@ nav:
     - 'MICA advanced analysis': tutorials/MICA-advance.md
     - 'Network visualization': tutorials/network-visual.md
     - 'Driver target function analysis': tutorials/function-analysis.md
-    - 'Convert an eset object to a Seurat object': tutorials/convert-object.md
+    - 'Interoperability between SparseEset, Seurat, and anndata': tutorials/interoperability.md
 repo_url: https://github.com/jyyulab/scMINER
 site_author: Liang (Adam) Ding, Hao Shi
 copyright: Apache License (Version 2.0)

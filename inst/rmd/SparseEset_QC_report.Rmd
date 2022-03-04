@@ -74,7 +74,7 @@ p.gene.qc <- ggplot(data = data.frame(ncells = cells_per_gene), aes(log10(ncells
               theme_classic()+
               labs(x = "Log10 (Cell counts + 1)",
                    y = "Gene counts",
-                   title = "Histogram: Number of cells expressed by each genes") +
+                   title = "Histogram: number of cells expressed for each gene") +
               theme(
                     axis.text = element_text(size = 10),
                     axis.title = element_text(size = 12, face = "bold"),
