@@ -14,7 +14,7 @@ nav:
   - Contact: contact.md
   - Tutorials:
     - 'Basic analysis on PBMC (14k)': tutorials/PBMC-14k.md
-    - 'KO vs. WT analysis on Th17': tutorials/Th17.md
+    - 'KO vs. WT analysis on CD8+ T cells': tutorials/CD8T.md
     - 'MICA advanced analysis': tutorials/MICA-advance.md
     - 'Network visualization': tutorials/network-visual.md
     - 'Driver target function analysis': tutorials/function-analysis.md
