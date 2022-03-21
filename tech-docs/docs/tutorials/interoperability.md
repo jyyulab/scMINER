@@ -1,4 +1,13 @@
 # Interoperability between SparseEset, Seurat, and anndata
+
+## SC data type Conversion
+|             | SparseEset | Seurat | SingleCellExperiment | anndata |
+| ----------- | ----------- | ----------- | ----------- | ----------- |
+| **SparseEset** | x | SparseEset<br>Seurat | SparseEset<br>SingleCellExperiment | SparseEset<br>SingleCellExperiment<br>anndata2ri |
+| **Seurat** | Seurat<br>SparseEset | x | Seurat<br>SingleCellExperiment | https://mojaveazure.github.io/seurat-disk/articles/convert-anndata.html |
+| **SingleCellExperiment** | SingleCellExperiment<br>SparseEset | SingleCellExperiment<br>Seurat | x | anndata2ri |
+| **anndata** |	anndata2ri<br>SingleCellExperiment<br>SparseEset | anndata2ri<br>SingleCellExperiment<br>Seurat | anndata2ri | x |
+
 ## SparseEset to Seurat
 ```R
 # eset.log2 is the SparseEset with log2 normalized matrix; 
