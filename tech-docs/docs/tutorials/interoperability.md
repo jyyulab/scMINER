@@ -4,9 +4,21 @@
 |             | SparseEset | Seurat | SingleCellExperiment | anndata |
 | ----------- | ----------- | ----------- | ----------- | ----------- |
 | **SparseEset** | x | SparseEset<br>Seurat | SparseEset<br>SingleCellExperiment | SparseEset<br>SingleCellExperiment<br>anndata2ri |
-| **Seurat** | Seurat<br>SparseEset | x | Seurat<br>SingleCellExperiment | https://mojaveazure.github.io/seurat-disk/articles/convert-anndata.html |
+| **Seurat** | Seurat<br>SparseEset | x | Seurat<br>SingleCellExperiment | <https://mojaveazure.github.io/seurat-disk/articles/convert-anndata.html> |
 | **SingleCellExperiment** | SingleCellExperiment<br>SparseEset | SingleCellExperiment<br>Seurat | x | anndata2ri |
-| **anndata** |	anndata2ri<br>SingleCellExperiment<br>SparseEset | anndata2ri<br>SingleCellExperiment<br>Seurat | anndata2ri | x |
+| **anndata** |	anndata2ri<br>SingleCellExperiment<br>SparseEset | anndata2ri<br>SingleCellExperiment<br>Seurat | anndata2ri<br>SingleCellExperiment | x |
+
+### Seurat
+<https://cran.r-project.org/web/packages/Seurat/index.html>
+### SingleCellExperiment
+<https://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html>
+### anndata
+<https://cran.r-project.org/web/packages/anndata/index.html>
+### anndata2ri
+<https://github.com/theislab/anndata2ri>
+
+And this is an alternative package that helps easy conversion of different single-cell data formats to each other.  
+<https://github.com/cellgeni/sceasy>
 
 ## SparseEset to Seurat
 ```R
