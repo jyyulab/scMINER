@@ -1,4 +1,4 @@
-# Interoperability between SparseEset, Seurat, and anndata
+# Interoperability between SparseEset, Seurat, SingleCellExperiment, and anndata
 
 ## SC data type Conversion
 |             | SparseEset | Seurat | SingleCellExperiment | anndata |
