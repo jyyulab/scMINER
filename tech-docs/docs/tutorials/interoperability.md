@@ -17,7 +17,7 @@
 ### anndata2ri
 <https://github.com/theislab/anndata2ri>
 
-And this is an alternative package that helps easy conversion of different single-cell data formats to each other.  
+### And this is an alternative package that helps easy conversion of different single-cell data formats to each other.
 <https://github.com/cellgeni/sceasy>
 
 ## SparseEset to Seurat
