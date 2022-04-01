@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Liang (Adam) Ding, Hao Shi">
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Installation - scMINER</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Installation";
+    var mkdocs_page_input_path = "install.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yaml.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ABC123"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-ABC123');
+  </script>
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> scMINER</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                    </li>
+                </ul>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Installation</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#installing-scminer">Installing scMINER</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#install-scminer-r-package">Install scMINER R package</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#install-mica-python-package">Install MICA python package</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#install-sjaracne-python-package">Install SJARACNe python package</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#r-session-info">R session info</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#python-session-info">Python session info</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="" href="../api.md">API</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../reference/">References</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../contact/">Contact</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Tutorials</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/PBMC-14k/">Basic analysis on PBMC (14k)</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/CD8T/">KO vs. WT analysis on CD8+ T cells</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/MICA-advanced/">Mutual information-based clustering analysis (MICA)</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../tutorials/network-visual.md">Network visualization</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../tutorials/function-analysis.md">Driver target function analysis</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../tutorials/interoperability/">Interoperability between SparseEset, Seurat, and anndata</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">scMINER</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Installation</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/jyyulab/scMINER/edit/master/docs/install.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="installation">Installation</h1>
+<h2 id="dependencies">Dependencies</h2>
+<p>scMINER requires R version &gt;= 4.0.5 and Python version &gt;= 3.8.10 to run. We recommend using <a href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a> to create and manage the environments.</p>
+<h2 id="installing-scminer">Installing scMINER</h2>
+<h6 id="install-scminer-r-package">Install <a href="https://github.com/jyyulab/scMINER">scMINER</a> R package</h6>
+<p>To install from GitHub <code>master</code> branch</p>
+<pre><code class="language-R">install.packages(devtools)  # install devtools package first
+devtools::install_github(&quot;jyyulab/scMINER&quot;, ref='master', dependencies='Depends') 
+</code></pre>
+<p>or to clone from <code>https://github.com/jyyulab/scMINER/</code> and install from source files:</p>
+<pre><code class="language-R">devtools::install(pkg='.',dependencies=TRUE)            # Install the package with dependencies.
+devtools::install_deps(pkg = &quot;.&quot;, dependencies = TRUE)  # Install package dependencies if needed.
+</code></pre>
+<p>or to download the released tar.gz file is under project space, you can install via:</p>
+<pre><code class="language-R">devtools::install(pkg='scMINER_0.1.0.tar.gz', dependencies=TRUE)
+</code></pre>
+<h6 id="install-mica-python-package">Install <a href="https://github.com/jyyulab/MICA">MICA</a> python package</h6>
+<p>To install the package from PyPI:</p>
+<pre><code class="language-bash">pip install MICA
+</code></pre>
+<p>or to install from source: </p>
+<pre><code class="language-bash">git clone https://github.com/jyyulab/MICA
+cd MICA
+python setup.py install
+</code></pre>
+<h6 id="install-sjaracne-python-package">Install <a href="https://github.com/jyyulab/SJARACNe">SJARACNe</a> python package</h6>
+<p>As the core SJARACNe functions were implemented in C++ which requires compiling, we recommend using installing from source: </p>
+<pre><code class="language-bash">git clone https://github.com/jyyulab/SJARACNe
+cd SJARACNe
+python setup.py build
+python setup.py install
+</code></pre>
+<h6 id="r-session-info">R session info</h6>
+<pre><code class="language-R">&gt; sessionInfo()
+R version 3.6.1 (2019-07-05)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS Mojave 10.14.3
+
+Matrix products: default
+BLAS:   /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+ [1] stats4    grid      parallel  stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] scMINER_0.1.0               NetBID2_2.0.1               openxlsx_4.1.0.1            msigdbr_7.0.1               GSVA_1.32.0                 biomaRt_2.40.4             
+ [7] reshape_0.8.8               arm_1.10-1                  MASS_7.3-51.4               MCMCglmm_2.29               ape_5.3                     coda_0.19-3                
+[13] ordinal_2019.4-25           umap_0.2.3.1                plotrix_3.7-6               plot3D_1.1.1                igraph_1.2.4.1              aricode_0.1.2              
+[19] ConsensusClusterPlus_1.48.0 DESeq2_1.24.0               tximport_1.12.3             impute_1.58.0               limma_3.40.6                GEOquery_2.52.0            
+[25] lme4_1.1-21                 SummarizedExperiment_1.14.1 DelayedArray_0.10.0         BiocParallel_1.18.1         matrixStats_0.55.0          GenomicRanges_1.36.1       
+[31] GenomeInfoDb_1.20.0         IRanges_2.18.3              S4Vectors_0.22.1            kableExtra_1.1.0            knitr_1.25                  Matrix_1.2-17              
+[37] rmarkdown_1.16              cowplot_1.0.0               dplyr_0.8.3                 pheatmap_1.0.12             ComplexHeatmap_2.0.0        scales_1.0.0               
+[43] RColorBrewer_1.1-2          ggplot2_3.2.1               reshape2_1.4.3              Biobase_2.44.0              BiocGenerics_0.30.0         BiocManager_1.30.4         
+
+loaded via a namespace (and not attached):
+  [1] backports_1.1.4        circlize_0.4.8         Hmisc_4.2-0            plyr_1.8.4             lazyeval_0.2.2         GSEABase_1.46.0        splines_3.6.1          digest_0.6.21         
+  [9] htmltools_0.3.6        magrittr_1.5           checkmate_1.9.4        memoise_1.1.0          cluster_2.1.0          readr_1.3.1            annotate_1.62.0        askpass_1.1           
+ [17] prettyunits_1.0.2      colorspace_1.4-1       blob_1.2.0             rvest_0.3.4            xfun_0.10              jsonlite_1.6           crayon_1.3.4           RCurl_1.95-4.12       
+ [25] graph_1.62.0           genefilter_1.66.0      zeallot_0.1.0          survival_2.44-1.1      glue_1.3.1             gtable_0.3.0           zlibbioc_1.30.0        XVector_0.24.0        
+ [33] webshot_0.5.1          GetoptLong_0.1.7       Rhdf5lib_1.6.1         shape_1.4.4            abind_1.4-5            DBI_1.0.0              Rcpp_1.0.2             viridisLite_0.3.0     
+ [41] xtable_1.8-4           progress_1.2.2         htmlTable_1.13.2       clue_0.3-57            reticulate_1.13        foreign_0.8-72         bit_1.1-14             Formula_1.2-3         
+ [49] htmlwidgets_1.3        httr_1.4.1             acepack_1.4.1          pkgconfig_2.0.3        XML_3.98-1.20          nnet_7.3-12            locfit_1.5-9.1         tidyselect_0.2.5      
+ [57] rlang_0.4.0            later_0.8.0            AnnotationDbi_1.46.1   munsell_0.5.0          tools_3.6.1            RSQLite_2.1.2          evaluate_0.14          stringr_1.4.0         
+ [65] bit64_0.9-7            zip_2.0.4              purrr_0.3.2            nlme_3.1-141           mime_0.7               xml2_1.2.2             compiler_3.6.1         shinythemes_1.1.2     
+ [73] rstudioapi_0.10        png_0.1-7              tibble_2.1.3           geneplotter_1.62.0     stringi_1.4.3          cubature_2.0.3         lattice_0.20-38        nloptr_1.2.1          
+ [81] tensorA_0.36.1         vctrs_0.2.0            pillar_1.4.2           lifecycle_0.1.0        GlobalOptions_0.1.1    ucminf_1.1-4           data.table_1.12.2      bitops_1.0-6          
+ [89] corpcor_1.6.9          httpuv_1.5.2           R6_2.4.0               latticeExtra_0.6-28    promises_1.0.1         gridExtra_2.3          boot_1.3-23            assertthat_0.2.1      
+ [97] rhdf5_2.28.0           openssl_1.4.1          rjson_0.2.20           withr_2.1.2            GenomeInfoDbData_1.2.1 hms_0.5.1              rpart_4.1-15           tidyr_1.0.0           
+[105] minqa_1.2.4            misc3d_0.8-4           numDeriv_2016.8-1.1    shiny_1.3.2            base64enc_0.1-3 
+</code></pre>
+<h6 id="python-session-info">Python session info</h6>
+<pre><code class="language-Python">&gt;&gt;&gt; import MICA
+&gt;&gt;&gt; import session_info
+&gt;&gt;&gt; session_info.show()
+-----
+MICA                NA
+session_info        1.0.0
+-----
+Python 3.8.10 | packaged by conda-forge | (default, Sep 13 2021, 21:46:58) [GCC 9.4.0]
+Linux-3.10.0-1160.15.2.el7.x86_64-x86_64-with-glibc2.10
+-----
+Session information updated at 2022-02-15 11:56
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../reference/" class="btn btn-neutral float-right" title="References">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href=".." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Apache License (Version 2.0)</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jyyulab/scMINER/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../reference/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
