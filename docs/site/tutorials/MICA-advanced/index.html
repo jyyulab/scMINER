@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Liang (Adam) Ding, Hao Shi">
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Mutual information-based clustering analysis (MICA) - scMINER</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Mutual information-based clustering analysis (MICA)";
+    var mkdocs_page_input_path = "tutorials/MICA-advanced.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yaml.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ABC123"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-ABC123');
+  </script>
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> scMINER</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../install/">Installation</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="" href="../../api.md">API</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../reference/">References</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../contact/">Contact</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Tutorials</span></p>
+                <ul class="current">
+                    <li class="toctree-l1"><a class="reference internal" href="../PBMC-14k/">Basic analysis on PBMC (14k)</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../CD8T/">KO vs. WT analysis on CD8+ T cells</a>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Mutual information-based clustering analysis (MICA)</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#using-mica">Using MICA</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#mica-ge-mode">MICA GE mode</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#mica-ge-commands">MICA GE commands</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#description-of-output-files">Description of output files</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#description-of-important-parameters">Description of important parameters</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#total-running-time">Total running time</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mica-mds-mode">MICA MDS mode</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#mica-mds-commands">MICA MDS commands</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#description-of-output-files_1">Description of output files</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#description-of-important-parameters_1">Description of Important Parameters</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../network-visual.md">Network visualization</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../function-analysis.md">Driver target function analysis</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../interoperability/">Interoperability between SparseEset, Seurat, and anndata</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">scMINER</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Tutorials &raquo;</li>
+        
+      
+    
+    <li>Mutual information-based clustering analysis (MICA)</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/jyyulab/scMINER/edit/master/docs/tutorials/MICA-advanced.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="mutual-information-based-clustering-analysis-mica">Mutual information-based clustering analysis (MICA)</h1>
+<p>MICA is a clustering tool for single-cell RNA-seq data. MICA takes a preprocessed gene expression matrix as input and efficiently cluster the cells. MICA consists of the following main components:</p>
+<ol>
+<li>Mutual information estimation for cell-cell distance quantification</li>
+<li>Dimension reduction on the non-linear mutual information-based distance space</li>
+<li>Consensus clustering on dimension reduced spaces</li>
+<li>Clustering visualization and cell type annotation</li>
+</ol>
+<p><img alt="MICA_workflow" src="../../images/MICA_workflow.png" /></p>
+<h2 id="using-mica">Using MICA</h2>
+<p>MICA consists of two modes named by the dimension reduction techniques: multi-dimensional scaling (<strong>MICA MDS</strong>) mode and graph embedding (<strong>MICA GE</strong>) mode. The MICA MDS mode is more robust for small datasets (less than <code>5000</code> cells by default) due to its global dimension reduction nature; the MICA GE mode works better for large datasets (more than <code>5000</code> cells) using a graph embedding approach to explore distant neighbor cells.</p>
+<h3 id="mica-ge-mode">MICA GE mode</h3>
+<p>As mentioned above, the MICA GE mode reduces the dimensionality using the graph embedding method. It sweeps a range of resolutions to perform Louvain clustering for each resolution in the range. It also performs silouette analysis as an reference for the selecting of the optimal number of clusters. </p>
+<h4 id="mica-ge-commands">MICA GE commands</h4>
+<p>The simplest way to MICA GE mode is to provide <code>mica ge</code> a preprocessed expression matrix file in either .h5ad or .txt format, and a path to an output directory.</p>
+<pre><code>mica ge -i ./test_data/inputs/10x/PBMC/3k/pre-processed/pbmc3k_preprocessed.h5ad -o ./test_data/outputs
+</code></pre>
+<p>The default number of workers to run in parallel is <code>1</code>. To increase the number of workers (recommended), use <code>-nw</code> option.</p>
+<pre><code>mica ge -i ./test_data/inputs/10x/PBMC/3k/pre-processed/pbmc3k_preprocessed.h5ad -o ./test_data/outputs -nw 25
+</code></pre>
+<p>To increase the upper limit of the range of resolutions to <code>4.0</code>, use <code>-ar</code> option; to decrease the step size for sweeping resolutions to <code>0.1</code>, use <code>-ss</code> option.</p>
+<pre><code>mica ge -i ./test_data/inputs/10x/PBMC/3k/pre-processed/pbmc3k_preprocessed.h5ad -o ./test_data/outputs -nw 25 -ar 4.0 -ss 0.1
+</code></pre>
+<p>See below the description of other parameters.</p>
+<h4 id="description-of-output-files">Description of output files</h4>
+<p>Typical MICA GE mode output files include:</p>
+<p><code>clustered.h5ad</code>: a <code>.h5ad</code> file with preprocessed gene expression matrix, cell and gene meta information and clustering results included.</p>
+<p><code>silhouette_avg.txt</code>: a <code>.txt</code> file with four columns dimension, resolution, num_clusters and silhouette_avg. silhouette_avg is the average silhouette scores of all the cells. In theory, a higher silhouette_avg value indicates a purer clustering result. However, the peak silhouette_avg value is usually biased towards fewer number of clusters. It is recommended to check a few clustering results whose silhouette_avg values are close to the peak silhouette_avg value. For example, the peak silhouette_avg value for the PBMC14k dataset corresponds to the clustering results with 4 clusters; the clustering results with 7 clusters (known 7 sorted populations) have relatively smaller silhouette_avg values.</p>
+<pre><code>dimension resolution  num_clusters    silhouette_avg
+24        2.71828     7               0.5391235947608948
+24        3.00417     7               0.539175271987915
+24        3.32012     6               0.5465611219406128
+24        3.6693      6               0.5463876128196716
+24        4.0552      6               0.5127292275428772
+24        4.48169     6               0.512337863445282
+24        4.95303     6               0.5124161839485168
+24        5.47395     5               0.4783124029636383
+24        6.04965     5               0.5457172393798828
+24        6.68589     5               0.5456818342208862
+24        7.38906     5               0.54740309715271
+24        8.16617     4               0.6289374232292175
+24        9.02501     4               0.6288570761680603
+</code></pre>
+<p>For each Louvain clustering resolution, MICA GE generates three output files.
+<code>clustering_UMAP_euclidean_24_3.6693.txt</code>: a tab-delimited text file with four columns <code>ID</code> (cell barcode ID),  <code>X</code>, <code>Y</code> (UMAP or tSNE coordinates), <code>label</code> (predicted clustering label). <code>euclidean</code> in the file name indicates the distance function used for the clustering on the embedded space, <code>24</code> is the number of reduced dimensions, <code>3.6693</code> is the Louvain clustering resolution. </p>
+<pre><code>ID              X           Y           label 
+CACTTTGACGCAAT  -4.6490397  14.635475   1
+GTTACGGAAACGAA  -4.099431   11.762381   1
+AGTCACGACAGGAG  -4.75394    3.9216163   4
+TTCGAGGACCAGTA  -5.1016173  4.8917494   4
+CACTTATGAGTCGT  -3.1518545  15.187379   1
+GCATGTGATTCTGT  -3.6067667  14.740933   1
+TAGAATACGTATCG  -4.634878   12.530589   1
+</code></pre>
+<p><code>clustering_UMAP_euclidean_24_3.6693.pdf</code>: an UMAP plot file whose name schema is the same as above clustering label file.</p>
+<p><code>silhouette_2_6_3.6693.pdf</code>: a silhouette plot file, where <code>2</code> is the number of UMAP dimensions, <code>6</code> is the number of clusters.</p>
+<h4 id="description-of-important-parameters">Description of important parameters</h4>
+<p>MICA GE exposes a number of useful optional command-line parameters to the user. The particularly important ones are explained here, but you can always run <code>mica ge -h</code> to see them all.</p>
+<p><code>--num-neighbors-mi</code><br />
+Number of neighbors to build mutual information-based nearest neighbor graph. The default value is <code>80</code>. This parameter has a significant impact on the clustering performance and run time.</p>
+<p><img src="../../images/num_neighbors_mi_vs_ari.png" style="width:49%">
+<img src="../../images/num_neighbors_mi_vs_run_time.png"  style="width:49%"></p>
+<p><code>--num-walks</code><br />
+Number of workers to run in parallel. The default value is <code>1</code>. We suggest using <code>25</code>. The parallelizable steps are MI-based kNN, dimension reduction and UMAP visualization.</p>
+<p><img src="../../images/num_workers_vs_run_time.png" style="width:49%">
+<img src="../../images/num_works_vs_max_mem.png" style="width:49%"></p>
+<p><code>--num-neighbor-euclidean</code><br />
+Number of neighbors to build euclidean distance-based nearest neighbor graph after dimension reduction. The default value is <code>20</code>. This parameter affects clustering performance and maximum memory usage.</p>
+<p><img src="../../images/num_neighbor_euclidean_vs_ari.png" style="width:49%">
+<img src="../../images/num_neighbor_euclidean_vs_max_mem.png" style="width:49%"></p>
+<p><code>--num-walks</code><br />
+Number of random walks per source for the node2vec graph embedding. The default value is 110.</p>
+<p><img src="../../images/num_walks_vs_ari.png" style="width:49%"></p>
+<p><code>--window-size</code><br />
+Context window size of a random walk for the node2vec graph embedding. The default value is 10.</p>
+<p><img src="../../images/window_size_vs_ari.png" style="width:49%"></p>
+<p><code>--hyper-p</code><br />
+Hyperparameter p controls the likelihood of immediately traveling back to a node recently traversed of a random walk. The default value is 2.8.</p>
+<p><img src="../../images/hyperparameter_p_vs_ari.png" style="width:49%"></p>
+<p><code>--hyper-q</code><br />
+Hyperparameter q controls the likelihood of walking away from the previous node of a random walk. The default value is 0.4.</p>
+<p><img src="../../images/hyperparameter_q_vs_ari.png" style="width:49%"></p>
+<p><strong>Note</strong>: all the parameter tunings with respect to clustering performance, run time and maximum memory usage are based on PBMC20k dataset.</p>
+<h4 id="total-running-time">Total running time</h4>
+<h6 id="pbmc-20k">PBMC (20k)</h6>
+<p><img src="../../images/total_time_PBMC20k.png" style="width:49%"></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Time (s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MI-kNN</td>
+<td>2278</td>
+</tr>
+<tr>
+<td>node2vec</td>
+<td>418</td>
+</tr>
+<tr>
+<td>clustering</td>
+<td>60</td>
+</tr>
+<tr>
+<td>UMAP</td>
+<td>710</td>
+</tr>
+<tr>
+<td>silhouette</td>
+<td>319</td>
+</tr>
+<tr>
+<td>total</td>
+<td>3785 (1.05h)</td>
+</tr>
+</tbody>
+</table>
+<h6 id="human-motor-cortex">Human Motor Cortex</h6>
+<p><img src="../../images/total_time_human_motor_cotex.png" style="width:49%"></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Time (s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MI-kNN</td>
+<td>12233</td>
+</tr>
+<tr>
+<td>node2vec</td>
+<td>1553</td>
+</tr>
+<tr>
+<td>clustering</td>
+<td>401</td>
+</tr>
+<tr>
+<td>UMAP</td>
+<td>3235</td>
+</tr>
+<tr>
+<td>silhouette</td>
+<td>4005</td>
+</tr>
+<tr>
+<td>total</td>
+<td>21427 (5.95h)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="mica-mds-mode">MICA MDS mode</h3>
+<p>The MICA MDS mode performs stable on small datasets (including bulk datasets) but the memory usage grows quadratically as the number of cells increases. <code>k</code>-mean is the default clustering method, which requires users to specify the number of clusters (<code>k</code> in <code>k</code>-mean clustering). Due to the memory limitation, the workflow is implemented using common workflow language (CWL) for the scattering and gathering on the expression matrix.</p>
+<h4 id="mica-mds-commands">MICA MDS commands</h4>
+<p>The simplest way to MICA MDS mode is to provide <code>mica mds</code> a preprocessed expression matrix file in either .h5ad or .txt format, a path to an output directory, a project name, and the number of estimated clusters (a number or a space-delimited list) of your dataset.</p>
+<pre><code>mica mds -i ./test_data/inputs/10x/PBMC/3k/pre-processed/pbmc3k_preprocessed.h5ad -o ./test_data/outputs -pn PBMC3k -nc 8 9 10
+</code></pre>
+<h4 id="description-of-output-files_1">Description of output files</h4>
+<p>Typical MICA MDS mode output files include:</p>
+<p><code>project_name_k10_umap_ClusterMem.txt</code>: a tab-delimited text file with four columns <code>ID</code> (cell barcode ID),  <code>X</code>, <code>Y</code> (UMAP or tSNE coordinates), <code>label</code> (predicted clustering label). <code>project_name</code> in the file name is given by the parameter <code>-p</code>, <code>10</code> is the number of clusters.</p>
+<p><code>project_name_k10_umap.png</code>: an UMAP plot file whose name schema is the same as above clustering label file.</p>
+<p><code>project_name_dist.h5</code>: a <code>.h5ad</code> file with the merged distance matrix.</p>
+<p><code>project_name_reduced.h5</code>: a <code>.h5ad</code> file with the MDS reduced matrix.</p>
+<h4 id="description-of-important-parameters_1">Description of Important Parameters</h4>
+<p>MICA MDS exposes a number of useful optional command-line parameters to the user. The particularly important ones are explained here, but you can always run <code>mica mds -h</code> to see them all.</p>
+<p><code>-dk</code><br />
+The number of reduced dimensions used in <code>k</code>-mean clustering, array inputs are supported. The default value is <code>[19]</code>.</p>
+<p><code>--platform</code><br />
+Computing platform to run the CWL workflow. Can be <code>local</code> (cwltool) or <code>lsf</code> (cwlexec). The default value is <code>local</code>.</p>
+<p><code>--config-json</code><br />
+LSF-specific configuration file in JSON format to be used for the CWL workflow execution. Required if use <code>lsf</code> platform.</p>
+<p><code>--bootstrap</code><br />
+The maximum number of iterations per dimension to perform <code>k</code>-mean clustering. The default value is <code>10</code>.</p>
+<p><code>--thread-number</code><br />
+Number of workers used for multiple <code>k</code>-means iterations, usually equals to <code>--bootstrap</code>. The default value is <code>10</code>.</p>
+<p><code>--slice-size</code><br />
+The number of cells per sliced matrix for scattering and gathering parallelism. The default value is <code>1000</code>.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../interoperability/" class="btn btn-neutral float-right" title="Interoperability between SparseEset, Seurat, and anndata">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../CD8T/" class="btn btn-neutral" title="KO vs. WT analysis on CD8+ T cells"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>Apache License (Version 2.0)</p>
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/jyyulab/scMINER/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../CD8T/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../interoperability/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
