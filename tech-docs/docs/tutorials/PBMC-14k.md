@@ -5,7 +5,7 @@ This tutorial introduce you scMINER's basic analysis using a PBMC dataset with 1
 ## Data loading and preprocessing
 
 ### Read 10x genomics data
-We start by reading the downsampled 10x genomics data with function `readscRNAseqData()`. This function reads data from either 10x genomics standard output files (usually contains three individual files: matrix.mtx, barcodes.tsv, features.tsv) or other text files by passing arguments to `read.delim()`. The function creates a `SparseExpressionSet` object adapted from `ExpressionSet` class if set `CreateSparseEset=T`; otherwise, it creates a list object that stores expression data, feature data and sample data under three separate slots. If `add.meta=T`, then additional sample info such as total number of UMI will be calculated and stored in the object. The following command sets `is.10x=T`, `CreateSparseEset = F`, and `add.meta=F`.
+We start by reading the downsampled 10x genomics data with function `readscRNAseqData()`. This function reads data from either 10x genomics standard output files (usually contains three individual files: matrix.mtx, barcodes.tsv, features.tsv) or other text files by passing arguments to `read.delim()`. The function creates a `SparseExpressionSet` object adapted from `ExpressionSet` class if set `CreateSparseEset=T`; otherwise, it creates a list object that stores expression data, feature data and sample data under three separate slots. If `add.meta=T`, then additional sample info such as total number of UMI will be calculated and stored in the object. The following command sets `is.10x=T`, `CreateSparseEset = T`, and `add.meta=T`.
 
 To load data from standard 10x genomics files, creating a `SparseEset` directly is recommended.
 
@@ -70,7 +70,7 @@ We recommend count per million reads (CPM) normalization and log2 transformation
 ```R
 norm = 1e6 
 exp.norm <- sweep(exprs(pbmc.14k.eset.filter), 2, 
-                  norm/unname(Matrix::colSums(exprs(eset.sel))), '*')
+                  norm/unname(Matrix::colSums(exprs(pbmc.14k.eset.filter))), '*')
 
 # log transformation (required by MICA)
 exp.log2 <- log(exp.norm + 1, base = 2)
@@ -274,7 +274,7 @@ TF_list <-get.Topdrivers(DAG_result = DAG_result,
 ```
 
 
-In scMINER, we provide a handful of visualizations to compare driver activity from different cell type/clusters. Here we demo two basic functions: `feature_heatmap` and `feature_vlnplot`. These functions could be used on either expression and activty matrix.
+In scMINER, we provide a handful of visualizations to compare driver activity from different cell type/clusters. Here we demo two basic functions: `feature_heatmap` and `feature_vlnplot`. These functions could be used on either expression and activity matrix.
 
 ```R
 feature_heatmap(input_eset = acs.14k, target = TF_list, group_tag = "celltype",feature = "geneSymbol",
@@ -292,4 +292,3 @@ p<-feature_vlnplot(input_eset = acs.14k,feature = "geneSymbol",target=c("LEF1","
 
 
 In order to perform more advanced network analysis utilizing SJARACNe generated cell type specific networks, please infer detailed guidance under [Advanced analysis](../Advanced analysis/PBMC-14k-network) tab.
-

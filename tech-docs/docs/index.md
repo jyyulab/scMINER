@@ -14,10 +14,12 @@ scMINER is also integrated with a suite of downstream analysis and visualization
 The scMINER software is developed and maintained by the [Yu Laboratory @ St. Jude](https://www.stjude.org/directory/y/jiyang-yu.html) and is released under the Apache License (Version 2.0). Please consider citing [paper] if you find scMINER useful in your research.
 
 
-## scMINER's key functions
-scMINER analysis runs in three phases: preprocessing, MICA and MINIE.
+## Why use scMINER?
+scMINER includes the following key functions:
 
-* `Preprocessing` phase contains steps to perform quality control and build eset object.
+* Build `SparseEset` object for efficiently storing large-scale single-cell RNAseq data.
+
+* Integrated quality control and .
 
 * `MICA` stands for **M**utual **I**nformation-based **C**lustering **A**nalysis. MICA is a command line tool implemented in python for scalable clustering analysis and superior clustering purity.
 <img src="images/MICA_clusters_frontpage.png" alt="Logo" width="300" height="400"/>
@@ -30,7 +32,7 @@ scMINER analysis runs in three phases: preprocessing, MICA and MINIE.
 
 
 ## Get started with scMINER
-If you are new to scMINER, make sure to install scMINER following the [installation guide](install.md) and go though the basic tutorial which contains a step-by-step analysis of 1200 Human Blood Mononuclear Cells (PBMCs). For a more advanced or ad_hoc analysis, please refer to other guided analysis or scMINER's high-level API.
+If you are new to scMINER, make sure to install scMINER following the [installation guide](install.md) and go though the basic tutorial which contains a step-by-step analysis of 14K Human Blood Mononuclear Cells (PBMCs). For a more advanced or ad_hoc analysis, please refer to other guided analysis or scMINER's high-level API.
 
 
 ## Support
