@@ -1,5 +1,5 @@
 # scMINER Guided Analysis on WT and KO CD8+ T cell in chronic infection model
-TOX is a master transcription factor for CD8+ T cell exhaustion during chronic infection. This tutorial introduce you scMINER's basic analysis using a WT and TOX KO CD8+ T dataset (GSE119940) [[Yao et al., Nat Immunol 2019](../reference.md#[Zheng et al., 2017])]. 
+TOX is a master transcription factor for CD8+ T cell exhaustion during chronic infection. This tutorial introduce you scMINER's basic analysis using a WT and TOX KO CD8+ T dataset (GSE119940) [[Yao et al., Nat Immunol 2019](../reference.md#[Yao et al., Nat Immunol 2019])]. 
 
 
 ## Data loading and preprocessing
@@ -33,7 +33,6 @@ meta.data<-rbind(meta.data.WT,meta.data.KO)
 
 # Set add.meta=T to run the quality control and store the info in the object
 eset.raw<-CreateSparseEset(data=mat,meta.data = meta.data,feature.data = d.WT$feature.data,add.meta = T)
-
 ```
 
 
@@ -105,7 +104,6 @@ Pick a MICA command to run in a command line environment based on the number of 
 
 ```bash
 mica lsf -j config_cwlexec.json -i ./MICA/CD8T_MICA_input.txt -p TOXKO -k 2 3 4 5 6 7 8 9 10 -o ./MICA/ -b 10 -dr MDS -v umap -d 0.01 -sn 1000 
-
 ```
 
 Here, `-p` specifies a project name for naming the output files; `-k` is an array of integers delimited by a single space, where each integer specifies a `k` to perform a k-mean clustering; 
@@ -180,9 +178,9 @@ done
 Identify hidden driver from content-based network is the key step in scMINER to help understand your scRNA-seq data, and provide biological insight. 
 
 ### Calculate activity
-Activity calculation is the basis of driver estimation in scMINER. To infer driver activity, expression profile of their targets are intergrated via function `GetActivityFromSJARACNe`. This function takes SJARACNe output path and expression set as input, and return an activity set as well as structured network files if set `save_network_files=TRUE`. **Please note that this function could only work if you used `generateSJARACNeInput` to create SJARACNe input directory and files.**
+Activity calculation is the basis of driver estimation in scMINER. To infer driver activity, expression profile of their targets are integrated via function `GetActivityFromSJARACNe()`. This function takes SJARACNe output path and expression set as input, and return an activity set as well as structured network files if set `save_network_files=TRUE`. **Please note that this function could only work if you used `generateSJARACNeInput` to create SJARACNe input directory and files.**
 
-Since scRNA-seq data are extremly sparse and noisy, please set `activity.method` as `'unweighted'`. 
+Since scRNA-seq data is extremely sparse and noisy, please set `activity.method` as `'unweighted'`. 
 
 ```R
 acs.CD8T_tf <- GetActivityFromSJARACNe(
@@ -208,30 +206,27 @@ acs.CD8T_sig <- GetActivityFromSJARACNe(
 
 
 ### Driver estimation by differential activity analysis
-The function `get.DA` was designed to perform differnetial activity analysis from SJARACNe inferred activity matrix. In this function, two-sided student's t-test will be performed to compare mean activity from one cell type V.S. the others. It will return a data frame that includes all TF occurred in original data. Statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help identify hidden drivers. You can save it to file in order to check them manually. 
+The function `get.DA()` was designed to perform differential activity analysis from SJARACNe inferred activity matrix. In this function, two-sided student's t-test will be performed to compare mean activity from one cell type V.S. the others. It will return a data frame that includes all TF occurred in original data. Statistics such as t.statistics, p-value, 95%CI, etc. are output to help identify hidden drivers. You can save it to file in order to check them manually. 
 
 ```R
-DAG_result_tf <- get.DA(input_eset =acs.CD8T_tf,group_tag = "genotype")
-DAG_result_sig <- get.DA(input_eset =acs.CD8T_sig,group_tag = "genotype")
+DAG_result_tf <- get.DA(input_eset = acs.CD8T_tf, group_tag = "genotype")
+DAG_result_sig <- get.DA(input_eset = acs.CD8T_sig, group_tag = "genotype")
 ```
 
 We also offer a function called `get.Topdrivers` to help picking top drivers for each cell type. You can specify `n` as maximum number of top drivers to pick, and `degree_filter` to restrict number of targets. 
 
 ```R
-TF_list <-get.Topdrivers(DAG_result = DAG_result_tf,
-                             celltype = levels(acs.CD8T_tf$genotype), # ensure cluster order
-                             n = 5, degree_filter = c(50,600))
+TF_list <- get.Topdrivers(DAG_result = DAG_result_tf,
+                         celltype = levels(acs.CD8T_tf$genotype), # ensure cluster order
+                         n = 5, degree_filter = c(50,600))
 ```
-
-
 
 ```R
 #check postive controls
-p<-feature_vlnplot(input_eset = acs.CD8T_tf,feature = "geneSymbol",target=c("TOX","TCF7"),
-                    ylabel = "Activity",group_by = "genotype", ncol=2)
+p <- feature_vlnplot(input_eset = acs.CD8T_tf, feature = "geneSymbol", target=c("TOX","TCF7"),
+                   ylabel = "Activity", group_by = "genotype", ncol=2)
 ```
 ![TOX_vlnplot](../images/2_4_Tox.png)
 ![Tcf7_vlnplot](../images/2_4_Tcf7.png)
 
-In order to perform more advanced network analysis utilizing SJARACNe generated cell type specific networks, please infer detailed guidance under [Advanced analysis](../Advanced analysis/PBMC-14k-network) tab.
-
+To perform more advanced network analysis utilizing SJARACNe generated cell type specific networks, please refer to pages [Network visualization](../tutorials/network-visualize.md) and [Driver target function analysis](../tutorials/function-analysis.md).

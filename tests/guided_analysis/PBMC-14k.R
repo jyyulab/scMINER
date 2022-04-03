@@ -40,7 +40,7 @@ rm(exp.norm)
 
 # load clustering results
 pbmc.14k.eset.log2 <- readMICAoutput(eset = pbmc.14k.eset.log2, load_ClusterRes = TRUE, 
-                      output_file = "/Users/lding/Git/scMINER/tech-docs/docs/images/clustering_UMAP_euclidean_24_1.82212.txt")
+                      output_file = "/Users/lding/Git/scMINER/docs/docs/images/clustering_UMAP_euclidean_24_1.82212.txt")
 
 # X, Y, color_by specify coordinate and clustering label entries in the eset phenoData; pct is the size of the point
 MICAplot(input_eset = pbmc.14k.eset.log2, X = "X", Y = "Y", color_by = "ClusterRes", pct = 0.5)
@@ -63,7 +63,7 @@ feature_heatmap(input_eset = pbmc.14k.eset.log2, target = genes_of_interest, gro
                 save_plot = FALSE, width = 6, height = 6, name = "log2Exp")
 
 # Read marker genes from an excel file
-markers <- read.xlsx("/Users/lding/Git/scMINER/tech-docs/docs/tables/Immune_signatures.xlsx")
+markers <- read.xlsx("/Users/lding/Git/scMINER/docs/docs/tables/Immune_signatures.xlsx")
 
 # Maker gene file has 3 required columns
 head(markers)
@@ -79,6 +79,14 @@ pbmc.14k.eset.log2$celltype <- indx[pbmc.14k.eset.log2$ClusterRes]
 
 
 generateSJARACNeInput(
-  input_eset = pbmc.14k.eset.log2, funcType = "TF", ref = "hg",
+  input_eset = pbmc.14k.eset.log2, funcType = "TF", ref = "hg",  # human
   wd.src = "/Users/lding/Documents/scMINER/PBMC14k_input/SJARACNe",  # output directory
   group_name = "celltype")
+
+
+generateSJARACNeInput(
+  input_eset = pbmc.14k.eset.log2, funcType = "SIG", ref = "hg",  # human
+  wd.src = "/Users/lding/Documents/scMINER/PBMC14k_input/SJARACNe",  # output directory
+  group_name = "celltype")
+
+

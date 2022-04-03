@@ -115,7 +115,7 @@ mica ge -i ./PBMC14k_MICA_input.h5ad -o ./outputs -ar 4.0 -nw 10 -nnm 100 -pdm 3
 
 Here, `-ar` determines the maximum size of the communities (default: 3.0); `-nw` specifies the number of workers to run in parallel (default: 10); `-nnm` is the number of neighbors to build mutual information-based nearest neighbor graph (default 100); `-pdm` stands for pruning degree multiplier, the vertex with degree greater than pruning_degree_multi * num_neighbors_mi will be pruned. Use `mica ge -h` to find more options of MICA MDS mode.
 
-A more detailed description of important parameters can be found in [API]() page.
+A more detailed description of output files and important parameters can be found in [Mutual information-based clustering analysis (MICA)](../tutorials/MICA-advanced.md) page.
 
 
 ### Read MICA output
@@ -218,7 +218,15 @@ This function creates one directory containing the required inputs (filtered exp
 
 ```R
 generateSJARACNeInput(
-	input_eset = eset, funcType = "TF", 
+	input_eset = pbmc.14k.eset.log2, funcType = "TF", 
+	ref = "hg",  #human
+	wd.src = "SJARACNe",  #Output directory
+	group_tag = "celltype")
+```
+
+```R
+generateSJARACNeInput(
+	input_eset = pbmc.14k.eset.log2, funcType = "SIG", 
 	ref = "hg",  #human
 	wd.src = "SJARACNe",  #Output directory
 	group_tag = "celltype")
@@ -242,53 +250,53 @@ done
 Identify hidden driver from content-based network is the key step in scMINER to help understand your scRNA-seq data, and provide biological insight. 
 
 ### Calculate activity
-Activity calculation is the basis of driver estimation in scMINER. To infer driver activity, expression profile of their targets are intergrated via function `GetActivityFromSJARACNe`. This function takes SJARACNe output path and expression set as input, and return an activity set as well as structured network files if set `save_network_files=TRUE`. **Please note that this function could only work if you used `generateSJARACNeInput` to create SJARACNe input directory and files.**
+Activity calculation is the basis of driver estimation in scMINER. To infer driver activity, expression profile of their targets are integrated via function `GetActivityFromSJARACNe()`. This function takes SJARACNe output path and expression set as input, and return an activity set as well as structured network files if set `save_network_files=TRUE`. **Please note that this function could only work if you used `generateSJARACNeInput()` to create SJARACNe input directory and files.**
 
-Since scRNA-seq data are extremly sparse and noisy, please set `activity.method` as `'unweighted'`. 
+Since scRNA-seq data is extremely sparse and noisy, please set `activity.method` as `'unweighted'`. 
 
 ```R
-acs.14k <- GetActivityFromSJARACNe(
+acs.14k.tf <- GetActivityFromSJARACNe(
     SJARACNe_output_path ="SJARACNE/",
-    SJARACNe_input_eset = eset,
+    SJARACNe_input_eset = pbmc.14k.eset.log2,
     activity.method="unweighted", # we highly recommend using 'unweighted' as activity calculation method
     activity.norm=TRUE, 
     group_tag = "celltype", # which group was used to partition expression profiles
     save_network_file=TRUE, # whether or not save network for each group
-    save_path="./networks/") #default as false, but recommended to be TRUE
+    functype="tf",# whether or not save network for each group
+    save_path="./networks_tf/") #default as false, but recommended to be TRUE
+    
+acs.14k.sig <- GetActivityFromSJARACNe(
+    SJARACNe_output_path ="SJARACNE/",
+    SJARACNe_input_eset = pbmc.14k.eset.log2,
+    activity.method="unweighted", # we highly recommend using 'unweighted' as activity calculation method
+    activity.norm=TRUE, 
+    group_tag = "celltype", # which group was used to partition expression profiles
+    save_network_file=TRUE, # whether or not save network for each group
+    functype="tf",# whether or not save network for each group
+    save_path="./networks_sig/") #default as false, but recommended to be TRUE
 ```
 
 
 ### Driver estimation by differential activity analysis
-The function `get.DA` was designed to perform differnetial activity analysis from SJARACNe inferred activity matrix. In this function, two-sided student's t-test will be performed to compare mean activity from one cell type V.S. the others. It will return a data frame that includes all TF occurred in original data. Statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help identify hidden drivers. You can save it to file in order to check them manually. 
+The function `get.DA()` was designed to perform differential activity analysis from SJARACNe inferred activity matrix. In this function, two-sided student's t-test will be performed to compare mean activity from one cell type V.S. the others. It will return a data frame that includes all TF occurred in original data. Statistics such as t.statistics, p-value, 95%CI, etc. are output to help identify hidden drivers. You can save it to file in order to check them manually. 
 
 ```R
-DAG_result <- get.DA(input_eset = acs.14k,group_tag = "celltype")
+DAG_result_tf <- get.DA(input_eset = acs.14k.tf, group_tag = "celltype")
+DAG_result_sig <- get.DA(input_eset = acs.14k.sig, group_tag = "celltype")
 ```
 
-We also offer a function called `get.Topdrivers` to help picking top drivers for each cell type. You can specify `n` as maximum number of top drivers to pick, and `degree_filter` to restrict number of targets. 
+We also offer a function called `get.Topdrivers()` to help picking top drivers for each cell type. You can specify `n` as maximum number of top drivers to pick, and `degree_filter` to restrict number of targets.
 
 ```R
-TF_list <-get.Topdrivers(DAG_result = DAG_result,
-                             celltype = levels(acs.14k$celltype), # ensure cluster order
-                             n = 5, degree_filter = c(50,600))
+TF_list <- get.Topdrivers(DAG_result = DAG_result_tf,
+                          celltype = levels(acs.14k$genotype), # ensure cluster order
+                          n = 5, degree_filter = c(50, 600))
 ```
-
-
-In scMINER, we provide a handful of visualizations to compare driver activity from different cell type/clusters. Here we demo two basic functions: `feature_heatmap` and `feature_vlnplot`. These functions could be used on either expression and activity matrix.
 
 ```R
-feature_heatmap(input_eset = acs.14k, target = TF_list, group_tag = "celltype",feature = "geneSymbol",
-                width = 6,height = 6, save_plot=TRUE, cluster_rows = FALSE,
-                name = "Activity",plot_name="./21_TopTFHeatmap.png")
+# check postive controls
+p <- feature_vlnplot(input_eset = acs.14k, feature = "geneSymbol", target=c("IL7R", "CD14"),
+                     ylabel = "Activity", group_by = "genotype", ncol=2)
 ```
-<center><img src="../plots/4_1_TopTFHeatmap.png" alt="Driver heatmap" width="550"></center>
 
-```R
-#check postive controls
-p<-feature_vlnplot(input_eset = acs.14k,feature = "geneSymbol",target=c("LEF1","TCF7","BATF","TBX21","IRF8","SPIB","BATF3","CEBPA"),
-                    ylabel = "Activity",group_by = "celltype", ncol=2)
-```
-<center><img src="../plots/4_2_Known_MR_vlnplot.png" alt="Driver heatmap" width="600"></center>
-
-
-In order to perform more advanced network analysis utilizing SJARACNe generated cell type specific networks, please infer detailed guidance under [Advanced analysis](../Advanced analysis/PBMC-14k-network) tab.
+To perform more advanced network analysis utilizing SJARACNe generated cell type specific networks, please refer to pages [Network visualization](../tutorials/network-visualize.md) and [Driver target function analysis](../tutorials/function-analysis.md).

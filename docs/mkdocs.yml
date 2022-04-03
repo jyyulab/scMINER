@@ -9,14 +9,13 @@ theme:
 nav:
   - Home: index.md
   - Installation: install.md
-  - API: api.md
   - References: reference.md
   - Contact: contact.md
   - Tutorials:
     - 'Basic analysis on PBMC (14k)': tutorials/PBMC-14k.md
     - 'KO vs. WT analysis on CD8+ T cells': tutorials/CD8T.md
     - 'Mutual information-based clustering analysis (MICA)': tutorials/MICA-advanced.md
-    - 'Network visualization': tutorials/network-visual.md
+    - 'Network visualization': tutorials/network-visualize.md
     - 'Driver target function analysis': tutorials/function-analysis.md
     - 'Interoperability between SparseEset, Seurat, and anndata': tutorials/interoperability.md
 repo_url: https://github.com/jyyulab/scMINER
