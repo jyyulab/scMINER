@@ -64,10 +64,6 @@
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="" href="../../api.md">API</a>
-                    </li>
-                </ul>
-                <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../../reference/">References</a>
                     </li>
                 </ul>
@@ -129,9 +125,9 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../MICA-advanced/">Mutual information-based clustering analysis (MICA)</a>
                     </li>
-                    <li class="toctree-l1"><a class="" href="../network-visual.md">Network visualization</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../network-visualize/">Network visualization</a>
                     </li>
-                    <li class="toctree-l1"><a class="" href="../function-analysis.md">Driver target function analysis</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../function-analysis/">Driver target function analysis</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../interoperability/">Interoperability between SparseEset, Seurat, and anndata</a>
                     </li>
@@ -248,7 +244,7 @@ rm(exp.norm)
 <pre><code class="language-bash">mica ge -i ./PBMC14k_MICA_input.h5ad -o ./outputs -ar 4.0 -nw 10 -nnm 100 -pdm 3.0
 </code></pre>
 <p>Here, <code>-ar</code> determines the maximum size of the communities (default: 3.0); <code>-nw</code> specifies the number of workers to run in parallel (default: 10); <code>-nnm</code> is the number of neighbors to build mutual information-based nearest neighbor graph (default 100); <code>-pdm</code> stands for pruning degree multiplier, the vertex with degree greater than pruning_degree_multi * num_neighbors_mi will be pruned. Use <code>mica ge -h</code> to find more options of MICA MDS mode.</p>
-<p>A more detailed description of important parameters can be found in <a href="">API</a> page.</p>
+<p>A more detailed description of output files and important parameters can be found in <a href="../MICA-advanced/">Mutual information-based clustering analysis (MICA)</a> page.</p>
 <h3 id="read-mica-output">Read MICA output</h3>
 <p>Function <code>readMICAoutput()</code> adds MICA clustering results to the <code>SparseEset</code> object created before, which will be the major data structure for downstream analysis. <strong>Note: All the functions for downstream analysis are compatible with both <code>expressionSet</code> and <code>SparseExpressionSet</code></strong>. </p>
 <p>After choosing a clustering result based on known cell type signatures or silhouette scores (provided by GE mode). The clustering labels can be saved to <code>eset$ClusterRes</code> by setting <code>load_ClusterRes</code> as TRUE.</p>
@@ -314,7 +310,13 @@ pbmc.14k.eset.log2$celltype &lt;- indx[pbmc.14k.eset.log2$ClusterRes]
 <p><code>generateSJAracneInput()</code> functions uses the annotated cell type information stored in <code>pData([your_expressionSet])</code> to generate inputs for running SJARACNe from the command line. The function partitions the input expression matrix and performs essential filtering (filter out not expressed genes in a cluster) to ensure a reliable network construction. <code>funcType</code> is required to specify the type of the network. If set <code>funcType="TF"</code>, a reference transcription factor list will be loaded automatically without manual input. However, you do need to define species information for your data using under <code>ref</code>.</p>
 <p>This function creates one directory containing the required inputs (filtered expression matrix in .exp format and filtered TF list in .txt format) for each cell type. </p>
 <pre><code class="language-R">generateSJARACNeInput(
-    input_eset = eset, funcType = &quot;TF&quot;, 
+    input_eset = pbmc.14k.eset.log2, funcType = &quot;TF&quot;, 
+    ref = &quot;hg&quot;,  #human
+    wd.src = &quot;SJARACNe&quot;,  #Output directory
+    group_tag = &quot;celltype&quot;)
+</code></pre>
+<pre><code class="language-R">generateSJARACNeInput(
+    input_eset = pbmc.14k.eset.log2, funcType = &quot;SIG&quot;, 
     ref = &quot;hg&quot;,  #human
     wd.src = &quot;SJARACNe&quot;,  #Output directory
     group_tag = &quot;celltype&quot;)
@@ -331,38 +333,43 @@ done
 <h2 id="identify-cell-type-specific-hidden-drivers-via-minie">Identify cell-type-specific hidden drivers via MINIE</h2>
 <p>Identify hidden driver from content-based network is the key step in scMINER to help understand your scRNA-seq data, and provide biological insight. </p>
 <h3 id="calculate-activity">Calculate activity</h3>
-<p>Activity calculation is the basis of driver estimation in scMINER. To infer driver activity, expression profile of their targets are intergrated via function <code>GetActivityFromSJARACNe</code>. This function takes SJARACNe output path and expression set as input, and return an activity set as well as structured network files if set <code>save_network_files=TRUE</code>. <strong>Please note that this function could only work if you used <code>generateSJARACNeInput</code> to create SJARACNe input directory and files.</strong></p>
-<p>Since scRNA-seq data are extremly sparse and noisy, please set <code>activity.method</code> as <code>'unweighted'</code>. </p>
-<pre><code class="language-R">acs.14k &lt;- GetActivityFromSJARACNe(
+<p>Activity calculation is the basis of driver estimation in scMINER. To infer driver activity, expression profile of their targets are integrated via function <code>GetActivityFromSJARACNe()</code>. This function takes SJARACNe output path and expression set as input, and return an activity set as well as structured network files if set <code>save_network_files=TRUE</code>. <strong>Please note that this function could only work if you used <code>generateSJARACNeInput()</code> to create SJARACNe input directory and files.</strong></p>
+<p>Since scRNA-seq data is extremely sparse and noisy, please set <code>activity.method</code> as <code>'unweighted'</code>. </p>
+<pre><code class="language-R">acs.14k.tf &lt;- GetActivityFromSJARACNe(
     SJARACNe_output_path =&quot;SJARACNE/&quot;,
-    SJARACNe_input_eset = eset,
+    SJARACNe_input_eset = pbmc.14k.eset.log2,
     activity.method=&quot;unweighted&quot;, # we highly recommend using 'unweighted' as activity calculation method
     activity.norm=TRUE, 
     group_tag = &quot;celltype&quot;, # which group was used to partition expression profiles
     save_network_file=TRUE, # whether or not save network for each group
-    save_path=&quot;./networks/&quot;) #default as false, but recommended to be TRUE
+    functype=&quot;tf&quot;,# whether or not save network for each group
+    save_path=&quot;./networks_tf/&quot;) #default as false, but recommended to be TRUE
+
+acs.14k.sig &lt;- GetActivityFromSJARACNe(
+    SJARACNe_output_path =&quot;SJARACNE/&quot;,
+    SJARACNe_input_eset = pbmc.14k.eset.log2,
+    activity.method=&quot;unweighted&quot;, # we highly recommend using 'unweighted' as activity calculation method
+    activity.norm=TRUE, 
+    group_tag = &quot;celltype&quot;, # which group was used to partition expression profiles
+    save_network_file=TRUE, # whether or not save network for each group
+    functype=&quot;tf&quot;,# whether or not save network for each group
+    save_path=&quot;./networks_sig/&quot;) #default as false, but recommended to be TRUE
 </code></pre>
 <h3 id="driver-estimation-by-differential-activity-analysis">Driver estimation by differential activity analysis</h3>
-<p>The function <code>get.DA</code> was designed to perform differnetial activity analysis from SJARACNe inferred activity matrix. In this function, two-sided student's t-test will be performed to compare mean activity from one cell type V.S. the others. It will return a data frame that includes all TF occurred in original data. Statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help identify hidden drivers. You can save it to file in order to check them manually. </p>
-<pre><code class="language-R">DAG_result &lt;- get.DA(input_eset = acs.14k,group_tag = &quot;celltype&quot;)
+<p>The function <code>get.DA()</code> was designed to perform differential activity analysis from SJARACNe inferred activity matrix. In this function, two-sided student's t-test will be performed to compare mean activity from one cell type V.S. the others. It will return a data frame that includes all TF occurred in original data. Statistics such as t.statistics, p-value, 95%CI, etc. are output to help identify hidden drivers. You can save it to file in order to check them manually. </p>
+<pre><code class="language-R">DAG_result_tf &lt;- get.DA(input_eset = acs.14k.tf, group_tag = &quot;celltype&quot;)
+DAG_result_sig &lt;- get.DA(input_eset = acs.14k.sig, group_tag = &quot;celltype&quot;)
 </code></pre>
-<p>We also offer a function called <code>get.Topdrivers</code> to help picking top drivers for each cell type. You can specify <code>n</code> as maximum number of top drivers to pick, and <code>degree_filter</code> to restrict number of targets. </p>
-<pre><code class="language-R">TF_list &lt;-get.Topdrivers(DAG_result = DAG_result,
-                             celltype = levels(acs.14k$celltype), # ensure cluster order
-                             n = 5, degree_filter = c(50,600))
+<p>We also offer a function called <code>get.Topdrivers()</code> to help picking top drivers for each cell type. You can specify <code>n</code> as maximum number of top drivers to pick, and <code>degree_filter</code> to restrict number of targets.</p>
+<pre><code class="language-R">TF_list &lt;- get.Topdrivers(DAG_result = DAG_result_tf,
+                          celltype = levels(acs.14k$genotype), # ensure cluster order
+                          n = 5, degree_filter = c(50, 600))
 </code></pre>
-<p>In scMINER, we provide a handful of visualizations to compare driver activity from different cell type/clusters. Here we demo two basic functions: <code>feature_heatmap</code> and <code>feature_vlnplot</code>. These functions could be used on either expression and activity matrix.</p>
-<pre><code class="language-R">feature_heatmap(input_eset = acs.14k, target = TF_list, group_tag = &quot;celltype&quot;,feature = &quot;geneSymbol&quot;,
-                width = 6,height = 6, save_plot=TRUE, cluster_rows = FALSE,
-                name = &quot;Activity&quot;,plot_name=&quot;./21_TopTFHeatmap.png&quot;)
+<pre><code class="language-R"># check postive controls
+p &lt;- feature_vlnplot(input_eset = acs.14k, feature = &quot;geneSymbol&quot;, target=c(&quot;IL7R&quot;, &quot;CD14&quot;),
+                     ylabel = &quot;Activity&quot;, group_by = &quot;genotype&quot;, ncol=2)
 </code></pre>
-<p><center><img src="../plots/4_1_TopTFHeatmap.png" alt="Driver heatmap" width="550"></center></p>
-<pre><code class="language-R">#check postive controls
-p&lt;-feature_vlnplot(input_eset = acs.14k,feature = &quot;geneSymbol&quot;,target=c(&quot;LEF1&quot;,&quot;TCF7&quot;,&quot;BATF&quot;,&quot;TBX21&quot;,&quot;IRF8&quot;,&quot;SPIB&quot;,&quot;BATF3&quot;,&quot;CEBPA&quot;),
-                    ylabel = &quot;Activity&quot;,group_by = &quot;celltype&quot;, ncol=2)
-</code></pre>
-<p><center><img src="../plots/4_2_Known_MR_vlnplot.png" alt="Driver heatmap" width="600"></center></p>
-<p>In order to perform more advanced network analysis utilizing SJARACNe generated cell type specific networks, please infer detailed guidance under <a href="../Advanced analysis/PBMC-14k-network">Advanced analysis</a> tab.</p>
+<p>To perform more advanced network analysis utilizing SJARACNe generated cell type specific networks, please refer to pages <a href="../network-visualize/">Network visualization</a> and <a href="../function-analysis/">Driver target function analysis</a>.</p>
               
             </div>
           </div>

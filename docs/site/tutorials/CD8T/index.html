@@ -64,10 +64,6 @@
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="" href="../../api.md">API</a>
-                    </li>
-                </ul>
-                <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../../reference/">References</a>
                     </li>
                 </ul>
@@ -121,9 +117,9 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../MICA-advanced/">Mutual information-based clustering analysis (MICA)</a>
                     </li>
-                    <li class="toctree-l1"><a class="" href="../network-visual.md">Network visualization</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../network-visualize/">Network visualization</a>
                     </li>
-                    <li class="toctree-l1"><a class="" href="../function-analysis.md">Driver target function analysis</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../function-analysis/">Driver target function analysis</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../interoperability/">Interoperability between SparseEset, Seurat, and anndata</a>
                     </li>
@@ -169,7 +165,7 @@
             <div class="section">
               
                 <h1 id="scminer-guided-analysis-on-wt-and-ko-cd8-t-cell-in-chronic-infection-model">scMINER Guided Analysis on WT and KO CD8+ T cell in chronic infection model</h1>
-<p>TOX is a master transcription factor for CD8+ T cell exhaustion during chronic infection. This tutorial introduce you scMINER's basic analysis using a WT and TOX KO CD8+ T dataset (GSE119940) [<a href="../../reference/#[Zheng et al., 2017]">Yao et al., Nat Immunol 2019</a>]. </p>
+<p>TOX is a master transcription factor for CD8+ T cell exhaustion during chronic infection. This tutorial introduce you scMINER's basic analysis using a WT and TOX KO CD8+ T dataset (GSE119940) [<a href="../../reference/#[Yao et al., Nat Immunol 2019]">Yao et al., Nat Immunol 2019</a>]. </p>
 <h2 id="data-loading-and-preprocessing">Data loading and preprocessing</h2>
 <h3 id="read-10x-genomics-data">Read 10x genomics data</h3>
 <p>We start by reading WT and KO data with function <code>readscRNAseqData()</code>. This function reads data from either 10x genomics standard output files (usually contains three individual files: matrix.mtx, barcodes.tsv, features.tsv) or other text files by passing arguments to <code>read.delim()</code>. The function creates a <code>SparseExpressionSet</code> object adapted from <code>ExpressionSet</code> class if set <code>CreateSparseEset=T</code>; otherwise, it creates a list object that stores expression data, feature data and sample data under three separate slots. If <code>add.meta=T</code>, then additional sample info such as total number of UMI will be calculated and stored in the object. The following command sets <code>is.10x=T</code>, <code>CreateSparseEset = F</code>, and <code>add.meta=F</code>.</p>
@@ -194,7 +190,6 @@ meta.data&lt;-rbind(meta.data.WT,meta.data.KO)
 
 # Set add.meta=T to run the quality control and store the info in the object
 eset.raw&lt;-CreateSparseEset(data=mat,meta.data = meta.data,feature.data = d.WT$feature.data,add.meta = T)
-
 </code></pre>
 <h3 id="quality-control-and-data-filtering">Quality control and data filtering</h3>
 <p>Quality control assessments can be performed using <code>draw.scRNAseq.QC()</code> function, which outputs a html report generated through Rmarkdown <a href="../../htmls/CD8T_scRNAseq_QC.html">CD8T_scRNAseq_QC.html</a>. The report includes three essential quality control figures at both gene and cell levels. Suggested cutoffs will be returned as a list if set <code>output.cutoff=TRUE</code>.</p>
@@ -239,7 +234,6 @@ rm(exp.norm)
 <h3 id="run-mica-from-the-command-line">Run MICA from the command line</h3>
 <p>Pick a MICA command to run in a command line environment based on the number of cells of your dataset. For dataset with less than <code>5k</code> cells, MICA MDS mode is recommended.</p>
 <pre><code class="language-bash">mica lsf -j config_cwlexec.json -i ./MICA/CD8T_MICA_input.txt -p TOXKO -k 2 3 4 5 6 7 8 9 10 -o ./MICA/ -b 10 -dr MDS -v umap -d 0.01 -sn 1000 
-
 </code></pre>
 <p>Here, <code>-p</code> specifies a project name for naming the output files; <code>-k</code> is an array of integers delimited by a single space, where each integer specifies a <code>k</code> to perform a k-mean clustering; </p>
 <h3 id="read-mica-output">Read MICA output</h3>
@@ -291,8 +285,8 @@ done
 <h2 id="identify-genotype-specific-hidden-drivers-via-minie">Identify genotype-specific hidden drivers via MINIE</h2>
 <p>Identify hidden driver from content-based network is the key step in scMINER to help understand your scRNA-seq data, and provide biological insight. </p>
 <h3 id="calculate-activity">Calculate activity</h3>
-<p>Activity calculation is the basis of driver estimation in scMINER. To infer driver activity, expression profile of their targets are intergrated via function <code>GetActivityFromSJARACNe</code>. This function takes SJARACNe output path and expression set as input, and return an activity set as well as structured network files if set <code>save_network_files=TRUE</code>. <strong>Please note that this function could only work if you used <code>generateSJARACNeInput</code> to create SJARACNe input directory and files.</strong></p>
-<p>Since scRNA-seq data are extremly sparse and noisy, please set <code>activity.method</code> as <code>'unweighted'</code>. </p>
+<p>Activity calculation is the basis of driver estimation in scMINER. To infer driver activity, expression profile of their targets are integrated via function <code>GetActivityFromSJARACNe()</code>. This function takes SJARACNe output path and expression set as input, and return an activity set as well as structured network files if set <code>save_network_files=TRUE</code>. <strong>Please note that this function could only work if you used <code>generateSJARACNeInput</code> to create SJARACNe input directory and files.</strong></p>
+<p>Since scRNA-seq data is extremely sparse and noisy, please set <code>activity.method</code> as <code>'unweighted'</code>. </p>
 <pre><code class="language-R">acs.CD8T_tf &lt;- GetActivityFromSJARACNe(
   SJARACNe_output_path =&quot;./&quot;,
   SJARACNe_input_eset = eset.CD8T,
@@ -314,22 +308,22 @@ acs.CD8T_sig &lt;- GetActivityFromSJARACNe(
   save_path=&quot;./networks_sig/&quot;) 
 </code></pre>
 <h3 id="driver-estimation-by-differential-activity-analysis">Driver estimation by differential activity analysis</h3>
-<p>The function <code>get.DA</code> was designed to perform differnetial activity analysis from SJARACNe inferred activity matrix. In this function, two-sided student's t-test will be performed to compare mean activity from one cell type V.S. the others. It will return a data frame that includes all TF occurred in original data. Statistics such as t.statistics, p-value, 95%CI, etc. are outputed to help identify hidden drivers. You can save it to file in order to check them manually. </p>
-<pre><code class="language-R">DAG_result_tf &lt;- get.DA(input_eset =acs.CD8T_tf,group_tag = &quot;genotype&quot;)
-DAG_result_sig &lt;- get.DA(input_eset =acs.CD8T_sig,group_tag = &quot;genotype&quot;)
+<p>The function <code>get.DA()</code> was designed to perform differential activity analysis from SJARACNe inferred activity matrix. In this function, two-sided student's t-test will be performed to compare mean activity from one cell type V.S. the others. It will return a data frame that includes all TF occurred in original data. Statistics such as t.statistics, p-value, 95%CI, etc. are output to help identify hidden drivers. You can save it to file in order to check them manually. </p>
+<pre><code class="language-R">DAG_result_tf &lt;- get.DA(input_eset = acs.CD8T_tf, group_tag = &quot;genotype&quot;)
+DAG_result_sig &lt;- get.DA(input_eset = acs.CD8T_sig, group_tag = &quot;genotype&quot;)
 </code></pre>
 <p>We also offer a function called <code>get.Topdrivers</code> to help picking top drivers for each cell type. You can specify <code>n</code> as maximum number of top drivers to pick, and <code>degree_filter</code> to restrict number of targets. </p>
-<pre><code class="language-R">TF_list &lt;-get.Topdrivers(DAG_result = DAG_result_tf,
-                             celltype = levels(acs.CD8T_tf$genotype), # ensure cluster order
-                             n = 5, degree_filter = c(50,600))
+<pre><code class="language-R">TF_list &lt;- get.Topdrivers(DAG_result = DAG_result_tf,
+                         celltype = levels(acs.CD8T_tf$genotype), # ensure cluster order
+                         n = 5, degree_filter = c(50,600))
 </code></pre>
 <pre><code class="language-R">#check postive controls
-p&lt;-feature_vlnplot(input_eset = acs.CD8T_tf,feature = &quot;geneSymbol&quot;,target=c(&quot;TOX&quot;,&quot;TCF7&quot;),
-                    ylabel = &quot;Activity&quot;,group_by = &quot;genotype&quot;, ncol=2)
+p &lt;- feature_vlnplot(input_eset = acs.CD8T_tf, feature = &quot;geneSymbol&quot;, target=c(&quot;TOX&quot;,&quot;TCF7&quot;),
+                   ylabel = &quot;Activity&quot;, group_by = &quot;genotype&quot;, ncol=2)
 </code></pre>
 <p><img alt="TOX_vlnplot" src="../../images/2_4_Tox.png" />
 <img alt="Tcf7_vlnplot" src="../../images/2_4_Tcf7.png" /></p>
-<p>In order to perform more advanced network analysis utilizing SJARACNe generated cell type specific networks, please infer detailed guidance under <a href="../Advanced analysis/PBMC-14k-network">Advanced analysis</a> tab.</p>
+<p>To perform more advanced network analysis utilizing SJARACNe generated cell type specific networks, please refer to pages <a href="../network-visualize/">Network visualization</a> and <a href="../function-analysis/">Driver target function analysis</a>.</p>
               
             </div>
           </div>
