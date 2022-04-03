@@ -124,29 +124,29 @@ Hyperparameter q controls the likelihood of walking away from the previous node 
 
 #### Total running time
 
-###### PBMC (20k)
+###### PBMC20k (20,000 cells)
 <img src="../../images/total_time_PBMC20k.png" style="width:49%">
 
 | Step        | Time (s)    |
 | ----------- | ----------- |
-| MI-kNN      | 2278        |
+| MI-kNN      | 2,278       |
 | node2vec    | 418         |
 | clustering  | 60          |
 | UMAP        | 710         |
 | silhouette  | 319         |
-| total       | 3785 (1.05h)|
+| total       |3,785 (1.05h)|
 
-###### Human Motor Cortex
+###### Human Motor Cortex (76,533 cells)
 <img src="../../images/total_time_human_motor_cotex.png" style="width:49%">
 
 | Step        | Time (s)    |
 | ----------- | ----------- |
-| MI-kNN      | 12233       |
-| node2vec    | 1553        |
+| MI-kNN      | 12,233      |
+| node2vec    | 1,553       |
 | clustering  | 401         |
-| UMAP        | 3235        |
-| silhouette  | 4005        |
-| total       |21427 (5.95h)|
+| UMAP        | 3,235       |
+| silhouette  | 4,005       |
+| total       |21,427 (5.95h)|
 
 
 ### MICA MDS mode
