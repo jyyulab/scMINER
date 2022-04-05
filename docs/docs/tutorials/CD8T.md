@@ -1,5 +1,5 @@
 # scMINER Guided Analysis on WT and KO CD8+ T cell in chronic infection model
-TOX is a master transcription factor for CD8+ T cell exhaustion during chronic infection. This tutorial introduce you scMINER's basic analysis using a WT and TOX KO CD8+ T dataset (GSE119940) [[Yao et al., Nat Immunol 2019](../reference.md#[Yao et al., Nat Immunol 2019])]. 
+TOX is a master transcription factor for CD8+ T cell exhaustion during chronic infection. This tutorial introduce you scMINER's basic analysis using a WT and TOX KO CD8+ T dataset (GSE119940) [[Yao et al., Nat Immunol 2019](./data-reference.md#[Yao et al., Nat Immunol 2019])]. 
 
 
 ## Data loading and preprocessing
