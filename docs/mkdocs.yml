@@ -9,7 +9,6 @@ theme:
 nav:
   - Home: index.md
   - Installation: install.md
-  - References: reference.md
   - Contact: contact.md
   - Tutorials:
     - 'Basic analysis on PBMC (14k)': tutorials/PBMC-14k.md
@@ -18,6 +17,7 @@ nav:
     - 'Network visualization': tutorials/network-visualize.md
     - 'Driver target function analysis': tutorials/function-analysis.md
     - 'Interoperability between SparseEset, Seurat, and anndata': tutorials/interoperability.md
+    - 'Data references': tutorials/data-reference.md
 repo_url: https://github.com/jyyulab/scMINER
 site_author: Liang (Adam) Ding, Hao Shi
 copyright: Apache License (Version 2.0)

@@ -1,6 +1,6 @@
 # Installation
 ## Dependencies
-scMINER requires R version >= 4.0.5 and Python version >= 3.8.10 to run. We recommend using [Miniconda](https://docs.conda.io/en/latest/miniconda.html) to create and manage the environments.
+scMINER requires R version >= 4.0.5 and Python version **==** 3.7.6 to run. We recommend using [Miniconda](https://docs.conda.io/en/latest/miniconda.html) to create and manage the environments.
 
 
 ## Installing scMINER

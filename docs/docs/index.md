@@ -19,12 +19,12 @@ scMINER includes the following key functions:
 
 * Build `SparseEset` object for efficiently storing large-scale single-cell RNAseq data.
 
-* Integrated quality control and .
+* Integrated quality control with a comprehensive html report.
 
 * `MICA` stands for **M**utual **I**nformation-based **C**lustering **A**nalysis. MICA is a command line tool implemented in python for scalable clustering analysis and superior clustering purity.
 <img src="images/MICA_clusters_frontpage.png" alt="Logo" width="300" height="400"/>
 
-* `MINIE` stands for **M**utual **I**nformation-based **N**etwork **I**nference **E**ngine. MINIE includes functions for GRN reverse engineering and protein activity inference.
+* `MINIE` stands for **M**utual **I**nformation-based **N**etwork **I**nference **E**ngine. MINIE includes functions for GRN reverse engineering and protein activity inference for hidden drive analysis.
 ![context-specific network](images/context-based_network.png)
 
    With inferred protein activities, MINIE enables differential activity analysis. 

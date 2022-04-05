@@ -102,7 +102,7 @@ rm(exp.norm)
 Pick a MICA command to run in a command line environment based on the number of cells of your dataset. For dataset with less than `5k` cells, MICA MDS mode is recommended.
 
 ```bash
-mica mds -i ./PBMC14k_MICA_input.h5ad -o ./outputs -pn PBMC14k -nc 8 9 10 -dk 14 13 14 15 16 17 18 19
+mica mds -i ./PBMC14k_MICA_input.h5ad -o ./outputs -pn PBMC14k -nc 8 9 10 
 ```
 
 Here, `-pn` specifies a project name for naming the output files; `-nc` is an array of integers delimited by a single space, where each integer specifies a `k` to perform a k-mean clustering; `-dk` can be an integer or an array of integers delimited by a single space (default is `19`), it specifies the number of dimensions used in k-mean clusterings. Use `mica mds -h` to see more options of MICA MDS mode.
@@ -110,10 +110,10 @@ Here, `-pn` specifies a project name for naming the output files; `-nc` is an ar
 For datasets with more than `5k` cells, MICA GE mode is recommended.
 
 ```bash
-mica ge -i ./PBMC14k_MICA_input.h5ad -o ./outputs -ar 4.0 -nw 10 -nnm 100 -pdm 3.0
+mica ge -i ./PBMC14k_MICA_input.h5ad -o ./outputs -ar 4.0 -ss 0.1 -nw 25 -nnm 80
 ```
 
-Here, `-ar` determines the maximum size of the communities (default: 3.0); `-nw` specifies the number of workers to run in parallel (default: 10); `-nnm` is the number of neighbors to build mutual information-based nearest neighbor graph (default 100); `-pdm` stands for pruning degree multiplier, the vertex with degree greater than pruning_degree_multi * num_neighbors_mi will be pruned. Use `mica ge -h` to find more options of MICA MDS mode.
+Here, `-ar` determines the maximum size of the communities (default: `3.0`); `-ss` is the step size to sweep resolutions in a range (default: `0.2`); `-nw` specifies the number of workers to run in parallel (default: `1`); `-nnm` is the number of neighbors to build mutual information-based nearest neighbor graph (default `80`). Use `mica ge -h` to find more options of MICA GE mode.
 
 A more detailed description of output files and important parameters can be found in [Mutual information-based clustering analysis (MICA)](../tutorials/MICA-advanced.md) page.
 
