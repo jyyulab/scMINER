@@ -64,10 +64,6 @@
                     </li>
                 </ul>
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../../reference/">References</a>
-                    </li>
-                </ul>
-                <ul>
                     <li class="toctree-l1"><a class="reference internal" href="../../contact/">Contact</a>
                     </li>
                 </ul>
@@ -131,6 +127,8 @@
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../interoperability/">Interoperability between SparseEset, Seurat, and anndata</a>
                     </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../data-reference/">Data references</a>
+                    </li>
                 </ul>
       </div>
     </div>
@@ -173,7 +171,7 @@
             <div class="section">
               
                 <h1 id="scminer-guided-analysis-on-14k-pbmcs-from-10x-genomics">scMINER Guided Analysis on 14k PBMCs from 10x Genomics</h1>
-<p>This tutorial introduce you scMINER's basic analysis using a PBMC dataset with 10 sorted populations of 2k cells per population [<a href="../../reference/#[Zheng et al., 2017]">Zheng et al., 2017</a>]. We remove CD34+ cells, CD4+ helper T cells, and total CD8+ cytotoxic cells from the dataset because of low sorting purity or a significant overlap with other immune cells based on the sorting strategy, which creates a new dataset with seven known cell types and 14k cells in total. The original dataset is freely available under accession number <a href="https://www.ncbi.nlm.nih.gov/sra?term=SRP073767">SRP073767</a> and <a href="https://zenodo.org/record/3357167#.YhQNF2RKj6V">Zenodo</a>.</p>
+<p>This tutorial introduce you scMINER's basic analysis using a PBMC dataset with 10 sorted populations of 2k cells per population [<a href="../reference.md#[Zheng et al., 2017]">Zheng et al., 2017</a>]. We remove CD34+ cells, CD4+ helper T cells, and total CD8+ cytotoxic cells from the dataset because of low sorting purity or a significant overlap with other immune cells based on the sorting strategy, which creates a new dataset with seven known cell types and 14k cells in total. The original dataset is freely available under accession number <a href="https://www.ncbi.nlm.nih.gov/sra?term=SRP073767">SRP073767</a> and <a href="https://zenodo.org/record/3357167#.YhQNF2RKj6V">Zenodo</a>.</p>
 <h2 id="data-loading-and-preprocessing">Data loading and preprocessing</h2>
 <h3 id="read-10x-genomics-data">Read 10x genomics data</h3>
 <p>We start by reading the downsampled 10x genomics data with function <code>readscRNAseqData()</code>. This function reads data from either 10x genomics standard output files (usually contains three individual files: matrix.mtx, barcodes.tsv, features.tsv) or other text files by passing arguments to <code>read.delim()</code>. The function creates a <code>SparseExpressionSet</code> object adapted from <code>ExpressionSet</code> class if set <code>CreateSparseEset=T</code>; otherwise, it creates a list object that stores expression data, feature data and sample data under three separate slots. If <code>add.meta=T</code>, then additional sample info such as total number of UMI will be calculated and stored in the object. The following command sets <code>is.10x=T</code>, <code>CreateSparseEset = T</code>, and <code>add.meta=T</code>.</p>
@@ -237,13 +235,13 @@ rm(exp.norm)
 </code></pre>
 <h3 id="run-mica-from-the-command-line">Run MICA from the command line</h3>
 <p>Pick a MICA command to run in a command line environment based on the number of cells of your dataset. For dataset with less than <code>5k</code> cells, MICA MDS mode is recommended.</p>
-<pre><code class="language-bash">mica mds -i ./PBMC14k_MICA_input.h5ad -o ./outputs -pn PBMC14k -nc 8 9 10 -dk 14 13 14 15 16 17 18 19
+<pre><code class="language-bash">mica mds -i ./PBMC14k_MICA_input.h5ad -o ./outputs -pn PBMC14k -nc 8 9 10 
 </code></pre>
 <p>Here, <code>-pn</code> specifies a project name for naming the output files; <code>-nc</code> is an array of integers delimited by a single space, where each integer specifies a <code>k</code> to perform a k-mean clustering; <code>-dk</code> can be an integer or an array of integers delimited by a single space (default is <code>19</code>), it specifies the number of dimensions used in k-mean clusterings. Use <code>mica mds -h</code> to see more options of MICA MDS mode.</p>
 <p>For datasets with more than <code>5k</code> cells, MICA GE mode is recommended.</p>
-<pre><code class="language-bash">mica ge -i ./PBMC14k_MICA_input.h5ad -o ./outputs -ar 4.0 -nw 10 -nnm 100 -pdm 3.0
+<pre><code class="language-bash">mica ge -i ./PBMC14k_MICA_input.h5ad -o ./outputs -ar 4.0 -ss 0.1 -nw 25 -nnm 80
 </code></pre>
-<p>Here, <code>-ar</code> determines the maximum size of the communities (default: 3.0); <code>-nw</code> specifies the number of workers to run in parallel (default: 10); <code>-nnm</code> is the number of neighbors to build mutual information-based nearest neighbor graph (default 100); <code>-pdm</code> stands for pruning degree multiplier, the vertex with degree greater than pruning_degree_multi * num_neighbors_mi will be pruned. Use <code>mica ge -h</code> to find more options of MICA MDS mode.</p>
+<p>Here, <code>-ar</code> determines the maximum size of the communities (default: <code>3.0</code>); <code>-ss</code> is the step size to sweep resolutions in a range (default: <code>0.2</code>); <code>-nw</code> specifies the number of workers to run in parallel (default: <code>1</code>); <code>-nnm</code> is the number of neighbors to build mutual information-based nearest neighbor graph (default <code>80</code>). Use <code>mica ge -h</code> to find more options of MICA GE mode.</p>
 <p>A more detailed description of output files and important parameters can be found in <a href="../MICA-advanced/">Mutual information-based clustering analysis (MICA)</a> page.</p>
 <h3 id="read-mica-output">Read MICA output</h3>
 <p>Function <code>readMICAoutput()</code> adds MICA clustering results to the <code>SparseEset</code> object created before, which will be the major data structure for downstream analysis. <strong>Note: All the functions for downstream analysis are compatible with both <code>expressionSet</code> and <code>SparseExpressionSet</code></strong>. </p>
