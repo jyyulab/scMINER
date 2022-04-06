@@ -9,7 +9,7 @@ scMINER requires R version >= 4.0.5 and Python version **==** 3.7.6 to run. We r
 To install from GitHub `master` branch
 
 ```R
-install.packages(devtools)  # install devtools package first
+install.packages('devtools')  # install devtools package first
 devtools::install_github("jyyulab/scMINER", ref='master', dependencies='Depends') 
 ```
 or to clone from `https://github.com/jyyulab/scMINER/` and install from source files:

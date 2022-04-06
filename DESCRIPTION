@@ -21,7 +21,7 @@ Depends:
     knitr (>= 1.25),
     grDevices(>= 3.6.1),
     scales (>= 1.0.0),
-    limma (>= 3.40.6)
+    limma (>= 3.40.6),
     anndata (>= 0.7.5.2)
 Imports:
     Matrix (>= 1.2.17),
