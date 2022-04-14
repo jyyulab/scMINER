@@ -16,6 +16,7 @@ nav:
     - 'Mutual information-based clustering analysis (MICA)': tutorials/MICA-advanced.md
     - 'Network visualization': tutorials/network-visualize.md
     - 'Driver target function analysis': tutorials/function-analysis.md
+    - 'Activity based clustering': tutorials/activity-based-clustering.md
     - 'Interoperability between SparseEset, Seurat, and anndata': tutorials/interoperability.md
     - 'Data references': tutorials/data-reference.md
 repo_url: https://github.com/jyyulab/scMINER
