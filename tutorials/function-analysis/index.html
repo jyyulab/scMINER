@@ -78,10 +78,22 @@
                     <li class="toctree-l1"><a class="reference internal" href="../network-visualize/">Network visualization</a>
                     </li>
                     <li class="toctree-l1 current"><a class="reference internal current" href="./">Driver target function analysis</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#pathway-enrichment">Pathway enrichment</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#read-in-database">Read in database</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#fisher-exact-test">Fisher exact test</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#visualize-pathway-enrichment-in-multiple-conditions">Visualize pathway enrichment in multiple conditions</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../activity-based-clustering/">Activity based clustering</a>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../interoperability/">Interoperability between SparseEset, Seurat, and anndata</a>
-                    </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../data-reference/">Data references</a>
                     </li>
                 </ul>
       </div>
@@ -124,7 +136,46 @@
           <div role="main">
             <div class="section">
               
-                
+                <h1 id="scminer-guided-analysis-on-functional-enrichment">scMINER Guided Analysis on functional enrichment</h1>
+<p>Visualization of functional enrichment of the regulons.</p>
+<h2 id="pathway-enrichment">Pathway enrichment</h2>
+<h3 id="read-in-database">Read in database</h3>
+<pre><code class="language-R"># Read in database
+library(NetBID2)
+gs.preload(use_spe='Mus musculus',update=FALSE)
+print(all_gs2gene_info)
+
+</code></pre>
+<h3 id="fisher-exact-test">Fisher exact test</h3>
+<pre><code class="language-R"># Get the Regulons of Batf in each cell states
+driver_list &lt;- rownames(Batftarget1)
+Batftarget12&lt;-intersect(Batftarget1$target,Batftarget2$target) ## overlapped Batf targets in Tpex and Teff-like Tex
+res_up12 &lt;- funcEnrich.Fisher(input_list=Batftarget12,use_gs=c('H',&quot;CP:KEGG&quot;), Pv_thre=0.05,Pv_adj = 'none',min_gs_size = 30, max_gs_size = 500)
+
+draw.funcEnrich.bar(funcEnrich_res= res_up12,top_number=30,main='Function Enrichment for Top drivers',pdf_file=sprintf('%s/funcEnrich_bar_Batf.pdf','target/'),display_genes = TRUE)
+
+</code></pre>
+<p><img alt="functional_enrichment" src="../../images/funcEnrich_bar_Batf_prog_eff_targets.png" /></p>
+<h3 id="visualize-pathway-enrichment-in-multiple-conditions">Visualize pathway enrichment in multiple conditions</h3>
+<pre><code class="language-R"># Get the regulons of Batf in each cell state
+
+res_up1 &lt;- funcEnrich.Fisher(input_list=Batftarget1,use_gs=c('H',&quot;CP:KEGG&quot;), Pv_thre=0.05,Pv_adj = 'none',min_gs_size = 30, max_gs_size = 500)
+res_up2 &lt;- funcEnrich.Fisher(input_list=Batftarget2,use_gs=c('H',&quot;CP:KEGG&quot;), Pv_thre=0.05,Pv_adj = 'none',min_gs_size = 30, max_gs_size = 500)
+
+res_up12$Cluster_ID&lt;-'Overlap'
+res_up1$Cluster_ID&lt;-'Tpex'
+res_up2$Cluster_ID&lt;-'Teff-like'
+rest_all1&lt;-rbind(res_up12,res_up1,res_up2)
+ggplot(rest_all1, aes(y = factor(reorder(`#Name`,Odds_Ratio)),  x = Cluster_ID))+
+  geom_point(aes(colour = Odds_Ratio, size = -log10(Adj_P))) + 
+  scale_color_gradient2(low = &quot;blue&quot;,  mid = &quot;white&quot;,high = &quot;red&quot;) +
+  labs(x=&quot;Odds_Ratio&quot;,y=&quot;Pathways&quot;)+
+  scale_size(range = c(1, 6)) +
+  theme_bw() +
+  theme(axis.text.x=element_text(angle=45,hjust=1))
+
+</code></pre>
+<p><img alt="functional_enrichment_3_condition" src="../../images/pathways_highlight_Batf_pathway.png" /></p>
               
             </div>
           </div>
@@ -132,7 +183,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../interoperability/" class="btn btn-neutral float-right" title="Interoperability between SparseEset, Seurat, and anndata">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../activity-based-clustering/" class="btn btn-neutral float-right" title="Activity based clustering">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../network-visualize/" class="btn btn-neutral" title="Network visualization"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -170,7 +221,7 @@
       <span><a href="../network-visualize/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../interoperability/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../activity-based-clustering/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
