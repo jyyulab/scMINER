@@ -18,7 +18,6 @@ nav:
     - 'Driver target function analysis': tutorials/function-analysis.md
     - 'Activity based clustering': tutorials/activity-based-clustering.md
     - 'Interoperability between SparseEset, Seurat, and anndata': tutorials/interoperability.md
-    - 'Data references': tutorials/data-reference.md
 repo_url: https://github.com/jyyulab/scMINER
 site_author: Liang (Adam) Ding, Hao Shi
 copyright: Apache License (Version 2.0)

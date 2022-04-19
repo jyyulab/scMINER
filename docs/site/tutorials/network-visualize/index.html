@@ -76,12 +76,18 @@
                     <li class="toctree-l1"><a class="reference internal" href="../MICA-advanced/">Mutual information-based clustering analysis (MICA)</a>
                     </li>
                     <li class="toctree-l1 current"><a class="reference internal current" href="./">Network visualization</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#read-in-network">Read in network</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#the-rewiring-of-a-specific-tf-can-be-output-to-cytoscape">The rewiring of a specific TF can be output to CytoScape.</a>
+    </li>
+    </ul>
                     </li>
                     <li class="toctree-l1"><a class="reference internal" href="../function-analysis/">Driver target function analysis</a>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../interoperability/">Interoperability between SparseEset, Seurat, and anndata</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../activity-based-clustering/">Activity based clustering</a>
                     </li>
-                    <li class="toctree-l1"><a class="reference internal" href="../data-reference/">Data references</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../interoperability/">Interoperability between SparseEset, Seurat, and anndata</a>
                     </li>
                 </ul>
       </div>
@@ -124,7 +130,36 @@
           <div role="main">
             <div class="section">
               
-                
+                <h1 id="scminer-guided-analysis-on-network-visualization">scMINER Guided Analysis on network visualization</h1>
+<p>Visualization of regulon rewiring between different cell states.</p>
+<h2 id="read-in-network">Read in network</h2>
+<p>We start by reading SJARACNE output with function <code>get.SJAracne.network()</code>. </p>
+<pre><code class="language-R"># Create a SparseExpressionSet object with meta info
+net2 &lt;- NetBID2::get.SJAracne.network('TEXeff_13218_13218_3394/tf/TEXeff_13218_13218_3394SJARACNE_TF/SJARACNE_out.final/consensus_network_ncol_.txt')
+
+</code></pre>
+<p>Then a plot with regulon of a specific TF can be created by using <code>draw.targetNet()</code> function.</p>
+<pre><code class="language-R">### Calculate edge score for each target
+use_driver='Batf'
+celltype=&quot;t_TEXeff&quot;
+edge_score &lt;-net2$target_list[[use_driver]]$MI*sign(net1$target_list[[use_driver]]$spearman)
+
+### DAG_result_tf is the TF DA master table ##########
+NetBID2::draw.targetNet(source_label=use_driver,source_z=DAG_result_tf[DAG_result_tf$geneSymbol==use_driver,celltype], 
+                        edge_score = edge_score,pdf_file=sprintf('./targetNet_out_%s.pdf',use_driver),label_cex = 1,n_layer=2,source_cex = 1, alphabetical_order=TRUE)
+
+</code></pre>
+<p><img alt="BATF_target" src="../../images/targetNet_out_Batf1.png" /></p>
+<h2 id="the-rewiring-of-a-specific-tf-can-be-output-to-cytoscape">The rewiring of a specific TF can be output to CytoScape.</h2>
+<pre><code class="language-R">## combine all the target into a master table for CytoScape input
+Batf_target1&lt;-net1$target_list[[use_driver]]
+Batf_target2&lt;-net2$target_list[[use_driver]]
+Batf_target3&lt;-net3$target_list[[use_driver]]
+Batf_target_all&lt;-rbind(Batf_target,Batf_target2,Batf_target3)
+write.table(Batf_target_all,file = &quot;Batf_network_rewiring.txt&quot;,row.names = F,sep = &quot;\t&quot;,quote = F)
+
+</code></pre>
+<p><img alt="BATF_all_target" src="../../images/Batf_network_rewiring.png" /></p>
               
             </div>
           </div>
