@@ -172,45 +172,69 @@ python setup.py install
 </code></pre>
 <h6 id="r-session-info">R session info</h6>
 <pre><code class="language-R">&gt; sessionInfo()
-R version 3.6.1 (2019-07-05)
-Platform: x86_64-apple-darwin15.6.0 (64-bit)
-Running under: macOS Mojave 10.14.3
+R version 4.1.1 (2021-08-10)
+Platform: x86_64-apple-darwin17.0 (64-bit)
+Running under: macOS Monterey 12.2.1
 
 Matrix products: default
-BLAS:   /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
-LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
 
 locale:
 [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 
 attached base packages:
- [1] stats4    grid      parallel  stats     graphics  grDevices utils     datasets  methods   base     
+ [1] grid      stats4    parallel  stats     graphics  grDevices utils     datasets  methods   base        
 
 other attached packages:
- [1] scMINER_0.1.0               NetBID2_2.0.1               openxlsx_4.1.0.1            msigdbr_7.0.1               GSVA_1.32.0                 biomaRt_2.40.4             
- [7] reshape_0.8.8               arm_1.10-1                  MASS_7.3-51.4               MCMCglmm_2.29               ape_5.3                     coda_0.19-3                
-[13] ordinal_2019.4-25           umap_0.2.3.1                plotrix_3.7-6               plot3D_1.1.1                igraph_1.2.4.1              aricode_0.1.2              
-[19] ConsensusClusterPlus_1.48.0 DESeq2_1.24.0               tximport_1.12.3             impute_1.58.0               limma_3.40.6                GEOquery_2.52.0            
-[25] lme4_1.1-21                 SummarizedExperiment_1.14.1 DelayedArray_0.10.0         BiocParallel_1.18.1         matrixStats_0.55.0          GenomicRanges_1.36.1       
-[31] GenomeInfoDb_1.20.0         IRanges_2.18.3              S4Vectors_0.22.1            kableExtra_1.1.0            knitr_1.25                  Matrix_1.2-17              
-[37] rmarkdown_1.16              cowplot_1.0.0               dplyr_0.8.3                 pheatmap_1.0.12             ComplexHeatmap_2.0.0        scales_1.0.0               
-[43] RColorBrewer_1.1-2          ggplot2_3.2.1               reshape2_1.4.3              Biobase_2.44.0              BiocGenerics_0.30.0         BiocManager_1.30.4         
+ [1] NetBID2_2.0.3               plotly_4.9.4.1              rhdf5_2.36.0                openxlsx_4.2.4             
+ [5] msigdbr_7.4.1               GSVA_1.40.1                 biomaRt_2.48.3              reshape_0.8.8              
+ [9] arm_1.11-2                  MASS_7.3-54                 MCMCglmm_2.32               ape_5.5                    
+[13] coda_0.19-4                 ordinal_2019.12-10          ComplexHeatmap_2.8.0        umap_0.2.7.0               
+[17] plotrix_3.8-2               plot3D_1.4                  igraph_1.2.6                aricode_1.0.0              
+[21] ConsensusClusterPlus_1.56.0 DESeq2_1.32.0               tximport_1.20.0             impute_1.66.0              
+[25] GEOquery_2.60.0             lme4_1.1-27.1               SummarizedExperiment_1.22.0 GenomicRanges_1.44.0       
+[29] GenomeInfoDb_1.28.4         IRanges_2.26.0              S4Vectors_0.30.2            MatrixGenerics_1.4.3       
+[33] matrixStats_0.61.0          Matrix_1.3-4                scMINER_0.1.0               limma_3.48.3               
+[37] scales_1.1.1                knitr_1.34                  dplyr_1.0.7                 kableExtra_1.3.4           
+[41] rmarkdown_2.11              reshape2_1.4.4              RColorBrewer_1.1-2          ggplot2_3.3.5              
+[45] Biobase_2.52.0              BiocGenerics_0.38.0        
 
 loaded via a namespace (and not attached):
-  [1] backports_1.1.4        circlize_0.4.8         Hmisc_4.2-0            plyr_1.8.4             lazyeval_0.2.2         GSEABase_1.46.0        splines_3.6.1          digest_0.6.21         
-  [9] htmltools_0.3.6        magrittr_1.5           checkmate_1.9.4        memoise_1.1.0          cluster_2.1.0          readr_1.3.1            annotate_1.62.0        askpass_1.1           
- [17] prettyunits_1.0.2      colorspace_1.4-1       blob_1.2.0             rvest_0.3.4            xfun_0.10              jsonlite_1.6           crayon_1.3.4           RCurl_1.95-4.12       
- [25] graph_1.62.0           genefilter_1.66.0      zeallot_0.1.0          survival_2.44-1.1      glue_1.3.1             gtable_0.3.0           zlibbioc_1.30.0        XVector_0.24.0        
- [33] webshot_0.5.1          GetoptLong_0.1.7       Rhdf5lib_1.6.1         shape_1.4.4            abind_1.4-5            DBI_1.0.0              Rcpp_1.0.2             viridisLite_0.3.0     
- [41] xtable_1.8-4           progress_1.2.2         htmlTable_1.13.2       clue_0.3-57            reticulate_1.13        foreign_0.8-72         bit_1.1-14             Formula_1.2-3         
- [49] htmlwidgets_1.3        httr_1.4.1             acepack_1.4.1          pkgconfig_2.0.3        XML_3.98-1.20          nnet_7.3-12            locfit_1.5-9.1         tidyselect_0.2.5      
- [57] rlang_0.4.0            later_0.8.0            AnnotationDbi_1.46.1   munsell_0.5.0          tools_3.6.1            RSQLite_2.1.2          evaluate_0.14          stringr_1.4.0         
- [65] bit64_0.9-7            zip_2.0.4              purrr_0.3.2            nlme_3.1-141           mime_0.7               xml2_1.2.2             compiler_3.6.1         shinythemes_1.1.2     
- [73] rstudioapi_0.10        png_0.1-7              tibble_2.1.3           geneplotter_1.62.0     stringi_1.4.3          cubature_2.0.3         lattice_0.20-38        nloptr_1.2.1          
- [81] tensorA_0.36.1         vctrs_0.2.0            pillar_1.4.2           lifecycle_0.1.0        GlobalOptions_0.1.1    ucminf_1.1-4           data.table_1.12.2      bitops_1.0-6          
- [89] corpcor_1.6.9          httpuv_1.5.2           R6_2.4.0               latticeExtra_0.6-28    promises_1.0.1         gridExtra_2.3          boot_1.3-23            assertthat_0.2.1      
- [97] rhdf5_2.28.0           openssl_1.4.1          rjson_0.2.20           withr_2.1.2            GenomeInfoDbData_1.2.1 hms_0.5.1              rpart_4.1-15           tidyr_1.0.0           
-[105] minqa_1.2.4            misc3d_0.8-4           numDeriv_2016.8-1.1    shiny_1.3.2            base64enc_0.1-3 
+  [1] utf8_1.2.2                  reticulate_1.22             tidyselect_1.1.1            RSQLite_2.2.8              
+  [5] AnnotationDbi_1.54.1        htmlwidgets_1.5.4           BiocParallel_1.26.2         ScaledMatrix_1.0.0         
+  [9] munsell_0.5.0               codetools_0.2-18            misc3d_0.9-0                withr_2.4.2                
+ [13] colorspace_2.0-2            filelock_1.0.2              rstudioapi_0.13             SingleCellExperiment_1.14.1
+ [17] GenomeInfoDbData_1.2.6      bit64_4.0.5                 vctrs_0.3.8                 generics_0.1.0             
+ [21] xfun_0.26                   BiocFileCache_2.0.0         R6_2.5.1                    doParallel_1.0.16          
+ [25] clue_0.3-59                 rsvd_1.0.5                  locfit_1.5-9.4              bitops_1.0-7               
+ [29] rhdf5filters_1.4.0          cachem_1.0.6                DelayedArray_0.18.0         assertthat_0.2.1           
+ [33] nnet_7.3-16                 gtable_0.3.0                beachmat_2.8.1              Cairo_1.5-12.2             
+ [37] rlang_0.4.11                genefilter_1.74.0           systemfonts_1.0.4           GlobalOptions_0.1.2        
+ [41] splines_4.1.1               lazyeval_0.2.2              checkmate_2.0.0             abind_1.4-5                
+ [45] backports_1.2.1             Hmisc_4.5-0                 tensorA_0.36.2              tools_4.1.1                
+ [49] tcltk_4.1.1                 cubature_2.0.4.2            ellipsis_0.3.2              Rcpp_1.0.8                 
+ [53] plyr_1.8.6                  sparseMatrixStats_1.4.2     base64enc_0.1-3             progress_1.2.2             
+ [57] zlibbioc_1.38.0             purrr_0.3.4                 RCurl_1.98-1.5              prettyunits_1.1.1          
+ [61] rpart_4.1-15                openssl_1.4.5               GetoptLong_1.0.5            cluster_2.1.2              
+ [65] magrittr_2.0.1              data.table_1.14.2           RSpectra_0.16-0             circlize_0.4.13            
+ [69] hms_1.1.1                   evaluate_0.14               xtable_1.8-4                XML_3.99-0.8               
+ [73] jpeg_0.1-9                  gridExtra_2.3               shape_1.4.6                 compiler_4.1.1             
+ [77] tibble_3.1.5                crayon_1.4.1                minqa_1.2.4                 htmltools_0.5.2            
+ [81] corpcor_1.6.10              tzdb_0.1.2                  Formula_1.2-4               tidyr_1.1.4                
+ [85] geneplotter_1.70.0          DBI_1.1.1                   dbplyr_2.1.1                rappdirs_0.3.3             
+ [89] boot_1.3-28                 babelgene_21.4              readr_2.0.1                 pkgconfig_2.0.3            
+ [93] numDeriv_2016.8-1.1         foreign_0.8-81              xml2_1.3.2                  foreach_1.5.1              
+ [97] svglite_2.0.0               annotate_1.70.0             webshot_0.5.2               XVector_0.32.0             
+[101] rvest_1.0.1                 stringr_1.4.0               digest_0.6.28               graph_1.70.0               
+[105] Biostrings_2.60.2           htmlTable_2.2.1             DelayedMatrixStats_1.14.3   GSEABase_1.54.0            
+[109] curl_4.3.2                  rjson_0.2.20                nloptr_1.2.2.2              lifecycle_1.0.1            
+[113] nlme_3.1-152                jsonlite_1.7.2              Rhdf5lib_1.14.2             viridisLite_0.4.0          
+[117] askpass_1.1                 fansi_0.5.0                 pillar_1.6.3                lattice_0.20-44            
+[121] KEGGREST_1.32.0             fastmap_1.1.0               httr_1.4.2                  survival_3.2-11            
+[125] glue_1.4.2                  zip_2.2.0                   png_0.1-7                   iterators_1.0.13           
+[129] bit_4.0.4                   HDF5Array_1.20.0            stringi_1.7.4               blob_1.2.2                 
+[133] BiocSingular_1.8.1          latticeExtra_0.6-29         memoise_2.0.0               ucminf_1.1-4               
+[137] irlba_2.3.3  
 </code></pre>
 <h6 id="python-session-info">Python session info</h6>
 <pre><code class="language-Python">&gt;&gt;&gt; import MICA
