@@ -90,7 +90,8 @@ After reviewing all the QC plots and finishing filtering, it is ready to perform
 
 ```R
 # Prepare MICA input
-generateMICAinput(d = exp.log2 , filename = "./PBMC14k_MICA_input.h5ad")
+library(anndata)
+generateMICAinput(eset = pbmc.14k.eset.log2, filepath = "./PBMC14k_MICA_input.h5ad")
 
 # (optional) Clean working environment
 rm(exp.log2)
