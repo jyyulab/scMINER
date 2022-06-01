@@ -227,7 +227,8 @@ pbmc.14k.eset.log2 &lt;- CreateSparseEset(data = exp.log2, meta.data = pData(pbm
 <h3 id="generate-mica-input">Generate MICA input</h3>
 <p><code>generateMICAinput()</code> function takes a log transformed expression matrix as input, and outputs a cell by gene matrix stored in .h5 (default) or .txt file as input to MICA.</p>
 <pre><code class="language-R"># Prepare MICA input
-generateMICAinput(d = exp.log2 , filename = &quot;./PBMC14k_MICA_input.h5ad&quot;)
+library(anndata)
+generateMICAinput(eset = pbmc.14k.eset.log2, filepath = &quot;./PBMC14k_MICA_input.h5ad&quot;)
 
 # (optional) Clean working environment
 rm(exp.log2)
