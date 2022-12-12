@@ -1,34 +1,5 @@
 # scMINER (Single-cell Mutual Information based Network Engineering Ranger)
-
-=======
-
-*scMINER* is a **systems biology** analysis framework for high-throughput single cell RNA-seq data implemented primarily in R and python. This package offers a combination of several individual tools including but not limit to [MICA](https://github.com/jyyulab/MICA) (Mutual Information based Clustering analysis) and [SJARACNe] (https://github.com/jyyulab/SJARACNe). Installation instructions for each individual tools are available on github through links above.
+*scMINER* is an R package for preprocessing, QC, clustering, and *hidden driver analysis* of single-cell RNA-seq data. scMINER enables mutual information-based cell clustering, cell-type-specific gene regulatory network (GRN) reverse engineering and protein activity inference, to identify hidden transcriptional factors (TFs) and signaling factors (SIGs) driving cellular lineage differentiation and tissue specific specification. scMINER software consists of three components: [MICA](https://github.com/jyyulab/MICA) (Mutual Information based Clustering analysis), [SJARACNe](https://github.com/jyyulab/SJARACNe) and [MINIE](https://github.com/jyyulab/scMINER/).
 
 
-## Installation
-To install scMINER R package, in R environment with `R >= 3.6.0` and above, run
-
-```R
-devtools::install_github("jyyulab/scMINER",ref='master',dependencies='Depends') 
-```
-or clone from `https://github.com/jyyulab/scMINER/` and install from source files like below:
-
-```R
-
-devtools::install(pkg='.',dependencies=TRUE) ## Install the package with dependencies.
-devtools::install_deps(pkg = ".", dependencies = TRUE) ## Install package dependencies if needed.
-
-```
-If you are a Yu Lab member, tar.gz file is under project space, you can install via:
-
-```R
-devtools::install(pkg='/Volumes/yu3grp/scRNASeq/yu3grp/scMINER/scMINER_0.1.0.tar.gz', dependencies=TRUE)
-
-```
-
-
-## Documentation and guided anlaysis
-Comprehensive documentations could be found at:  
-- https://jyyulab.github.io/scMINER/
-
-
+Read the [documentation](https://jyyulab.github.io/scMINER/site/) for installtion instruction and guided analysis. If you'd like to contribute, please open an issue or a pull request in the [github repository](https://github.com/jyyulab/scMINER/issues).
