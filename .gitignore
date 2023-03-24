@@ -8,3 +8,5 @@ docs/_site/
 .Ruserdata
 .idea/*
 inst/doc
+/doc/
+/Meta/
