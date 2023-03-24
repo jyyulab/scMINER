@@ -7,3 +7,4 @@ docs/_site/
 .RData
 .Ruserdata
 .idea/*
+inst/doc
