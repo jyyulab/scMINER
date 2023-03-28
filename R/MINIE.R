@@ -1,24 +1,20 @@
 ## ---------------------------
 ##
-## Script name: MINIE
+## Script name: MINIE (Mutual Information-based Network Inference Engine)
 ##
-## Purpose of script: designed for preprocessing, QC, clustering,
-##    and hidden driver analysis of single-cell RNA-seq data
+## Purpose of script: to reconstruct cell-type-specific GRNs for driver activity inference and target network rewiring analysis
 ##
 ## Author: The scMINER software is developed and maintained by the Yu Laboratory @ St. Jude
 ##
-## Date Created: `r paste(Sys.Date())`
-##
-## Copyright (c) Timothy Farewell, `r paste(format(Sys.Date(), "%Y"))`
-## Email: hello@timfarewell.co.uk
+## Date Created: 2023-03-24
 ##
 ## ---------------------------
 ##
-## Notes: scMINER enables mutual information-based cell clustering,
-##    cell-type-specific gene regulatory network (GRN) reverse engineering and
-##    protein activity inference, to identify hidden transcriptional factors (TFs)
-##    and signaling factors (SIGs) driving cellular lineage differentiation and
-##    tissue specific specification.
+## Notes:
+##    (1) MINIE takes inputs of a gene expression profile and cell cluster labels.
+##    (2) Then MINIE invokes SJARACNe to reconstruct cell-type-specific transcriptional factor and signaling networks.
+##    (3) Finally, with the predicted targets of a driver for a cell cluster, MINIE calculates the driver activity by performing a column-wise normalization to ensure each cell is on a similar expression level, followed by averaging the expression of the driver's target genes.
 ##
 ## ---------------------------
+
 

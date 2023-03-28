@@ -17,14 +17,13 @@ specification.
 scMINER software consists of three components:
 
 -   [MICA](https://github.com/jyyulab/MICA) (Mutual Information based
-    Clustering analysis)
+    Clustering analysis) – perform clustering analysis
 
--   [SJARACNe](https://github.com/jyyulab/SJARACNe) (a scalable solution
-    of ARACNe that improves the computational performance to reconstruct
-    the regulatory network)
+-   [SJARACNe](https://github.com/jyyulab/SJARACNe) – generate network
 
 -   [MINIE](https://github.com/jyyulab/scMINER/)(Mutual
-    Information-based Network Inference Engine).
+    Information-based Network Inference Engine) – identify
+    cell-type-specific hidden drivers
 
 ## Installation
 
@@ -36,17 +35,25 @@ You can install the development version of scMINER from
 devtools::install_github("jyyulab/scMINER")
 ```
 
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-``` r
-library(scMINER)
-```
-
 ## Tutorial
 
 Read the [documentation](https://jyyulab.github.io/scMINER/site/) for
-detailed installation instruction and guided analysis. If you’d like to
-contribute, please open an issue or a pull request in the [github
-repository](https://github.com/jyyulab/scMINER/issues).
+detailed installation instruction and guided analysis.
+
+### Example1: scMINER Guided Analysis on 14k PBMCs from 10x Genomics
+
+This tutorial introduce you scMINER’s basic analysis using a PBMC
+dataset with 10 sorted populations of 2k cells per population \[Zheng et
+al., 2017\]. Check [tutorial for
+example](https://jyyulab.github.io/scMINER/site/tutorials/PBMC-14k/)
+
+### Example2: scMINER Guided Analysis on WT and KO CD8+ T cell in chronic infection model
+
+TOX is a master transcription factor for CD8+ T cell exhaustion during
+chronic infection. This tutorial introduce you scMINER’s basic analysis
+using a WT and TOX KO CD8+ T dataset (GSE119940) \[Yao et al., Nat
+Immunol 2019\]. Check [tutorial for
+example](https://jyyulab.github.io/scMINER/site/tutorials/CD8T/)
+
+If you’d like to contribute, please open an issue or a pull request in
+the [github repository](https://github.com/jyyulab/scMINER/issues).

@@ -19,9 +19,13 @@
 ##
 ##    scMINER software consists of three components:
 ##
-##        MICA: Mutual Information based Clustering analysis (https://github.com/jyyulab/MICA).
-##        SJARACNe:a scalable solution of ARACNe that improves the computational performance to reconstruct the regulatory network (https://github.com/jyyulab/SJARACNe).
-##        MINIE: Mutual Information-based Network Inference Engine (MINIE.R).
+##      (1) MICA: Mutual Information based Clustering analysis (https://github.com/jyyulab/MICA).
+##      (2) SJARACNe:a scalable solution of ARACNe that improves the computational performance to reconstruct the regulatory network (https://github.com/jyyulab/SJARACNe).
+##      (3) MINIE: Mutual Information-based Network Inference Engine (MINIE.R).
+##
+##    scMINER provides supporting functions to prepare datasets for running MICA and SJARACNe and import results into R.
 ##
 ## ---------------------------
+
+
 
