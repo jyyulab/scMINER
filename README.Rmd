@@ -39,7 +39,7 @@ conda create -n scminer python=3.7.6        # Create a python virtual environmen
 source activate scminer                     # Activate the virtual environment
 pip install MICA                            # Install MICA and its dependencies
 pip install SJARACNe                        # Install SJARACNe and its dependencies
-conda install r-base=4.1.1                  # Install R
+conda install -c -r r-base=4.0.3            # Install R
 conda install -c conda-forge r-devtools     # Install R devtools 
 ```
 
@@ -55,14 +55,13 @@ Read the [documentation](https://jyyulab.github.io/scMINER/site/) for detailed i
 
 ### Example1: scMINER Guided Analysis on 14k PBMCs from 10x Genomics
 
-This tutorial introduce you scMINER's basic analysis using a PBMC dataset with 10 sorted populations of 2k cells per population [Zheng et al., 2017]. 
+This tutorial introduce you scMINER's basic analysis using a PBMC dataset with 10 sorted populations of 2k cells per population [Zheng et al., 2017](https://www.nature.com/articles/ncomms14049). 
 Check [tutorial for example](https://jyyulab.github.io/scMINER/site/tutorials/PBMC-14k/)
 
 ### Example2: scMINER Guided Analysis on WT and KO CD8+ T cell in chronic infection model
 
-TOX is a master transcription factor for CD8+ T cell exhaustion during chronic infection. This tutorial introduce you scMINER's basic analysis using a WT and TOX KO CD8+ T dataset (GSE119940) [Yao et al., Nat Immunol 2019].
+TOX is a master transcription factor for CD8+ T cell exhaustion during chronic infection. This tutorial introduce you scMINER's basic analysis using a WT and TOX KO CD8+ T dataset (GSE119940) [Yao et al., Nat Immunol 2019](https://www.nature.com/articles/s41590-019-0403-4).
 Check [tutorial for example](https://jyyulab.github.io/scMINER/site/tutorials/CD8T/)
-
 
 
 If you'd like to contribute, please open an issue or a pull request in the [github repository](https://github.com/jyyulab/scMINER/issues).
