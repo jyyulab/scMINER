@@ -17,21 +17,34 @@ specification.
 scMINER software consists of three components:
 
 -   [MICA](https://github.com/jyyulab/MICA) (Mutual Information based
-    Clustering analysis) – perform clustering analysis
+    Clustering analysis) : perform clustering analysis
 
--   [SJARACNe](https://github.com/jyyulab/SJARACNe) – generate network
+-   [SJARACNe](https://github.com/jyyulab/SJARACNe) : generate cluster
+    specific networks
 
 -   [MINIE](https://github.com/jyyulab/scMINER/)(Mutual
-    Information-based Network Inference Engine) – identify
+    Information-based Network Inference Engine) : identify
     cell-type-specific hidden drivers
 
 ## Installation
 
-You can install the development version of scMINER from
+Users need to install MICA, SJARACNe and scMINER(MINIE) to run the
+scMINER analysis. Using conda to create a virtual environment is
+strongly recommended.
+
+``` bash
+conda create -n scminer python=3.7.6        # Create a python virtual environment
+source activate scminer                     # Activate the virtual environment
+pip install MICA                            # Install MICA and its dependencies
+pip install SJARACNe                        # Install SJARACNe and its dependencies
+conda install r-base=4.1.1                  # Install R
+conda install -c conda-forge r-devtools     # Install R devtools 
+```
+
+In R, you can install the current version of scMINER from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
 devtools::install_github("jyyulab/scMINER")
 ```
 

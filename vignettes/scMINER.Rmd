@@ -14,6 +14,155 @@ knitr::opts_chunk$set(
 )
 ```
 
+*scMINER* is an R package for preprocessing, QC, clustering, and *hidden driver analysis* of single-cell RNA-seq data. scMINER enables mutual information-based cell clustering, cell-type-specific gene regulatory network (GRN) reverse engineering and protein activity inference, to identify hidden transcriptional factors (TFs) and signaling factors (SIGs) driving cellular lineage differentiation and tissue specific specification. 
+
+scMINER software consists of three components: 
+
+- [MICA](https://github.com/jyyulab/MICA) (Mutual Information based Clustering analysis) : perform clustering analysis
+
+- [SJARACNe](https://github.com/jyyulab/SJARACNe) : generate cluster specific networks 
+
+- [MINIE](https://github.com/jyyulab/scMINER/)(Mutual Information-based Network Inference Engine) : identify cell-type-specific hidden drivers
+
+## Installation
+
+You can install the current version of scMINER from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("jyyulab/scMINER")
+```
+
+### Example1: scMINER Guided Analysis on 14k PBMCs from 10x Genomics
+
+This tutorial introduce you scMINER's basic analysis using a PBMC dataset with 10 sorted populations of 2k cells per population [Zheng et al., 2017]. The purpose of scMINER is to identify cell-type specific hidden drivers from single-cell RNASeq dataset. 
+
+##### Step0: Preparations
+
+
 ```{r setup}
 library(scMINER)
 ```
+
+
+
+
+##### Data loading and preprocessing
+
+-- Read 10x genomics data
+
+-- Quality control and data filtering
+
+-- Normalization and transformation
+
+##### Perform clustering analysis via MICA
+
+-- Generate MICA input
+
+-- Run MICA from the command line
+
+-- Read MICA output
+
+##### Cell type annotation after clustering
+
+-- Marker gene visualization
+  
+-- Cell type annotation
+
+##### Network generation via SJARACNe
+
+-- Generate SJARACNe input
+
+-- Run SJARACNe from the command line
+
+##### Identify cell-type-specific hidden drivers via MINIE
+
+-- Calculate activity
+
+-- Driver estimation by differential activity analysis
+ 
+
+
+
+
+
+### Example2: scMINER Guided Analysis on WT and KO CD8+ T cell in chronic infection model
+
+TOX is a master transcription factor for CD8+ T cell exhaustion during chronic infection. This tutorial introduce you scMINER's basic analysis using a WT and TOX KO CD8+ T dataset (GSE119940) [Yao et al., Nat Immunol 2019].
+
+```{r}
+library(scMINER)
+```
+
+##### Data loading and preprocessing
+
+-- Read 10x genomics data
+
+-- Quality control and data filtering
+
+-- Normalization and transformation
+
+##### Perform clustering analysis via MICA
+
+-- Generate MICA input
+
+-- Run MICA from the command line
+
+-- Read MICA output
+
+##### Cell type annotation after clustering
+
+-- Marker gene visualization
+  
+-- Cell type annotation
+
+##### WT and KO cell network generation via SJARACNe
+
+-- Generate SJARACNe input
+
+-- Run SJARACNe from the command line
+
+##### Identify genotype-specific hidden drivers via MINIE
+
+-- Calculate activity
+
+-- Driver estimation by differential activity analysis
+
+
+
+## Advanced analysis in scMINER
+
+### scMINER Guided Analysis on activity-based clustering
+
+- Generate bulk network by using MetaCell
+
+- Create membership for each cell based on metacell
+
+- Generate eset object for network construction
+
+- Create Pseudobulk eset
+
+- Generate Network
+
+
+### scMINER Guided Analysis on functional enrichment
+
+- Pathway enrichment
+
+### scMINER Guided Analysis on network visualization
+
+- Read in network
+
+- The rewiring of a specific TF can be output to CytoScape.
+
+### Interoperability between SparseEset, Seurat, SingleCellExperiment, and anndata
+
+- SC data type Conversion
+
+- SparseEset to Seurat
+
+- Seurat to SparseEset
+
+
+
+
