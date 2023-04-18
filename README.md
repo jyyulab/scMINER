@@ -35,10 +35,12 @@ strongly recommended.
 ``` bash
 conda create -n scminer python=3.7.6        # Create a python virtual environment
 source activate scminer                     # Activate the virtual environment
+pip install setuptools==57.5.0              # install setuptools
 pip install MICA                            # Install MICA and its dependencies
 pip install SJARACNe                        # Install SJARACNe and its dependencies
-conda install -c -r r-base=4.0.3            # Install R
-conda install -c conda-forge r-devtools     # Install R devtools 
+conda install -c -r r-base=4.0.3            # Install R (Bioconductor Version 3.12)
+conda install -c conda-forge r-devtools     # Install R devtools
+conda install -c bioconda bioconductor-biobase # Install R biobase
 ```
 
 In R, you can install the current version of scMINER from

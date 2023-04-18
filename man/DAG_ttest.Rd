@@ -6,11 +6,6 @@
 \usage{
 DAG_ttest(d, group)
 }
-\arguments{
-\item{d}{A vector of gene expression}
-
-\item{group}{A vector of group information}
-}
 \description{
-Inner function to do t.test(pairwise/2case) from activity matrix
+DAG_ttest
 }
