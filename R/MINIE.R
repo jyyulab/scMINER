@@ -163,7 +163,8 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
   }
   #retrieve networks
   output.files<-list.files(path=SJARACNe_output_path,
-                           pattern="consensus_network_ncol_.txt",recursive = TRUE,full.names = TRUE)
+                           pattern="consensus_network_ncol_.txt",
+                           recursive = TRUE,full.names = TRUE)
 
   if(length(output.files)==0) stop ("Please check your SJARACNe output path!",'\n')
   print(output.files)
@@ -213,7 +214,7 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
     }
 
     cat("Calculate Activity for ",net,"!",'\n')
-    eset.sel<-eset[,pData(eset)[,group_name]==i]
+    eset.sel<-eset[,which(pData(eset)[,group_name]==celltypes[i])]
 
     acs1<-get_activity(Net = TF.table$network_dat,tag = "TF",normalize=activity.norm,
                        eset = eset.sel, activity.method = activity.method, use.symbol=TRUE)
@@ -577,7 +578,9 @@ get.DA<-function(input_eset=NULL,group_name="celltype",group_case=NULL, group_ct
 
       rs.tmp <- as.data.frame(da.list,stringsAsFactors=FALSE)
       rs.full <- merge(rs,rs.tmp,by='id');rm(rs.tmp)
-
+      if(!'geneSymbol' %in% colnames(rs.full) & 'fn' %in% colnames(rs.full)){
+        rs.full$geneSymbol <-rs.full$fn
+      }
       rs <- dplyr::select(rs.full,
                           geneSymbol,
                           id:FuncType,
@@ -602,7 +605,9 @@ get.DA<-function(input_eset=NULL,group_name="celltype",group_case=NULL, group_ct
 
       rs.tmp <- as.data.frame(da.list,stringsAsFactors=FALSE)
       rs.full <- merge(rs,rs.tmp,by.x='id',by.y="ID");rm(rs.tmp);rm(da.list)
-
+      if(!'geneSymbol' %in% colnames(rs.full) & 'fn' %in% colnames(rs.full)){
+        rs.full$geneSymbol <-rs.full$fn
+      }
       rs <- dplyr::select(rs.full,
                           geneSymbol,
                           id:FuncType,
@@ -632,29 +637,27 @@ get.Topdrivers <- function(DAG_result= DAG_result, n=5, degree_filter=c(50,500),
 
   rownames(DAG_result)<-DAG_result$id
   cols <- colnames(DAG_result)
-  if(is.null(celltype)) celltypes<-gsub("^degree_","",cols[grep("^degree_",cols)])
-  else { celltypes<-celltype }
-
+  if(is.null(celltype)){
+    celltypes<-gsub("^degree_","",cols[grep("^degree_",cols)])
+  } else {
+    celltypes<-celltype
+  }
+  ori_DAG_result<-DAG_result
   cat("Output top regulators for ",celltypes ,"\n")
   res<-NULL
-
   for (i in celltypes){
     cat("Top MR for:" ,i,"\n")
     if(!is.null(degree_filter)) {
-
-      DAG_result<-DAG_result[which(DAG_result[,paste0("degree_",i)]> degree_filter[1] & DAG_result[,paste0("degree_",i)] <degree_filter[2]),]
+      DAG_result<-ori_DAG_result[which(ori_DAG_result[,paste0("degree_",i)]> degree_filter[1] & ori_DAG_result[,paste0("degree_",i)] <degree_filter[2]),] ### change to ori_DAG_result
     }
-
     tcol<-grep(paste0("^t_",i),colnames(DAG_result))
-
     topDriver<-DAG_result$id[sort(DAG_result[,tcol],decreasing=TRUE,index.return=TRUE,na.last=TRUE)$ix][1:n]
 
     D2print<-DAG_result[topDriver,c(1,grep(i,colnames(DAG_result)))]
-
-
+    D2print <- D2print[which(is.na(D2print[,1])==F),,drop=F]
     print(D2print)
 
-    res<- c(res,topDriver)
+    res<- c(res,topDriver[complete.cases(topDriver)])
     cat("==============","\n")
   }
   cat("Done!")
@@ -746,4 +749,88 @@ combinePvalVector <-function(pvals,
     }
   }
   return(c(`Z-statistics` = stat, `P.Value` = pval))
+}
+
+
+###Activity inner function###
+std <- function(x){
+  x<-x[!is.na(x)]
+  (x-mean(x))/sd(x)
+}
+es <- function(z,es.method="mean"){
+  if(es.method=="maxmean"){
+    n<-length(z)
+    m1<-ifelse(sum(z>0)>0,sum(z[z>0])/n,0)
+    m2<-ifelse(sum(z<0)>0,sum(z[z<0])/n,0)
+    if(m1>-m2) es<-m1
+    else es<-m2
+  }
+  else if(es.method=='absmean'){
+    es<-mean(abs(z))
+  }
+  else if(es.method == 'mean'){
+    es<-mean(z)
+  }
+  else{
+    stop('Unsupported method!\n')
+  }
+  return(es)
+}
+#' DAG_ttest
+#' @export
+DAG_ttest<-function(d,group){
+
+  #d.tmp<-unlist(d[1,-1])
+  d.tmp<-unlist(d[,-1])
+  d.tmp<-data.frame(acs=d.tmp,group=group,stringsAsFactors = FALSE)
+
+  d.sel<-d.tmp[complete.cases(d.tmp),]
+  d.sel$group<-as.factor(d.sel$group)
+
+  n.cases<-nlevels(d.sel$group)
+
+  #cat("=")
+  if(n.cases==2){
+    res <- t.test(dplyr::filter(d.tmp,group=="Aim")$acs,
+                  dplyr::filter(d.tmp,group=="Ctrl")$acs)
+    pval.t <-res$p.value
+    t.stat <- res$statistic
+    #extract results
+    rs.t <- c(id=d$acs.id,
+              t.stat,
+              pval = pval.t,
+              res$parameter,#df
+              CI.low = res$conf.int[1],
+              CI.high = res$conf.int[2],
+              MeanAct.Aim = unname(res$estimate[1]),
+              MeanAct.Ctrl = unname(res$estimate[2]))
+
+  }else{
+    rs.t <- c(id = d$acs.id,
+              t=NA,
+              pval = NA,
+              df = NA,
+              CI.low = NA,
+              CI.high = NA,
+              MeanAct.Aim = mean(filter(d.tmp,group=="Aim")$acs),
+              MeanAct.Ctrl = mean(filter(d.tmp,group=="Ctrl")$acs))
+  }
+
+  rs.t<-c(rs.t, log2FC=rs.t["MeanAct.Aim"]-rs.t["MeanAct.Ctrl"])
+
+  return(rs.t)
+}
+##
+#############
+check_param <- function(para_name,envir){
+  if(base::exists(para_name,envir=envir)==FALSE){message(sprintf('%s missing !',para_name));return(0)}
+  if(is.null(base::get(para_name,envir=envir))==TRUE){message(sprintf('%s is NULL !',para_name));return(0)}
+  return(1)
+}
+
+check_options <- function(para_name,option_list,envir){
+  if(!base::get(para_name,envir=envir) %in% option_list){
+    message(sprintf('Only accept %s set at: %s !',para_name,base::paste(option_list,collapse=';')));return(0)
+  }
+  return(1)
 }

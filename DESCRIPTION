@@ -3,7 +3,7 @@ Type: Package
 Title: scMINER
 Version: 1.0.0
 Author: Yu Lab (St.Jude Children's Research Hospital)
-Maintainer: Liang Ding <liang.ding@stjude.org>, Hao Shi <hao.shi@stjude.org>
+Maintainer: Liang Ding <liang.ding@stjude.org>, Hao Shi <hao.shi@stjude.org>, Xinran Dong <xinran.dong@foxmail.com>
 Description: Mutual information-based single-cell clustering and network-enabled hidden driver analysis
 License: Apache License
 Encoding: UTF-8

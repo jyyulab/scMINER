@@ -38,6 +38,9 @@ get_activity(
 
 \item{sep.symbol}{which symbol to sparate name and tag}
 }
+\value{
+
+}
 \description{
 Calculate activity from network file or gene list
 }

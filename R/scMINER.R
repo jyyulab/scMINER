@@ -40,7 +40,6 @@
 ##    generateSJARACNeInput()
 ## ---------------------------
 
-
 #' Manipulation of Working Directories for scMINER pipeline
 #'
 #' \code{scMINER.dir.create} is used to help users create an organized working directory for the network construction step in scMINER analysis.
@@ -466,13 +465,14 @@ draw.marker.bbp<-function(ref = NULL,input_eset,
     colnames(d)<-c("Cluster", "CellType", "MarkerScore","ExpressionPercentage")
     d$Cluster<-as.factor(d$Cluster)
 
-    p<-draw.bubblePlot2(df=d, xlab="Cluster",ylab="CellType",
+    p<- draw.bubblePlot2(df=d, xlab="Cluster",ylab="CellType",
                         clab="MarkerScore",slab="ExpressionPercentage",
                         plot.title="Cell type annotation for each cluster")
   }
 
   if(save_plot){ggsave(plot = p, filename = plot_name , units="in",
                        width = width,height = height,dpi = 300)}
+  print(d)
   return(p)
 }
 
@@ -597,10 +597,10 @@ feature_heatmap <- function(input_eset,target,feature="geneSymbol",
   n<-length(unique(lab.ordered))
   ncols <- scales::hue_pal()(n)
   names(ncols) <- unique(lab.ordered)
-  myanndf = HeatmapAnnotation(df = df,col=list(scMINER = ncols))
+  myanndf = ComplexHeatmap::HeatmapAnnotation(df = df,col=list(scMINER = ncols))
   mycolors = colors
 
-  hmp <- Heatmap(exp.ordered, col = mycolors, name = name,
+  hmp <- ComplexHeatmap::Heatmap(exp.ordered, col = mycolors, name = name,
                  show_row_names = TRUE,
                  show_column_names = FALSE,
                  cluster_rows = cluster_rows,
@@ -777,10 +777,10 @@ generateMICAinput <- function(eset, filepath, scminer.par=NULL){
                 row.names = TRUE, col.names = NA, quote = FALSE)
   }else if(length(grep(".h5ad$", filepath))!=0){
     cat("Writing MICA input to a .h5ad file...", "\n")
-    ad <- anndata::AnnData(X = t(as.matrix(exprs(eset))),
-                           obs = pData(eset),
-                           var = fData(eset)
-    )
+    ad <- anndata::AnnData(
+                          X = t(as.matrix(exprs(eset))),
+                          obs = pData(eset),
+                          var = fData(eset))
     anndata::write_h5ad(ad, filepath)
   }else{
     stop("Your filepath should be ended with .txt or .h5ad", "\n")
@@ -800,7 +800,7 @@ generateMICAinput <- function(eset, filepath, scminer.par=NULL){
     }
   }else{
     cat('For dataset with less than 5k cells, MICA MDS mode is recommended.\n')
-    recommend_cmd <- sprintf('mica mds -i %s -o %s -pn %s -nc 8 9 10 -dk 19',scminer.par$out.dir.MICA_input,scminer.par$out.dir.MICA,scminer.par$project.name)
+    recommend_cmd <- sprintf('mica mds -i %s -o %s -pn %s -nc 4 5 6 7 8 9 10 -dk 19',scminer.par$out.dir.MICA_input,scminer.par$out.dir.MICA,scminer.par$project.name)
     cat(sprintf("Suggested command line is:\n\n%s\n
                 -pn specifies a project name for naming the output files;
                 -nc is an array of integers delimited by a single space, where each integer specifies a k to perform a k-mean clustering;
@@ -973,13 +973,13 @@ generateSJARACNeInput<-function(input_eset,ref=NULL,funcType=NULL,wd.src,group_n
     for (i in 1:length(groups)){
       grp.tag<-groups[i]; input_eset[,which(pData(input_eset)[,group_name]==grp.tag)] -> eset.sel
       res <- SJARACNe_filter(eset.sel=eset.sel,tf.ref=tf.ref,sig.ref=sig.ref,wd.src=wd.src,grp.tag=grp.tag)
+      print(res)
+      #return(c(dir.cur,grp.tag,f.exp,f.tfsig))
       ## suggested command for SJARACNe
-      name_type <- sprintf('%s_%s',grp.tag,tolower(funcType))
-      output_dir <- sprintf('%s/%s/%s',wd.src,grp.tag,tolower(funcType))
-      SJAR.cmd.1 <- sprintf('sjaracne lsf -e %s/%s.exp -g %s/%s.txt -o %s -n 100 -pc 1e-5',
-                            wd.src,grp.tag,output_dir,name_type,output_dir)
-      SJAR.cmd.2 <- sprintf('sjaracne local -e %s/%s.exp -g %s/%s.txt -o %s -n 100 -pc 1e-5',
-                            wd.src,grp.tag,output_dir,name_type,output_dir)
+      SJAR.cmd.1 <- sprintf('sjaracne lsf -e %s -g %s -o %s_final -n 100 -pc 1e-5 -tmp %s/tmp/ -j ../SJARACNe/SJARACNe/config/config_cwlexec.json',
+                            res[3],res[4],res[1],res[1])
+      SJAR.cmd.2 <- sprintf('sjaracne local -e %s -g %s -o %s_final -n 100 -pc 1e-5 -tmp %s/tmp/',
+                            res[3],res[4],res[1],res[1])
       all.SJAR.cmd.1 <- c(all.SJAR.cmd.1,SJAR.cmd.1)
       all.SJAR.cmd.2 <- c(all.SJAR.cmd.2,SJAR.cmd.2)
     }#end for
@@ -1004,3 +1004,108 @@ generateSJARACNeInput<-function(input_eset,ref=NULL,funcType=NULL,wd.src,group_n
 
 
 
+### inner functions
+#' SJARACNe_filter
+#' @description This is the inner function to help generate SJARACNe input for scRNA-seq data,
+#' all non-informative (zero genes) will be filtered in by this function
+#' @param eset.sel ExpressionSet to generate SJaracne input
+#' @param tf.ref A vector of reference transcription factors
+#' @param sig.ref A vector of reference signaling genes
+#' @param wd.src path to store SjAracne input
+#' @param grp.tag name of group for identification
+#' @details Non-expressed genes in subgroups are filtered.
+#' tf.ref should be coordinate with featureNames(eset.sel).
+#' @return A folder with picked master regulator and filtered gene expression matrix
+SJARACNe_filter<-function(eset.sel,tf.ref,sig.ref,wd.src,grp.tag){
+  cat(grp.tag,'\n')
+
+  #fData(eset.sel)$IQR<-apply(exprs(eset.sel),1,IQR)
+  # exclude genes with all zero
+  eset.sel<-eset.sel[apply(exprs(eset.sel),1,function(xx){sum(xx)!=0}),]
+
+  fData(eset.sel)$geneNames<-fData(eset.sel)$geneSymbol
+
+  ni<-nrow(eset.sel);ni
+  ns<-ncol(eset.sel);ns
+  ng<-nlevels(factor(fData(eset.sel)$geneNames));ng
+  tag<-paste(grp.tag,nrow(eset.sel),ng,ncol(eset.sel),sep='_');tag
+
+  dir.cur<-file.path(wd.src,tag);dir.cur
+  dir.create(dir.cur,recursive = T)
+
+  #write exp data to exp format
+  expdata<-data.frame(cbind(isoformId=featureNames(eset.sel),geneSymbol=fData(eset.sel)$geneSymbol,as.matrix(exprs(eset.sel))),stringsAsFactors = FALSE)
+  f.exp<-file.path(dir.cur,paste(grp.tag,"_",ni,"_",ng,"_",ns,".exp",sep=''));f.exp
+  write.table(expdata,file=f.exp,sep="\t",row.names=FALSE,quote=FALSE)
+
+  if (!is.null(tf.ref)){
+    dir.create(file.path(dir.cur,'tf'),recursive = T)
+    tf.eset.sel<-subset(eset.sel,fData(eset.sel)$geneSymbol%in%tf.ref)
+    dim(tf.eset.sel)
+    f.tf<-file.path(dir.cur,'tf',paste(grp.tag,"_",nrow(tf.eset.sel),"_",nlevels(factor(fData(tf.eset.sel)$geneSymbol)),"_",ns,"_tf.txt",sep=''));f.tf
+    cat(featureNames(tf.eset.sel),file=f.tf,sep='\n')
+    f.tfsig<-f.tf
+    dir.cur.tfsig <- sprintf('%s/tf',dir.cur)
+  }
+
+  if (!is.null(sig.ref)){
+    dir.create(file.path(dir.cur,'sig'),recursive = T)
+    sig.eset.sel<-subset(eset.sel,fData(eset.sel)$geneSymbol%in%sig.ref)
+    dim(sig.eset.sel)
+    f.sig<-file.path(dir.cur,'sig',paste(grp.tag,"_",nrow(sig.eset.sel),"_",nlevels(factor(fData(sig.eset.sel)$geneSymbol)),"_",ns,"_sig.txt",sep=''));f.sig
+    cat(featureNames(sig.eset.sel),file=f.sig,sep='\n')
+    f.tfsig<-f.sig
+    dir.cur.tfsig <- sprintf('%s/sig',dir.cur)
+  }
+  return(c(dir.cur.tfsig,as.character(grp.tag),f.exp,f.tfsig))
+}
+#' Inner function for simple bubbleplots
+#' @param df re-structured data.frame for bubble plots
+#' @param xlab string
+#' @param ylab string
+#' @param clab string
+#' @param slab string
+#' @param low.col string,default as "#004C99"
+#' @param high.col string, default as "CC0000
+#' @param plot.title string
+#' @return a ggplot object
+draw.bubblePlot2<-function(df=NULL,xlab,ylab,clab,slab,
+                           low.col="#004C99",high.col="#CC0000",plot.title=NULL){
+
+  p <- ggplot(df, aes_string(x= xlab, y= ylab)) +
+    theme_classic()+
+    geom_point(aes_string(fill=clab, size= slab),color="black",pch=21)+
+    scale_fill_gradient2(low=low.col,high=high.col)+
+    scale_x_discrete(limits=levels(df[,xlab]))+
+    scale_y_discrete(limits=levels(df[,ylab]))+
+    theme(panel.grid.major= element_line(colour = "grey",size=0.3),
+          panel.grid.minor = element_line(colour = "grey",size=0.3),
+          axis.text.x = element_text(size = 12),
+          axis.text.y = element_text(size = 12))
+  labs(x = xlab, y = ylab, title = plot.title)
+
+  return(p)
+}
+#############
+#' @title SparseExpressionSet
+#' @exportClass SparseExpressionSet
+#' @importFrom Biobase ExpressionSet
+setClass( "SparseExpressionSet",
+          contains = "ExpressionSet",
+          prototype = prototype( new( "VersionedBiobase",
+                                      versions = c(classVersion("ExpressionSet"), SparseExpressionSet = "1.0.0" ))))
+
+##
+#############
+check_param <- function(para_name,envir){
+  if(base::exists(para_name,envir=envir)==FALSE){message(sprintf('%s missing !',para_name));return(0)}
+  if(is.null(base::get(para_name,envir=envir))==TRUE){message(sprintf('%s is NULL !',para_name));return(0)}
+  return(1)
+}
+
+check_options <- function(para_name,option_list,envir){
+  if(!base::get(para_name,envir=envir) %in% option_list){
+    message(sprintf('Only accept %s set at: %s !',para_name,base::paste(option_list,collapse=';')));return(0)
+  }
+  return(1)
+}

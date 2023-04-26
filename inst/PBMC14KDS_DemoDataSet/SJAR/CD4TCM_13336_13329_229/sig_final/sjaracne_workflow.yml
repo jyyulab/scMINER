@@ -1,0 +1,14 @@
+exp_file:
+  class: File
+  path: /home/dongxinran/project/scMINER/test/PBMC14KDS/SJAR/CD4TCM_13336_13329_229/CD4TCM_13336_13329_229.exp
+probe_file:
+  class: File
+  path: /home/dongxinran/project/scMINER/test/PBMC14KDS/SJAR/CD4TCM_13336_13329_229/sig/CD4TCM_2676_2676_229_sig.txt
+p_value_consensus: 1e-5
+p_value_bootstrap: 1e-07
+depth: 40
+aracne_config_dir:
+  class: Directory
+  path: /ocean/apps/miniconda3/envs/scminer/lib/python3.7/site-packages/SJARACNe-0.2.1-py3.7.egg/SJARACNe/config
+bootstrap_num: 100
+final_out_dir_name: sig_final

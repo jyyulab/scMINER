@@ -35,12 +35,20 @@ strongly recommended.
 ``` bash
 conda create -n scminer python=3.7.6        # Create a python virtual environment
 source activate scminer                     # Activate the virtual environment
+## install MICA
 pip install setuptools==57.5.0              # install setuptools
 pip install MICA                            # Install MICA and its dependencies
-pip install SJARACNe                        # Install SJARACNe and its dependencies
+## install SJARACNE
+# pip install SJARACNe                        # Install SJARACNe and its dependencies
+git clone https://github.com/jyyulab/SJARACNe.git
+cd SJARACNe/
+python setup.py build     # build SJARACNe binary
+python setup.py install
+cd ../
+## install scMINER(MINIE)
 conda install -c -r r-base=4.0.3            # Install R (Bioconductor Version 3.12)
 conda install -c conda-forge r-devtools     # Install R devtools
-conda install -c bioconda bioconductor-biobase # Install R biobase
+conda install -c conda-forge r-biocmanager  # Install R BiocManager
 ```
 
 In R, you can install the current version of scMINER from
