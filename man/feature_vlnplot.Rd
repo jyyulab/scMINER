@@ -44,3 +44,18 @@ feature_vlnplot(
 \description{
 This plot will visualize feature info in violin plot by outputing a ggplot object
 }
+\examples{
+demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+                        package = "scMINER")
+load(demo_file)
+genes_of_interest <-c("CD3D", "CD27", "IL7R",
+                      "SELL", "CCR7", "IL32",
+                      "GZMA", "GZMK", "DUSP2",
+                      "CD8A", "GZMH", "GZMB",
+                      "CD79A", "CD79B", "CD86", "CD14")
+scMINER::feature_vlnplot(input_eset = pbmc.14k.DS.eset.log2,
+                         target = genes_of_interest,
+                         feature = "geneSymbol",
+                         group_by = "ClusterRes",
+                         ylabel = "log2Exp", ncol = 4)
+}

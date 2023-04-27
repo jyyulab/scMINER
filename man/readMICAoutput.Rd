@@ -13,11 +13,17 @@ readMICAoutput(eset = NULL, input_file, output_file, load_ClusterRes = TRUE)
 
 \item{output_file}{output ClusterMem.txt file from MICA pipeline}
 
-\item{load_ClusterRes}{logical, if TRUE, clustering results will be store at pData(eset)$label}
+\item{load_ClusterRes}{logical, if TRUE, clustering results will be store at Biobase::pData(eset)$label}
 }
 \value{
 A sparse expressionSet object
 }
 \description{
 Read MICA input and output to create an expressionSet for downstream analysis
+}
+\examples{
+MICA_output <- system.file('PBMC14KDS_DemoDataSet/MICA/clustering_umap_euclidean_19.txt',
+pbmc.14k.DS.eset.log2 <- scMINER::readMICAoutput(eset = pbmc.14k.DS.eset.log2,
+                          load_ClusterRes = TRUE,
+                          output_file = MICA_output)
 }

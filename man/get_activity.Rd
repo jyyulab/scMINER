@@ -28,7 +28,7 @@ get_activity(
 
 \item{use.symbol}{logical, in network file, use geneSymbol or use geneID}
 
-\item{feature}{character, use which feature as ID in fData(eset)}
+\item{feature}{character, use which feature as ID in Biobase::fData(eset)}
 
 \item{es.method}{character, which method to use to calculate actiivty value ("mean","maxmean")}
 
@@ -46,4 +46,17 @@ Calculate activity from network file or gene list
 }
 \details{
 If network object was loaded by get.network.scMINER function, then network dataframe is could be retrieved under network_dat slot.
+}
+\examples{
+demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+                        package = "scMINER")
+load(demo_file)
+TF_file <- system.file('PBMC14KDS_DemoDataSet/SJAR/Bcell_11546_11539_77/tf_final/consensus_network_ncol_.txt',
+            package = "scMINER")
+tf.network  <- get.network.scMINER(network_file=TF_file)
+acs1<-get_activity(Net = tf.network$network_dat,tag = "TF",
+         normalize=T,
+         eset = pbmc.14k.DS.eset.log2,
+         activity.method = 'unweighted',
+         use.symbol=TRUE)
 }

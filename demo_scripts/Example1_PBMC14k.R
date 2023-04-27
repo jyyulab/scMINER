@@ -10,7 +10,7 @@ scminer.par <- scMINER::scMINER.dir.create(project_main_dir = project_main_dir,
 
 ### Step1: Load in dataset
 ## Option1: load data from standard 10x genomics files
-demo_dir <- base::system.file('PBMC14KDS_DemoDataSet/DATA/10X/',package = "scMINER")
+demo_dir <- system.file('PBMC14KDS_DemoDataSet/DATA/10X/',package = "scMINER")
 pbmc.14k.DS.eset <- scMINER::readscRNAseqData(file = demo_dir,
                                               is.10x = T,
                                               CreateSparseEset = T,
@@ -79,7 +79,7 @@ save(scminer.par,file=scminer.par$out.dir.DATA_par)
 ## load SparseEset RData
 # load(scminer.par$out.dir.DATA_eset) ## if re-start R-session
 ## or load from R package
-# demo_file <- base::system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+# demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
 #                         package = "scMINER")
 # load(demo_file)
 
@@ -88,7 +88,7 @@ scminer.par$out.dir.MICA_output <- sprintf('%s/clustering_umap_euclidean_19.txt'
                                            scminer.par$out.dir.MICA)
 
 ## or use file from R package
-# scminer.par$out.dir.MICA_output <- base::system.file('PBMC14KDS_DemoDataSet/MICA/clustering_umap_euclidean_19.txt',
+# scminer.par$out.dir.MICA_output <- system.file('PBMC14KDS_DemoDataSet/MICA/clustering_umap_euclidean_19.txt',
 #             package = "scMINER")
 
 pbmc.14k.DS.eset.log2 <- scMINER::readMICAoutput(eset = pbmc.14k.DS.eset.log2,
@@ -130,7 +130,7 @@ scMINER::feature_heatmap(input_eset = pbmc.14k.DS.eset.log2,
 
 ## Cell type annotation
 ## Draw a bubble plot
-markers_file <- base::system.file('PBMC14KDS_DemoDataSet/DATA/',
+markers_file <- system.file('PBMC14KDS_DemoDataSet/DATA/',
                   'Immune_signatures.xlsx',
                   package = "scMINER")
 markers <- openxlsx::read.xlsx(markers_file)
@@ -154,7 +154,7 @@ save(scminer.par,file=scminer.par$out.dir.DATA_par)
 ## load SparseEset RData
 # load(scminer.par$out.dir.DATA_eset) ## if re-start R-session
 ## or load from R package
-# demo_file <- base::system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+# demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
 #                               package = "scMINER")
 # load(demo_file)
 
@@ -188,11 +188,11 @@ save(scminer.par,file=scminer.par$out.dir.DATA_par)
 ## load SparseEset RData
 # load(scminer.par$out.dir.DATA_eset) ## if re-start R-session
 ## or load from R package
-# demo_file <- base::system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+# demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
 #                         package = "scMINER")
 # load(demo_file)
 ## set the out.dir.SJAR to the demo output file
-# scminer.par$out.dir.SJAR <- base::system.file('PBMC14KDS_DemoDataSet/SJAR/',
+# scminer.par$out.dir.SJAR <- system.file('PBMC14KDS_DemoDataSet/SJAR/',
 #                                              package = "scMINER")
 
 ### Step1: Calculate activity from SJARACNe output
@@ -237,7 +237,7 @@ TF_list <- get.Topdrivers(DAG_result = DAG_result_tf,
 ### Step3: Check positive controls
 p <- feature_vlnplot(input_eset = acs.14k.sig,
                      feature = "fn",
-             target=c("CD27", "IL7R","CCR7",'GZMA','GZMK','DUSP2','GZMH','GZMB'),
+                     target=c("CD27", "IL7R","CCR7",'GZMA','GZMK','DUSP2','GZMH','GZMB'),
                      ylabel = "Activity",
                      group_by = scminer.par$SJAR.group.name, ncol=2)
 p

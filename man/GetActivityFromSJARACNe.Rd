@@ -23,7 +23,7 @@ GetActivityFromSJARACNe(
 \item{functype}{character c("tf","sig"); If NULL, both activity from TF and SIG network will be calculated;
 default as NULL}
 
-\item{group_name}{a string, group name stored in pData that defines expression matrix separation}
+\item{group_name}{a string, group name stored in Biobase::pData that defines expression matrix separation}
 
 \item{activity.method}{c("weighted,unweighted), default to "unweighted"}
 
@@ -40,15 +40,21 @@ An expressionset with activity values
 Allocate network information from SJARACNe and calculate activity score for each hub genes.
 }
 \examples{
+demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+                        package = "scMINER")
+load(demo_file)
+out.dir.SJAR <- system.file('PBMC14KDS_DemoDataSet/SJAR/',
+                        package = "scMINER")
+acs.14k.tf <- GetActivityFromSJARACNe(
+              SJARACNe_output_path = out.dir.SJAR,
+              SJARACNe_input_eset = pbmc.14k.DS.eset.log2,
+              activity.method="unweighted",
+              activity.norm=TRUE,
+              group_name =  "celltype",
+              save_network_file=FALSE,
+              functype="tf",
+              save_path='.')
 \dontrun{
-acs.12k <- GetActivityFromSJARACNe(
-             SJARACNe_output_path ="./",
-             SJARACNe_input_eset = eset.12k,
-             activity.method="unweighted",
-             activity.norm=TRUE,
-             group_name = "celltype",
-             save_network_file=TRUE, #default as false, but recommended to be TRUE
-             save_path="./networks")
 }
 
 }

@@ -21,7 +21,7 @@ MICAplot(
 \arguments{
 \item{input_eset}{ExpressionSet that include visualization coordinates in phenotype data}
 
-\item{color_by}{Coloring criteria of data points, should be a variable stored in pData(input_eset)}
+\item{color_by}{Coloring criteria of data points, should be a variable stored in Biobase::pData(input_eset)}
 
 \item{colors}{character, color values, if NULL then use ggplot default color}
 
@@ -38,7 +38,18 @@ MICAplot(
 \item{title.name}{character, title of plot, default as NULL}
 
 \item{pct}{numerical, size of point, default as 0.5}
+
+\item{aplha}{numerical, indicate point transparency}
 }
 \description{
 This function helps to generate a ggplot object for phenotypic visualization
+}
+\examples{
+demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+                        package = "scMINER")
+load(demo_file)
+scMINER::MICAplot(input_eset = pbmc.14k.DS.eset.log2, X = "X", Y = "Y",
+                  color_by = "ClusterRes", pct = 0.5)
+\dontrun{
+}
 }

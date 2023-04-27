@@ -34,5 +34,7 @@ Imports:
 Suggests:
     NetBID2 (>= 2.0.3),
     openxlsx (>= 4.2.3),
-    knitr (>= 1.33)
+    knitr (>= 1.33),
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
+Config/testthat/edition: 3

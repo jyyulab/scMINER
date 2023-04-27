@@ -38,3 +38,10 @@ scRNA-seq filtering function
 \details{
 preMICA.filtering
 }
+\examples{
+demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+                        package = "scMINER")
+load(demo_file)
+pbmc.14k.DS.eset.filter <- scMINER::preMICA.filtering(SparseEset = pbmc.14k.DS.eset.log2,
+      cutoffs = cutoffs)
+}

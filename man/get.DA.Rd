@@ -13,12 +13,12 @@ get.DA(
 )
 }
 \arguments{
-\item{input_eset}{ExpressionSet that stores group information in pData}
+\item{input_eset}{ExpressionSet that stores group information in Biobase::pData}
 
-\item{group_name}{a character string, column name in pData(input_eset) that indicates group info}
+\item{group_name}{a character string, column name in Biobase::pData(input_eset) that indicates group info}
 
 \item{group_case}{NULL(If do get.DA for all group vs others) or a character string (one specific group vs others) of
-column name in pData(input_eset) that indicates group info}
+column name in Biobase::pData(input_eset) that indicates group info}
 
 \item{group_ctrl}{NULL(If one vs Others); a character indicate case group if do pairwise analysis}
 
@@ -33,10 +33,9 @@ which helps to conduct two_sided t.test on all genes in specific group VS Others
 to find differential activity genes, a table with essential statistics will be outputted.
 }
 \examples{
-\dontrun{get.DA(eset, group_name="group")}
- # Try find DAG for only group 1
- \dontrun{get.DA(eset, group_name="group",group_case="group1")}
-}
-\seealso{
-DAG_ttest; getDE.limma
+demo_file <- system.file('PBMC14KDS_DemoDataSet/SJAR/DATA/celltype_Activity.RData',
+                                             package = "scMINER")
+load(demo_file)
+DAG_result_tf <- get.DA(input_eset = AC_eset$AC.TF,
+                       group_name = "celltype")
 }

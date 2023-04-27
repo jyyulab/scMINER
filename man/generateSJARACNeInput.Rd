@@ -34,9 +34,16 @@ It can take transcription factor/signaling gene reference from internal(stored i
 generateSJARACNeInput
 }
 \examples{
+demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+                        package = "scMINER")
+load(demo_file)
+SJAR.cmd.tf <- generateSJARACNeInput(
+               input_eset = pbmc.14k.DS.eset.log2,
+               funcType = "TF",
+               ref = "hg",  # human
+               wd.src = 'test/',  # output directory
+               group_name = "celltype")
 \dontrun{
-generateSJARACNeInput(input_eset = eset ,ref = "hg",funcType="TF",
-wd.src = "./",group_name = "celltype")
 }
 }
 \keyword{SJARACNe}

@@ -62,7 +62,10 @@
 #' project.name (project name), out.dir (path of the project folder).
 #'
 #' @examples
-#'
+#' project_main_dir <- '../test'
+#' project_name <- 'PBMC14KDS'
+#' scminer.par <- scMINER::scMINER.dir.create(project_main_dir = project_main_dir,
+#'                                         project_name = project_name)
 #' \dontrun{
 #' # Creating a main working directory under the current working directory by folder name
 #' scminer.par <- scMINER.dir.create("MyMainDir","MyProject")
@@ -118,16 +121,30 @@ scMINER.dir.create <- function(project_main_dir=NULL,project_name=NULL){
   return(scminer.par)
 }
 
-
 #' CreateSparseEset
 #' @description Create a S4 class which utilize 'ExpressionSet' template yet compatible with sparseMatrix type of assaydata
 #' @param data Sparse expression data, could be from either of these class:c('matrix','dgTMatrix','dgCMatrix').Required
 #' @param meta.data phenotype data which rownames should be the same as data colnames; Optional; Default as NULL
 #' @param feature.data feature data which rownames should be the same as data rownames; Optional; Default as NULL
 #' @param add.meta logical; Whether or not calculate extra pheonotype info including total number of UMI,
-#' number of non-zero gene for each cell, mitochondrial percentage and spike-in gene expression percentage and store them in pData
+#' number of non-zero gene for each cell, mitochondrial percentage and spike-in gene expression percentage and store them in Biobase::pData
 #'
 #' @return A customized S4 class using ExpressionSet class as prototype
+#' @examples
+#' demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+#'                         package = "scMINER")
+#' load(demo_file)
+#' pbmc.14k.DS.eset.log2.update <- CreateSparseEset(data = exprs(pbmc.14k.DS.eset.log2),
+#'                          meta.data = Biobase::pData(pbmc.14k.DS.eset.log2),
+#'                          feature.data = Biobase::fData(pbmc.14k.DS.eset.log2),
+#'                          add.meta = F)
+#' \dontrun{
+#' meta.data<-SeuratObject@meta.data
+#' feature.data<-data.frame(rownames(SeuratObject@assays$RNA@data))
+#' colnames(feature.data)<-"geneSymbol"
+#' rownames(feature.data)<-feature.data$geneSymbol
+#' eset<-CreateSparseEset(data=SeuratObject@assays$RNA@data,meta.data = meta.data,
+#'                      feature.data = feature.data,add.meta = F)
 #' @export
 CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T){
 
@@ -219,7 +236,6 @@ CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T
   return(Obj)
 }
 
-
 #' readscRNAseqData
 #' @description read scRNA-seq data, a wrapper of conventional data reading (read.delim) and 10x genomics data standarad output reading
 #'
@@ -229,8 +245,14 @@ CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T
 #' @param CreateSparseEset logical, whether or not create sparse matrix incorporated expression set
 #' @param add.meta logical, whether or not calculate metadata info from expression matrixm, this is not suggested before merging/downsampling your data
 #' @param ... parameters pass to read.delim if is.10x = FALSE
-#'
 #' @return A list or sparse matrix expression set
+#' @examples
+#' demo_dir <- system.file('PBMC14KDS_DemoDataSet/DATA/10X/',package = "scMINER")
+#' pbmc.14k.DS.eset <- scMINER::readscRNAseqData(file = demo_dir,
+#'                                               is.10x = T,
+#'                                               CreateSparseEset = T,
+#'                                               add.meta = T)
+#'
 #' @export
 readscRNAseqData <- function(file, is.10x=TRUE, CreateSparseEset=TRUE, add.meta=F, sep=','){
 
@@ -302,10 +324,19 @@ readscRNAseqData <- function(file, is.10x=TRUE, CreateSparseEset=TRUE, add.meta=
 #' @param project.name a character, project name to print on report
 #' @param plot.dir a character, output directory for QC reports
 #' @param output.cutoff logical, whether or not return a list of suggested thresholds for filtering
-#' @param group a character, a variable name indicate groupping information (stored in pData) to
+#' @param group a character, a variable name indicate groupping information (stored in Biobase::pData) to
 #' help generate violin plots
 #'
 #' @return an R markdown QC report and a list of suggested threshold (if specify)
+#' @examples
+#' demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+#'                         package = "scMINER")
+#' load(demo_file)
+#' cutoffs <- scMINER::draw.scRNAseq.QC(SparseEset = pbmc.14k.DS.eset.log2,
+#'                project.name = 'test',
+#'                plot.dir = '.',
+#'                group = "group",      # this indicate which meta data information will be use in x axis to group violin plots
+#'                output.cutoff = TRUE) # whether or not to output suggested cutoffs
 #' @export
 draw.scRNAseq.QC<-function(SparseEset,project.name,
                            plot.dir="./QC/",
@@ -313,7 +344,7 @@ draw.scRNAseq.QC<-function(SparseEset,project.name,
   if(!dir.exists(plot.dir)) {dir.create(plot.dir)}
 
   #Calcualte Cutoffs
-  pd<-pData(SparseEset)
+  pd<-Biobase::pData(SparseEset)
   cfs<-list(nCell_cutoff = max(floor(0.005 * dim(SparseEset)[2]), 1),
             umi_cf_lo = max(floor(exp(median(log(pd$nUMI.total)) - 3 * mad(log(pd$nUMI.total)))),100),
             umi_cf_hi = ceiling(exp(median(log(pd$nUMI.total)) + 3 * mad(log(pd$nUMI.total)))),
@@ -338,13 +369,19 @@ draw.scRNAseq.QC<-function(SparseEset,project.name,
 
 
 #' Draw barplot for composition study
-#'
 #' @param input_eset ExpressionSet that include group information in phenotype data
-#' @param group_by Group criteria for bars, should be a variable stored in pData(input_eset)
-#' @param color_by Coloring criteria of bar fractions, should be a variable stored in pData(input_eset)
+#' @param group_by Group criteria for bars, should be a variable stored in Biobase::pData(input_eset)
+#' @param color_by Coloring criteria of bar fractions, should be a variable stored in Biobase::pData(input_eset)
 #' @param colors color values to feed in scale_fill_manual, default as NULL; If NULL, then default color for ggplot will be used
 #'
 #' @return a ggplot object
+#' @examples
+#' demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+#'                         package = "scMINER")
+#' load(demo_file)
+#' draw.group.barplot(pbmc.14k.DS.eset.log2,
+#'                    group_by = 'celltype',
+#'                    color_by = 'celltype')
 #' @export
 #'
 draw.group.barplot<-function(input_eset,
@@ -352,17 +389,16 @@ draw.group.barplot<-function(input_eset,
                              color_by,
                              colors = NULL){
 
-  input<-pData(input_eset)
-
+  input<-Biobase::pData(input_eset)
   if(group_by%in%colnames(input)){
     if(color_by%in%colnames(input)){
       input[,group_by]<-as.factor(input[,group_by])
       input[,color_by]<-as.factor(input[,color_by])
     }else{
-      stop ('color_by name not found in pData!','\n')
+      stop ('color_by name not found in Biobase::pData!','\n')
     }
   }else{
-    stop ('group_by name not found in pData!','\n')
+    stop ('group_by name not found in Biobase::pData!','\n')
   }
 
 
@@ -392,18 +428,26 @@ draw.group.barplot<-function(input_eset,
 #' @description  Marker visualizatoin from known markers/signatures, requires knowledge-based marker list as input
 #' @param ref reference dataframe, includes positive or negative markers for different cell types;
 #' Specify first column as different cell types, second columns as markers, third columns as weight (postive or negative marker)
-#' @param input_eset expressionSet/SparseExpressionSet object with clustering membership stored in pData
-#' @param group_name a character, the variable containing clustering label in pData(eset); or any other group information stored in pData(eset)
+#' @param input_eset expressionSet/SparseExpressionSet object with clustering membership stored in Biobase::pData
+#' @param group_name a character, the variable containing clustering label in Biobase::pData(eset); or any other group information stored in Biobase::pData(eset)
 #' @param save_plot logical, whether or not save your plot; if TRUE, plot will be saved as plot_name
 #' @param width default as 8, inch as unit
 #' @param height default as 5, inch as unit
 #' @param plot_name plot name, please include plot type
-#' @param feature feature type from second column of your reference , should be in colnames(fData(eset))
+#' @param feature feature type from second column of your reference , should be in colnames(Biobase::fData(eset))
 #' @return A ggplot object
 #' @examples
+#' demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+#'                         package = "scMINER")
+#' load(demo_file)
+#' markers_file <- system.file('PBMC14KDS_DemoDataSet/DATA/',
+#'  'Immune_signatures.xlsx',
+#'   package = "scMINER")
+#' markers <- openxlsx::read.xlsx(markers_file)
+#' draw.marker.bbp(ref = markers, input_eset = pbmc.14k.DS.eset.log2,
+#'                width = 6, height = 4, feature = "geneSymbol",
+#'                group_name = "ClusterRes", save_plot = FALSE)
 #' \dontrun{
-#' df.ref=data.frame(celltype="Cd4 T",markers=c("Cd8a","Cd4","Cd3g"),weight=c(-1,1,1))
-#' draw.marker.bbp<-function(ref = df.ref,input_eset, feature='geneSymbol',group_name="ClusterRes", save_plot = FALSE, width=8, height=5)
 #' }
 #'
 #' @export
@@ -416,14 +460,14 @@ draw.marker.bbp<-function(ref = NULL,input_eset,
   #exp<-apply(exprs(eset),2,std)
   #filter reference marker sets
 
-  if (!feature%in%colnames(fData(input_eset))) stop('Please check your feature!')
+  if (!feature%in%colnames(Biobase::fData(input_eset))) stop('Please check your feature!')
   colnames(ref)<-c("celltype","markers","weight")
-  ref<-dplyr::filter(ref,markers%in%fData(input_eset)[,feature])
-  indx<-which(fData(input_eset)[,feature]%in%ref$markers)
+  ref<-dplyr::filter(ref,markers%in%Biobase::fData(input_eset)[,feature])
+  indx<-which(Biobase::fData(input_eset)[,feature]%in%ref$markers)
   if(length(indx)==0) stop("No genes from the reference list could be found in data!","\n")
 
   exp<-as.matrix(exprs(input_eset))[indx,]
-  rownames(exp)<-fData(input_eset)[,feature][indx]
+  rownames(exp)<-Biobase::fData(input_eset)[,feature][indx]
 
   celltypes<-unique(ref$celltype)
 
@@ -444,12 +488,12 @@ draw.marker.bbp<-function(ref = NULL,input_eset,
   ac_norm<-apply(ac,2,scale) #column normalization
 
   n_mtx<-(ac>0.5)
-  df_n<-data.frame(label=pData(input_eset)[,group_name],n_mtx)
+  df_n<-data.frame(label=Biobase::pData(input_eset)[,group_name],n_mtx)
   df_n<-aggregate(.~label,df_n,mean)
   library(reshape2)
   df_n_melt<-melt(df_n,id.vars = "label")
 
-  df<-data.frame(label=pData(input_eset)[,group_name],ac_norm);
+  df<-data.frame(label=Biobase::pData(input_eset)[,group_name],ac_norm);
   df<-df[,colSums(is.na(df))<nrow(df)];#remove NA columns
   df<-aggregate(.~label,df,mean)
   input<-t(apply(df[,-1],1,scale))#row normalization
@@ -476,8 +520,6 @@ draw.marker.bbp<-function(ref = NULL,input_eset,
   return(p)
 }
 
-
-
 #' @title feature_vlnplot
 #' @description This plot will visualize feature info in violin plot by outputing a ggplot object
 #' @param input_eset Input expression set
@@ -491,7 +533,20 @@ draw.marker.bbp<-function(ref = NULL,input_eset,
 #' @param boxplot logical, whether to plot boxplot on violinplot
 #' @param title.size numerical, default as 5
 #' @param ncol cordinates for y axis
-#'
+#' @examples
+#' demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+#'                         package = "scMINER")
+#' load(demo_file)
+#' genes_of_interest <-c("CD3D", "CD27", "IL7R",
+#'                       "SELL", "CCR7", "IL32",
+#'                       "GZMA", "GZMK", "DUSP2",
+#'                       "CD8A", "GZMH", "GZMB",
+#'                       "CD79A", "CD79B", "CD86", "CD14")
+#' scMINER::feature_vlnplot(input_eset = pbmc.14k.DS.eset.log2,
+#'                          target = genes_of_interest,
+#'                          feature = "geneSymbol",
+#'                          group_by = "ClusterRes",
+#'                          ylabel = "log2Exp", ncol = 4)
 #' @export
 feature_vlnplot <- function(input_eset,
                             target=NULL,feature="geneSymbol",
@@ -500,19 +555,19 @@ feature_vlnplot <- function(input_eset,
                             ncol=3,stat="median",
                             boxplot=FALSE,title.size=5){
 
-  if(!group_by%in% colnames(pData(input_eset))) stop('Please check your group_by information!','\n')
-  if(!feature%in% colnames(fData(input_eset))) stop('Please check your feature information!','\n')
+  if(!group_by%in% colnames(Biobase::pData(input_eset))) stop('Please check your group_by information!','\n')
+  if(!feature%in% colnames(Biobase::fData(input_eset))) stop('Please check your feature information!','\n')
 
   # extract input information
   input <- exprs(input_eset)
-  indx<-which(fData(input_eset)[,feature]%in%target)
-  gn<-fData(input_eset)[,feature][indx]
+  indx<-which(Biobase::fData(input_eset)[,feature]%in%target)
+  gn<-Biobase::fData(input_eset)[,feature][indx]
 
   if(length(indx)==0) stop('No target feature found in data!','\n')
 
-  label <- as.factor(pData(input_eset)[,group_by])
+  label <- as.factor(Biobase::pData(input_eset)[,group_by])
   if (is.null(color_by)) color_by=group_by
-  condition<- as.factor(pData(input_eset)[,color_by])
+  condition<- as.factor(Biobase::pData(input_eset)[,color_by])
 
   # Gene expression visualized as columns
   if (length(target)!=1) {
@@ -551,9 +606,6 @@ feature_vlnplot <- function(input_eset,
   return(p)
 }
 
-
-
-
 #' @title Visualize gene expression level on scRNA-seq data via heatmap
 #' @description This plot will visualiz feature info in scatter plot by outputing a ggplot object
 #' @param input_eset Input expression set
@@ -569,7 +621,21 @@ feature_vlnplot <- function(input_eset,
 #' @param height numerical
 #' @param ... parameter to be passed to ComplexHeatmap::Heatmap
 #' @return a ggplot object
-#'
+#' @examples
+#' demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+#'                         package = "scMINER")
+#' load(demo_file)
+#' genes_of_interest <-c("CD3D", "CD27", "IL7R",
+#'                       "SELL", "CCR7", "IL32",
+#'                       "GZMA", "GZMK", "DUSP2",
+#'                       "CD8A", "GZMH", "GZMB",
+#'                       "CD79A", "CD79B", "CD86", "CD14")
+#' scMINER::feature_heatmap(input_eset = pbmc.14k.DS.eset.log2,
+#'                      target = genes_of_interest,
+#'                      group_name = "ClusterRes",
+#'                      save_plot = FALSE,
+#'                      width = 6, height = 6,
+#'                      name = "log2Exp")
 #' @export
 feature_heatmap <- function(input_eset,target,feature="geneSymbol",
                             group_name="label",name="log2Exp",
@@ -580,12 +646,12 @@ feature_heatmap <- function(input_eset,target,feature="geneSymbol",
                             ...){
 
   input <- exprs(input_eset)
-  gn<-intersect(target,fData(input_eset)[,feature])
-  indx<-match(gn,fData(input_eset)[,feature])
+  gn<-intersect(target,Biobase::fData(input_eset)[,feature])
+  indx<-match(gn,Biobase::fData(input_eset)[,feature])
 
   exp<-exprs(input_eset)[indx,]
   rownames(exp)<-gn
-  lab<-pData(input_eset)[,group_name];names(lab) <- sampleNames(input_eset)
+  lab<-Biobase::pData(input_eset)[,group_name];names(lab) <- sampleNames(input_eset)
 
   #re-order expressionmatrix and label
   ranks<-names(sort(lab,decreasing = FALSE))
@@ -631,7 +697,21 @@ feature_heatmap <- function(input_eset,target,feature="geneSymbol",
 #' @param alpha numerical, default as 0.8
 #' @param colors color palette for feature highlighting
 #' @param pct.size numrical, point size
-#'
+#' @examples
+#' demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+#'                         package = "scMINER")
+#' load(demo_file)
+#' genes_of_interest <-c("CD3D", "CD27", "IL7R",
+#'                       "SELL", "CCR7", "IL32",
+#'                       "GZMA", "GZMK", "DUSP2",
+#'                       "CD8A", "GZMH", "GZMB",
+#'                       "CD79A", "CD79B", "CD86", "CD14")
+#' scMINER::feature_highlighting(input_eset = pbmc.14k.DS.eset.log2,
+#'                       target = genes_of_interest,
+#'                       feature = "geneSymbol",
+#'                       ylabel = "log2Exp",
+#'                       x = "X", y = "Y",
+#'                       pct.size = 0.5)
 #' @export
 feature_highlighting<-function(input_eset,target=NULL,
                                feature="geneSymbol",
@@ -643,12 +723,12 @@ feature_highlighting<-function(input_eset,target=NULL,
 
   # change it to expr is ok
   input<-as.matrix(exprs(input_eset))
-  indx<-which(fData(input_eset)[,feature]%in%target)
+  indx<-which(Biobase::fData(input_eset)[,feature]%in%target)
   if(length(indx)==0) stop("Target feature not found.")
 
-  gn<-fData(input_eset)[,feature][indx]
+  gn<-Biobase::fData(input_eset)[,feature][indx]
   id.vars<-c(x,y,wrap_by)
-  projection<-pData(input_eset)[colnames(input),id.vars]
+  projection<-Biobase::pData(input_eset)[colnames(input),id.vars]
 
   #gene expression visualized as columns
   if (length(indx)!=1) {
@@ -696,7 +776,12 @@ feature_highlighting<-function(input_eset,target=NULL,
 #' @param Mito_filter logical;a numerical number, indicating upper threshold put on Mitochondrial gene expression fraction for cell filtering
 #' @param nGene_filter logical; a numerical number, indicating lower threshold put on number of gene expression in each cell for cell filtering
 #' @param nUMI_filter logical;a vector of two numerical number, indicating lower threshold and upper threshold put on number of total UMI for cell filtering
-#'
+#' @examples
+#' demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+#'                         package = "scMINER")
+#' load(demo_file)
+#' pbmc.14k.DS.eset.filter <- scMINER::preMICA.filtering(SparseEset = pbmc.14k.DS.eset.log2,
+#'       cutoffs = cutoffs)
 #' @return A Sparse expression set
 #' @export
 preMICA.filtering <- function(SparseEset,
@@ -739,7 +824,7 @@ preMICA.filtering <- function(SparseEset,
 
   #gene filtering
   if(gene_filter){
-    gene <- unname((which(fData(SparseEset)$nCells >= cfs$nCell_cutoff)))
+    gene <- unname((which(Biobase::fData(SparseEset)$nCells >= cfs$nCell_cutoff)))
     eset.sel<-SparseEset[gene,]
 
     cat("Gene expressed in less than ", cfs$nCell_cutoff,
@@ -759,14 +844,18 @@ preMICA.filtering <- function(SparseEset,
 }#end preMICA.filtering
 
 #' Generate MICA input accepted txt or h5ad file
-#'
 #' @description A utility function that helps generate MICA input from a data matrix with rownames and colnames
 #' @usage generateMICAinput(d, filename="project_name_MICAinput.h5")
 #' @param d matrix with colnames as cell/sample info, rownames as gene/feature info
 #' @param filename filename of your MICA input file, supported format: txt or h5
 #' @param scminer.par list for the parameter settings in scMINER pipeline, optional.
 #' @return A txt file or a h5 file that could be read in MICA
-#'
+#' @examples
+#' demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+#'                         package = "scMINER")
+#' load(demo_file)
+#' MICA.cmd <- generateMICAinput(eset = pbmc.14k.DS.eset.log2 ,
+#'                       filepath = '.')
 #' @export
 generateMICAinput <- function(eset, filepath, scminer.par=NULL){
   recommend_cmd <- NULL
@@ -779,8 +868,8 @@ generateMICAinput <- function(eset, filepath, scminer.par=NULL){
     cat("Writing MICA input to a .h5ad file...", "\n")
     ad <- anndata::AnnData(
                           X = t(as.matrix(exprs(eset))),
-                          obs = pData(eset),
-                          var = fData(eset))
+                          obs = Biobase::pData(eset),
+                          var = Biobase::fData(eset))
     anndata::write_h5ad(ad, filepath)
   }else{
     stop("Your filepath should be ended with .txt or .h5ad", "\n")
@@ -800,12 +889,14 @@ generateMICAinput <- function(eset, filepath, scminer.par=NULL){
     }
   }else{
     cat('For dataset with less than 5k cells, MICA MDS mode is recommended.\n')
-    recommend_cmd <- sprintf('mica mds -i %s -o %s -pn %s -nc 4 5 6 7 8 9 10 -dk 19',scminer.par$out.dir.MICA_input,scminer.par$out.dir.MICA,scminer.par$project.name)
-    cat(sprintf("Suggested command line is:\n\n%s\n
+    if(is.null(scminer.par)==FALSE){
+      recommend_cmd <- sprintf('mica mds -i %s -o %s -pn %s -nc 4 5 6 7 8 9 10 -dk 19',scminer.par$out.dir.MICA_input,scminer.par$out.dir.MICA,scminer.par$project.name)
+      cat(sprintf("Suggested command line is:\n\n%s\n
                 -pn specifies a project name for naming the output files;
                 -nc is an array of integers delimited by a single space, where each integer specifies a k to perform a k-mean clustering;
                 -dk can be an integer or an array of integers delimited by a single space (default is 19), it specifies the number of dimensions used in k-mean clusterings.
                 Use mica mds -h to see more options of MICA MDS mode.",recommend_cmd))
+    }
   }
   cat("Done.","\n")
   return(recommend_cmd)
@@ -813,14 +904,18 @@ generateMICAinput <- function(eset, filepath, scminer.par=NULL){
 
 
 #' @title readMICAoutput
-#'
 #' @description Read MICA input and output to create an expressionSet for downstream analysis
 #'
 #' @param eset a SparseMatrix Eset
 #' @param input_file input expression txt file of MICA pipeline
 #' @param output_file output ClusterMem.txt file from MICA pipeline
-#' @param load_ClusterRes logical, if TRUE, clustering results will be store at pData(eset)$label
-#'
+#' @param load_ClusterRes logical, if TRUE, clustering results will be store at Biobase::pData(eset)$label
+#' @examples
+#' MICA_output <- system.file('PBMC14KDS_DemoDataSet/MICA/clustering_umap_euclidean_19.txt',
+#             package = "scMINER")
+#' pbmc.14k.DS.eset.log2 <- scMINER::readMICAoutput(eset = pbmc.14k.DS.eset.log2,
+#'                           load_ClusterRes = TRUE,
+#'                           output_file = MICA_output)
 #' @return A sparse expressionSet object
 #' @export
 readMICAoutput<-function(eset=NULL, input_file, output_file,load_ClusterRes =TRUE){
@@ -860,11 +955,10 @@ readMICAoutput<-function(eset=NULL, input_file, output_file,load_ClusterRes =TRU
 }
 
 
-##################################################################################################
 #' @title plot MICA clustering results or other meta variables
 #' @description This function helps to generate a ggplot object for phenotypic visualization
 #' @param input_eset ExpressionSet that include visualization coordinates in phenotype data
-#' @param color_by Coloring criteria of data points, should be a variable stored in pData(input_eset)
+#' @param color_by Coloring criteria of data points, should be a variable stored in Biobase::pData(input_eset)
 #' @param colors character, color values, if NULL then use ggplot default color
 #' @param X character, column name of x axis
 #' @param Y character, column name of y axis
@@ -874,10 +968,13 @@ readMICAoutput<-function(eset=NULL, input_file, output_file,load_ClusterRes =TRU
 #' @param title.name character, title of plot, default as NULL
 #' @param pct numerical, size of point, default as 0.5
 #' @param aplha numerical, indicate point transparency
-#'
+#' @examples
+#' demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+#'                         package = "scMINER")
+#' load(demo_file)
+#' scMINER::MICAplot(input_eset = pbmc.14k.DS.eset.log2, X = "X", Y = "Y",
+#'                   color_by = "ClusterRes", pct = 0.5)
 #' \dontrun{
-#' MICAplot<-function(input_eset, color_by= "ClusterRes", colors= NULL, X="tSNE_1",Y="tSNE_2",show_label=TRUE,
-#' title.size=20,title.name="Unsupervised clustering result from MICA",pct=0.5,alpha=1){
 #' }
 #' @export
 MICAplot<-function(input_eset,
@@ -885,7 +982,7 @@ MICAplot<-function(input_eset,
                    X=NULL,Y=NULL,show_label=FALSE,label.size=10,
                    title.size=20,title.name="",pct=0.5,alpha=1){
 
-  input<-pData(input_eset)
+  input<-Biobase::pData(input_eset)
   if(!color_by%in%colnames(input)){stop("Label name not found in phenotype data!","\n")}
   if(!X%in%colnames(input)|!Y%in%colnames(input)){stop("Please check your x or y axis assignment!","\n")}
   p <- ggplot(data=input,aes_string(x=X, y=Y,color = color_by))+
@@ -925,14 +1022,11 @@ MICAplot<-function(input_eset,
   return(p)
 }
 
-
-
 #' generateSJARACNeInput
 #'
 #' @title Generate SJARACNE input with designed folder structure
 #' @description This function helps to generate appropriate input files for SJARACNe pipeline.
 #' It can take transcription factor/signaling gene reference from internal(stored in package) or external (manual define)
-#'
 #'
 #' @param input_eset An expressionSet
 #' @param ref c("hg", "mm"), could be a manually defined geneSymbol vector
@@ -942,9 +1036,16 @@ MICAplot<-function(input_eset,
 #' @return SJARACNe input files for each subgroups
 #' @keywords SJARACNe
 #' @examples
+#' demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+#'                         package = "scMINER")
+#' load(demo_file)
+#' SJAR.cmd.tf <- generateSJARACNeInput(
+#'                input_eset = pbmc.14k.DS.eset.log2,
+#'                funcType = "TF",
+#'                ref = "hg",  # human
+#'                wd.src = 'test/',  # output directory
+#'                group_name = "celltype")
 #' \dontrun{
-#' generateSJARACNeInput(input_eset = eset ,ref = "hg",funcType="TF",
-#' wd.src = "./",group_name = "celltype")
 #' }
 #' @export
 generateSJARACNeInput<-function(input_eset,ref=NULL,funcType=NULL,wd.src,group_name){
@@ -966,12 +1067,12 @@ generateSJARACNeInput<-function(input_eset,ref=NULL,funcType=NULL,wd.src,group_n
     else if (funcType=="SIG") sig.ref <- ref
     else warning("Activity calculations will not be supported!","\n")
   }
-  if(group_name%in%colnames(pData(input_eset))){
-    groups <- unique(pData(input_eset)[,group_name])
+  if(group_name%in%colnames(Biobase::pData(input_eset))){
+    groups <- unique(Biobase::pData(input_eset)[,group_name])
     all.SJAR.cmd.1 <- c()
     all.SJAR.cmd.2 <- c()
     for (i in 1:length(groups)){
-      grp.tag<-groups[i]; input_eset[,which(pData(input_eset)[,group_name]==grp.tag)] -> eset.sel
+      grp.tag<-groups[i]; input_eset[,which(Biobase::pData(input_eset)[,group_name]==grp.tag)] -> eset.sel
       res <- SJARACNe_filter(eset.sel=eset.sel,tf.ref=tf.ref,sig.ref=sig.ref,wd.src=wd.src,grp.tag=grp.tag)
       print(res)
       #return(c(dir.cur,grp.tag,f.exp,f.tfsig))
@@ -1001,9 +1102,6 @@ generateSJARACNeInput<-function(input_eset,ref=NULL,funcType=NULL,wd.src,group_n
   return(list(lsf=all.SJAR.cmd.1,local=all.SJAR.cmd.2))
 }#end function
 
-
-
-
 ### inner functions
 #' SJARACNe_filter
 #' @description This is the inner function to help generate SJARACNe input for scRNA-seq data,
@@ -1019,30 +1117,30 @@ generateSJARACNeInput<-function(input_eset,ref=NULL,funcType=NULL,wd.src,group_n
 SJARACNe_filter<-function(eset.sel,tf.ref,sig.ref,wd.src,grp.tag){
   cat(grp.tag,'\n')
 
-  #fData(eset.sel)$IQR<-apply(exprs(eset.sel),1,IQR)
+  #Biobase::fData(eset.sel)$IQR<-apply(exprs(eset.sel),1,IQR)
   # exclude genes with all zero
   eset.sel<-eset.sel[apply(exprs(eset.sel),1,function(xx){sum(xx)!=0}),]
 
-  fData(eset.sel)$geneNames<-fData(eset.sel)$geneSymbol
+  Biobase::fData(eset.sel)$geneNames<-Biobase::fData(eset.sel)$geneSymbol
 
   ni<-nrow(eset.sel);ni
   ns<-ncol(eset.sel);ns
-  ng<-nlevels(factor(fData(eset.sel)$geneNames));ng
+  ng<-nlevels(factor(Biobase::fData(eset.sel)$geneNames));ng
   tag<-paste(grp.tag,nrow(eset.sel),ng,ncol(eset.sel),sep='_');tag
 
   dir.cur<-file.path(wd.src,tag);dir.cur
   dir.create(dir.cur,recursive = T)
 
   #write exp data to exp format
-  expdata<-data.frame(cbind(isoformId=featureNames(eset.sel),geneSymbol=fData(eset.sel)$geneSymbol,as.matrix(exprs(eset.sel))),stringsAsFactors = FALSE)
+  expdata<-data.frame(cbind(isoformId=featureNames(eset.sel),geneSymbol=Biobase::fData(eset.sel)$geneSymbol,as.matrix(exprs(eset.sel))),stringsAsFactors = FALSE)
   f.exp<-file.path(dir.cur,paste(grp.tag,"_",ni,"_",ng,"_",ns,".exp",sep=''));f.exp
   write.table(expdata,file=f.exp,sep="\t",row.names=FALSE,quote=FALSE)
 
   if (!is.null(tf.ref)){
     dir.create(file.path(dir.cur,'tf'),recursive = T)
-    tf.eset.sel<-subset(eset.sel,fData(eset.sel)$geneSymbol%in%tf.ref)
+    tf.eset.sel<-subset(eset.sel,Biobase::fData(eset.sel)$geneSymbol%in%tf.ref)
     dim(tf.eset.sel)
-    f.tf<-file.path(dir.cur,'tf',paste(grp.tag,"_",nrow(tf.eset.sel),"_",nlevels(factor(fData(tf.eset.sel)$geneSymbol)),"_",ns,"_tf.txt",sep=''));f.tf
+    f.tf<-file.path(dir.cur,'tf',paste(grp.tag,"_",nrow(tf.eset.sel),"_",nlevels(factor(Biobase::fData(tf.eset.sel)$geneSymbol)),"_",ns,"_tf.txt",sep=''));f.tf
     cat(featureNames(tf.eset.sel),file=f.tf,sep='\n')
     f.tfsig<-f.tf
     dir.cur.tfsig <- sprintf('%s/tf',dir.cur)
@@ -1050,9 +1148,9 @@ SJARACNe_filter<-function(eset.sel,tf.ref,sig.ref,wd.src,grp.tag){
 
   if (!is.null(sig.ref)){
     dir.create(file.path(dir.cur,'sig'),recursive = T)
-    sig.eset.sel<-subset(eset.sel,fData(eset.sel)$geneSymbol%in%sig.ref)
+    sig.eset.sel<-subset(eset.sel,Biobase::fData(eset.sel)$geneSymbol%in%sig.ref)
     dim(sig.eset.sel)
-    f.sig<-file.path(dir.cur,'sig',paste(grp.tag,"_",nrow(sig.eset.sel),"_",nlevels(factor(fData(sig.eset.sel)$geneSymbol)),"_",ns,"_sig.txt",sep=''));f.sig
+    f.sig<-file.path(dir.cur,'sig',paste(grp.tag,"_",nrow(sig.eset.sel),"_",nlevels(factor(Biobase::fData(sig.eset.sel)$geneSymbol)),"_",ns,"_sig.txt",sep=''));f.sig
     cat(featureNames(sig.eset.sel),file=f.sig,sep='\n')
     f.tfsig<-f.sig
     dir.cur.tfsig <- sprintf('%s/sig',dir.cur)

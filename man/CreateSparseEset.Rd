@@ -19,7 +19,7 @@ CreateSparseEset(
 \item{feature.data}{feature data which rownames should be the same as data rownames; Optional; Default as NULL}
 
 \item{add.meta}{logical; Whether or not calculate extra pheonotype info including total number of UMI,
-number of non-zero gene for each cell, mitochondrial percentage and spike-in gene expression percentage and store them in pData}
+number of non-zero gene for each cell, mitochondrial percentage and spike-in gene expression percentage and store them in Biobase::pData}
 }
 \value{
 A customized S4 class using ExpressionSet class as prototype

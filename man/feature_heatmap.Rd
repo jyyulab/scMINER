@@ -50,3 +50,19 @@ a ggplot object
 \description{
 This plot will visualiz feature info in scatter plot by outputing a ggplot object
 }
+\examples{
+demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+                        package = "scMINER")
+load(demo_file)
+genes_of_interest <-c("CD3D", "CD27", "IL7R",
+                      "SELL", "CCR7", "IL32",
+                      "GZMA", "GZMK", "DUSP2",
+                      "CD8A", "GZMH", "GZMB",
+                      "CD79A", "CD79B", "CD86", "CD14")
+scMINER::feature_heatmap(input_eset = pbmc.14k.DS.eset.log2,
+                     target = genes_of_interest,
+                     group_name = "ClusterRes",
+                     save_plot = FALSE,
+                     width = 6, height = 6,
+                     name = "log2Exp")
+}

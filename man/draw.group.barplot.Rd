@@ -9,9 +9,9 @@ draw.group.barplot(input_eset, group_by, color_by, colors = NULL)
 \arguments{
 \item{input_eset}{ExpressionSet that include group information in phenotype data}
 
-\item{group_by}{Group criteria for bars, should be a variable stored in pData(input_eset)}
+\item{group_by}{Group criteria for bars, should be a variable stored in Biobase::pData(input_eset)}
 
-\item{color_by}{Coloring criteria of bar fractions, should be a variable stored in pData(input_eset)}
+\item{color_by}{Coloring criteria of bar fractions, should be a variable stored in Biobase::pData(input_eset)}
 
 \item{colors}{color values to feed in scale_fill_manual, default as NULL; If NULL, then default color for ggplot will be used}
 }
@@ -20,4 +20,12 @@ a ggplot object
 }
 \description{
 Draw barplot for composition study
+}
+\examples{
+demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+                        package = "scMINER")
+load(demo_file)
+draw.group.barplot(pbmc.14k.DS.eset.log2,
+                   group_by = 'celltype',
+                   color_by = 'celltype')
 }

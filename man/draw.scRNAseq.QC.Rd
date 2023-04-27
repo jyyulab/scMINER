@@ -21,7 +21,7 @@ draw.scRNAseq.QC(
 
 \item{output.cutoff}{logical, whether or not return a list of suggested thresholds for filtering}
 
-\item{group}{a character, a variable name indicate groupping information (stored in pData) to
+\item{group}{a character, a variable name indicate groupping information (stored in Biobase::pData) to
 help generate violin plots}
 }
 \value{
@@ -32,4 +32,14 @@ generated a scRNA-seq quality control report in html with Rmarkdown
 }
 \details{
 draw.scRNAseq.QC
+}
+\examples{
+demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+                        package = "scMINER")
+load(demo_file)
+cutoffs <- scMINER::draw.scRNAseq.QC(SparseEset = pbmc.14k.DS.eset.log2,
+               project.name = 'test',
+               plot.dir = '.',
+               group = "group",      # this indicate which meta data information will be use in x axis to group violin plots
+               output.cutoff = TRUE) # whether or not to output suggested cutoffs
 }

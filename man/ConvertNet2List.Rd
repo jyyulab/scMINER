@@ -2,7 +2,9 @@
 % Please edit documentation in R/MINIE.R
 \name{ConvertNet2List}
 \alias{ConvertNet2List}
-\title{Convert Pairwise Network Data Frame to Driver-to-Target List}
+\title{Convert Pairwise Network Data Frame to Driver-to-Target List
+\code{ConvertNet2List} is a helper function in the \code{get.SJAracne.network}.
+But if users have their own pairwise gene network files, they can convert it to driver-to-target list object.}
 \usage{
 ConvertNet2List(net_dat = NULL)
 }
@@ -17,16 +19,15 @@ Each element is a data frame, contains three columns. "target", target gene name
 "MI", mutual information; "spearman", spearman correlation coefficient.
 }
 \description{
+Convert Pairwise Network Data Frame to Driver-to-Target List
 \code{ConvertNet2List} is a helper function in the \code{get.SJAracne.network}.
 But if users have their own pairwise gene network files, they can convert it to driver-to-target list object.
 }
 \examples{
+TF_file <- system.file('PBMC14KDS_DemoDataSet/SJAR/Bcell_11546_11539_77/tf_final/consensus_network_ncol_.txt',
+            package = "scMINER")
+tf.network  <- get.network.scMINER(network_file=TF_file)
+network_list <- ConvertNet2List(tf.network$network_dat)
 \dontrun{
-tf.network.file <- sprintf('\%s/demo1/network/SJAR/project_2019-02-14/\%s/\%s',
-                   system.file(package = "NetBID2"),
-                   'output_tf_sjaracne_project_2019-02-14_out_.final',
-                   'consensus_network_ncol_.txt')
-net_dat      <- read.delim(file=tf.network.file,stringsAsFactors = FALSE)
-target_list  <- ConvertNet2List(net_dat)
 }
 }

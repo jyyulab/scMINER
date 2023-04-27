@@ -27,3 +27,14 @@ A list of top master regulators among different groups
 Help quick pick top master regulators from previous
 differential activity analysis results
 }
+\examples{
+demo_file <- system.file('PBMC14KDS_DemoDataSet/SJAR/DATA/celltype_Activity.RData',
+                                             package = "scMINER")
+load(demo_file)
+DAG_result_tf <- get.DA(input_eset = AC_eset$AC.TF,
+                       group_name = "celltype")
+celltype <- levels(Biobase::pData(AC_eset$AC.TF)[,"celltype"])
+TF_list <- get.Topdrivers(DAG_result = DAG_result_tf,
+                          celltype = celltype,
+                          n = 5, degree_filter = c(50, 600))
+}

@@ -19,3 +19,10 @@ A txt file or a h5 file that could be read in MICA
 \description{
 A utility function that helps generate MICA input from a data matrix with rownames and colnames
 }
+\examples{
+demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+                        package = "scMINER")
+load(demo_file)
+MICA.cmd <- generateMICAinput(eset = pbmc.14k.DS.eset.log2 ,
+                      filepath = '.')
+}

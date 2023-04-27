@@ -19,11 +19,11 @@ draw.marker.bbp(
 \item{ref}{reference dataframe, includes positive or negative markers for different cell types;
 Specify first column as different cell types, second columns as markers, third columns as weight (postive or negative marker)}
 
-\item{input_eset}{expressionSet/SparseExpressionSet object with clustering membership stored in pData}
+\item{input_eset}{expressionSet/SparseExpressionSet object with clustering membership stored in Biobase::pData}
 
-\item{feature}{feature type from second column of your reference , should be in colnames(fData(eset))}
+\item{feature}{feature type from second column of your reference , should be in colnames(Biobase::fData(eset))}
 
-\item{group_name}{a character, the variable containing clustering label in pData(eset); or any other group information stored in pData(eset)}
+\item{group_name}{a character, the variable containing clustering label in Biobase::pData(eset); or any other group information stored in Biobase::pData(eset)}
 
 \item{save_plot}{logical, whether or not save your plot; if TRUE, plot will be saved as plot_name}
 
@@ -43,9 +43,17 @@ Marker visualizatoin from known markers/signatures, requires knowledge-based mar
 Visualize marker score of different cell types on bubbleplot
 }
 \examples{
+demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+                        package = "scMINER")
+load(demo_file)
+markers_file <- system.file('PBMC14KDS_DemoDataSet/DATA/',
+ 'Immune_signatures.xlsx',
+  package = "scMINER")
+markers <- openxlsx::read.xlsx(markers_file)
+draw.marker.bbp(ref = markers, input_eset = pbmc.14k.DS.eset.log2,
+               width = 6, height = 4, feature = "geneSymbol",
+               group_name = "ClusterRes", save_plot = FALSE)
 \dontrun{
-df.ref=data.frame(celltype="Cd4 T",markers=c("Cd8a","Cd4","Cd3g"),weight=c(-1,1,1))
-draw.marker.bbp<-function(ref = df.ref,input_eset, feature='geneSymbol',group_name="ClusterRes", save_plot = FALSE, width=8, height=5)
 }
 
 }

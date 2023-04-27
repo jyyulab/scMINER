@@ -27,7 +27,9 @@ Each edge of the network has two attributes, \code{weight} and \code{sign}.
 correlation coefficient (1, positive regulation; -1, negative regulation).
 }
 \examples{
+TF_file <- system.file('PBMC14KDS_DemoDataSet/SJAR/Bcell_11546_11539_77/tf_final/consensus_network_ncol_.txt',
+            package = "scMINER")
+tf.network  <- get.network.scMINER(network_file=TF_file)
 \dontrun{
-tf.network  <- get.network.scMINER(network_file="consensus_network_ncol_.txt")
 }
 }

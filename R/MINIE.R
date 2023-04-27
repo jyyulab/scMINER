@@ -45,8 +45,10 @@
 #' @return Return a list containing three elements, \code{network_dat}, \code{target_list} and \code{igraph_obj}.
 #'
 #' @examples
+#' TF_file <- system.file('PBMC14KDS_DemoDataSet/SJAR/Bcell_11546_11539_77/tf_final/consensus_network_ncol_.txt',
+#'             package = "scMINER")
+#' tf.network  <- get.network.scMINER(network_file=TF_file)
 #' \dontrun{
-#' tf.network  <- get.network.scMINER(network_file="consensus_network_ncol_.txt")
 #' }
 #' @export
 get.network.scMINER<- function(network_file=NULL){
@@ -62,7 +64,6 @@ get.network.scMINER<- function(network_file=NULL){
 }
 
 #' Convert Pairwise Network Data Frame to Driver-to-Target List
-#'
 #' \code{ConvertNet2List} is a helper function in the \code{get.SJAracne.network}.
 #' But if users have their own pairwise gene network files, they can convert it to driver-to-target list object.
 #'
@@ -75,13 +76,11 @@ get.network.scMINER<- function(network_file=NULL){
 #' "MI", mutual information; "spearman", spearman correlation coefficient.
 #'
 #' @examples
+#' TF_file <- system.file('PBMC14KDS_DemoDataSet/SJAR/Bcell_11546_11539_77/tf_final/consensus_network_ncol_.txt',
+#'             package = "scMINER")
+#' tf.network  <- get.network.scMINER(network_file=TF_file)
+#' network_list <- ConvertNet2List(tf.network$network_dat)
 #' \dontrun{
-#' tf.network.file <- sprintf('%s/demo1/network/SJAR/project_2019-02-14/%s/%s',
-#'                    system.file(package = "NetBID2"),
-#'                    'output_tf_sjaracne_project_2019-02-14_out_.final',
-#'                    'consensus_network_ncol_.txt')
-#' net_dat      <- read.delim(file=tf.network.file,stringsAsFactors = FALSE)
-#' target_list  <- ConvertNet2List(net_dat)
 #' }
 #' @export
 ConvertNet2List <- function(net_dat=NULL) {
@@ -110,14 +109,13 @@ ConvertNet2List <- function(net_dat=NULL) {
   return(all_target)
 }
 
-
 #' GetActivityFromSJARACNe
 #'
 #' @description Allocate network information from SJARACNe and calculate activity score for each hub genes.
 #'
 #' @param SJARACNe_output_path Path to SJARACNe output folder(s)
 #' @param SJARACNe_input_eset Expressionset that you generate input from
-#' @param group_name a string, group name stored in pData that defines expression matrix separation
+#' @param group_name a string, group name stored in Biobase::pData that defines expression matrix separation
 #' @param activity.method c("weighted,unweighted), default to "unweighted"
 #' @param activity.norm logical, default to TRUE.
 #' @param functype character c("tf","sig"); If NULL, both activity from TF and SIG network will be calculated;
@@ -128,21 +126,25 @@ ConvertNet2List <- function(net_dat=NULL) {
 #' @return An expressionset with activity values
 #'
 #' @examples
+#' demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+#'                         package = "scMINER")
+#' load(demo_file)
+#' out.dir.SJAR <- system.file('PBMC14KDS_DemoDataSet/SJAR/',
+#'                         package = "scMINER")
+#' acs.14k.tf <- GetActivityFromSJARACNe(
+#'               SJARACNe_output_path = out.dir.SJAR,
+#'               SJARACNe_input_eset = pbmc.14k.DS.eset.log2,
+#'               activity.method="unweighted",
+#'               activity.norm=TRUE,
+#'               group_name =  "celltype",
+#'               save_network_file=FALSE,
+#'               functype="tf",
+#'               save_path='.')
 #' \dontrun{
-#' acs.12k <- GetActivityFromSJARACNe(
-#'              SJARACNe_output_path ="./",
-#'              SJARACNe_input_eset = eset.12k,
-#'              activity.method="unweighted",
-#'              activity.norm=TRUE,
-#'              group_name = "celltype",
-#'              save_network_file=TRUE, #default as false, but recommended to be TRUE
-#'              save_path="./networks")
 #'}
 #'
 #' @keywords GetActivity
 #' @author Chenxi Qian, \email{chenxi.qian@stjude.org}
-#'
-#'
 #' @export
 GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
                                   SJARACNe_input_eset=NA,
@@ -154,7 +156,7 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
                                   save_path=NULL){
 
   eset<-SJARACNe_input_eset;
-  if(!group_name%in%colnames(pData(eset))){
+  if(!group_name%in%colnames(Biobase::pData(eset))){
     stop('Check your group_name please.','\n')
   }
 
@@ -214,7 +216,7 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
     }
 
     cat("Calculate Activity for ",net,"!",'\n')
-    eset.sel<-eset[,which(pData(eset)[,group_name]==celltypes[i])]
+    eset.sel<-eset[,which(Biobase::pData(eset)[,group_name]==celltypes[i])]
 
     acs1<-get_activity(Net = TF.table$network_dat,tag = "TF",normalize=activity.norm,
                        eset = eset.sel, activity.method = activity.method, use.symbol=TRUE)
@@ -254,12 +256,12 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
                    deg_master[,-1],stringsAsFactors = FALSE)
 
   # Was not getting any values when "row.names", changed to "geneSymbol" since
-  # "fn" in fd is equivalent to "geneSymbol" in fData(eset) -- unsure if this change
+  # "fn" in fd is equivalent to "geneSymbol" in Biobase::fData(eset) -- unsure if this change
   # is 100% correct.
-  fd <-merge(fd,fData(eset),by.x="fn",by.y="geneSymbol")
+  fd <-merge(fd,Biobase::fData(eset),by.x="fn",by.y="geneSymbol")
   rownames(fd)<-fd$ID
 
-  pd <- pData(eset)
+  pd <- Biobase::pData(eset)
 
   acs.mtx <- as.matrix(acs_master[,-1])
   rownames(acs.mtx)<- acs_master$ID
@@ -281,7 +283,7 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
 #' @param tag If network is TF network or SIG network
 #' @param genelist A list of signature gene list
 #' @param use.symbol logical, in network file, use geneSymbol or use geneID
-#' @param feature character, use which feature as ID in fData(eset)
+#' @param feature character, use which feature as ID in Biobase::fData(eset)
 #' @param es.method character, which method to use to calculate actiivty value ("mean","maxmean")
 #' @param activity.method character, which method to use to estimate activity ("weighted","unweighted")
 #' @param normalize logical, if normalize or not
@@ -289,8 +291,19 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
 #'
 #' @details
 #' If network object was loaded by get.network.scMINER function, then network dataframe is could be retrieved under network_dat slot.
+#' @examples
+#' demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+#'                         package = "scMINER")
+#' load(demo_file)
+#' TF_file <- system.file('PBMC14KDS_DemoDataSet/SJAR/Bcell_11546_11539_77/tf_final/consensus_network_ncol_.txt',
+#'             package = "scMINER")
+#' tf.network  <- get.network.scMINER(network_file=TF_file)
+#' acs1<-get_activity(Net = tf.network$network_dat,tag = "TF",
+#'          normalize=T,
+#'          eset = pbmc.14k.DS.eset.log2,
+#'          activity.method = 'unweighted',
+#'          use.symbol=TRUE)
 #' @return
-#'
 #' @export
 get_activity<-function(Net=NULL,
                        eset,
@@ -303,7 +316,7 @@ get_activity<-function(Net=NULL,
                        normalize=TRUE,
                        sep.symbol="."){
 
-  if(!feature%in%colnames(fData(eset))) stop("please check your geneSymbol in fData!","\n")
+  if(!feature%in%colnames(Biobase::fData(eset))) stop("please check your geneSymbol in Biobase::fData!","\n")
   else{cat("Using",feature,"to match targets!","\n")}
 
   if(!is.null(Net)) {
@@ -340,12 +353,12 @@ get_activity<-function(Net=NULL,
     }
 
     #update the overlap between NetBID based geneset and original expression data
-    if(length(intersect(fData(eset)[,feature],gsc[[i]]))==0){
+    if(length(intersect(Biobase::fData(eset)[,feature],gsc[[i]]))==0){
       cat("Genelist",names(gsc)[i], "has no overlap with eset feature names.","\n")
       next
     }
     else{
-      eset.sel<-eset[fData(eset)[,feature]%in%gsc[[i]],]
+      eset.sel<-eset[Biobase::fData(eset)[,feature]%in%gsc[[i]],]
       gsc[[i]]<-featureNames(eset.sel)
     }
 
@@ -360,7 +373,7 @@ get_activity<-function(Net=NULL,
       else if (activity.method == 'weighted'){
 
         fd.sel<-data.frame(fn=featureNames(eset.sel),
-                           geneSymbol=fData(eset.sel)$geneSymbol,
+                           geneSymbol=Biobase::fData(eset.sel)$geneSymbol,
                            stringsAsFactors=FALSE)
 
         tmp<-merge(fd.sel,tmp,by.x="fn",by.y="target",sort = FALSE)
@@ -400,8 +413,6 @@ get_activity<-function(Net=NULL,
 #' @return
 #' Return a data frame. Rows are genes/drivers, columns are "ID", "logFC", "AveExpr", "t", "P.Value", "adj.P.Val", "B", "Z-statistics", "Ave.G1" and "Ave.G0".
 #' Names of the columns may vary from different group names. Sorted by P-values.
-#'
-#'
 #' @examples
 #' \dontrun{
 #' analysis.par <- list()
@@ -420,7 +431,6 @@ get_activity<-function(Net=NULL,
 #'                                 G1_name=each_subtype,
 #'                                 G0_name='other')
 #' }
-#' @export
 getDE.limma <- function(eset=NULL, G1=NULL, G0=NULL,G1_name=NULL,G0_name=NULL,verbose=TRUE,random_effect=NULL) {
   #
   all_input_para <- c('eset','G1','G0','verbose')
@@ -492,56 +502,52 @@ getDE.limma <- function(eset=NULL, G1=NULL, G0=NULL,G1_name=NULL,G0_name=NULL,ve
   return(tT)
 }
 
-
-
-
-
-
 #' @title Find differential activity genes from activity matrix
 #'
 #' @description  \code{get.DA} is a wraper of (\code{DAG_test}, and \code{getDE.limma}),
 #'  which helps to conduct two_sided t.test on all genes in specific group VS Others
 #'  to find differential activity genes, a table with essential statistics will be outputted.
 #'
-#' @param input_eset ExpressionSet that stores group information in pData
-#' @param group_name a character string, column name in pData(input_eset) that indicates group info
+#' @param input_eset ExpressionSet that stores group information in Biobase::pData
+#' @param group_name a character string, column name in Biobase::pData(input_eset) that indicates group info
 #' @param group_case NULL(If do get.DA for all group vs others) or a character string (one specific group vs others) of
-#'  column name in pData(input_eset) that indicates group info
+#'  column name in Biobase::pData(input_eset) that indicates group info
 #' @param group_ctrl NULL(If one vs Others); a character indicate case group if do pairwise analysis
 #' @param method a character from c("t.test", "limma"), which method will be used to identify differential activity gene
 #' @return output would be a data.frame containing: t.statistics, p.value, log2FC, z.score, and mean Activity value
 #'
-#' @seealso DAG_ttest; getDE.limma
 #' @examples
-#' \dontrun{get.DA(eset, group_name="group")}
-#'  # Try find DAG for only group 1
-#'  \dontrun{get.DA(eset, group_name="group",group_case="group1")}
+#' demo_file <- system.file('PBMC14KDS_DemoDataSet/SJAR/DATA/celltype_Activity.RData',
+#'                                              package = "scMINER")
+#' load(demo_file)
+#' DAG_result_tf <- get.DA(input_eset = AC_eset$AC.TF,
+#'                        group_name = "celltype")
 #' @export
 get.DA<-function(input_eset=NULL,group_name="celltype",group_case=NULL, group_ctrl=NULL, method="t.test"){
 
   d<-data.frame(id = featureNames(input_eset), exprs(input_eset), stringsAsFactors=FALSE)
-  rs <- fData(input_eset);rs$id <- d$id
+  rs <- Biobase::fData(input_eset);rs$id <- d$id
 
-  if(!group_name%in%colnames(pData(input_eset))) {
+  if(!group_name%in%colnames(Biobase::pData(input_eset))) {
     stop('Please check your group_name.',"\n")}
 
 
   if(!is.null(group_case)){
-    if(!group_case%in%pData(input_eset)[,group_name]){
+    if(!group_case%in%Biobase::pData(input_eset)[,group_name]){
       stop('Please check your group_case.',"\n")
     }
 
     if(!is.null(group_ctrl)){
-      if(!group_case%in%pData(input_eset)[,group_name]){
+      if(!group_case%in%Biobase::pData(input_eset)[,group_name]){
         stop('Please check your group_ctrl',"\n")
       }
-      input_eset<-input_eset[,which(pData(input_eset)[,group_name]%in%c(group_case,group_ctrl))]
+      input_eset<-input_eset[,which(Biobase::pData(input_eset)[,group_name]%in%c(group_case,group_ctrl))]
     }else{
       group_ctrl<-"Others"
     }
 
     cat("Find differential activity genes for ", group_case ," vs ",group_ctrl, "only!","\n")
-    input_eset$da_group <- ifelse(pData(input_eset)[,group_name]==group_case,"Aim","Ctrl") #label info
+    input_eset$da_group <- ifelse(Biobase::pData(input_eset)[,group_name]==group_case,"Aim","Ctrl") #label info
 
     if(method=="t.test"){
       da <- plyr::ddply(d,'id','DAG_ttest',group=input_eset$da_group)
@@ -560,9 +566,9 @@ get.DA<-function(input_eset=NULL,group_name="celltype",group_case=NULL, group_ct
     #do all group cases in all
     if (method=="t.test"){
 
-      da.list <- lapply(unique(pData(input_eset)[,group_name]),function(xx){
+      da.list <- lapply(unique(Biobase::pData(input_eset)[,group_name]),function(xx){
 
-        d.label <- ifelse(pData(input_eset)[,group_name] == xx, "Aim", "Ctrl") #label info
+        d.label <- ifelse(Biobase::pData(input_eset)[,group_name] == xx, "Aim", "Ctrl") #label info
 
         da <- plyr::ddply(d,'id','DAG_ttest',group=d.label)
 
@@ -592,11 +598,11 @@ get.DA<-function(input_eset=NULL,group_name="celltype",group_case=NULL, group_ct
                           starts_with("log2FC"))
     }else {
       #use limma
-      da.list <- lapply(unique(pData(input_eset)[,group_name]),function(xx){
+      da.list <- lapply(unique(Biobase::pData(input_eset)[,group_name]),function(xx){
         da <- getDE.limma(eset=input_eset,
                           G1_name=xx,G0_name = "Others",
-                          G1=colnames(input_eset[,which(pData(input_eset)[,group_name]==xx)]),
-                          G0=colnames(input_eset[,which(pData(input_eset)[,group_name]!=xx)]),
+                          G1=colnames(input_eset[,which(Biobase::pData(input_eset)[,group_name]==xx)]),
+                          G0=colnames(input_eset[,which(Biobase::pData(input_eset)[,group_name]!=xx)]),
                           verbose=FALSE)
         indx<-match(rs$id, da$ID)
         da<-da[indx,]
@@ -632,6 +638,16 @@ get.DA<-function(input_eset=NULL,group_name="celltype",group_case=NULL, group_ct
 #' @param degree_filter filter out drivers with target number less than certain value
 #' @param celltype character, output top hits are from which celltype
 #' @return A list of top master regulators among different groups
+#' @examples
+#' demo_file <- system.file('PBMC14KDS_DemoDataSet/SJAR/DATA/celltype_Activity.RData',
+#'                                              package = "scMINER")
+#' load(demo_file)
+#' DAG_result_tf <- get.DA(input_eset = AC_eset$AC.TF,
+#'                        group_name = "celltype")
+#' celltype <- levels(Biobase::pData(AC_eset$AC.TF)[,"celltype"])
+#' TF_list <- get.Topdrivers(DAG_result = DAG_result_tf,
+#'                           celltype = celltype,
+#'                           n = 5, degree_filter = c(50, 600))
 #' @export
 get.Topdrivers <- function(DAG_result= DAG_result, n=5, degree_filter=c(50,500), celltype=NULL){
 
@@ -663,7 +679,6 @@ get.Topdrivers <- function(DAG_result= DAG_result, n=5, degree_filter=c(50,500),
   cat("Done!")
   return(res)
 }
-
 
 #' Combine P Values Using Fisher's Method or Stouffer's Method
 #'

@@ -32,7 +32,10 @@ PLOT/, storing plot files;
 This function also returns a list object (example, \code{scminer.par} in the demo) with directory information wrapped inside.
 }
 \examples{
-
+project_main_dir <- '../test'
+project_name <- 'PBMC14KDS'
+scminer.par <- scMINER::scMINER.dir.create(project_main_dir = project_main_dir,
+                                        project_name = project_name)
 \dontrun{
 # Creating a main working directory under the current working directory by folder name
 scminer.par <- scMINER.dir.create("MyMainDir","MyProject")

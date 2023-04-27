@@ -104,7 +104,7 @@ To load data from standard 10x genomics files, creating a `SparseEset` directly 
 
 ```{r}
 ## Option1: load data from standard 10x genomics files
-demo_dir <- base::system.file('PBMC14KDS_DemoDataSet/DATA/10X/',
+demo_dir <- system.file('PBMC14KDS_DemoDataSet/DATA/10X/',
                               package = "scMINER")
 pbmc.14k.DS.eset <- scMINER::readscRNAseqData(file = demo_dir,
                                               is.10x = T,
@@ -254,7 +254,7 @@ If the user only want to test the code in this section, load the RData from scMI
 
 ```r
 # or load from R package
-demo_file <- base::system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
                          package = "scMINER")
 load(demo_file)
 ```
@@ -271,7 +271,7 @@ Here, we use the demo file from scMINER package.
 
 ```{r}
 ## or use file from R package
-scminer.par$out.dir.MICA_output <- base::system.file('PBMC14KDS_DemoDataSet/MICA/clustering_umap_euclidean_19.txt',
+scminer.par$out.dir.MICA_output <- system.file('PBMC14KDS_DemoDataSet/MICA/clustering_umap_euclidean_19.txt',
              package = "scMINER")
 ```
 
@@ -338,7 +338,7 @@ scMINER::feature_heatmap(input_eset = pbmc.14k.DS.eset.log2,
 With a pre-defined marker gene list, `marker_bbplot()` function calculates a cell type signature score (weighted mean using the given weights in the marker list) for each cluster, and visualize all the signature scores using a bubble plot. Here, we curated a list of well-known marker genes of 9 common immune cell types and use these genes to calculate a marker score for each of the predicted PBMC clusters. **Note: the pre-defined marker gene list has a required format. See `head(makers)` below**.
 
 ```{r,fig.width=15,fig.height=18}
-markers_file <- base::system.file('PBMC14KDS_DemoDataSet/DATA/',
+markers_file <- system.file('PBMC14KDS_DemoDataSet/DATA/',
                   'Immune_signatures.xlsx',
                   package = "scMINER")
 markers <- openxlsx::read.xlsx(markers_file)
@@ -420,7 +420,7 @@ Activity calculation is the basis of driver estimation in scMINER. To infer driv
 Users can set the `scminer.par$out.dir.SJAR` to the demo output directory in the R package to testify the codes in this section.
 
 ```{r}
-scminer.par$out.dir.SJAR <- base::system.file('PBMC14KDS_DemoDataSet/SJAR/',
+scminer.par$out.dir.SJAR <- system.file('PBMC14KDS_DemoDataSet/SJAR/',
              package = "scMINER")
 ```
 
