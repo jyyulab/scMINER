@@ -489,13 +489,16 @@ draw.marker.bbp<-function(ref = NULL,input_eset,
 
   n_mtx<-(ac>0.5)
   df_n<-data.frame(label=Biobase::pData(input_eset)[,group_name],n_mtx)
-  df_n<-aggregate(.~label,df_n,mean)
+  tmp1 <- aggregate(df_n,by=list(df_n$label),mean);tmp1$label<-tmp1$Group.1;df_n <- tmp1[,-1]
+  #df_n<-aggregate(.~label,df_n,mean)
   library(reshape2)
   df_n_melt<-melt(df_n,id.vars = "label")
 
   df<-data.frame(label=Biobase::pData(input_eset)[,group_name],ac_norm);
   df<-df[,colSums(is.na(df))<nrow(df)];#remove NA columns
-  df<-aggregate(.~label,df,mean)
+  #df<-aggregate(.~label,df,mean)
+  tmp1 <- aggregate(df,by=list(df$label),mean);tmp1$label<-tmp1$Group.1;df <- tmp1[,-1]
+  #
   input<-t(apply(df[,-1],1,scale))#row normalization
   input<-as.data.frame(cbind(df[,1],input))
   rownames(input)<-rownames(df)
@@ -508,7 +511,7 @@ draw.marker.bbp<-function(ref = NULL,input_eset,
     d<-cbind(df_melt,df_n_melt[,3])
     colnames(d)<-c("Cluster", "CellType", "MarkerScore","ExpressionPercentage")
     d$Cluster<-as.factor(d$Cluster)
-
+    d$MarkerScore <- as.numeric(d$MarkerScore)
     p<- draw.bubblePlot2(df=d, xlab="Cluster",ylab="CellType",
                         clab="MarkerScore",slab="ExpressionPercentage",
                         plot.title="Cell type annotation for each cluster")

@@ -179,8 +179,9 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
   if(length(output.files)==0) stop ("Please check your SJARACNe output path!",'\n')
   ##
   net.names<-gsub(SJARACNe_output_path,"",output.files)
-  net.names<-gsub("\\_.*","",net.names);
+  #net.names<-gsub("\\_.*","",net.names);
   net.names<-gsub("^/","",net.names);
+  net.names <- gsub('^(.*)_\\d+_\\d+_\\d+/.*','\\1',net.names)
   #net.names<-gsub("[/]","",net.names)
   celltypes<-unique(net.names)
   print(celltypes)
@@ -211,7 +212,7 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
 
     if(save_network_file){
       if(!is.null(TF.table)) save(TF.table,file=file.path(save_path,paste0(net,".TF.network.RData")))
-      if(!is.null(SIG.table)) save(SIG.table,file=file.path(save_path,paste0(net,".TF.network.RData")))
+      if(!is.null(SIG.table)) save(SIG.table,file=file.path(save_path,paste0(net,".SIG.network.RData")))
       cat("Network saved for ", net,"\n")
     }
 
@@ -561,10 +562,9 @@ get.DA<-function(input_eset=NULL,group_name="celltype",group_case=NULL, group_ct
     }
   }else{
 
-    cat('\n','Find Differential Activity TF for all groups!','\n')
+    cat('\n','Find Differential Activity Driver for all groups!','\n')
 
     #do all group cases in all
-    if (method=="t.test"){
 
       da.list <- lapply(unique(Biobase::pData(input_eset)[,group_name]),function(xx){
 
