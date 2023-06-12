@@ -528,7 +528,8 @@ get.DA<-function(input_eset=NULL,group_name="celltype",group_case=NULL, group_ct
 
   d<-data.frame(id = featureNames(input_eset), exprs(input_eset), stringsAsFactors=FALSE)
   rs <- fData(input_eset);rs$id <- d$id
-
+  if('fn' %in% colnames(d) & !'geneSymbol' %in% colnames(d)) d$geneSymbol <- d$fn
+  if('fn' %in% colnames(rs) & !'geneSymbol' %in% colnames(rs)) rs$geneSymbol <- rs$fn
   if(!group_name%in%colnames(pData(input_eset))) {
     stop('Please check your group_name.',"\n")}
 
