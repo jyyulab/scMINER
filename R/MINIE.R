@@ -527,28 +527,28 @@ getDE.limma <- function(eset=NULL, G1=NULL, G0=NULL,G1_name=NULL,G0_name=NULL,ve
 get.DA<-function(input_eset=NULL,group_name="celltype",group_case=NULL, group_ctrl=NULL, method="t.test"){
 
   d<-data.frame(id = featureNames(input_eset), exprs(input_eset), stringsAsFactors=FALSE)
-  rs <- Biobase::fData(input_eset);rs$id <- d$id
+  rs <- fData(input_eset);rs$id <- d$id
 
-  if(!group_name%in%colnames(Biobase::pData(input_eset))) {
+  if(!group_name%in%colnames(pData(input_eset))) {
     stop('Please check your group_name.',"\n")}
 
 
   if(!is.null(group_case)){
-    if(!group_case%in%Biobase::pData(input_eset)[,group_name]){
+    if(!group_case%in%pData(input_eset)[,group_name]){
       stop('Please check your group_case.',"\n")
     }
 
     if(!is.null(group_ctrl)){
-      if(!group_case%in%Biobase::pData(input_eset)[,group_name]){
+      if(!group_case%in%pData(input_eset)[,group_name]){
         stop('Please check your group_ctrl',"\n")
       }
-      input_eset<-input_eset[,which(Biobase::pData(input_eset)[,group_name]%in%c(group_case,group_ctrl))]
+      input_eset<-input_eset[,which(pData(input_eset)[,group_name]%in%c(group_case,group_ctrl))]
     }else{
       group_ctrl<-"Others"
     }
 
     cat("Find differential activity genes for ", group_case ," vs ",group_ctrl, "only!","\n")
-    input_eset$da_group <- ifelse(Biobase::pData(input_eset)[,group_name]==group_case,"Aim","Ctrl") #label info
+    input_eset$da_group <- ifelse(pData(input_eset)[,group_name]==group_case,"Aim","Ctrl") #label info
 
     if(method=="t.test"){
       da <- plyr::ddply(d,'id','DAG_ttest',group=input_eset$da_group)
@@ -562,13 +562,14 @@ get.DA<-function(input_eset=NULL,group_name="celltype",group_case=NULL, group_ct
     }
   }else{
 
-    cat('\n','Find Differential Activity Driver for all groups!','\n')
+    cat('\n','Find Differential Activity TF for all groups!','\n')
 
     #do all group cases in all
+    if (method=="t.test"){
 
-      da.list <- lapply(unique(Biobase::pData(input_eset)[,group_name]),function(xx){
+      da.list <- lapply(unique(pData(input_eset)[,group_name]),function(xx){
 
-        d.label <- ifelse(Biobase::pData(input_eset)[,group_name] == xx, "Aim", "Ctrl") #label info
+        d.label <- ifelse(pData(input_eset)[,group_name] == xx, "Aim", "Ctrl") #label info
 
         da <- plyr::ddply(d,'id','DAG_ttest',group=d.label)
 
@@ -584,9 +585,7 @@ get.DA<-function(input_eset=NULL,group_name="celltype",group_case=NULL, group_ct
 
       rs.tmp <- as.data.frame(da.list,stringsAsFactors=FALSE)
       rs.full <- merge(rs,rs.tmp,by='id');rm(rs.tmp)
-      if(!'geneSymbol' %in% colnames(rs.full) & 'fn' %in% colnames(rs.full)){
-        rs.full$geneSymbol <-rs.full$fn
-      }
+
       rs <- dplyr::select(rs.full,
                           geneSymbol,
                           id:FuncType,
@@ -598,11 +597,11 @@ get.DA<-function(input_eset=NULL,group_name="celltype",group_case=NULL, group_ct
                           starts_with("log2FC"))
     }else {
       #use limma
-      da.list <- lapply(unique(Biobase::pData(input_eset)[,group_name]),function(xx){
+      da.list <- lapply(unique(pData(input_eset)[,group_name]),function(xx){
         da <- getDE.limma(eset=input_eset,
                           G1_name=xx,G0_name = "Others",
-                          G1=colnames(input_eset[,which(Biobase::pData(input_eset)[,group_name]==xx)]),
-                          G0=colnames(input_eset[,which(Biobase::pData(input_eset)[,group_name]!=xx)]),
+                          G1=colnames(input_eset[,which(pData(input_eset)[,group_name]==xx)]),
+                          G0=colnames(input_eset[,which(pData(input_eset)[,group_name]!=xx)]),
                           verbose=FALSE)
         indx<-match(rs$id, da$ID)
         da<-da[indx,]
@@ -611,9 +610,7 @@ get.DA<-function(input_eset=NULL,group_name="celltype",group_case=NULL, group_ct
 
       rs.tmp <- as.data.frame(da.list,stringsAsFactors=FALSE)
       rs.full <- merge(rs,rs.tmp,by.x='id',by.y="ID");rm(rs.tmp);rm(da.list)
-      if(!'geneSymbol' %in% colnames(rs.full) & 'fn' %in% colnames(rs.full)){
-        rs.full$geneSymbol <-rs.full$fn
-      }
+
       rs <- dplyr::select(rs.full,
                           geneSymbol,
                           id:FuncType,
