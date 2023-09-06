@@ -252,8 +252,8 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
   # generate acs expression set
   deg_master<-filter(deg_master,!is.na(ID))
   fd <- data.frame(ID=deg_master$ID,
-                   fn=sapply(strsplit(deg_master$ID,"\\."),"[",1),
-                   FuncType=sapply(strsplit(deg_master$ID,"\\."),"[",2),
+                   fn=gsub('(.*)\\.[TF|SIG].*','\\1',deg_master$ID),
+                   FuncType=gsub('(.*)\\.([TF|SIG].*)','\\2',deg_master$ID),
                    deg_master[,-1],stringsAsFactors = FALSE)
 
   # Was not getting any values when "row.names", changed to "geneSymbol" since
@@ -271,7 +271,8 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
   acs.mtx<-acs.mtx[-which(is.na(rownames(acs.mtx))),]
 
   acs.eset<-new("ExpressionSet",phenoData= new("AnnotatedDataFrame",pd),
-                featureData=new("AnnotatedDataFrame",fd), annotation="",exprs=as.matrix(acs.mtx))
+                featureData=new("AnnotatedDataFrame",fd),
+                annotation="",exprs=as.matrix(acs.mtx))
 
   return(acs.eset)
 }#end activity function

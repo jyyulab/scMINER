@@ -324,6 +324,7 @@ readscRNAseqData <- function(file, is.10x=TRUE, CreateSparseEset=TRUE, add.meta=
 #' @param project.name a character, project name to print on report
 #' @param plot.dir a character, output directory for QC reports
 #' @param output.cutoff logical, whether or not return a list of suggested thresholds for filtering
+#' @param only.cutoff logical, whether or not only return cuttoff without plotting QC
 #' @param group a character, a variable name indicate groupping information (stored in Biobase::pData) to
 #' help generate violin plots
 #'
@@ -340,7 +341,7 @@ readscRNAseqData <- function(file, is.10x=TRUE, CreateSparseEset=TRUE, add.meta=
 #' @export
 draw.scRNAseq.QC<-function(SparseEset,project.name,
                            plot.dir="./QC/",
-                           output.cutoff=TRUE,group="group"){
+                           output.cutoff=TRUE,group="group",only.cutoff=FALSE){
   if(!dir.exists(plot.dir)) {dir.create(plot.dir)}
 
   #Calcualte Cutoffs
@@ -351,7 +352,7 @@ draw.scRNAseq.QC<-function(SparseEset,project.name,
             nGene_cf = max(floor(exp(median(log(pd$nGene)) - 3 * mad(log(pd$nGene)))),50),
             ERCC_cf = round(median(pd$percent.spikeIn) + 3 * mad(pd$percent.spikeIn),4),
             mito_cf = round(median(pd$percent.mito) + 3 * mad(pd$percent.mito),4))
-
+  if(only.cutoff==TRUE) return(cfs)
   rmarkdown::render(input=system.file("rmd", "SparseEset_QC_report.Rmd", package = "scMINER"),
                     output_dir = plot.dir,
                     output_file = paste0(project.name,"_scRNAseq_QC.html"),
@@ -493,7 +494,6 @@ draw.marker.bbp<-function(ref = NULL,input_eset,
   #df_n<-aggregate(.~label,df_n,mean)
   library(reshape2)
   df_n_melt<-melt(df_n,id.vars = "label")
-
   df<-data.frame(label=Biobase::pData(input_eset)[,group_name],ac_norm);
   df<-df[,colSums(is.na(df))<nrow(df)];#remove NA columns
   #df<-aggregate(.~label,df,mean)
@@ -504,7 +504,8 @@ draw.marker.bbp<-function(ref = NULL,input_eset,
   rownames(input)<-rownames(df)
   colnames(input)<-colnames(df)
   df_melt<-melt(input,id.vars = "label")
-
+  ##
+  df_n_melt<-melt(df_n[,colnames(input)],id.vars = "label") # 20230724
 
   if(all(df_melt[,c(1,2)]==df_n_melt[,c(1,2)])){
 
@@ -1171,7 +1172,8 @@ SJARACNe_filter<-function(eset.sel,tf.ref,sig.ref,wd.src,grp.tag){
 #' @param plot.title string
 #' @return a ggplot object
 draw.bubblePlot2<-function(df=NULL,xlab,ylab,clab,slab,
-                           low.col="#004C99",high.col="#CC0000",plot.title=NULL){
+                           low.col="#004C99",high.col="#CC0000",plot.title=NULL,
+                           xlab_angle=0,xlab_hjust=0.5){
 
   p <- ggplot(df, aes_string(x= xlab, y= ylab)) +
     theme_classic()+
@@ -1181,10 +1183,9 @@ draw.bubblePlot2<-function(df=NULL,xlab,ylab,clab,slab,
     scale_y_discrete(limits=levels(df[,ylab]))+
     theme(panel.grid.major= element_line(colour = "grey",size=0.3),
           panel.grid.minor = element_line(colour = "grey",size=0.3),
-          axis.text.x = element_text(size = 12),
+          axis.text.x = element_text(size = 12,angle = xlab_angle, hjust = xlab_hjust),
           axis.text.y = element_text(size = 12))
   labs(x = xlab, y = ylab, title = plot.title)
-
   return(p)
 }
 #############

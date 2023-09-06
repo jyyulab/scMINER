@@ -1,11 +1,11 @@
-######-
+---
 title: "Tutorial for scMINER"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Tutorial for scMINER}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-######-
+---
 
 *scMINER* is an R package for preprocessing, QC, clustering, and *hidden driver analysis* of single-cell RNA-seq data. scMINER enables mutual information-based cell clustering, cell-type-specific gene regulatory network (GRN) reverse engineering and protein activity inference, to identify hidden transcriptional factors (TFs) and signaling factors (SIGs) driving cellular lineage differentiation and tissue specific specification. 
 

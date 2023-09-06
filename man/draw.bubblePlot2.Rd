@@ -12,7 +12,9 @@ draw.bubblePlot2(
   slab,
   low.col = "#004C99",
   high.col = "#CC0000",
-  plot.title = NULL
+  plot.title = NULL,
+  xlab_angle = 0,
+  xlab_hjust = 0.5
 )
 }
 \arguments{

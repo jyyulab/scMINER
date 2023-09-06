@@ -9,7 +9,8 @@ draw.scRNAseq.QC(
   project.name,
   plot.dir = "./QC/",
   output.cutoff = TRUE,
-  group = "group"
+  group = "group",
+  only.cutoff = FALSE
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ draw.scRNAseq.QC(
 
 \item{group}{a character, a variable name indicate groupping information (stored in Biobase::pData) to
 help generate violin plots}
+
+\item{only.cutoff}{logical, whether or not only return cuttoff without plotting QC}
 }
 \value{
 an R markdown QC report and a list of suggested threshold (if specify)
