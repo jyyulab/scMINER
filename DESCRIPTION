@@ -30,7 +30,8 @@ Imports:
     methods (>= 4.0.3),
     ComplexHeatmap (>= 2.6.2),
     igraph (>= 1.2.6),
-    rhdf5 (>= 2.34.0)
+    rhdf5 (>= 2.34.0),
+    renv
 Suggests:
     NetBID2 (>= 2.0.3),
     openxlsx (>= 4.2.3),

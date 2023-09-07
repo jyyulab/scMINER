@@ -46,7 +46,7 @@ python setup.py build     # build SJARACNe binary
 python setup.py install
 cd ../
 ## install scMINER(MINIE)
-conda install -c -r r-base=4.0.3            # Install R (Bioconductor Version 3.12)
+conda install -c conda-forge r-base=4.0.3   # Install R (Bioconductor Version 3.12)
 conda install -c conda-forge r-devtools     # Install R devtools
 conda install -c conda-forge r-biocmanager  # Install R BiocManager
 ```

@@ -38,7 +38,7 @@ python setup.py build     # build SJARACNe binary
 python setup.py install
 cd ../
 ## install scMINER(MINIE)
-conda install -c -r r-base=4.0.3            # Install R (Bioconductor Version 3.12)
+conda install -c conda-forge r-base=4.0.3   # Install R (Bioconductor Version 3.12)
 conda install -c conda-forge r-devtools     # Install R devtools
 conda install -c conda-forge r-biocmanager  # Install R BiocManager
 ```
@@ -285,7 +285,7 @@ pbmc.14k.DS.eset.log2 <- scMINER::readMICAoutput(eset = pbmc.14k.DS.eset.log2,
 
 `MICAplot()` function can be used to visualize MICA clustering results using `ggplot`.
 
-```{r,fig.width=15,fig.height=18}
+```{r,fig.width=8,fig.height=8}
 ## draw MICA results
 scMINER::MICAplot(input_eset = pbmc.14k.DS.eset.log2, X = "X", Y = "Y",
                   color_by = "ClusterRes", pct = 0.5)
@@ -297,7 +297,7 @@ scMINER::MICAplot(input_eset = pbmc.14k.DS.eset.log2, X = "X", Y = "Y",
 
 To help with identifing the optimal number of clusters and annotating the clusters, selected marker genes can be visualized with UMAP/t-SNE scatterplots, violin plots or heatmap plots via function `feature_highlighting()`, `feature_vlnplot()` and `feature_heatmap()` respectively.
 
-```{r,fig.width=15,fig.height=18}
+```{r,fig.width=8,fig.height=8}
 genes_of_interest <-c("CD3D", "CD27", "IL7R",
                       "SELL", "CCR7", "IL32",
                       "GZMA", "GZMK", "DUSP2",
@@ -313,7 +313,7 @@ scMINER::feature_highlighting(input_eset = pbmc.14k.DS.eset.log2,
 ```
 
 
-```{r,fig.width=15,fig.height=18}
+```{r,fig.width=8,fig.height=8}
 scMINER::feature_vlnplot(input_eset = pbmc.14k.DS.eset.log2,
                          target = genes_of_interest,
                          feature = "geneSymbol",
@@ -322,7 +322,7 @@ scMINER::feature_vlnplot(input_eset = pbmc.14k.DS.eset.log2,
 ```  
   
   
-```{r,fig.width=15,fig.height=18}
+```{r,fig.width=8,fig.height=8}
 scMINER::feature_heatmap(input_eset = pbmc.14k.DS.eset.log2,
                          target = genes_of_interest,
                          group_name = "ClusterRes",
@@ -337,7 +337,7 @@ scMINER::feature_heatmap(input_eset = pbmc.14k.DS.eset.log2,
 
 With a pre-defined marker gene list, `marker_bbplot()` function calculates a cell type signature score (weighted mean using the given weights in the marker list) for each cluster, and visualize all the signature scores using a bubble plot. Here, we curated a list of well-known marker genes of 9 common immune cell types and use these genes to calculate a marker score for each of the predicted PBMC clusters. **Note: the pre-defined marker gene list has a required format. See `head(makers)` below**.
 
-```{r,fig.width=15,fig.height=18}
+```{r,fig.width=8,fig.height=8}
 markers_file <- system.file('PBMC14KDS_DemoDataSet/DATA/',
                   'Immune_signatures.xlsx',
                   package = "scMINER")
@@ -426,7 +426,7 @@ scminer.par$out.dir.SJAR <- system.file('PBMC14KDS_DemoDataSet/SJAR/',
 
 Since scRNA-seq data is extremely sparse and noisy, please set `activity.method` as `'unweighted'`. 
 
-```{r,fig.width=15,fig.height=18}
+```{r,fig.width=8,fig.height=8}
 ### Step1: Calculate activity from SJARACNe output
 acs.14k.tf <- GetActivityFromSJARACNe(
   SJARACNe_output_path = scminer.par$out.dir.SJAR,
@@ -461,7 +461,7 @@ save(AC_eset,file=scminer.par$out.dir.AC)
 The function `get.DA()` was designed to perform differential activity analysis from SJARACNe inferred activity matrix. In this function, two-sided student's t-test will be performed to compare mean activity from one cell type V.S. the others. It will return a data frame that includes all TF occurred in original data. Statistics such as t.statistics, p-value, 95%CI, etc. are output to help identify hidden drivers. You can save it to file in order to check them manually. 
 
 
-```{r,fig.width=15,fig.height=18}
+```{r,fig.width=8,fig.height=8}
 ### Step2: Driver estimation by differential activity analysis
 DAG_result_tf <- get.DA(input_eset = acs.14k.tf,
                         group_name = scminer.par$SJAR.group.name)
@@ -471,7 +471,7 @@ DAG_result_sig <- get.DA(input_eset = acs.14k.sig,
 
 We also offer a function called `get.Topdrivers()` to help picking top drivers for each cell type. You can specify `n` as maximum number of top drivers to pick, and `degree_filter` to restrict number of targets.
 
-```{r,fig.width=15,fig.height=18}
+```{r,fig.width=8,fig.height=8}
 celltype <- levels(pData(pbmc.14k.DS.eset.log2)[,scminer.par$SJAR.group.name])
 TF_list <- get.Topdrivers(DAG_result = DAG_result_tf,
                           celltype = celltype,
@@ -489,7 +489,7 @@ p
 
 Finally, save parameter object for the project management.
 
-```{r,fig.width=15,fig.height=18}
+```{r,fig.width=8,fig.height=8}
 #### Step4: update parameter object
 save(scminer.par,file=scminer.par$out.dir.DATA_par)
 ```
