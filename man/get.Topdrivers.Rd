@@ -28,7 +28,7 @@ Help quick pick top master regulators from previous
 differential activity analysis results
 }
 \examples{
-demo_file <- system.file('PBMC14KDS_DemoDataSet/SJAR/DATA/celltype_Activity.RData',
+demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/celltype_Activity.RData',
                                              package = "scMINER")
 load(demo_file)
 DAG_result_tf <- get.DA(input_eset = AC_eset$AC.TF,

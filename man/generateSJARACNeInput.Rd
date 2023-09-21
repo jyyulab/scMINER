@@ -8,6 +8,9 @@ generateSJARACNeInput(
   input_eset,
   ref = NULL,
   funcType = NULL,
+  input_driver = NULL,
+  sampleN = 1000,
+  seed = 1,
   wd.src,
   group_name
 )
@@ -18,6 +21,12 @@ generateSJARACNeInput(
 \item{ref}{c("hg", "mm"), could be a manually defined geneSymbol vector}
 
 \item{funcType}{c("TF","SIG", NULL), if NULL then both TF and SIG will be considered}
+
+\item{input_driver, }{a list of drivers for calculation. If NULL, curated driver list in the R package will be used.}
+
+\item{sampleN}{integer, number of cells that should be sampled per group for computational efficiency purpose, default is 1000. If sampleN=NULL, no sampling will be performed.}
+
+\item{seed}{integer, the random seed for sampling, default is 1.}
 
 \item{wd.src}{output path}
 

@@ -22,7 +22,10 @@ A sparse expressionSet object
 Read MICA input and output to create an expressionSet for downstream analysis
 }
 \examples{
-MICA_output <- system.file('PBMC14KDS_DemoDataSet/MICA/clustering_umap_euclidean_19.txt',
+demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+                        package = "scMINER")
+load(demo_file)
+MICA_output <- system.file('PBMC14KDS_DemoDataSet/MICA/clustering_umap_euclidean_19.txt',package = "scMINER")
 pbmc.14k.DS.eset.log2 <- scMINER::readMICAoutput(eset = pbmc.14k.DS.eset.log2,
                           load_ClusterRes = TRUE,
                           output_file = MICA_output)

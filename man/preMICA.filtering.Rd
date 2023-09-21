@@ -7,11 +7,11 @@
 preMICA.filtering(
   SparseEset,
   cutoffs,
-  gene_filter = T,
-  nGene_filter = T,
-  nUMI_filter = T,
-  ERCC_filter = T,
-  Mito_filter = T
+  gene_filter = TRUE,
+  nGene_filter = TRUE,
+  nUMI_filter = TRUE,
+  ERCC_filter = TRUE,
+  Mito_filter = TRUE
 )
 }
 \arguments{
@@ -42,6 +42,12 @@ preMICA.filtering
 demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
                         package = "scMINER")
 load(demo_file)
-pbmc.14k.DS.eset.filter <- scMINER::preMICA.filtering(SparseEset = pbmc.14k.DS.eset.log2,
+cutoffs <- draw.scRNAseq.QC(SparseEset = pbmc.14k.DS.eset.log2,
+                                     project.name = project_name,
+                                     plot.dir = 'test/',
+                                     group = "group",
+                                     output.cutoff = TRUE,
+                                     only.cutoff = TRUE)
+pbmc.14k.DS.eset.filter <- preMICA.filtering(SparseEset = pbmc.14k.DS.eset.log2,
       cutoffs = cutoffs)
 }

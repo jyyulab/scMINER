@@ -301,7 +301,7 @@ GetActivityFromSJARACNe<-function(SJARACNe_output_path=NA,
 #'             package = "scMINER")
 #' tf.network  <- get.network.scMINER(network_file=TF_file)
 #' acs1<-get_activity(Net = tf.network$network_dat,tag = "TF",
-#'          normalize=T,
+#'          normalize=TRUE,
 #'          eset = pbmc.14k.DS.eset.log2,
 #'          activity.method = 'unweighted',
 #'          use.symbol=TRUE)
@@ -519,7 +519,7 @@ getDE.limma <- function(eset=NULL, G1=NULL, G0=NULL,G1_name=NULL,G0_name=NULL,ve
 #' @return output would be a data.frame containing: t.statistics, p.value, log2FC, z.score, and mean Activity value
 #'
 #' @examples
-#' demo_file <- system.file('PBMC14KDS_DemoDataSet/SJAR/DATA/celltype_Activity.RData',
+#' demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/celltype_Activity.RData',
 #'                                              package = "scMINER")
 #' load(demo_file)
 #' DAG_result_tf <- get.DA(input_eset = AC_eset$AC.TF,
@@ -638,7 +638,7 @@ get.DA<-function(input_eset=NULL,group_name="celltype",group_case=NULL, group_ct
 #' @param celltype character, output top hits are from which celltype
 #' @return A list of top master regulators among different groups
 #' @examples
-#' demo_file <- system.file('PBMC14KDS_DemoDataSet/SJAR/DATA/celltype_Activity.RData',
+#' demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/celltype_Activity.RData',
 #'                                              package = "scMINER")
 #' load(demo_file)
 #' DAG_result_tf <- get.DA(input_eset = AC_eset$AC.TF,

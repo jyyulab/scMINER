@@ -146,7 +146,7 @@ scMINER.dir.create <- function(project_main_dir=NULL,project_name=NULL){
 #' eset<-CreateSparseEset(data=SeuratObject@assays$RNA@data,meta.data = meta.data,
 #'                      feature.data = feature.data,add.meta = F)
 #' @export
-CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T){
+CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=TRUE){
 
   if(!class(data)[1]%in%c("dgCMatrix","dgTMatrix","matrix","dgeMatrix")){
     stop("Input format should %in% c( 'matrix','dgTMatrix','dgCMatrix','dgeMatrix,'Matrix')","\n")
@@ -249,9 +249,9 @@ CreateSparseEset<-function(data=NULL,meta.data=NULL,feature.data=NULL,add.meta=T
 #' @examples
 #' demo_dir <- system.file('PBMC14KDS_DemoDataSet/DATA/10X/',package = "scMINER")
 #' pbmc.14k.DS.eset <- scMINER::readscRNAseqData(file = demo_dir,
-#'                                               is.10x = T,
-#'                                               CreateSparseEset = T,
-#'                                               add.meta = T)
+#'                                               is.10x = TRUE,
+#'                                               CreateSparseEset = TRUE,
+#'                                               add.meta = TRUE)
 #'
 #' @export
 readscRNAseqData <- function(file, is.10x=TRUE, CreateSparseEset=TRUE, add.meta=F, sep=','){
@@ -261,7 +261,7 @@ readscRNAseqData <- function(file, is.10x=TRUE, CreateSparseEset=TRUE, add.meta=
     data.path <- file
     cat("Reading 10X genomcis data in",data.path, "\n")
 
-    f<-list.files(path=data.path,full.names = T)
+    f<-list.files(path=data.path,full.names = TRUE)
     f<-f[grep(".gz$",f)]
 
     if (length(grep(".gz",f))!=0){
@@ -336,8 +336,8 @@ readscRNAseqData <- function(file, is.10x=TRUE, CreateSparseEset=TRUE, add.meta=
 #' cutoffs <- scMINER::draw.scRNAseq.QC(SparseEset = pbmc.14k.DS.eset.log2,
 #'                project.name = 'test',
 #'                plot.dir = '.',
-#'                group = "group",      # this indicate which meta data information will be use in x axis to group violin plots
-#'                output.cutoff = TRUE) # whether or not to output suggested cutoffs
+#'                group = "group",
+#'                output.cutoff = TRUE,only.cutoff=TRUE)
 #' @export
 draw.scRNAseq.QC<-function(SparseEset,project.name,
                            plot.dir="./QC/",
@@ -784,17 +784,23 @@ feature_highlighting<-function(input_eset,target=NULL,
 #' demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
 #'                         package = "scMINER")
 #' load(demo_file)
-#' pbmc.14k.DS.eset.filter <- scMINER::preMICA.filtering(SparseEset = pbmc.14k.DS.eset.log2,
+#' cutoffs <- draw.scRNAseq.QC(SparseEset = pbmc.14k.DS.eset.log2,
+#'                                      project.name = project_name,
+#'                                      plot.dir = 'test/',
+#'                                      group = "group",
+#'                                      output.cutoff = TRUE,
+#'                                      only.cutoff = TRUE)
+#' pbmc.14k.DS.eset.filter <- preMICA.filtering(SparseEset = pbmc.14k.DS.eset.log2,
 #'       cutoffs = cutoffs)
 #' @return A Sparse expression set
 #' @export
 preMICA.filtering <- function(SparseEset,
                               cutoffs,
-                              gene_filter=T,
-                              nGene_filter=T,
-                              nUMI_filter=T,
-                              ERCC_filter=T,
-                              Mito_filter=T)
+                              gene_filter=TRUE,
+                              nGene_filter=TRUE,
+                              nUMI_filter=TRUE,
+                              ERCC_filter=TRUE,
+                              Mito_filter=TRUE)
 {
   cat("Pre-filtering dimension: ",dim(SparseEset),"\n")
 
@@ -852,6 +858,8 @@ preMICA.filtering <- function(SparseEset,
 #' @usage generateMICAinput(d, filename="project_name_MICAinput.h5")
 #' @param d matrix with colnames as cell/sample info, rownames as gene/feature info
 #' @param filename filename of your MICA input file, supported format: txt or h5
+#' @param sampleN integer, number of cells that should be sampled for computational efficiency purpose, default is 50000. If sampleN=NULL, no sampling will be performed.
+#' @param seed integer, the random seed for sampling, default is 1.
 #' @param scminer.par list for the parameter settings in scMINER pipeline, optional.
 #' @return A txt file or a h5 file that could be read in MICA
 #' @examples
@@ -859,26 +867,39 @@ preMICA.filtering <- function(SparseEset,
 #'                         package = "scMINER")
 #' load(demo_file)
 #' MICA.cmd <- generateMICAinput(eset = pbmc.14k.DS.eset.log2 ,
-#'                       filepath = '.')
+#'                       filepath = 'test.h5ad')
 #' @export
-generateMICAinput <- function(eset, filepath, scminer.par=NULL){
+generateMICAinput <- function(eset, filepath, sampleN=50000, seed=1, scminer.par=NULL){
   recommend_cmd <- NULL
+  exp_mat <- as.matrix(exprs(eset))
+  obs_dat <- Biobase::pData(eset)
+  var_dat <- Biobase::fData(eset)
+  cell_size <- ncol(exp_mat)
+  if(is.null(sampleN)==FALSE){
+    if(cell_size>sampleN){
+      set.seed(seed=seed)
+      s1 <- sample(1:cell_size,size=sampleN,replace = FALSE)
+      exp_mat <- exp_mat[,s1,drop=F]
+      obs_dat <- obs_dat[s1,,drop=F]
+      message(sprintf('original %s cells are downsampled to %s cells for MICA input',cell_size,length(s1)))
+      }
+  }
   if (length(grep(".txt$", filepath))!=0){
-    mica.input <- as.data.frame(t(as.matrix(exprs(eset))))
+    mica.input <- as.data.frame(t(exp_mat))
     cat("Writing MICA input to a .txt file...", "\n")
     write.table(mica.input, file = filepath, sep = "\t",
                 row.names = TRUE, col.names = NA, quote = FALSE)
   }else if(length(grep(".h5ad$", filepath))!=0){
     cat("Writing MICA input to a .h5ad file...", "\n")
     ad <- anndata::AnnData(
-                          X = t(as.matrix(exprs(eset))),
-                          obs = Biobase::pData(eset),
-                          var = Biobase::fData(eset))
+                          X = t(exp_mat),
+                          obs = obs_dat,
+                          var = var_dat)
     anndata::write_h5ad(ad, filepath)
   }else{
     stop("Your filepath should be ended with .txt or .h5ad", "\n")
   }
-  cell_size <- ncol(as.matrix(exprs(eset)))
+  cell_size <- ncol(exp_mat)
   if(cell_size>=5000){
     cat('For dataset with more than 5k cells, MICA GE mode is recommended.\n')
     if(is.null(scminer.par)==FALSE){
@@ -915,8 +936,10 @@ generateMICAinput <- function(eset, filepath, scminer.par=NULL){
 #' @param output_file output ClusterMem.txt file from MICA pipeline
 #' @param load_ClusterRes logical, if TRUE, clustering results will be store at Biobase::pData(eset)$label
 #' @examples
-#' MICA_output <- system.file('PBMC14KDS_DemoDataSet/MICA/clustering_umap_euclidean_19.txt',
-#             package = "scMINER")
+#' demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData',
+#'                         package = "scMINER")
+#' load(demo_file)
+#' MICA_output <- system.file('PBMC14KDS_DemoDataSet/MICA/clustering_umap_euclidean_19.txt',package = "scMINER")
 #' pbmc.14k.DS.eset.log2 <- scMINER::readMICAoutput(eset = pbmc.14k.DS.eset.log2,
 #'                           load_ClusterRes = TRUE,
 #'                           output_file = MICA_output)
@@ -1035,6 +1058,9 @@ MICAplot<-function(input_eset,
 #' @param input_eset An expressionSet
 #' @param ref c("hg", "mm"), could be a manually defined geneSymbol vector
 #' @param funcType c("TF","SIG", NULL), if NULL then both TF and SIG will be considered
+#' @param input_driver, a list of drivers for calculation. If NULL, curated driver list in the R package will be used.
+#' @param sampleN integer, number of cells that should be sampled per group for computational efficiency purpose, default is 1000. If sampleN=NULL, no sampling will be performed.
+#' @param seed integer, the random seed for sampling, default is 1.
 #' @param wd.src output path
 #' @param group_name name of group for sample identification
 #' @return SJARACNe input files for each subgroups
@@ -1052,33 +1078,59 @@ MICAplot<-function(input_eset,
 #' \dontrun{
 #' }
 #' @export
-generateSJARACNeInput<-function(input_eset,ref=NULL,funcType=NULL,wd.src,group_name){
+generateSJARACNeInput<-function(input_eset,
+                                ref=NULL,funcType=NULL,
+                                input_driver=NULL,
+                                sampleN=1000,
+                                seed=1,
+                                wd.src,group_name){
   SJAR.cmd <- NULL
-  if (!dir.exists(wd.src)) dir.create(wd.src,recursive = T)
-  if (ref%in%c("hg","mm")){
-    ref_file<-system.file("RData",paste0("tf_sigs_",ref,".RData"),package = "scMINER")
-    load(ref_file)
-    cat("Using references from: ", ref_file,"\n")
-    sig.ref <- NULL;tf.ref <- NULL
-    tf.ref<- dplyr::filter(tf_sigs, isTF==TRUE)$geneSymbol
-    sig.ref<- dplyr::filter(tf_sigs, isSIG==TRUE)$geneSymbol
-    if (!is.null(funcType)){
-      if (funcType=="TF") sig.ref <- NULL
-      else if (funcType=="SIG") tf.ref <- NULL
+  if (!dir.exists(wd.src)) dir.create(wd.src,recursive = TRUE)
+  # input_driver, 20230919
+  if(is.null(input_driver)==TRUE | length(input_driver)<1){
+    if (ref%in%c("hg","mm")){
+      ref_file<-system.file("RData",paste0("tf_sigs_",ref,".RData"),package = "scMINER")
+      load(ref_file)
+      cat("Using references from: ", ref_file,"\n")
+      sig.ref <- NULL;tf.ref <- NULL
+      tf.ref<- dplyr::filter(tf_sigs, isTF==TRUE)$geneSymbol
+      sig.ref<- dplyr::filter(tf_sigs, isSIG==TRUE)$geneSymbol
+      if (!is.null(funcType)){
+        if (funcType=="TF") sig.ref <- NULL
+        else if (funcType=="SIG") tf.ref <- NULL
+      }
+    }else {
+      if (funcType=="TF") tf.ref <- ref
+      else if (funcType=="SIG") sig.ref <- ref
+      else warning("Activity calculations will not be supported!","\n")
     }
-  }else {
+  }else{
+    sig.ref <- NULL;tf.ref <- NULL
+    ref <- input_driver
     if (funcType=="TF") tf.ref <- ref
     else if (funcType=="SIG") sig.ref <- ref
-    else warning("Activity calculations will not be supported!","\n")
   }
   if(group_name%in%colnames(Biobase::pData(input_eset))){
     groups <- unique(Biobase::pData(input_eset)[,group_name])
     all.SJAR.cmd.1 <- c()
     all.SJAR.cmd.2 <- c()
     for (i in 1:length(groups)){
-      grp.tag<-groups[i]; input_eset[,which(Biobase::pData(input_eset)[,group_name]==grp.tag)] -> eset.sel
-      res <- SJARACNe_filter(eset.sel=eset.sel,tf.ref=tf.ref,sig.ref=sig.ref,wd.src=wd.src,grp.tag=grp.tag)
+      grp.tag<-groups[i];
+      eset.sel <- input_eset[,which(Biobase::pData(input_eset)[,group_name]==grp.tag)]
+      ########### 20230913, downsample eset.sel
+      if(is.null(sampleN)==FALSE){
+        cell_size <- ncol(Biobase::exprs(eset.sel))
+        if(cell_size>sampleN){
+          set.seed(seed=seed)
+          s1 <- sample(1:cell_size,size=sampleN,replace = FALSE)
+          eset.sel <- eset.sel[,s1]
+          message(sprintf('original %s cells are downsampled to %s cells for SJARACNe input',cell_size,length(s1)))
+        }
+      }
+      res <- SJARACNe_filter(eset.sel=eset.sel,tf.ref=tf.ref,
+                             sig.ref=sig.ref,wd.src=wd.src,grp.tag=grp.tag)
       print(res)
+      ###########
       #return(c(dir.cur,grp.tag,f.exp,f.tfsig))
       ## suggested command for SJARACNe
       SJAR.cmd.1 <- sprintf('sjaracne lsf -e %s -g %s -o %s_final -n 100 -pc 1e-5 -tmp %s/tmp/ -j ../SJARACNe/SJARACNe/config/config_cwlexec.json',
@@ -1133,7 +1185,7 @@ SJARACNe_filter<-function(eset.sel,tf.ref,sig.ref,wd.src,grp.tag){
   tag<-paste(grp.tag,nrow(eset.sel),ng,ncol(eset.sel),sep='_');tag
 
   dir.cur<-file.path(wd.src,tag);dir.cur
-  dir.create(dir.cur,recursive = T)
+  dir.create(dir.cur,recursive = TRUE)
 
   #write exp data to exp format
   expdata<-data.frame(cbind(isoformId=featureNames(eset.sel),geneSymbol=Biobase::fData(eset.sel)$geneSymbol,as.matrix(exprs(eset.sel))),stringsAsFactors = FALSE)
@@ -1141,7 +1193,7 @@ SJARACNe_filter<-function(eset.sel,tf.ref,sig.ref,wd.src,grp.tag){
   write.table(expdata,file=f.exp,sep="\t",row.names=FALSE,quote=FALSE)
 
   if (!is.null(tf.ref)){
-    dir.create(file.path(dir.cur,'tf'),recursive = T)
+    dir.create(file.path(dir.cur,'tf'),recursive = TRUE)
     tf.eset.sel<-subset(eset.sel,Biobase::fData(eset.sel)$geneSymbol%in%tf.ref)
     dim(tf.eset.sel)
     f.tf<-file.path(dir.cur,'tf',paste(grp.tag,"_",nrow(tf.eset.sel),"_",nlevels(factor(Biobase::fData(tf.eset.sel)$geneSymbol)),"_",ns,"_tf.txt",sep=''));f.tf
@@ -1151,7 +1203,7 @@ SJARACNe_filter<-function(eset.sel,tf.ref,sig.ref,wd.src,grp.tag){
   }
 
   if (!is.null(sig.ref)){
-    dir.create(file.path(dir.cur,'sig'),recursive = T)
+    dir.create(file.path(dir.cur,'sig'),recursive = TRUE)
     sig.eset.sel<-subset(eset.sel,Biobase::fData(eset.sel)$geneSymbol%in%sig.ref)
     dim(sig.eset.sel)
     f.sig<-file.path(dir.cur,'sig',paste(grp.tag,"_",nrow(sig.eset.sel),"_",nlevels(factor(Biobase::fData(sig.eset.sel)$geneSymbol)),"_",ns,"_sig.txt",sep=''));f.sig

@@ -33,7 +33,7 @@ which helps to conduct two_sided t.test on all genes in specific group VS Others
 to find differential activity genes, a table with essential statistics will be outputted.
 }
 \examples{
-demo_file <- system.file('PBMC14KDS_DemoDataSet/SJAR/DATA/celltype_Activity.RData',
+demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/celltype_Activity.RData',
                                              package = "scMINER")
 load(demo_file)
 DAG_result_tf <- get.DA(input_eset = AC_eset$AC.TF,

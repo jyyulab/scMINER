@@ -55,7 +55,7 @@ TF_file <- system.file('PBMC14KDS_DemoDataSet/SJAR/Bcell_11546_11539_77/tf_final
             package = "scMINER")
 tf.network  <- get.network.scMINER(network_file=TF_file)
 acs1<-get_activity(Net = tf.network$network_dat,tag = "TF",
-         normalize=T,
+         normalize=TRUE,
          eset = pbmc.14k.DS.eset.log2,
          activity.method = 'unweighted',
          use.symbol=TRUE)

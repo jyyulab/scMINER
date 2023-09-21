@@ -7,6 +7,10 @@
 generateMICAinput(d, filename="project_name_MICAinput.h5")
 }
 \arguments{
+\item{sampleN}{integer, number of cells that should be sampled for computational efficiency purpose, default is 50000. If sampleN=NULL, no sampling will be performed.}
+
+\item{seed}{integer, the random seed for sampling, default is 1.}
+
 \item{scminer.par}{list for the parameter settings in scMINER pipeline, optional.}
 
 \item{d}{matrix with colnames as cell/sample info, rownames as gene/feature info}
@@ -24,5 +28,5 @@ demo_file <- system.file('PBMC14KDS_DemoDataSet/DATA/pbmc.14k.DS.eset.log2.RData
                         package = "scMINER")
 load(demo_file)
 MICA.cmd <- generateMICAinput(eset = pbmc.14k.DS.eset.log2 ,
-                      filepath = '.')
+                      filepath = 'test.h5ad')
 }

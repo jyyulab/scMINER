@@ -63,7 +63,7 @@ NOTE: for the dataSet size issue, the data in the demo is the down-sampled datas
 
 Make sure you have the MICA, SJARACNe, scMINER package installed. For this example, R package `openxlsx`, `anndata` are required. 
 
-```{r,echo=FALSE}
+```{r}
 library(scMINER)
 library(openxlsx)
 library(anndata)
@@ -148,7 +148,8 @@ cutoffs <- scMINER::draw.scRNAseq.QC(SparseEset = pbmc.14k.DS.eset,
                             project.name = project_name,
                             plot.dir = scminer.par$out.dir.QC,
                             group = "group",      # this indicate which meta data information will be use in x axis to group violin plots
-                            output.cutoff = TRUE) # whether or not to output suggested cutoffs
+                            output.cutoff = TRUE, # whether or not to output suggested cutoffs
+                            only.cutoff = TRUE) # whether or not to only output cutoff without drawing QC plot
 ```
 
 The histogram plot visualizes a distribution of expressed genes among each cells. The blue vertical line shows the recommended cutoff (0.5% * number of cells) to filter lowly expressed cells. 

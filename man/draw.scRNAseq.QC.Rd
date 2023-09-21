@@ -43,6 +43,6 @@ load(demo_file)
 cutoffs <- scMINER::draw.scRNAseq.QC(SparseEset = pbmc.14k.DS.eset.log2,
                project.name = 'test',
                plot.dir = '.',
-               group = "group",      # this indicate which meta data information will be use in x axis to group violin plots
-               output.cutoff = TRUE) # whether or not to output suggested cutoffs
+               group = "group",
+               output.cutoff = TRUE,only.cutoff=TRUE)
 }

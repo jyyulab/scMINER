@@ -8,7 +8,7 @@ CreateSparseEset(
   data = NULL,
   meta.data = NULL,
   feature.data = NULL,
-  add.meta = T
+  add.meta = TRUE
 )
 }
 \arguments{

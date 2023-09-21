@@ -33,8 +33,8 @@ read scRNA-seq data, a wrapper of conventional data reading (read.delim) and 10x
 \examples{
 demo_dir <- system.file('PBMC14KDS_DemoDataSet/DATA/10X/',package = "scMINER")
 pbmc.14k.DS.eset <- scMINER::readscRNAseqData(file = demo_dir,
-                                              is.10x = T,
-                                              CreateSparseEset = T,
-                                              add.meta = T)
+                                              is.10x = TRUE,
+                                              CreateSparseEset = TRUE,
+                                              add.meta = TRUE)
 
 }
