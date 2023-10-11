@@ -4,7 +4,14 @@
 \alias{SJARACNe_filter}
 \title{SJARACNe_filter}
 \usage{
-SJARACNe_filter(eset.sel, tf.ref, sig.ref, wd.src, grp.tag)
+SJARACNe_filter(
+  eset.sel,
+  tf.ref,
+  sig.ref,
+  wd.src,
+  grp.tag,
+  symbolColumnName = "geneSymbol"
+)
 }
 \arguments{
 \item{eset.sel}{ExpressionSet to generate SJaracne input}
@@ -16,6 +23,8 @@ SJARACNe_filter(eset.sel, tf.ref, sig.ref, wd.src, grp.tag)
 \item{wd.src}{path to store SjAracne input}
 
 \item{grp.tag}{name of group for identification}
+
+\item{symbolColumnName}{name for the column that save gene symbols.}
 }
 \value{
 A folder with picked master regulator and filtered gene expression matrix

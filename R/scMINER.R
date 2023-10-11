@@ -1063,6 +1063,7 @@ MICAplot<-function(input_eset,
 #' @param seed integer, the random seed for sampling, default is 1.
 #' @param wd.src output path
 #' @param group_name name of group for sample identification
+#' @param symbolColumnName name for the column that save gene symbols.
 #' @return SJARACNe input files for each subgroups
 #' @keywords SJARACNe
 #' @examples
@@ -1083,7 +1084,7 @@ generateSJARACNeInput<-function(input_eset,
                                 input_driver=NULL,
                                 sampleN=1000,
                                 seed=1,
-                                wd.src,group_name){
+                                wd.src,group_name,symbolColumnName='geneSymbol'){
   SJAR.cmd <- NULL
   if (!dir.exists(wd.src)) dir.create(wd.src,recursive = TRUE)
   # input_driver, 20230919
@@ -1128,7 +1129,8 @@ generateSJARACNeInput<-function(input_eset,
         }
       }
       res <- SJARACNe_filter(eset.sel=eset.sel,tf.ref=tf.ref,
-                             sig.ref=sig.ref,wd.src=wd.src,grp.tag=grp.tag)
+                             sig.ref=sig.ref,wd.src=wd.src,grp.tag=grp.tag,
+                             symbolColumnName=symbolColumnName)
       print(res)
       ###########
       #return(c(dir.cur,grp.tag,f.exp,f.tfsig))
@@ -1167,17 +1169,22 @@ generateSJARACNeInput<-function(input_eset,
 #' @param sig.ref A vector of reference signaling genes
 #' @param wd.src path to store SjAracne input
 #' @param grp.tag name of group for identification
+#' @param symbolColumnName name for the column that save gene symbols.
 #' @details Non-expressed genes in subgroups are filtered.
 #' tf.ref should be coordinate with featureNames(eset.sel).
 #' @return A folder with picked master regulator and filtered gene expression matrix
-SJARACNe_filter<-function(eset.sel,tf.ref,sig.ref,wd.src,grp.tag){
+SJARACNe_filter<-function(eset.sel,tf.ref,sig.ref,wd.src,grp.tag,symbolColumnName='geneSymbol'){
   cat(grp.tag,'\n')
 
   #Biobase::fData(eset.sel)$IQR<-apply(exprs(eset.sel),1,IQR)
   # exclude genes with all zero
   eset.sel<-eset.sel[apply(exprs(eset.sel),1,function(xx){sum(xx)!=0}),]
-
-  Biobase::fData(eset.sel)$geneNames<-Biobase::fData(eset.sel)$geneSymbol
+  ## 20231011
+  if(!'geneNames' %in% colnames(Biobase::fData(eset.sel))){
+    if(symbolColumnName %in% colnames(Biobase::fData(eset.sel))){
+      Biobase::fData(eset.sel)$geneNames<-Biobase::fData(eset.sel)[,symbolColumnName]
+    }
+  }
 
   ni<-nrow(eset.sel);ni
   ns<-ncol(eset.sel);ns

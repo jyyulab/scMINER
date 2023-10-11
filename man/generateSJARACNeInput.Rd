@@ -12,7 +12,8 @@ generateSJARACNeInput(
   sampleN = 1000,
   seed = 1,
   wd.src,
-  group_name
+  group_name,
+  symbolColumnName = "geneSymbol"
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ generateSJARACNeInput(
 \item{wd.src}{output path}
 
 \item{group_name}{name of group for sample identification}
+
+\item{symbolColumnName}{name for the column that save gene symbols.}
 }
 \value{
 SJARACNe input files for each subgroups
