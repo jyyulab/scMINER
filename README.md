@@ -12,7 +12,7 @@ information-based cell clustering, cell-type-specific gene regulatory
 network (GRN) reverse engineering and protein activity inference, to
 identify hidden transcriptional factors (TFs) and signaling factors
 (SIGs) driving cellular lineage differentiation and tissue specific
-specification. test23
+specification.
 
 scMINER software consists of three components:
 
