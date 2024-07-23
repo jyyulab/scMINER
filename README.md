@@ -16,15 +16,14 @@ specification.
 
 scMINER software consists of three components:
 
--   [MICA](https://github.com/jyyulab/MICA) (Mutual Information based
-    Clustering analysis) : perform clustering analysis
+- [MICA](https://github.com/jyyulab/MICA) (Mutual Information based
+  Clustering analysis) : perform clustering analysis
 
--   [SJARACNe](https://github.com/jyyulab/SJARACNe) : generate cluster
-    specific networks
+- [SJARACNe](https://github.com/jyyulab/SJARACNe) : generate cluster
+  specific networks
 
--   [MINIE](https://github.com/jyyulab/scMINER/)(Mutual
-    Information-based Network Inference Engine) : identify
-    cell-type-specific hidden drivers
+- [MINIE](https://github.com/jyyulab/scMINER/)(Mutual Information-based
+  Network Inference Engine) : identify cell-type-specific hidden drivers
 
 ## Installation
 
@@ -55,7 +54,8 @@ In R, you can install the current version of scMINER from
 [GitHub](https://github.com/) with:
 
 ``` r
-devtools::install_github("jyyulab/scMINER")
+# install.packages("devtools")
+devtools::install_github("QingfeiPan/scMINER_110")
 ```
 
 ## Tutorial

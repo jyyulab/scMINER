@@ -1,41 +1,45 @@
 Package: scMINER
 Type: Package
-Title: scMINER
-Version: 1.0.0
-Author: Yu Lab (St.Jude Children's Research Hospital)
-Maintainer: Liang Ding <liang.ding@stjude.org>, Hao Shi <hao.shi@stjude.org>, Xinran Dong <xinran.dong@foxmail.com>
-Description: Mutual information-based single-cell clustering and network-enabled hidden driver analysis
-License: Apache License
+Title: Single-cell Mutual Information-based Network Enginerring Ranger
+Version: 1.1.0
+Authors@R: c(
+    person(given = "Qingfei", family = "Pan", email = "qingfei.pan@stjude.org", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-0243-6898")),
+    person(given = "Liang", family = "Ding", email = "liang.ding@stjude.org", role = c("aut")),
+    person(given = "Hao", family = "Shi", email = "hao.shi@stjude.org", role = c("aut")),
+    person(given = "Xinran", family = "Dong", email = "xinran.done@foxmail.com", role = c("aut")),
+    person("Yu Lab @ St Jude Children's Research Hospital", role = "fnd"))
+Description: scMINER is a mutual information-based framework for single-cell/nucleus RNA-Seq data
+    analysis. It enables the mutual information-based clustering, cell type-specific gene network
+    reverse engineering and protein activity inference for not only transcriptional factors (TFs)
+    but also signaling genes (SIGs) on a cell type-specific basis. scMINER can identify the hidden
+    drivers underlying cellular lineage differentiation, tissue specification and beyond.
+License: Apache License (>= 2)
 Encoding: UTF-8
-LazyData: TRUE 
+LazyData: TRUE
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Depends: 
-    R (>= 4.0.3),
+    R (>= 4.0),
+    base (>= 4.2.2),
     Biobase (>= 2.50.0),
+    Matrix (>= 1.5.3),
+    methods (>= 4.0.3),
+    stats (>= 4.0.3)
+Imports: 
+    anndata (>= 0.7.5.3),
+    dplyr (>= 1.0.6),
     ggplot2 (>= 3.3.3),
-    RColorBrewer (>= 1.1.2),
+    gridExtra (>= 2.3),
+    hdf5r (>= 1.3.10),
+    igraph (>= 1.2.6),
+    limma (>= 3.46.0),
+    pheatmap (>= 1.0.12),
     reshape2 (>= 1.4.4),
     rmarkdown (>= 2.8),
-    kableExtra (>= 1.3.4),
-    dplyr (>= 1.0.6),
-    grDevices (>= 4.0.3),
-    scales (>= 1.1.1),
-    limma (>= 3.46.0),
-    anndata (>= 0.7.5.3)
-Imports:
-    plyr (>= 1.8.6),
-    Matrix (>= 1.5.3),
-    stats (>= 4.0.3),
-    methods (>= 4.0.3),
-    ComplexHeatmap (>= 2.6.2),
-    igraph (>= 1.2.6),
-    rhdf5 (>= 2.34.0),
-    renv
-Suggests:
-    NetBID2 (>= 2.0.3),
-    openxlsx (>= 4.2.3),
-    knitr (>= 1.33),
+    SuperCell (>= 1.0)
+Suggests: 
+    knitr,
+    openxlsx (>= 4.2.5.2),
+    Seurat (>= 5.0.0),
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
-Config/testthat/edition: 3
