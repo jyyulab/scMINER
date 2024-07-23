@@ -54,14 +54,14 @@ createSparseEset <- function(input_matrix,
     stop("The format of input_matrix is not supported!\nscMINER supports: 'dgCMatrix', 'dgTMatrix', 'dgeMatrix', 'matrix', 'data.frame'. Use class() to check.")
   }
 
-  cat("Creating sparse eset from the input input_matrix ...\n")
+  cat("Creating sparse eset from the input_matrix ...\n")
   ## feature data
   if (is.null(featureData) == TRUE) {
     feature_data <- data.frame(row.names = rownames(expression_data), GeneSymbol = rownames(expression_data), stringsAsFactors = F)
   } else {
     if_involved <- row.names(expression_data) %in% row.names(featureData)
     if (all(if_involved) == TRUE) {
-      feature_data <- featureData[row.names(expression_data),]
+      feature_data <- featureData[row.names(expression_data), , drop = FALSE]
     } else {
       stop("Some features of the input_matrix were not found in the featureData: ", paste0(row.names(expression_data)[!if_involved], collapse = ", "), ".\n")
     }
@@ -73,7 +73,7 @@ createSparseEset <- function(input_matrix,
   } else {
     if_involved <- colnames(expression_data) %in% row.names(cellData)
     if (all(if_involved) == TRUE) {
-      cell_data <- cellData[colnames(expression_data),]
+      cell_data <- cellData[colnames(expression_data), , drop = FALSE]
     } else {
       stop("Some cells of the input_matrix were not found in the cellData: ", paste0(colnames(expression_data)[!if_involved], collapse = ", "), ".\n")
     }

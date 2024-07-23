@@ -91,7 +91,7 @@ readInput_10x.dir <- function(input_dir,
     if (all(if_matched)) {
       cellNames <- gsub("-1$", "", cellNames)
     } else {
-      cat('\tSuffix removal was specified but skipped, since some barcodes do not carry "-1" suffix:', paste0(cellNames[if_matched], collapse = ", "), '.\n')
+      cat('\tSuffix removal was specified but skipped, since some barcodes do not carry "-1" suffix.\n')
     }
   }
 
@@ -187,7 +187,7 @@ readInput_10x.h5 <- function(h5_file,
     if (all(if_matched)) {
       d_barcode <- gsub("-1$", "", d_barcode)
     } else {
-      cat('Suffix removal was specified but skipped, since some barcodes do not carry "-1" suffix:', paste0(d_barcode[if_matched], collapse = ", "), '.\n')
+      cat('Suffix removal was specified but skipped, since some barcodes do not carry "-1" suffix.\n')
     }
   }
 
@@ -250,7 +250,7 @@ readInput_h5ad <- function(h5ad_file,
     if (all(if_matched)) {
       row.names(h5ad_obj) <- gsub("-1$", "", row.names(h5ad_obj))
     } else {
-      cat('\tSuffix removal was specified but skipped, since some barcodes do not carry "-1" suffix:', paste0(row.names(h5ad_obj)[if_matched], collapse = ", "), '.\n')
+      cat('\tSuffix removal was specified but skipped, since some barcodes do not carry "-1" suffix.\n')
     }
   }
 
@@ -306,7 +306,7 @@ readInput_table <- function(table_file, sep = "\t", is.geneBYcell = TRUE,
     if (all(if_matched)) {
       colnames(d_matrix) <- gsub("-1$", "", colnames(d_matrix))
     } else {
-      cat('\tSuffix removal was specified but skipped, since some barcodes do not carry "-1" suffix:', paste0(colnames(d_matrix)[if_matched], collapse = ", "), '.\n')
+      cat('\tSuffix removal was specified but skipped, since some barcodes do not carry "-1" suffix.\n')
     }
   }
 
