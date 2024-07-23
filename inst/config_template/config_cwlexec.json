@@ -1,23 +1,31 @@
 {
-    "queue": "standard",
+    "queue": "compbio",
     "rerunnable": true,
-    "project": "MICA",
+    "project": "SJARACNe",
     "steps": {
-        "prep": {
-            "res_req": "rusage[mem=16000MB]"
+        "validate_files": {
+            "res_req": "rusage[mem=100MB]"
         },
-        "calc_pairwise_MI": {
-            "res_req": "rusage[mem=2000MB]"
+        "create_seeds": {
+            "res_req": "rusage[mem=100MB]"
         },
-        "mergeAndnorm": {
-            "res_req": "rusage[mem=12000MB]"
+        "create_adjmat_names": {
+            "res_req": "rusage[mem=100MB]"
         },
-        "dimension_reduce": {
-            "res_req": "rusage[mem=16000MB]"
+        "ch_ending_exp": {
+            "res_req": "rusage[mem=100MB]"
         },
-        "clustering": {
-            "processors": "8",
-            "res_req": "span[ptile=8] rusage[mem=2000MB]"
-        }
-    }
+        "ch_ending_probe": {
+            "res_req": "rusage[mem=100MB]"
+        },
+        "bootstrap": {
+            "res_req": "rusage[mem=9999MB]"
+        },
+        "copy_to_dir": {
+            "res_req": "rusage[mem=100MB]"
+        },
+        "consensus": {
+            "res_req": "rusage[mem=20000MB]"
+        },
+    },
 }
