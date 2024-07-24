@@ -134,6 +134,7 @@ createSparseEset <- function(input_matrix,
 #' @param addPrefix A character vector or `NULL`, add a **prefix** to the cell barcodes of each eset object to combine. It is highly recommended to use a prefix containing letters and/or numbers only, and not starting with numbers. Default: `NULL`.
 #' @param addSurfix A character vector or `NULL`, add a **surfix** to the cell barcodes of each eset object to combine. It is highly recommended to use a surfix containing letters and/or numbers only, and not starting with numbers. Default: `NULL`.
 #' @param addMetaData Logical, whether to update the meta data of cells and features after combination. Default: `TRUE`.
+#' @param imputeNA Logical, whether to impute NA values in combined matrix. If `TRUE`, the min value of the matrix will be used to replace the NAs. If `FALSE`, NA values will retain. Default: `TRUE`.
 #'
 #' @return A sparse eset object with combined features and cells of multiple eset objects.
 #' @export
@@ -144,7 +145,8 @@ combineSparseEset <- function(eset_list,
                               projectID = NULL,
                               addPrefix = NULL,
                               addSurfix = NULL,
-                              addMetaData = TRUE)
+                              addMetaData = TRUE,
+                              imputeNA = TRUE)
 {
   l_eset <- eset_list
   if (length(l_eset) <= 1) {stop("At least 2 esets are required for eset_list")}
@@ -174,7 +176,7 @@ combineSparseEset <- function(eset_list,
     }
   }
 
-  cat("Combinding these sparse esets:", paste0(eset_list, collapse = ", "), "...\n")
+  cat("Combining the input sparse eSets ...\n")
   ## merge matrix, barcodes, features
   if_duplicatedBarcodes <- lapply(l_eset, colnames) %>% unlist() %>% duplicated() %>% any()
   if (if_duplicatedBarcodes == TRUE) {
@@ -208,9 +210,15 @@ combineSparseEset <- function(eset_list,
   fd_merged <- data.frame(row.names = row.names(exp_merged), geneSymbol = row.names(exp_merged), nCell = Matrix::rowSums(exp_merged != 0))
 
   if (any(is.na(exp_merged))) {
-    min_v <- min(exp_merged, na.rm = T)
-    exp_merged[is.na(exp_merged)] <- min_v
-    cat('NAs were found in the merged matrix and have been replaced by the minimum value: ', min_v, '.\n')
+    if (imputeNA == TRUE) {
+      min_v <- min(exp_merged, na.rm = TRUE)
+      exp_merged[is.na(exp_merged)] <- min_v
+      cat('NA values were found in the merged matrix and have been replaced by the minimum value: ', min_v, '.\n')
+    } else {
+      cat('NA values were found and retained. To impute NAs, please set imputeNA = TRUE.\n')
+    }
+  } else {
+    cat('No NA values was found in the combined gene expression matrix!\n')
   }
   exp_merged <- Matrix::Matrix(as.matrix(exp_merged), sparse = TRUE)
 
@@ -234,7 +242,7 @@ combineSparseEset <- function(eset_list,
     spikeIn_genes <- row.names(exp_merged)[grepl(pattern = "^ERCC-|^Ercc-", x = row.names(exp_merged))]
     pd_merged$pctSpikeIn = round(Matrix::colSums(exp_merged[spikeIn_genes, ]) / Matrix::colSums(exp_merged), 8)
 
-    if (("CellID" %in% colnames(pd_merged)) == FALSE) {pd_merged$CellID <- row.names(pd_merged)}
+    pd_merged$CellID <- row.names(pd_merged)
   }
 
   eset <- new( "SparseExpressionSet",
@@ -271,7 +279,7 @@ updateSparseEset <- function(input_eset,
 {
   if (is.null(dataMatrix) == FALSE) {
     if (setequal(row.names(dataMatrix), row.names(input_eset))) {
-      dataMatrix <- dataMatrix[row.names(input_eset),]
+      dataMatrix <- dataMatrix[row.names(input_eset), , drop = FALSE]
     } else {
       stop("The rownames (Features) of dataMatrix and input_eset do NOT match.")
     }
@@ -294,7 +302,7 @@ updateSparseEset <- function(input_eset,
   } else {
     if_involved <- colnames(input_eset) %in% row.names(cellData)
     if (all(if_involved) == TRUE) {
-      cell_data <- cellData[colnames(input_eset),]
+      cell_data <- cellData[colnames(input_eset), , drop = FALSE]
     } else {
       stop("Some cells of the dataMatrix were not found in the cellData: ", paste0(colnames(input_eset)[if_involved], collapse = ", "), ".\n")
     }
@@ -303,7 +311,7 @@ updateSparseEset <- function(input_eset,
   if (is.null(cellData) == FALSE) {
     if_involved <- colnames(input_eset) %in% row.names(cellData)
     if (all(if_involved) == TRUE) {
-      pData(input_eset) <- cellData[colnames(input_eset),]
+      pData(input_eset) <- cellData[colnames(input_eset), , drop = FALSE]
       cat("The cell information of input_eset has been updated!\n")
     } else {
       stop("Some cells of the input_eset were not found in the cellData: ", paste0(colnames(input_eset)[!if_involved], collapse = ", "), ". Please check and re-try.")
@@ -313,7 +321,7 @@ updateSparseEset <- function(input_eset,
   if (is.null(featureData) == FALSE) {
     if_involved <- row.names(input_eset) %in% row.names(featureData)
     if (all(if_involved) == TRUE) {
-      fData(input_eset) <- featureData[row.names(input_eset),]
+      fData(input_eset) <- featureData[row.names(input_eset), , drop = FALSE]
       cat("The feature information of input_eset has been updated!\n")
     } else {
       stop("Some features of the input_eset were not found in the featureData: ", paste0(row.names(input_eset)[!if_involved], collapse = ", "), ". Please check and re-try.")
@@ -539,6 +547,7 @@ drawSparseEsetQC <- function(input_eset,
     }
   }
 
+  input_eset <- input_eset
   ## check the input eset
   if (is.null(group_by) == FALSE) {
     cat("Checkinig the group_by information in eset ...\n")

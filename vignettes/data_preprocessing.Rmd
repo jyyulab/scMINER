@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ```{r setup, message=FALSE, warning=FALSE}
 library(scMINER)
 library(ggplot2)
-library(reticulate)
+library(dplyr)
 ```
 
 # Introduction
@@ -166,7 +166,7 @@ head(fData(pbmc14k_raw.eset))
 
 ## Using self-customized meta data
 
-In some cases, you may have more meta data of either cell (e.g. sample id, treatment condition) or features (e.g. gene full name, gene type, genome location) which will be used in downstream analysis and you do want to add them into the sparse eSet object. the `createSparseEset()` function provides another two arguments, **`cellData`** and **`featureData`**, to take the self-customized meta data. For the PBMC14k dataset, we have the true labels of cell type and would like to add them to the sparse eSet object.
+In some cases, you may have more meta data of either cells (e.g. sample id, treatment condition) or features (e.g. gene full name, gene type, genome location) which will be used in downstream analysis and you do want to add them into the sparse eSet object. the `createSparseEset()` function provides another two arguments, **`cellData`** and **`featureData`**, to take the self-customized meta data. For the PBMC14k dataset, we have the true labels of cell type and would like to add them to the sparse eSet object.
 
 ```{r create-sparse-eset-solely-with-cutomized-matadata}
 ## read the true labels of cell type for PBMC14k dataset
@@ -185,4 +185,91 @@ head(pData(pbmc14k_raw.eset))
 table(pData(pbmc14k_raw.eset)$cell_type)
 ```
 
-***NOTE:*** 
+## From multiple samples
+
+**What if you have multiple samples for one project?** Now it's pretty common to profile multiple samples of the same tissue but under different conditions (e.g. drug treatment) in one project. Analyzing these samples one by one is crucial, and analyzing them in a combined manner may give you more prospects. For this purpose, scMINER provides a function, `combineSparseEset()`, to easily combine the sparse eSet objects of multiple samples.
+
+```{r combine-sparse-eset}
+## create a sparse eSet object of each sample to combined
+demo1_mtx <- readInput_10x.dir(input_dir = data_dir, featureType = "gene_symbol", removeSuffix = TRUE)
+demo1.eset <- createSparseEset(input_matrix = demo1_mtx, projectID = "demo1", addMetaData = TRUE)
+
+demo2_mtx <- readInput_10x.h5(h5_file = h5_file, featureType = "gene_symbol", removeSuffix = TRUE)
+demo2.eset <- createSparseEset(input_matrix = demo2_mtx, projectID = "demo2", addMetaData = TRUE)
+
+demo3_mtx <- readInput_table(table_file = table_file, sep = "\t", is.geneBYcell = TRUE, removeSuffix = TRUE)
+demo3.eset <- createSparseEset(input_matrix = demo3_mtx, projectID = "demo3", addMetaData = TRUE)
+
+demo4_obj <- readInput_h5ad(h5ad_file = h5ad_file, removeSuffix = TRUE)
+demo4.eset <- createSparseEset(input_matrix = t(demo4_obj$X), projectID = "demo4", addMetaData = TRUE)
+
+## combine the 4 sparse eSet objects
+combined.eset <- combineSparseEset(eset_list = c(demo1.eset, demo2.eset, demo3.eset, demo4.eset),
+                                   projectID = c("sample1", "sample2", "sample3", "sample4"),
+                                   addPrefix = c("demo1", "demo2", "demo3", "demo4"),
+                                   addSurfix = NULL, addMetaData = TRUE, imputeNA = TRUE)
+dim(combined.eset)
+```
+
+A few questions you may have about the `combineSparseEset()` function:
+- **What if the input eSets have different features?** `combineSparseEset()` ALWAYS keep all features from the input eSets, and generate NA values wherever the data is not available. By default, this function impute the NA values with the minimum value of the combined matrix, which is usually but not always zero. If this imputation method doesn't fit your study, you can set `imputeNA` to `FALSE` to disable it. If so, the NAs will retain in the eSet object, and you can manually impute them with your own method.
+- **What if the input eSets have some same cell barcodes?** `combineSparseEset()` ALWAYS keep all cells from the input eSets, and will report an error when same barcodes are found in different input eSets. This function provides two arguments, `addPrefix` and `addSurfix`, to solve this issue. You can easily avoid the same barcodes of different input eSets by adding a eSet-specific prefix and/or surfix to the barcodes.
+```{r show-barcodes-of-combined-eset}
+head(pData(combined.eset))
+```
+
+- **I have some customized column in the phenoData and/or featureData slots. How does `combineSparseEset()` handle them?** `combineSparseEset()` only keep the columns of phenoData and featureData that shared by all input eSets. Your customized columns would be kept only when they are available in all input eSets.
+- **Are the 5 meta data statistics in the combined eSet still same with those generated in each eSet?** No. By default, `combineSparseEset()` will update (add, if they are not available in input eSets) these 5 meta data statistics based on the combined matrix. It's not recommended but you can disable it by setting `addMataData` to `FALSE`.
+
+
+# Quality control and filter the sparse eSet object
+
+In this section, we will introduce you how scMINER assess the scRNA-seq data quality, estimate the cutoffs for filtration, and remove the cells and feature of low quality from the sparse eSet object. We will use the PBMC14k dataset to conduct the demo.
+
+## QC metrics available in scMINER
+
+As we mentioned before, scMINER can automatically generate 5 meta data statistics and add them to the sparse eSet object. These 5 meta data statistics are the metrics scMINER uses to assess the quality of cells and features:
+
+- For cell quality assessment, scMINER provides 4 metrics that [commonly used by the community](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4758103/):
+  - **nUMI**: number of total UMIs in each cell. Cells with abnormally high nUMI usually indicate doublets, while those with abnormally low nUMI usually indicate poorly sequenced cells or empty droplets.
+  - **nFeature**: number of expressed features/genes in each cell. Similar to nUMI.
+  - **pctMito**: percentage of UMIs of mitochondrial genes (defined by "^mt-|^MT-") in each cell. Cells with aberrantly high pctMito usually indicate dying cells.
+  - **pctSpikeIn**: percentage of UMIs of spike-in RNAs (defined by "^ERCC-|^Ercc-")) in each cell. This is used to estimate the normalization factor. Cells with extremely high or low pctSpikeIn need to be removed.
+  
+- For feature quality assessment, scMINER provides one metrics:
+  - **nCell**: number of cells expressing the features/genes. Genes with extremely low nCell are poorly sequenced and are usually of low variance.
+
+## Generate the QC report
+
+To help assess the data quality and determine the cutoffs for data filtration, scMINER provides a function, `drawSparseEsetQC()`, to generate a html-format quality control report:
+```{r generateQCreport-eset, eval=FALSE}
+## To generate the 
+drawSparseEsetQC(input_eset = pbmc14k_raw.eset, output_html_file = "/Users/qpan/PBMC14k/PLOT/pbmc14k_rawCount.html", overwrite = TRUE)
+
+## scMINER supports group-specific QC highlights
+drawSparseEsetQC(input_eset = pbmc14k_raw.eset, output_html_file = "/Users/qpan/PBMC14k/PLOT/pbmc14k_rawCount.html", overwrite = FALSE, group_by = "true_label")
+```
+
+The qaulity control report consists of 4 parts:
+- **Key Statistics**: it highlights 5 key statistics of given eset object, including `number of cells`, `number of genes`, mean of `genes per cell`, mean of `UMIs per cell` and mean of `cells per gene`.
+- **Detailed statistics of key metrics**: it summarizes and visualizes the detailed statistics of 5 key metrics that scMINER uses for filtration: `nUMI`, `nFeature`, `pctMito`, `pctSpikeIn`, `nCell`.
+- **Detailed statistics per cell and gene**: it lists the detailed statistics of each gene and cell.
+- **Filtration cutoffs by scMINER**: it provides the cutoffs estimated automatically by scMINER based on Median ± 3 * MAD (maximum absolute deviance), and the pseudo-filtration statistics on both genes and cells with these cutoffs.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
