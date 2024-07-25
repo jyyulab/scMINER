@@ -16,11 +16,7 @@ knitr::opts_chunk$set(
 ```{r scminer-logo, fig.align = 'center', out.width = "75%", echo=FALSE}
 knitr::include_graphics("man/figures/README-/scMINER_logo.png")
 ```
-
-```
-![]("man/figures/README-/scMINER_logo.png")
-```
-
+---
 <!-- badges: start -->
 <!-- badges: end -->
 

@@ -1,9 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-<img src="man/figures/README-/scMINER_logo.png" width="75%" style="display: block; margin: auto;" />
-
-    ![]("man/figures/README-/scMINER_logo.png")
+## <img src="man/figures/README-/scMINER_logo.png" width="75%" style="display: block; margin: auto;" />
 
 <!-- badges: start -->
 <!-- badges: end -->
