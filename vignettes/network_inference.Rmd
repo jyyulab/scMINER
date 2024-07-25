@@ -12,6 +12,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
 ```{r setup, message=FALSE, warning=FALSE}
@@ -109,7 +110,7 @@ Please use "sjaracne lsf -h" or "sjaracne local -h" to check more details of arg
 There is another file, `config_cwlexec.json`, available in the folder. It contains the information (e.g. memory request for each step of SJARACNe run) used for LSF job submission. This file is only needed for LSF runs and the default values works well in most cases. If you are running SJARACNe on a big dataset, you may need to request more memory from it.
 
 In this case, we use LSF to run the SJARACNe:
-```{shell run-sjaracne-lsf, engine = 'bash', eval=FALSE}
+```{r run-sjaracne-lsf, engine = 'bash', eval=FALSE}
 ## let's use B cell as an example
 # for TF
 sjaracne lsf -e /work-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt -g /work-path/PBMC14k/SJARACNe/B/TF/B.835_1902.tf.txt -o /work-path/PBMC14k/SJARACNe/B/TF/bt100_pc001 -n 100 -pc 0.01 -j /work-path/PBMC14k/SJARACNe/B/config_cwlexec.json
@@ -121,7 +122,7 @@ sjaracne lsf -e /work-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt -g /work-path/
 We created a folder named "**bt100_pc001**" in both TF and SIG folders of each group, to save the networks generated under **100 bootstraps** (`-n 100`) and **0.01 consensus p value** (`-pc 0.01`).
 
 To run SJARACNe on a local machine:
-```{shell run-sjaracne-local, engine = 'bash', eval=FALSE}
+```{r run-sjaracne-local, engine = 'bash', eval=FALSE}
 ## let's use B cell as an example
 # for TF
 sjaracne local -e /work-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt -g /work-path/PBMC14k/SJARACNe/B/TF/B.835_1902.tf.txt -o /work-path/PBMC14k/SJARACNe/B/TF/bt100_pc001 -n 100 -pc 0.01
