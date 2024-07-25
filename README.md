@@ -1,83 +1,93 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# scMINER
+``` r
+knitr::include_graphics("man/figures/README-/scMINER_logo.png")
+```
+
+<img src="man/figures/README-/scMINER_logo.png" width="75%" style="display: block; margin: auto;" />
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-*scMINER* is an R package for preprocessing, QC, clustering, and *hidden
-driver analysis* of single-cell RNA-seq data. scMINER enables mutual
-information-based cell clustering, cell-type-specific gene regulatory
-network (GRN) reverse engineering and protein activity inference, to
-identify hidden transcriptional factors (TFs) and signaling factors
-(SIGs) driving cellular lineage differentiation and tissue specific
-specification.
+**scMINER** (**s**ingle-**c**ell **M**utual **I**nformation-based
+**N**etwork **E**ngineering **R**anger) is a **mutual information-based
+framework** for single cell RNA-seq data analysis. It includes the
+following key functions:
 
-scMINER software consists of three components:
+- **Mutual information-based clustering**: scMINER measures the
+  cell-cell similarities with **full feature-derived mutual
+  information**. It can catch both linear and non-linear correlations
+  and performs better in cell clustering, especially for those of close
+  states.
 
-- [MICA](https://github.com/jyyulab/MICA) (Mutual Information based
-  Clustering analysis) : perform clustering analysis
+- **Gene activity estimation**: scMINER rewires the cell-type specific
+  gene networks solely from the scRNA-seq data, and then estimates the
+  gene activities of not only **transcription factors (TFs)** but also
+  **signaling genes (SIGs)**. The gene activity-based analysis can
+  expose the **main regulators of various biological activities**, like
+  cellular linage differentiation and tissue specificity.
 
-- [SJARACNe](https://github.com/jyyulab/SJARACNe) : generate cluster
-  specific networks
+- **SparseEset-centered full-feature tool**: scMINER provides a wide
+  range of functions for **data intake**, **quality control and
+  filtration**, **MI-based clustering**, **network inference**, **gene
+  activity estimation**, **cell type annotation**, **differential
+  expression/activity analysis**, and **data visualization and
+  sharing**. Most of these functions are developed in an object-oriented
+  manner for the **SparseEset object**.
 
-- [MINIE](https://github.com/jyyulab/scMINER/)(Mutual Information-based
-  Network Inference Engine) : identify cell-type-specific hidden drivers
+# Installation
 
-## Installation
+scMINER framework is mainly developed with R for its advantages in
+statistical analysis and data visualization. It also includes two
+components, [MICA](https://github.com/jyyulab/MICA) and
+[SJARACNe](https://github.com/jyyulab/SJARACNe), that are developed with
+Python to take its strengths in calculation speed and memory
+consumption, since mutual information estimation of large-scale
+scRNA-seq data is usually compute-intensive.
 
-Users need to install MICA, SJARACNe and scMINER(MINIE) to run the
-scMINER analysis. Using conda to create a virtual environment is
-strongly recommended.
+Please install all three software for the full access to scMINER
+framework.
 
-``` bash
-conda create -n scminer python=3.7.6        # Create a python virtual environment
-source activate scminer                     # Activate the virtual environment
-## install MICA
-pip install setuptools==57.5.0              # install setuptools
-pip install MICA                            # Install MICA and its dependencies
-## install SJARACNE
-# pip install SJARACNe                        # Install SJARACNe and its dependencies
-git clone https://github.com/jyyulab/SJARACNe.git
-cd SJARACNe/
-python setup.py build     # build SJARACNe binary
-python setup.py install
-cd ../
-## install scMINER(MINIE)
-conda install -c conda-forge r-base=4.0.3   # Install R (Bioconductor Version 3.12)
-conda install -c conda-forge r-devtools     # Install R devtools
-conda install -c conda-forge r-biocmanager  # Install R BiocManager
-```
+### Install scMINER R package
 
-In R, you can install the current version of scMINER from
-[GitHub](https://github.com/) with:
+The scMINER R package requires R 4.2.3 or newer, and can be installed
+from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("QingfeiPan/scMINER_110")
+devtools::install_github("https://github.com/jyyulab/scMINER.git@dev-qpan")
 ```
 
-## Tutorial
+### Install MICA and SJARACNe
+
+The recommended method to install MICA and SJARACNe is to use
+[conda](https://conda.io/projects/conda/en/latest/) dependency manager:
+
+``` bash
+## setup conda env
+conda create -n scminer python=3.9.2                # Create a python virtual environment
+source activate scminer                             # Activate the virtual environment
+
+## install MICA
+git clone https://github.com/jyyulab/MICA           # Clone the MICA repo
+cd MICA                                             # Switch to the MICA root directory
+pip install .                                       # Install MICA and its dependencies
+mica -h                                             # Check if MICA works
+
+## install SJARACNE
+cd ..                                               # Switch to conda env folder
+git clone https://github.com/jyyulab/SJARACNe.git   # Clone the SJARACNe repo
+cd SJARACNe                                         # Switch to the MICA root directory
+python setup.py build                               # Build SJARACNe binary
+python setup.py install                             # Build SJARACNe binary
+sjaracne -h                                         # Check if SJARACNe works
+```
+
+# Tutorial
 
 Read the [documentation](https://jyyulab.github.io/scMINER/site/) for
 detailed installation instruction and guided analysis.
-
-### Example1: scMINER Guided Analysis on 14k PBMCs from 10x Genomics
-
-This tutorial introduce you scMINER’s basic analysis using a PBMC
-dataset with 10 sorted populations of 2k cells per population [Zheng et
-al., 2017](https://www.nature.com/articles/ncomms14049). Check [tutorial
-for example](https://jyyulab.github.io/scMINER/site/tutorials/PBMC-14k/)
-
-### Example2: scMINER Guided Analysis on WT and KO CD8+ T cell in chronic infection model
-
-TOX is a master transcription factor for CD8+ T cell exhaustion during
-chronic infection. This tutorial introduce you scMINER’s basic analysis
-using a WT and TOX KO CD8+ T dataset (GSE119940) [Yao et al., Nat
-Immunol 2019](https://www.nature.com/articles/s41590-019-0403-4). Check
-[tutorial for
-example](https://jyyulab.github.io/scMINER/site/tutorials/CD8T/)
 
 If you’d like to contribute, please open an issue or a pull request in
 the [github repository](https://github.com/jyyulab/scMINER/issues).
