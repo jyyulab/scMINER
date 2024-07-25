@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, message=FALSE, warning=FALSE}
 library(scMINER)
 library(ggplot2)
 library(dplyr)
@@ -101,6 +101,7 @@ In this case, we use LSF to run the SJARACNe:
 ## let's use B cell as an example
 # for TF
 sjaracne lsf -e /work-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt -g /work-path/PBMC14k/SJARACNe/B/TF/B.835_1902.tf.txt -o /work-path/PBMC14k/SJARACNe/B/TF/bt100_pc001 -n 100 -pc 0.01 -j /work-path/PBMC14k/SJARACNe/B/config_cwlexec.json
+
 # for SIG
 sjaracne lsf -e /work-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt -g /work-path/PBMC14k/SJARACNe/B/SIG/B.4148_1902.sig.txt -o /work-path/PBMC14k/SJARACNe/B/SIG/bt100_pc001 -n 100 -pc 0.01 -j /work-path/PBMC14k/SJARACNe/B/config_cwlexec.json
 ```
@@ -112,6 +113,7 @@ To run SJARACNe on a local machine:
 ## let's use B cell as an example
 # for TF
 sjaracne local -e /work-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt -g /work-path/PBMC14k/SJARACNe/B/TF/B.835_1902.tf.txt -o /work-path/PBMC14k/SJARACNe/B/TF/bt100_pc001 -n 100 -pc 0.01
+
 # for SIG
 sjaracne local -e /work-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt -g /work-path/PBMC14k/SJARACNe/B/SIG/B.4148_1902.sig.txt -o /work-path/PBMC14k/SJARACNe/B/SIG/bt100_pc001 -n 100 -pc 0.01
 ```
@@ -151,9 +153,15 @@ network_stats <- drawNetworkQC(sjaracne_dir = "/work-path/PBMC14K/SJARACNe", gen
 network_stats <- readRDS(system.file("extdata/demo_pbmc14k/PBMC14k/SJARACNe/network_stats.rds", package = "scMINER"))
 head(network_stats)
 ```
-The Mutual Information-based network rewiring by SJARACNe is done!
+**The Mutual Information-based network rewiring by SJARACNe is done!**
 
-
+<details>
+<summary>**Session info**</summary>
+```{r session-info}
+sessioninfo::session_info()
+```
+</details>
+\
 
 
 

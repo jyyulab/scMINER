@@ -162,6 +162,7 @@ compare2groups <- function(input_eset,
       gene_expr.g1 <- gene_expr[group_id == "g1"]
       gene_expr.g0 <- gene_expr[group_id == "g0"]
       if (stats::var(gene_expr.g1) == 0 | stats::var(gene_expr.g1) == 0) {
+        seed(123)
         gene_expr[group_id == "g1"] <- gene_expr[group_id == "g1"] + stats::rnorm(length(gene_expr[group_id == "g1"]), mean = 0, sd = 1e-8)
         gene_expr[group_id == "g0"] <- gene_expr[group_id == "g0"] + stats::rnorm(length(gene_expr[group_id == "g0"]), mean = 0, sd = 1e-8)
       }

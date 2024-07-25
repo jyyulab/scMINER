@@ -13,6 +13,8 @@ feature_scatterplot(
   ncol = 3,
   point.size = 0.5,
   legend.position = "right",
+  legend.key_height = 3,
+  legend.key_width = 1,
   fontsize.legend_title = 10,
   fontsize.legend_text = 8,
   fontsize.strip = 10,
@@ -37,15 +39,19 @@ feature_scatterplot(
 
 \item{legend.position}{Character, position of legend: "\code{right}" (the default), "\code{left}", "\code{top}", "\code{bottom}" or "\code{none}".}
 
-\item{fontsize.legend_title}{Integer, font size of the legend title. Default: 10.}
+\item{legend.key_height}{Numeric, height of the legend key in unit of "cm". Default: 3.}
 
-\item{fontsize.legend_text}{Integer, font size of the legend text. Default: 8.}
+\item{legend.key_width}{Numeric, width of the legend key in unit of "cm". Default: 1.}
 
-\item{fontsize.strip}{Integer, font size of the plot strip. Default: 10.}
+\item{fontsize.legend_title}{Numeric, font size of the legend title. Default: 10.}
 
-\item{fontsize.axis_title}{Integer, font size of the axis label and text. Default: 10.}
+\item{fontsize.legend_text}{Numeric, font size of the legend text. Default: 8.}
 
-\item{fontsize.axis_text}{Integer, font size of the axis label and text. Default: 8.}
+\item{fontsize.strip}{Numeric, font size of the plot strip. Default: 10.}
+
+\item{fontsize.axis_title}{Numeric, font size of the axis label and text. Default: 10.}
+
+\item{fontsize.axis_text}{Numeric, font size of the axis label and text. Default: 8.}
 }
 \value{
 Print a plot to screen and return a gtable containing a list of plots, can be visualized by plot(g), and saved by ggsave(file = "output.pdf", g)

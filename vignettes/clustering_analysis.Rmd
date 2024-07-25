@@ -124,4 +124,12 @@ To color-code the cells by true lables of cell type:
 MICAplot(input_eset = pbmc14k_log2cpm.eset, color_by = "trueLabel", X = "UMAP_1", Y = "UMAP_2", point.size = 0.1, fontsize.cluster_label = 4)
 ```
 
-The mututal information based clustering analysis is done!
+**The mutual information-based clustering analysis is done!**
+
+<details>
+<summary>**Session info**</summary>
+```{r session-info}
+sessioninfo::session_info()
+```
+</details>
+\

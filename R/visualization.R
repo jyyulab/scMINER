@@ -100,7 +100,7 @@ feature_vlnplot <- function(input_eset,
       axis.text.x = element_text(size = fontsize.axis_text, hjust = hjust_x, color = "black", angle = xlabel.angel),
       axis.text.y = element_text(size = fontsize.axis_text, hjust = 1, color = "black"))
 
-  if (is.null(colors) == FALSE) {p <- p+ scale_fill_manual(values = colors)}
+  if (is.null(colors) == FALSE) {p <- p + scale_fill_manual(values = colors)}
 
   return(p)
 }
@@ -220,11 +220,13 @@ feature_boxplot <- function(input_eset,
 #' @param ncol Integer, number of columns when multiple plots are displayed. Default: 3.
 #' @param point.size Numeric, size of the scatter points. Default: 0.5.
 #' @param legend.position Character, position of legend: "`right`" (the default), "`left`", "`top`", "`bottom`" or "`none`".
-#' @param fontsize.legend_title Integer, font size of the legend title. Default: 10.
-#' @param fontsize.legend_text Integer, font size of the legend text. Default: 8.
-#' @param fontsize.strip Integer, font size of the plot strip. Default: 10.
-#' @param fontsize.axis_title Integer, font size of the axis label and text. Default: 10.
-#' @param fontsize.axis_text Integer, font size of the axis label and text. Default: 8.
+#' @param legend.key_height Numeric, height of the legend key in unit of "cm". Default: 3.
+#' @param legend.key_width Numeric, width of the legend key in unit of "cm". Default: 1.
+#' @param fontsize.legend_title Numeric, font size of the legend title. Default: 10.
+#' @param fontsize.legend_text Numeric, font size of the legend text. Default: 8.
+#' @param fontsize.strip Numeric, font size of the plot strip. Default: 10.
+#' @param fontsize.axis_title Numeric, font size of the axis label and text. Default: 10.
+#' @param fontsize.axis_text Numeric, font size of the axis label and text. Default: 8.
 #'
 #' @return Print a plot to screen and return a gtable containing a list of plots, can be visualized by plot(g), and saved by ggsave(file = "output.pdf", g)
 #' @export
@@ -243,7 +245,9 @@ feature_scatterplot <- function(input_eset,
                                 location_x = "UMAP_1", location_y = "UMAP_2",
                                 colors = NULL,
                                 ncol = 3, point.size = 0.5,
-                                legend.position = "right", fontsize.legend_title = 10, fontsize.legend_text = 8,
+                                legend.position = "right",
+                                legend.key_height = 3, legend.key_width = 1,
+                                fontsize.legend_title = 10, fontsize.legend_text = 8,
                                 fontsize.strip = 10, fontsize.axis_title = 10, fontsize.axis_text = 8)
 {
   ## check parameters
@@ -281,6 +285,7 @@ feature_scatterplot <- function(input_eset,
       facet_wrap(~variable, scales = "fixed") + labs(x = location_x, y = location_y) +
       theme(
         legend.position = legend.position,
+        legend.key.height = unit(legend.key_height, 'cm'), legend.key.width = unit(legend.key_width, 'cm'),
         legend.title = element_text(size = fontsize.legend_title, face = "bold"),
         legend.text = element_text(size = fontsize.legend_text),
         strip.text = element_text(size = fontsize.strip, face = "bold"),
@@ -292,8 +297,6 @@ feature_scatterplot <- function(input_eset,
   }
 
   g <- gridExtra::grid.arrange(grobs = ps, ncol = ncol)
-
-  return(g)
 }
 
 

@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, message=FALSE, warning=FALSE}
 library(scMINER)
 library(ggplot2)
 library(dplyr)
@@ -28,7 +28,7 @@ In this tutorial, we will use PBMC14k dataset for demonstration purpose.
 
 <details>
 <summary>**How was the PBMC14K dataset generated?**</summary>
-```{r, prepare-input-eset, echo=FALSE}
+```{r, prepare-input-eset, message=FALSE, warning=FALSE}
 ## Read the raw count matrix
 pbmc14k_rawCount <- readInput_table(system.file("extdata/demo_pbmc14k/PBMC14k_rawCount.txt.gz", package = "scMINER"), is.geneBYcell = TRUE)
 
@@ -72,7 +72,7 @@ head(signature_table)
 ```
 
 With this signature table, `draw_bubbleplot()` can estimate the signature scores and visualize them using bubble plot:
-```{r signature-bubble, fig.width=6, fig.height=5, fig.align='center'}
+```{r signature-bubble, fig.width=7, fig.height=5, fig.align='center'}
 ## Violin plot of marker genes across clusters
 draw_bubbleplot(input_eset = pbmc14k_log2cpm.eset, signature_table = pbmc14k_signatureTable, group_by = "clusterID")
 ```
@@ -87,31 +87,31 @@ genes_of_interest <-c("CD14", "LYZ", "GZMB", "NKG7", "CD19", "MS4A1", "CD8A", "C
 ```
 
 ### feature visualization: violin plot
-```{r featurePlot-vln, fig.width=12, fig.height=12, fig.align='center'}
+```{r featurePlot-vln, fig.width=7, fig.height=6, fig.align='center'}
 ## Violin plot of marker genes across clusters
 feature_vlnplot(input_eset = pbmc14k_log2cpm.eset, features = genes_of_interest, group_by = "clusterID", ncol = 4)
 ```
 
 ### feature visualization: box plot
-```{r featurePlot-box, fig.width=12, fig.height=12, fig.align='center'}
+```{r featurePlot-box, fig.width=7, fig.height=6, fig.align='center'}
 ## Box plot of marker genes across clusters
 feature_boxplot(input_eset = pbmc14k_log2cpm.eset, features = genes_of_interest, group_by = "clusterID", ncol = 4)
 ```
 
 ### feature visualization: scatter plot
-```{r featurePlot-scatter, fig.width=12, fig.height=12, fig.align='center'}
+```{r featurePlot-scatter, fig.width=7, fig.height=7, fig.align='center'}
 ## UMAP scatter plot of marker genes
-feature_scatterplot(input_eset = pbmc14k_log2cpm.eset, features = genes_of_interest, ncol = 4, location_x = "UMAP_1", location_y =  "UMAP_2", point.size = 0.5)
+feature_scatterplot(input_eset = pbmc14k_log2cpm.eset, features = genes_of_interest, ncol = 4, location_x = "UMAP_1", location_y =  "UMAP_2", point.size = 0.5, legend.key_height = 0.3, legend.key_width = 0.2, fontsize.legend_title = 8, fontsize.legend_text = 6, fontsize.axis_title = 8, legend.position = "none")
 ```
 
 ### feature visualization: bubble plot
-```{r featurePlot-bubble, fig.width=8,fig.height=8, fig.align='center'}
+```{r featurePlot-bubble, fig.width=7,fig.height=5, fig.align='center'}
 ## Bubble plot of marker genes across clusters
 feature_bubbleplot(input_eset = pbmc14k_log2cpm.eset, features = genes_of_interest, group_by = "clusterID", xlabel.angel = 45)
 ```
 
 ### feature visualization: heatmap
-```{r featurePlot-heatmap, fig.width=12, fig.height=10,fig.align='center'}
+```{r featurePlot-heatmap, fig.width=7, fig.height=5,fig.align='center'}
 ## Heatmap of marker genes across clusters
 feature_heatmap(input_eset = pbmc14k_log2cpm.eset, features = genes_of_interest, group_by = "clusterID", scale_method = "none", annotation_columns = c("trueLabel"))
 ```
@@ -125,7 +125,7 @@ scMINER provides a function, `getDE()`, to perform the differential expression a
 
 ```{r differential-expression-analysis-1}
 ## 1. To perform differential expression analysis in a 1-vs-rest manner for all groups
-de_res1 <- getDE(input_eset = pbmc14k_log2cpm.eset, group_by = "clusterID", use_method = "limma")
+de_res1 <- getDE(input_eset = pbmc14k_log2cpm.eset[500,], group_by = "clusterID", use_method = "limma")
 head(de_res1)
 ```
 Here is an brief introduction to the results of `getDE()`:
@@ -170,7 +170,7 @@ head(pData(pbmc14k_log2cpm.eset))
 ```
 
 The `draw_barplot()` function can visualize the cell composition of self-defined groups. We can use it to show the purity of MICA clusters:
-```{r group-barplot, fig.width=8, fig.height=8, fig.align='center'}
+```{r group-barplot, fig.width=6, fig.height=6, fig.align='center'}
 ## Violin plot of marker genes across clusters
 draw_barplot(input_eset = pbmc14k_log2cpm.eset, group_by = "cell_type", color_by = "trueLabel_full", xlabel.angel = 45)
 ```
@@ -180,4 +180,13 @@ Don't forget to save the SparseExpressionSet object after the cell type annotati
 saveRDS(pbmc14k_log2cpm.eset, file = "/work-path/PBMC14k/DATA/pbmc14k_log2CPM_annotated.rds")
 ```
 
-The cell type annotation is done!
+**The cell type annotation is done!**
+
+<details>
+<summary>**Session info**</summary>
+```{r session-info}
+sessioninfo::session_info()
+```
+</details>
+\
+

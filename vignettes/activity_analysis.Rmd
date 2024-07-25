@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, message=FALSE, warning=FALSE}
 library(scMINER)
 library(ggplot2)
 library(dplyr)
@@ -66,16 +66,16 @@ scMINER provides two functions, `getActivity_individual()` and `getActivity_inBa
 `getActivity_individual()` is designed to calculate the activities per group. It takes the network files as the input:
 ```{r calculate-activity-individually, eval=FALSE}
 ## let's use B cell as an example
-activity_B.eset <- getActivity_individual(input_eset = pbmc14k_log2cpm.eset[, pData(pbmc14k_log2cpm.eset)$true_label.new == "B"], network_file.tf = "work-path/PBMC14K/SJARACNe/B/TF/bt100_pc001/sjaracne_workflow-fb2a69b9-f98e-47ff-87a0-6d538822fc6e/consensus_network_ncol_.txt", network_file.sig = "work-path/PBMC14K/SJARACNe/B/SIG/bt100_pc001/sjaracne_workflow-df798096-8dee-4baf-8f70-891c689dc769/consensus_network_ncol_.txt", driver_type = "TF_SIG")
+activity_B.eset <- getActivity_individual(input_eset = pbmc14k_log2cpm.eset[, pData(pbmc14k_log2cpm.eset)$true_label.new == "B"], network_file.tf = "/work-path/PBMC14K/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", network_file.sig = "/work-path/PBMC14K/SJARACNe/B/SIG/bt100_pc001/consensus_network_ncol_.txt", driver_type = "TF_SIG")
 ```
 
 If you need to calculate the activity for multiple groups, this is usually the case, you can do it using `getActivity_individual()` as shown above one by one and merge the esets after that. Or, scMINER privides another function, `getActivity_inBatch()`, to calculate the activity in batch:
 ```{r calculate-activity-in-batch}
 ## let's use B cell as an example
-activity.eset <- getActivity_inBatch(input_eset = pbmc14k_log2cpm.eset, sjaracne_dir = "work-path/PBMC14K/SJARACNe",  group_name = "true_label.new", driver_type = "TF_SIG", activity_method = "mean", do.z_normalization = TRUE)
+activity.eset <- getActivity_inBatch(input_eset = pbmc14k_log2cpm.eset, sjaracne_dir = "/work-path/PBMC14K/SJARACNe",  group_name = "true_label.new", driver_type = "TF_SIG", activity_method = "mean", do.z_normalization = TRUE)
 ```
 
-```{r save-activity-eset}
+```{r save-activity-eset, echo=FALSE}
 saveRDS(activity.eset, file = "/work-path/PBMC14k/DATA/activity.eset")
 ```
 
@@ -107,3 +107,13 @@ top_drivers <- getTopFeatures(input_table = da_res1, number = 10, group_by = "g1
 dim(top_drivers)
 head(top_drivers)
 ```
+
+**The activity-based analysis is done!**
+
+<details>
+<summary>**Session info**</summary>
+```{r session-info}
+sessioninfo::session_info()
+```
+</details>
+\
