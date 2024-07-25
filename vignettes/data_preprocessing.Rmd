@@ -164,8 +164,7 @@ write.table(d.14k, file = "/Volumes/projects/scRNASeq/yu3grp/scMINER/NG_Revision
 
 ```{r load-the-pbmc14k-data}
 ## Read the raw count matrix
-pbmc14k_rawCount <- readInput_table(system.file("extdata/demo_pbmc14k/PBMC14k_rawCount.txt.gz", package = "scMINER"), is.geneBYcell = TRUE)
-
+data("pbmc14k_rawCount")
 dim(pbmc14k_rawCount)
 
 pbmc14k_rawCount[1:5,1:5]

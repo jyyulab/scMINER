@@ -18,7 +18,7 @@ drawSparseEsetQC(
 
 \item{overwrite}{Logical, whether to overwrite the output .html file if it already exists. Default: \code{FALSE}.}
 
-\item{group}{Character or \code{NULL}, Name of column in pData(eset) used for grouping. Default: \code{NULL}.}
+\item{group_by}{Character or \code{NULL}, Name of column in pData(eset) used for grouping. Default: \code{NULL}.}
 }
 \value{
 A html-formatted quality control report of sparse eset object

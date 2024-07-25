@@ -573,8 +573,6 @@ drawNetworkQC <- function(network_file = NULL,
 #' @param x a vector of numbers for z-normalization
 #'
 #' @return a vector of numbers with z-normalized
-#' @export
-#' @noRd
 #'
 #' @examples do.std(c(1,2,3,4,5,NA,6,7,8,9))
 z_normalization <- function(x) {
@@ -592,8 +590,6 @@ z_normalization <- function(x) {
 #' @param net_dat a data frame generated from SJARANCe network file. These columns are needed: "`source`", "`target`", "`MI`" and "`spearman`".
 #'
 #' @return A list of source genes, for each source gene, the value is a data frame with "`target`", "`MI`" and "`spearman`" as the columns
-#' @export
-#' @noRd
 #'
 #' @examples net_data <-  read.table("./consensus_network_ncol_.txt", header = T, sep = "\t", stringsAsFactors = F, quote = "")
 #' target_list <- get_net2target_list(net_data)
@@ -628,12 +624,10 @@ get_net2target_list <- function(net_dat = NULL) {
 #' internal function for c`al_Activity()`, `getActivity_individual()`, `getActivity_inBatch()`.
 #'
 #' @param target_list a list of source genes returned by `get_net2target_list()`, for each source gene, the value if a data frame with "`target`", "`MI`" and "`spearman`" as the columns,
-#' @param es.method Character, method used to calculate the activity: "`mean`" (the default), "`weightedmean`", "`absmean`" or "`maxmean`".
+#' @param activity_method Character, method used to calculate the activity: "`mean`" (the default), "`weightedmean`", "`absmean`" or "`maxmean`".
 #'
 #' @return If "`weightedmean`" is given, it returns a matrix of signed (by Spearman correlation coefficient) mutual information, the sign of which will be used for activity calculation. For
 #' all the other methods ("`mean`", "`absmean`" or "`maxmean`"), it returns a matrix of 1.
-#' @export
-#' @noRd
 #'
 #' @examples weight_matrix <- get_target_list2matrix(target_list)
 get_target_list2matrix <- function(target_list = NULL, activity_method = 'mean') {
@@ -661,8 +655,6 @@ get_target_list2matrix <- function(target_list = NULL, activity_method = 'mean')
 #' @param do.std Logical, whether to do the z-normalization on the gene expression values in each sample. Default: `TRUE`.
 #'
 #' @return a matrix of activities, drivers by cells
-#' @export
-#' @noRd
 #'
 #' @examples act_mat <- cal_Activity(target_list = target_list, cal_mat = exprs(normalized.eset), activity_method = 'mean', do.std = TRUE)
 cal_Activity <- function(target_list = NULL, cal_mat = NULL, activity_method = 'mean', do.std = TRUE) {
@@ -741,11 +733,7 @@ cal_Activity <- function(target_list = NULL, cal_mat = NULL, activity_method = '
 #' @export
 #'
 #' @examples
-#' ## 1. when use the eset with all groups
-#' activity_group.eset <- getActivity_individual(input_eset = normalized.eset[, pData(normalized.eset)$cell_type == "Monocyte"], network_file.tf = "./TF/tag/sjaracne-workflow-\*/consensus_network_ncol_.txt", network_file.sig = "./SIG/tag/sjaracne-workflow-\*/consensus_network_ncol_.txt", driver_type = "TF_SIG")
-#'
-#' ## 2. when the group-specific eset is available
-#' activity_group.eset <- getActivity_individual(input_eset = group_specific.est, network_file.tf = "./TF/tag/sjaracne-workflow-\*/consensus_network_ncol_.txt", network_file.sig = "./SIG/tag/sjaracne-workflow-\*/consensus_network_ncol_.txt", driver_type = "TF_SIG")
+#' activity_group.eset <- getActivity_individual(input_eset = group_specific.est, network_file.tf = "consensus_network_ncol_.txt", network_file.sig = "consensus_network_ncol_.txt", driver_type = "TF_SIG")
 getActivity_individual <- function(input_eset,
                                    network_file.tf = NULL,
                                    network_file.sig = NULL,

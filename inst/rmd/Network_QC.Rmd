@@ -14,6 +14,8 @@ library(igraph)
 ```
 
 ```{r echo=FALSE}
+obj <- igraph_obj
+
 deg <- igraph::degree(obj, mode = "out")
 source_list <- names(deg)[which(deg > 0)]
 c1 <- igraph::components(obj)

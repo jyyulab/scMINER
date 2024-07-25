@@ -544,7 +544,7 @@ normalizeSparseEset <- function(input_eset,
 #' @param input_eset The sparse eset object for quality control analysis
 #' @param output_html_file The path of the output .html file
 #' @param overwrite Logical, whether to overwrite the output .html file if it already exists. Default: `FALSE`.
-#' @param group Character or `NULL`, Name of column in pData(eset) used for grouping. Default: `NULL`.
+#' @param group_by Character or `NULL`, Name of column in pData(eset) used for grouping. Default: `NULL`.
 #'
 #' @return A html-formatted quality control report of sparse eset object
 #' @export

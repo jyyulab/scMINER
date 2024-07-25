@@ -10,7 +10,6 @@
 #' @param twosided Logical, whether the input P values are two-sided. If FALSE, the input P values will be treated as one-tailed. Default: `TRUE`.
 #'
 #' @return A vector containing "Z-statistics" and "P.Value".
-#' @export
 #'
 #' @examples
 #' ## 1. combine P values from a vector
@@ -96,8 +95,6 @@ combinePvalVector <- function(pvals,
 #' @param use_method Character, method used for differential analysis: "`limma`" (the default), "`wilcoxon`", and "`t.test`".
 #'
 #' @return A data frame. Rows are genes/drivers, and columns are 11 statistics of differential analysis.
-#' @export
-#' @noRd
 #'
 #' @examples
 #' ## to call this function
@@ -162,7 +159,7 @@ compare2groups <- function(input_eset,
       gene_expr.g1 <- gene_expr[group_id == "g1"]
       gene_expr.g0 <- gene_expr[group_id == "g0"]
       if (stats::var(gene_expr.g1) == 0 | stats::var(gene_expr.g1) == 0) {
-        seed(123)
+        set.seed(123)
         gene_expr[group_id == "g1"] <- gene_expr[group_id == "g1"] + stats::rnorm(length(gene_expr[group_id == "g1"]), mean = 0, sd = 1e-8)
         gene_expr[group_id == "g0"] <- gene_expr[group_id == "g0"] + stats::rnorm(length(gene_expr[group_id == "g0"]), mean = 0, sd = 1e-8)
       }

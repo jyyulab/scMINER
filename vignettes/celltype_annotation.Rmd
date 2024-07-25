@@ -29,8 +29,8 @@ In this tutorial, we will use PBMC14k dataset for demonstration purpose.
 <details>
 <summary>**How was the PBMC14K dataset generated?**</summary>
 ```{r, prepare-input-eset, message=FALSE, warning=FALSE}
-## Read the raw count matrix
-pbmc14k_rawCount <- readInput_table(system.file("extdata/demo_pbmc14k/PBMC14k_rawCount.txt.gz", package = "scMINER"), is.geneBYcell = TRUE)
+## Load the raw count matrix
+data("pbmc14k_rawCount")
 
 ## Read the true labels
 pbmc14k_trueLabel <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k_trueLabel.txt.gz", package = "scMINER"), header = T, row.names = 1, sep = "\t", quote = "", stringsAsFactors = FALSE)
@@ -74,7 +74,7 @@ head(signature_table)
 With this signature table, `draw_bubbleplot()` can estimate the signature scores and visualize them using bubble plot:
 ```{r signature-bubble, fig.width=7, fig.height=5, fig.align='center'}
 ## Violin plot of marker genes across clusters
-draw_bubbleplot(input_eset = pbmc14k_log2cpm.eset, signature_table = pbmc14k_signatureTable, group_by = "clusterID")
+draw_bubbleplot(input_eset = pbmc14k_log2cpm.eset, signature_table = signature_table, group_by = "clusterID")
 ```
 In the bubble plot above, the color of the bubbles is proportional to the mean of signature score, and the size of the bubbles is proportional to the percentage of cells with higher signature score than mean. The cell type of each cluster is clear, except the cluster 7, which shows equally-high signature score of both CD4+ TCM and CD4+ Reg and higher percentage of CD4+ TCM cells.
 
