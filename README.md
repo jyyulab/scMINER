@@ -3,6 +3,7 @@
 <p align="center">
   <img src="man/figures/README-/scMINER_logo.png" width="75%" style="display: block; margin: auto;" />
 </p>
+
 ---
 <!-- badges: start -->
 <!-- badges: end -->
