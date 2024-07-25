@@ -5,24 +5,27 @@
 \title{Filter the cells and/or features of sparse eset object using automatic or self-customized cutoffs}
 \usage{
 filterSparseEset(
-  eset,
-  mode = "auto",
-  gene.nCell_min = 1,
-  gene.nCell_max = Inf,
-  cell.nUMI_min = 1,
-  cell.nUMI_max = Inf,
-  cell.nFeature_min = 1,
-  cell.nFeature_max = Inf,
-  cell.pctMito_min = 0,
-  cell.pctMito_max = 1,
-  cell.pctSpikeIn_min = 0,
-  cell.pctSpikeIn_max = 1
+  input_eset,
+  filter_mode = "auto",
+  filter_type = "both",
+  gene.nCell_min = NULL,
+  gene.nCell_max = NULL,
+  cell.nUMI_min = NULL,
+  cell.nUMI_max = NULL,
+  cell.nFeature_min = NULL,
+  cell.nFeature_max = NULL,
+  cell.pctMito_min = NULL,
+  cell.pctMito_max = NULL,
+  cell.pctSpikeIn_min = NULL,
+  cell.pctSpikeIn_max = NULL
 )
 }
 \arguments{
-\item{eset}{The sparse eset object to be filtered}
+\item{input_eset}{The sparse eset object to be filtered}
 
-\item{mode}{Character, mode to apply the filtration cutoffs: \strong{"auto"} (the default) or \strong{"manual"}.}
+\item{filter_mode}{Character, mode to apply the filtration cutoffs: \strong{"auto"} (the default) or \strong{"manual"}.}
+
+\item{filter_type}{Character, objective type to be filtered: \strong{"both"} (the default), \strong{"cell"} or \strong{"feature"} .}
 
 \item{gene.nCell_min}{Numeric, the minimum number of cells that the qualified genes are identified in. Default: 1.}
 

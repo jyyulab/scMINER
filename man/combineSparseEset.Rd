@@ -9,7 +9,8 @@ combineSparseEset(
   projectID = NULL,
   addPrefix = NULL,
   addSurfix = NULL,
-  addMetaData = TRUE
+  addMetaData = TRUE,
+  imputeNA = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ combineSparseEset(
 \item{addSurfix}{A character vector or \code{NULL}, add a \strong{surfix} to the cell barcodes of each eset object to combine. It is highly recommended to use a surfix containing letters and/or numbers only, and not starting with numbers. Default: \code{NULL}.}
 
 \item{addMetaData}{Logical, whether to update the meta data of cells and features after combination. Default: \code{TRUE}.}
+
+\item{imputeNA}{Logical, whether to impute NA values in combined matrix. If \code{TRUE}, the min value of the matrix will be used to replace the NAs. If \code{FALSE}, NA values will retain. Default: \code{TRUE}.}
 }
 \value{
 A sparse eset object with combined features and cells of multiple eset objects.

@@ -103,11 +103,11 @@ createSparseEset <- function(input_matrix,
 
     if ("pctMito" %in% colnames(cell_data)) {warning("The 'pctMito' column in cellData will be updated based on input_matrix. To keep it, please rename it in cellData.")}
     mito_genes <- row.names(expression_data)[grepl(pattern = "^mt-|^MT-", x = row.names(expression_data))]
-    cell_data$pctMito = round(Matrix::colSums(expression_data[mito_genes, ]) / Matrix::colSums(expression_data), 8)
+    cell_data$pctMito = round(Matrix::colSums(expression_data[row.names(expression_data) %in% mito_genes, ]) / Matrix::colSums(expression_data), 8)
 
     if ("pctSpikeIn" %in% colnames(cell_data)) {warning("The 'pctSpikeIn' column in cellData will be updated based on input_matrix. To keep it, please rename it in cellData.")}
     spikeIn_genes <- row.names(expression_data)[grepl(pattern = "^ERCC-|^Ercc-", x = row.names(expression_data))]
-    cell_data$pctSpikeIn = round(Matrix::colSums(expression_data[spikeIn_genes, ]) / Matrix::colSums(expression_data), 8)
+    cell_data$pctSpikeIn = round(Matrix::colSums(expression_data[row.names(expression_data) %in% spikeIn_genes, ]) / Matrix::colSums(expression_data), 8)
 
     if (("CellID" %in% colnames(cell_data)) == FALSE) {cell_data$CellID <- row.names(cell_data)}
   }
@@ -362,8 +362,9 @@ updateSparseEset <- function(input_eset,
 #' - **"manual"**: in this mode, the users can manually specify the cutoffs, both low and high, of all 5 metrics: **nUMI**, **nFeature**, **pctMito**, **pctSpikeIn** for cells, and **nCell** for genes. No cells or
 #' features would be removed under the default cutoffs of each metrics.
 #'
-#' @param eset The sparse eset object to be filtered
-#' @param mode Character, mode to apply the filtration cutoffs: **"auto"** (the default) or **"manual"**.
+#' @param input_eset The sparse eset object to be filtered
+#' @param filter_mode Character, mode to apply the filtration cutoffs: **"auto"** (the default) or **"manual"**.
+#' @param filter_type Character, objective type to be filtered: **"both"** (the default), **"cell"** or **"feature"** .
 #' @param gene.nCell_min Numeric, the minimum number of cells that the qualified genes are identified in. Default: 1.
 #' @param gene.nCell_max Numeric, the maximum number of cells that the qualified genes are identified in. Default: Inf.
 #' @param cell.nUMI_min Numeric, the minimum number of total UMI counts per cell that the qualified cells carry. Default: 1.
@@ -381,86 +382,112 @@ updateSparseEset <- function(input_eset,
 #' @examples
 #' filtered.eset <- filterSparseEset(raw.eset) ## filter the input eset using the cutoffs calculated by scMINER.
 #' filtered.eset <- filterSparseEset(raw.eset, gene.nCell_min = 10, cell.nUMI_min = 500, cell.nFeature_min = 100, cell.nFeature_max = 5000, cell.pctMito_max = 0.15)
-filterSparseEset <- function(eset,
-                             mode = "auto",
-                             gene.nCell_min = 1, gene.nCell_max = Inf,
-                             cell.nUMI_min = 1, cell.nUMI_max = Inf,
-                             cell.nFeature_min = 1, cell.nFeature_max = Inf,
-                             cell.pctMito_min = 0, cell.pctMito_max = 1,
-                             cell.pctSpikeIn_min = 0, cell.pctSpikeIn_max = 1)
+filterSparseEset <- function(input_eset,
+                             filter_mode = "auto",
+                             filter_type = "both",
+                             gene.nCell_min = NULL, gene.nCell_max = NULL,
+                             cell.nUMI_min = NULL, cell.nUMI_max = NULL,
+                             cell.nFeature_min = NULL, cell.nFeature_max = NULL,
+                             cell.pctMito_min = NULL, cell.pctMito_max = NULL,
+                             cell.pctSpikeIn_min = NULL, cell.pctSpikeIn_max = NULL)
+                             #gene.nCell_min = 1, gene.nCell_max = Inf,
+                             #cell.nUMI_min = 1, cell.nUMI_max = Inf,
+                             #cell.nFeature_min = 1, cell.nFeature_max = Inf,
+                             #cell.pctMito_min = 0, cell.pctMito_max = 1,
+                             #cell.pctSpikeIn_min = 0, cell.pctSpikeIn_max = 1)
 {
+  ## check parameters
+  if ((filter_mode %in% c("auto", "manual")) == FALSE) {stop('The filter_mode was not recognized. Please specify one of them: [auto | manual].')}
+  if ((filter_type %in% c("both", "cell", "feature")) == FALSE) {stop('The filter_type was not recognized. Please specify one of them: [both | cell | feature].')}
+
   ## check the availability of 5 QC metrics
-  cat("Checking the availability of the 5 metrics ('nCell', 'nUMI', 'nFeature', 'pctMito', 'pctSpikeIn') used for eset filtration ...\n")
-  if (("nCell" %in% colnames(Biobase::fData(eset))) & all(c("nUMI", "nFeature", "pctMito", "pctSpikeIn") %in% colnames(Biobase::pData(eset)))) {
+  cat("Checking the availability of the 5 metrics ('nCell', 'nUMI', 'nFeature', 'pctMito', 'pctSpikeIn') used for filtration ...\n")
+  if (("nCell" %in% colnames(Biobase::fData(input_eset))) & all(c("nUMI", "nFeature", "pctMito", "pctSpikeIn") %in% colnames(Biobase::pData(input_eset)))) {
     cat("Checking passed! All 5 metrics are available.\n")
   } else {
-    cat("Part of the 5 metrics are not available. Updating the eset automatically...\n")
-    eset <- updateSparseEset(eset, addMetaData = T)
+    cat("Part of the 5 metrics are not available. Updating the input eset automatically...\n")
+    input_eset <- updateSparseEset(input_eset, addMetaData = T)
     cat("Checking passed! All 5 metrics are available after updating.\n")
   }
 
   ## prepare the cutoffs
-  if (mode == "auto") {
-    gene.nCell_min = max(floor(0.005 * dim(eset)[2]), 1)
-    gene.nCell_max = Inf
-    cell.nUMI_min = max(floor(exp(median(log(eset$nUMI)) - 3 * mad(log(eset$nUMI)))), 100)
-    cell.nUMI_max = ceiling(exp(median(log(eset$nUMI)) + 3 * mad(log(eset$nUMI))))
-    cell.nFeature_min = max(floor(exp(median(log(eset$nFeature)) - 3 * mad(log(eset$nFeature)))), 50)
-    cell.nFeature_max = Inf
-    cell.pctMito_min = 0
-    cell.pctMito_max = round(median(eset$pctMito) + 3 * mad(eset$pctMito), 4)
-    cell.pctSpikeIn_min = 0
-    cell.pctSpikeIn_max = round(median(eset$pctSpikeIn) + 3 * mad(eset$pctSpikeIn), 4)
-  } else if (mode == "manual") {
-    if (is.null(gene.nCell_min)) {gene.nCell_min = 1}
-    if (is.null(gene.nCell_max)) {gene.nCell_max = Inf}
-    if (is.null(cell.nUMI_min)) {cell.nUMI_min = 1}
-    if (is.null(cell.nUMI_max)) {cell.nUMI_max = Inf}
-    if (is.null(cell.nFeature_min)) {cell.nFeature_min = 1}
-    if (is.null(cell.nFeature_max)) {cell.nFeature_max = Inf}
-    if (is.null(cell.pctMito_min)) {cell.pctMito_min = 0}
-    if (is.null(cell.pctMito_max)) {cell.pctMito_max = 1}
-    if (is.null(cell.pctSpikeIn_min)) {cell.pctSpikeIn_min = 0}
-    if (is.null(cell.pctSpikeIn_max)) {cell.pctSpikeIn_max = 1}
-  } else {
-    stop('The mode was not recognized. Please specify one of them: [auto | manual].')
+  if (filter_mode == "auto") {
+    if (is.null(gene.nCell_min) == TRUE) {gene.nCell_min = max(floor(0.005 * dim(input_eset)[2]), 1)}
+    if (is.null(gene.nCell_max) == TRUE) {gene.nCell_max = Inf}
+    if (is.null(cell.nUMI_min) == TRUE) {cell.nUMI_min = max(floor(exp(median(log(input_eset$nUMI)) - 3 * mad(log(input_eset$nUMI)))), 100)}
+    if (is.null(cell.nUMI_max) == TRUE) {cell.nUMI_max = ceiling(exp(median(log(input_eset$nUMI)) + 3 * mad(log(input_eset$nUMI))))}
+    if (is.null(cell.nFeature_min) == TRUE) {cell.nFeature_min = max(floor(exp(median(log(input_eset$nFeature)) - 3 * mad(log(input_eset$nFeature)))), 50)}
+    if (is.null(cell.nFeature_max) == TRUE) {cell.nFeature_max = Inf}
+    if (is.null(cell.pctMito_min) == TRUE) {cell.pctMito_min = 0}
+    if (is.null(cell.pctMito_max) == TRUE) {cell.pctMito_max = round(median(input_eset$pctMito) + 3 * mad(input_eset$pctMito), 4)}
+    if (is.null(cell.pctSpikeIn_min) == TRUE) {cell.pctSpikeIn_min = 0}
+    if (is.null(cell.pctSpikeIn_max) == TRUE) {cell.pctSpikeIn_max = round(median(input_eset$pctSpikeIn) + 3 * mad(input_eset$pctSpikeIn), 4)}
+  } else if (filter_mode == "manual") {
+    if (is.null(gene.nCell_min) == TRUE) {gene.nCell_min = 1}
+    if (is.null(gene.nCell_max) == TRUE) {gene.nCell_max = Inf}
+    if (is.null(cell.nUMI_min) == TRUE) {cell.nUMI_min = 1}
+    if (is.null(cell.nUMI_max) == TRUE) {cell.nUMI_max = Inf}
+    if (is.null(cell.nFeature_min) == TRUE) {cell.nFeature_min = 1}
+    if (is.null(cell.nFeature_max) == TRUE) {cell.nFeature_max = Inf}
+    if (is.null(cell.pctMito_min) == TRUE) {cell.pctMito_min = 0}
+    if (is.null(cell.pctMito_max) == TRUE) {cell.pctMito_max = 1}
+    if (is.null(cell.pctSpikeIn_min) == TRUE) {cell.pctSpikeIn_min = 0}
+    if (is.null(cell.pctSpikeIn_max) == TRUE) {cell.pctSpikeIn_max = 1}
   }
 
   ## filtering: genes
-  fd_pre <- Biobase::fData(eset)
-  gene_qualified <- row.names(eset)[fd_pre$nCell >= gene.nCell_min & fd_pre$nCell <= gene.nCell_max]
+  fd_pre <- Biobase::fData(input_eset)
+  if (filter_type %in% c("both", "feature")) {
+    gene_qualified <- row.names(input_eset)[fd_pre$nCell >= gene.nCell_min & fd_pre$nCell <= gene.nCell_max]
+  } else {
+    gene_qualified <- row.names(input_eset)
+  }
   msg_gene <- sprintf("\tGene filtration statistics:\n\t\tMetrics\t\tnCell\n\t\tCutoff_Low\t%.0f\n\t\tCutoff_High\t%f\n\t\tGene_total\t%d\n\t\tGene_passed\t%d(%.2f%%)\n\t\tGene_failed\t%d(%.2f%%)\n",
-                      gene.nCell_min, gene.nCell_max, nrow(eset), length(gene_qualified), (length(gene_qualified)/nrow(eset)*100), (nrow(eset)-length(gene_qualified)), ((nrow(eset)-length(gene_qualified))/nrow(eset)*100))
+                      gene.nCell_min, gene.nCell_max, nrow(input_eset), length(gene_qualified), (length(gene_qualified)/nrow(input_eset)*100), (nrow(input_eset)-length(gene_qualified)), ((nrow(input_eset)-length(gene_qualified))/nrow(input_eset)*100))
 
   ## filtering: cells
-  cell_qualified.nUMI <- which((eset$nUMI >= cell.nUMI_min) & (eset$nUMI <= cell.nUMI_max))
-  cell_qualified.nFeature <- which((eset$nFeature >= cell.nFeature_min) & (eset$nFeature <= cell.nFeature_max)); cell_qualified.combined <- intersect(cell_qualified.nUMI, cell_qualified.nFeature)
-  cell_qualified.pctMito <- which((eset$pctMito >= cell.pctMito_min) & (eset$pctMito <= cell.pctMito_max)); cell_qualified.combined <- intersect(cell_qualified.combined, cell_qualified.pctMito)
-  cell_qualified.pctSpikeIn <- which((eset$pctSpikeIn >= cell.pctSpikeIn_min) & (eset$pctSpikeIn <= cell.pctSpikeIn_max)); cell_qualified.combined <- intersect(cell_qualified.combined, cell_qualified.pctSpikeIn)
-  cell_qualified <- colnames(eset)[cell_qualified.combined]
+  if (filter_type %in% c("both", "cell")) {
+    cell_qualified.nUMI <- which((input_eset$nUMI >= cell.nUMI_min) & (input_eset$nUMI <= cell.nUMI_max))
+    cell_qualified.nFeature <- which((input_eset$nFeature >= cell.nFeature_min) & (input_eset$nFeature <= cell.nFeature_max)); cell_qualified.combined <- intersect(cell_qualified.nUMI, cell_qualified.nFeature)
+    cell_qualified.pctMito <- which((input_eset$pctMito >= cell.pctMito_min) & (input_eset$pctMito <= cell.pctMito_max)); cell_qualified.combined <- intersect(cell_qualified.combined, cell_qualified.pctMito)
+    cell_qualified.pctSpikeIn <- which((input_eset$pctSpikeIn >= cell.pctSpikeIn_min) & (input_eset$pctSpikeIn <= cell.pctSpikeIn_max)); cell_qualified.combined <- intersect(cell_qualified.combined, cell_qualified.pctSpikeIn)
+    cell_qualified <- colnames(input_eset)[cell_qualified.combined]
+  } else {
+    cell_qualified.nUMI <- which((input_eset$nUMI >= cell.nUMI_min) & (input_eset$nUMI <= cell.nUMI_max))
+    cell_qualified.nFeature <- which((input_eset$nFeature >= cell.nFeature_min) & (input_eset$nFeature <= cell.nFeature_max)); cell_qualified.combined <- intersect(cell_qualified.nUMI, cell_qualified.nFeature)
+    cell_qualified.pctMito <- which((input_eset$pctMito >= cell.pctMito_min) & (input_eset$pctMito <= cell.pctMito_max)); cell_qualified.combined <- intersect(cell_qualified.combined, cell_qualified.pctMito)
+    cell_qualified.pctSpikeIn <- which((input_eset$pctSpikeIn >= cell.pctSpikeIn_min) & (input_eset$pctSpikeIn <= cell.pctSpikeIn_max)); cell_qualified.combined <- intersect(cell_qualified.combined, cell_qualified.pctSpikeIn)
+    cell_qualified <- colnames(input_eset)
+  }
 
   msg_cell <- sprintf("\tCell filtration statistics:\n\t\tMetrics\t\tnUMI\t\tnFeature\tpctMito\t\tpctSpikeIn\tCombined\n\t\tCutoff_Low\t%.0f\t\t%.0f\t\t%.0f\t\t%.0f\t\t%s\n\t\tCutoff_High\t%.0f\t\t%.0f\t\t%.4f\t\t%.4f\t\t%s\n\t\tCell_total\t%d\t\t%d\t\t%d\t\t%d\t\t%d\n\t\tCell_passed\t%d(%.2f%%)\t%d(%.2f%%)\t%d(%.2f%%)\t%d(%.2f%%)\t%d(%.2f%%)\n\t\tCell_failed\t%d(%.2f%%)\t%d(%.2f%%)\t%d(%.2f%%)\t%d(%.2f%%)\t%d(%.2f%%)\n",
                   cell.nUMI_min, cell.nFeature_min, cell.pctMito_min, cell.pctSpikeIn_min, "NA",
                   cell.nUMI_max, cell.nFeature_max, cell.pctMito_max, cell.pctSpikeIn_max, "NA",
-                  ncol(eset), ncol(eset), ncol(eset), ncol(eset), ncol(eset),
-                  length(cell_qualified.nUMI), (length(cell_qualified.nUMI)/ncol(eset)*100),
-                  length(cell_qualified.nFeature), (length(cell_qualified.nFeature)/ncol(eset)*100),
-                  length(cell_qualified.pctMito), (length(cell_qualified.pctMito)/ncol(eset)*100),
-                  length(cell_qualified.pctSpikeIn), (length(cell_qualified.pctSpikeIn)/ncol(eset)*100),
-                  length(cell_qualified.combined), (length(cell_qualified.combined)/ncol(eset)*100),
-                  (ncol(eset)-length(cell_qualified.nUMI)), ((ncol(eset)-length(cell_qualified.nUMI))/ncol(eset)*100),
-                  (ncol(eset)-length(cell_qualified.nFeature)), ((ncol(eset)-length(cell_qualified.nFeature))/ncol(eset)*100),
-                  (ncol(eset)-length(cell_qualified.pctMito)), ((ncol(eset)-length(cell_qualified.pctMito))/ncol(eset)*100),
-                  (ncol(eset)-length(cell_qualified.pctSpikeIn)), ((ncol(eset)-length(cell_qualified.pctSpikeIn))/ncol(eset)*100),
-                  (ncol(eset)-length(cell_qualified.combined)), ((ncol(eset)-length(cell_qualified.combined))/ncol(eset)*100))
+                  ncol(input_eset), ncol(input_eset), ncol(input_eset), ncol(input_eset), ncol(input_eset),
+                  length(cell_qualified.nUMI), (length(cell_qualified.nUMI)/ncol(input_eset)*100),
+                  length(cell_qualified.nFeature), (length(cell_qualified.nFeature)/ncol(input_eset)*100),
+                  length(cell_qualified.pctMito), (length(cell_qualified.pctMito)/ncol(input_eset)*100),
+                  length(cell_qualified.pctSpikeIn), (length(cell_qualified.pctSpikeIn)/ncol(input_eset)*100),
+                  length(cell_qualified.combined), (length(cell_qualified.combined)/ncol(input_eset)*100),
+                  (ncol(input_eset)-length(cell_qualified.nUMI)), ((ncol(input_eset)-length(cell_qualified.nUMI))/ncol(input_eset)*100),
+                  (ncol(input_eset)-length(cell_qualified.nFeature)), ((ncol(input_eset)-length(cell_qualified.nFeature))/ncol(input_eset)*100),
+                  (ncol(input_eset)-length(cell_qualified.pctMito)), ((ncol(input_eset)-length(cell_qualified.pctMito))/ncol(input_eset)*100),
+                  (ncol(input_eset)-length(cell_qualified.pctSpikeIn)), ((ncol(input_eset)-length(cell_qualified.pctSpikeIn))/ncol(input_eset)*100),
+                  (ncol(input_eset)-length(cell_qualified.combined)), ((ncol(input_eset)-length(cell_qualified.combined))/ncol(input_eset)*100))
 
-  eset_filtered <- eset[gene_qualified, cell_qualified]
+  eset_filtered <- input_eset[gene_qualified, cell_qualified]
   cat("Filtration is done!\n")
 
   message("Filtration Summary:")
-  message("\t", nrow(eset_filtered), "/", nrow(eset), " genes passed!")
-  message("\t", ncol(eset_filtered), "/", ncol(eset), " cells passed!")
-  message("\nFor more details:\n", msg_gene, "\n", msg_cell)
+  message("\t", nrow(eset_filtered), "/", nrow(input_eset), " genes passed!")
+  message("\t", ncol(eset_filtered), "/", ncol(input_eset), " cells passed!")
+  if (filter_type == "both") {
+    message("\nFor more details:\n", msg_gene, "\n", msg_cell)
+  } else if (filter_type == "cell") {
+    message("\nFor more details:\n", msg_cell)
+  } else if (filter_type == "feature") {
+    message("\nFor more details:\n", msg_gene)
+  }
 
   return(eset_filtered)
 }

@@ -21,6 +21,6 @@ PackageUseDevtools: Yes
 PackageInstallArgs: --no-multiarch --with-keep.source
 PackageRoxygenize: rd,collate,namespace
 
-PythonType: system
-PythonVersion: 3.9.6
-PythonPath: /usr/bin/python3
+PythonType: conda
+PythonVersion: 3.9.18
+PythonPath: ~/Library/r-miniconda-arm64/envs/r-reticulate/bin/python3.9

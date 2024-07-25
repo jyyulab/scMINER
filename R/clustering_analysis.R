@@ -85,7 +85,7 @@ generateMICAinput <- function(input_eset,
 
   if (cell_size >= 5000) {
     cat('\nFor dataset with more than 5k cells, MICA GE mode is recommended.\n')
-    recommend_cmd <- sprintf('mica ge -i %s -o project_space/MICA/mica_output_dir -ar 3.0 -ss 0.2 -nw 1 -nnm 80', output_file)
+    recommend_cmd <- sprintf('With the default resolusion:\n\tmica ge -i %s -o project_space/MICA/mica_output_dir -res 1.822 -nw 8\n\n Or with a range of resolutions:\n\tmica ge -i %s -o project_space/MICA/mica_output_dir -minr 1.0 -maxr 2.0 -ss 0.1 -nw 8', output_file, output_file)
     cat("Suggested command line is:\n\n", recommend_cmd, "\n
     Where options represent:
         -res:   the number of communities (default: 1.822)
@@ -98,12 +98,12 @@ generateMICAinput <- function(input_eset,
     Use mica ge -h to find more options of MICA GE mode.")
   } else {
     cat('\nFor dataset with less than 5k cells, MICA MDS mode is recommended.\n')
-    recommend_cmd <- sprintf('mica mds -i %s -o project_space/MICA/mica_output_dir -nc 4 5 6 7 8 9 10 -dk 19', output_file)
+    recommend_cmd <- sprintf('mica mds -i %s -o project_space/MICA/mica_output_dir -nck 4 5 6 7 8 9 10 -dd 20', output_file)
     cat("Suggested command line is:\n\n", recommend_cmd, "\n
     Where options represent:
         -pn:    specifies a project name for naming the output files;
         -nck:   an array of integers delimited by a single space, where each integer specifies a k to perform a k-mean clustering;
-        -dk:    can be an integer or an array of integers delimited by a single space (default is 19), it specifies the number of dimensions used in k-mean clusterings.
+        -dd:    can be an integer or an array of integers delimited by a single space (default is 19), it specifies the number of dimensions used in k-mean clusterings.
     Use mica mds -h to see more options of MICA MDS mode.")
   }
   #return(recommend_cmd)

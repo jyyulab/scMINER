@@ -1,0 +1,109 @@
+---
+title: "Activity-based Data Analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{activity_analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(scMINER)
+library(ggplot2)
+library(dplyr)
+```
+
+# Introduction
+
+The **driver activity estimation** is one of the most important features of scMINER. **Mathematically**, the activity of one driver is a type of mean of the expressions of its targets. And **biologically**, the activity can be interpreted as a measure that describes how actively the driver functions, like the enzymes in digesting their subtracts, kinase in activating their downstream genes. Given the gene expression profiles and networks, scMINER can estimate the activities of some predefined drivers, including not only transcription factors (TFs) but also signaling genes (SIGs). scMINER provides a few functions to effortlessly calculate the activities, identify the hidden drivers and visualize them in multiple ways.
+
+In this tutorial, we will use PBMC14k dataset for demonstration purpose.
+
+<details>
+<summary>**How was the PBMC14K dataset generated?**</summary>
+```{r, prepare-input-eset, echo=FALSE}
+## Read the raw count matrix
+pbmc14k_rawCount <- readInput_table(system.file("extdata/demo_pbmc14k/PBMC14k_rawCount.txt.gz", package = "scMINER"), is.geneBYcell = TRUE)
+
+## Read the true labels
+pbmc14k_trueLabel <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k_trueLabel.txt.gz", package = "scMINER"), header = T, row.names = 1, sep = "\t", quote = "", stringsAsFactors = FALSE)
+
+## The true_label much cover all cells in the expression matrix
+table(colnames(pbmc14k_rawCount) %in% row.names(pbmc14k_trueLabel))
+
+## Create the sparse eSet object using the true_label
+pbmc14k_raw.eset <- createSparseEset(input_matrix = pbmc14k_rawCount, cellData = pbmc14k_trueLabel, featureData = NULL, projectID = "PBMC14k", addMetaData = TRUE)
+
+## Filter he sparse eSet object using the auto mode
+pbmc14k_filtered.eset <- filterSparseEset(pbmc14k_raw.eset, filter_mode = "auto", filter_type = "both")
+
+## Normalize he sparse eSet object using the auto mode
+pbmc14k_log2cpm.eset <- normalizeSparseEset(pbmc14k_filtered.eset, scale_factor = 1000000, log_base = 2, log_pseudoCount = 1)
+
+## Add the clustering results from MICA
+pbmc14k_log2cpm.eset <- addMICAoutput(pbmc14k_log2cpm.eset, mica_output_file = system.file("extdata/demo_pbmc14k/PBMC14k/MICA/clustering_UMAP_euclidean_20_2.05.txt", package = "scMINER"), visual_method = "umap")
+
+## Add cell type annotation results
+celltype_map <- c(`1`="CD4TN", `2`="CD4TCM", `3`="CD8TN", `4`="NK", `5`="B", `6`="Monocyte", `7`="CD4Treg")
+pbmc14k_log2cpm.eset$cell_type <- as.character(celltype_map[pbmc14k_log2cpm.eset$clusterID])
+```
+</details>
+\
+
+# Calculate the activities
+
+scMINER provides two functions, `getActivity_individual()` and `getActivity_inBatch()`, to calculate the driver activities:
+
+## Calculate the activities per group
+
+`getActivity_individual()` is designed to calculate the activities per group. It takes the network files as the input:
+```{r calculate-activity-individually, eval=FALSE}
+## let's use B cell as an example
+activity_B.eset <- getActivity_individual(input_eset = pbmc14k_log2cpm.eset[, pData(pbmc14k_log2cpm.eset)$true_label.new == "B"], network_file.tf = "work-path/PBMC14K/SJARACNe/B/TF/bt100_pc001/sjaracne_workflow-fb2a69b9-f98e-47ff-87a0-6d538822fc6e/consensus_network_ncol_.txt", network_file.sig = "work-path/PBMC14K/SJARACNe/B/SIG/bt100_pc001/sjaracne_workflow-df798096-8dee-4baf-8f70-891c689dc769/consensus_network_ncol_.txt", driver_type = "TF_SIG")
+```
+
+If you need to calculate the activity for multiple groups, this is usually the case, you can do it using `getActivity_individual()` as shown above one by one and merge the esets after that. Or, scMINER privides another function, `getActivity_inBatch()`, to calculate the activity in batch:
+```{r calculate-activity-in-batch}
+## let's use B cell as an example
+activity.eset <- getActivity_inBatch(input_eset = pbmc14k_log2cpm.eset, sjaracne_dir = "work-path/PBMC14K/SJARACNe",  group_name = "true_label.new", driver_type = "TF_SIG", activity_method = "mean", do.z_normalization = TRUE)
+```
+
+```{r save-activity-eset}
+saveRDS(activity.eset, file = "/work-path/PBMC14k/DATA/activity.eset")
+```
+
+
+# Differential activity analysis
+
+Similar to `getDE()`, scMINER provides a function, `getDA()`, to perform the differential activity analysis and identify the group-specific drivers.
+
+```{r differential-activity-analysis-1}
+## 1. To perform differential expression analysis in a 1-vs-rest manner for all groups
+da_res1 <- getDA(input_eset = activity.eset, group_by = "cell_type", use_method = "t.test")
+head(de_res1)
+```
+
+```{r differential-activity-analysis-2, eval=FALSE}
+## 2. To perform differential expression analysis in a 1-vs-rest manner for one specific group
+da_res2 <- getDA(input_eset = activity.eset, group_by = "cell_type", g1 = c("B"), use_method = "t.test")
+
+## 3. To perform differential expression analysis in a rest-vs-1 manner for one specific group
+da_res3 <- getDA(input_eset = activity.eset, group_by = "cell_type", g0 = c("B"), use_method = "t.test")
+
+## 4. To perform differential expression analysis in a 1-vs-1 manner for any two groups
+da_res4 <- getDA(input_eset = activity.eset, group_by = "cell_type", g1 = c("CD4Treg"), g0 = c("CD4TCM"), use_method = "t.test")
+```
+
+The `getTopFeatures()` function can aslo be used to easily extract the group-specific markers from the differential expression result:
+```{r get-top-drivers}
+top_drivers <- getTopFeatures(input_table = da_res1, number = 10, group_by = "g1_tag", sort_by = "log2FC", sort_decreasing = TRUE)
+dim(top_drivers)
+head(top_drivers)
+```

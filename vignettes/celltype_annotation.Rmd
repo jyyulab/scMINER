@@ -1,0 +1,183 @@
+---
+title: "Cell type annotation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{celltype_annotation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(scMINER)
+library(ggplot2)
+library(dplyr)
+```
+
+# Introduction
+
+Currently, there are two types of strategies to annotate the clusters: **supervised** and **unsupervised**. The **supervised** methods use a list of known markers of potential cell types curated from somoe existing studies of the same/similar contexts. While in contrast, the **unsupervised** methods are usually based on the differentially expressed genes. scMINER provide several useful functions to support both types of strategies.
+
+In this tutorial, we will use PBMC14k dataset for demonstration purpose.
+
+<details>
+<summary>**How was the PBMC14K dataset generated?**</summary>
+```{r, prepare-input-eset, echo=FALSE}
+## Read the raw count matrix
+pbmc14k_rawCount <- readInput_table(system.file("extdata/demo_pbmc14k/PBMC14k_rawCount.txt.gz", package = "scMINER"), is.geneBYcell = TRUE)
+
+## Read the true labels
+pbmc14k_trueLabel <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k_trueLabel.txt.gz", package = "scMINER"), header = T, row.names = 1, sep = "\t", quote = "", stringsAsFactors = FALSE)
+
+## The true_label much cover all cells in the expression matrix
+table(colnames(pbmc14k_rawCount) %in% row.names(pbmc14k_trueLabel))
+
+## Create the sparse eSet object using the true_label
+pbmc14k_raw.eset <- createSparseEset(input_matrix = pbmc14k_rawCount, cellData = pbmc14k_trueLabel, featureData = NULL, projectID = "PBMC14k", addMetaData = TRUE)
+
+## Filter he sparse eSet object using the auto mode
+pbmc14k_filtered.eset <- filterSparseEset(pbmc14k_raw.eset, filter_mode = "auto", filter_type = "both")
+
+## Normalize he sparse eSet object using the auto mode
+pbmc14k_log2cpm.eset <- normalizeSparseEset(pbmc14k_filtered.eset, scale_factor = 1000000, log_base = 2, log_pseudoCount = 1)
+
+## Add the clustering results from MICA
+pbmc14k_log2cpm.eset <- addMICAoutput(pbmc14k_log2cpm.eset, mica_output_file = system.file("extdata/demo_pbmc14k/PBMC14k/MICA/clustering_UMAP_euclidean_20_2.05.txt", package = "scMINER"), visual_method = "umap")
+```
+</details>
+\
+
+
+# Supervised cell type annotation
+
+In the past a few years, the scRNA-seq data has dramatically increased in both quality and quantity. For the majority of tissue types, some existing studies on the same/similar tissue type are most likely available, and from these existing studies, we can figure out a list of candidate cell types to expect and curate a list of markers for each of them. In this case, we know the 7 cell types involved in the dataset, and curated a marker list from some existing PBMCs studies.
+
+## Annotate using signature scores
+
+Given a marker list of candidate cell types, scMINER can estimate a signature score, which is mathematically `the weighted mean of the expression of marker genes involved`, for each candidate cell type across all cell cluster. To do so, you will need to generate a signature table with three columns:
+
+- `signature_name`: name of cell types/signatures;
+- `signature_feature`: markers genes/features of corresponding cell type/signature;
+- `weight`: weight of corresponding maker/feature in corresponding cell type/signature. It ranges from -1 to 1, so both positive and negtive markers are supoorted.
+```{r signature-table}
+## Signature table of PBMC14k dataset
+signature_table <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k_signatureTable.txt", package = "scMINER"), header = TRUE, sep = "\t", quote = "", stringsAsFactors = FALSE)
+head(signature_table)
+```
+
+With this signature table, `draw_bubbleplot()` can estimate the signature scores and visualize them using bubble plot:
+```{r signature-bubble, fig.width=6, fig.height=5, fig.align='center'}
+## Violin plot of marker genes across clusters
+draw_bubbleplot(input_eset = pbmc14k_log2cpm.eset, signature_table = pbmc14k_signatureTable, group_by = "clusterID")
+```
+In the bubble plot above, the color of the bubbles is proportional to the mean of signature score, and the size of the bubbles is proportional to the percentage of cells with higher signature score than mean. The cell type of each cluster is clear, except the cluster 7, which shows equally-high signature score of both CD4+ TCM and CD4+ Reg and higher percentage of CD4+ TCM cells.
+
+## Annotate using individual marker genes
+
+scMINER also provides a variety of functions to visualize the selected features: 
+```{r selected-markers}
+## For the demonstration purposes, we picked two well known markers for each of the 7 known cell types, plus "CD3D" and "CD4".
+genes_of_interest <-c("CD14", "LYZ", "GZMB", "NKG7", "CD19", "MS4A1", "CD8A", "CD8B", "SELL", "CCR7", "IL2RA", "FOXP3", "IL7R", "S100A4", "CD3D", "CD4")
+```
+
+### feature visualization: violin plot
+```{r featurePlot-vln, fig.width=12, fig.height=12, fig.align='center'}
+## Violin plot of marker genes across clusters
+feature_vlnplot(input_eset = pbmc14k_log2cpm.eset, features = genes_of_interest, group_by = "clusterID", ncol = 4)
+```
+
+### feature visualization: box plot
+```{r featurePlot-box, fig.width=12, fig.height=12, fig.align='center'}
+## Box plot of marker genes across clusters
+feature_boxplot(input_eset = pbmc14k_log2cpm.eset, features = genes_of_interest, group_by = "clusterID", ncol = 4)
+```
+
+### feature visualization: scatter plot
+```{r featurePlot-scatter, fig.width=12, fig.height=12, fig.align='center'}
+## UMAP scatter plot of marker genes
+feature_scatterplot(input_eset = pbmc14k_log2cpm.eset, features = genes_of_interest, ncol = 4, location_x = "UMAP_1", location_y =  "UMAP_2", point.size = 0.5)
+```
+
+### feature visualization: bubble plot
+```{r featurePlot-bubble, fig.width=8,fig.height=8, fig.align='center'}
+## Bubble plot of marker genes across clusters
+feature_bubbleplot(input_eset = pbmc14k_log2cpm.eset, features = genes_of_interest, group_by = "clusterID", xlabel.angel = 45)
+```
+
+### feature visualization: heatmap
+```{r featurePlot-heatmap, fig.width=12, fig.height=10,fig.align='center'}
+## Heatmap of marker genes across clusters
+feature_heatmap(input_eset = pbmc14k_log2cpm.eset, features = genes_of_interest, group_by = "clusterID", scale_method = "none", annotation_columns = c("trueLabel"))
+```
+
+
+# Unsupervised cell type annotation
+
+Existing studies in the same or similar contexts are not always available, and there is a significant concern regarding the reliability of reference studies. This reliability largely depends on the expertise of the original authors who defined the markers and assigned the cell types. Therefore, we strongly encourage users to also try unsupervised methods, which can serve as a means of cross-validation.
+
+scMINER provides a function, `getDE()`, to perform the differential expression analysis and identify the markers of each cluster. The `getDE()` function supports three different methods to perform the differential expression analysis, `limma`, `wilcoxon` and `t.test`. And it allows the users to define the groups to compare in a flexible way:
+
+```{r differential-expression-analysis-1}
+## 1. To perform differential expression analysis in a 1-vs-rest manner for all groups
+de_res1 <- getDE(input_eset = pbmc14k_log2cpm.eset, group_by = "clusterID", use_method = "limma")
+head(de_res1)
+```
+Here is an brief introduction to the results of `getDE()`:
+
+- **feature**: feature name;
+- **g1_tag**: a vector of clusters or subgroups involved in g1, the fore-ground group;
+- **g0_tag**: a vector of clusters or subgroups involved in g0, the back-ground group;
+- **g1_avg**: mean of gene expression of cells in g1;
+- **g0_tag**: mean of gene expression of cells in g0;
+- **g1_pct**: percentage of cells expressing the corresponding genes in group 1;
+- **g0_pct**: percentage of cells expressing the corresponding genes in group 0;
+- **log2FC**: log2Fold change of gene expression between g1 and g0;
+- **Pval**: P values of g1-g0 comparison;
+- **FDR**: FDR of g1-g0 comparison;
+- **Zscore**: Z score of g1-g0 comparison, signed by `log2FC`;
+
+```{r differential-expression-analysis-2, eval=FALSE}
+## 2. To perform differential expression analysis in a 1-vs-rest manner for one specific group
+de_res2 <- getDE(input_eset = pbmc14k_log2cpm.eset, group_by = "clusterID", g1 = c("1"), use_method = "limma")
+
+## 3. To perform differential expression analysis in a rest-vs-1 manner for one specific group
+de_res3 <- getDE(input_eset = pbmc14k_log2cpm.eset, group_by = "clusterID", g0 = c("1"), use_method = "limma")
+
+## 4. To perform differential expression analysis in a 1-vs-1 manner for any two groups
+de_res4 <- getDE(input_eset = pbmc14k_log2cpm.eset, group_by = "clusterID", g1 = c("1"), g0 = c("3"), use_method = "limma")
+```
+
+scMINER also provides a function, `getTopFeatures()`, to easily extract the group-specific markers from the differential expression result:
+```{r get-top-markers}
+cluster_markers <- getTopFeatures(input_table = de_res1, number = 10, group_by = "g1_tag", sort_by = "log2FC", sort_decreasing = TRUE)
+dim(cluster_markers)
+head(cluster_markers)
+```
+
+# Add cell type annotations to SparseExpressionSet object
+
+Based on the supervised and unsupervised methods, we have annotated the cell types for each cluster. To add the cell type annotation information into the sparse eset object:
+```{r add-cell-type-annotation-to-eset}
+celltype_map <- c(`1`="CD4TN", `2`="CD4TCM", `3`="CD8TN", `4`="NK", `5`="B", `6`="Monocyte", `7`="CD4Treg")
+pbmc14k_log2cpm.eset$cell_type <- as.character(celltype_map[pbmc14k_log2cpm.eset$clusterID])
+head(pData(pbmc14k_log2cpm.eset))
+```
+
+The `draw_barplot()` function can visualize the cell composition of self-defined groups. We can use it to show the purity of MICA clusters:
+```{r group-barplot, fig.width=8, fig.height=8, fig.align='center'}
+## Violin plot of marker genes across clusters
+draw_barplot(input_eset = pbmc14k_log2cpm.eset, group_by = "cell_type", color_by = "trueLabel_full", xlabel.angel = 45)
+```
+
+Don't forget to save the SparseExpressionSet object after the cell type annotation added.
+```{r save-eset-obj-after-annotation, eval=FALSE}
+saveRDS(pbmc14k_log2cpm.eset, file = "/work-path/PBMC14k/DATA/pbmc14k_log2CPM_annotated.rds")
+```
+
+The cell type annotation is done!
