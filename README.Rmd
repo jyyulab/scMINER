@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r ssa-logo, fig.align = 'center', out.width = "75%"}
+```{r scminer-logo, fig.align = 'center', out.width = "75%", echo=FALSE}
 knitr::include_graphics("man/figures/README-/scMINER_logo.png")
 ```
 

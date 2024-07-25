@@ -1,10 +1,6 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-``` r
-knitr::include_graphics("man/figures/README-/scMINER_logo.png")
-```
-
 <img src="man/figures/README-/scMINER_logo.png" width="75%" style="display: block; margin: auto;" />
 
 <!-- badges: start -->
