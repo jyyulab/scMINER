@@ -125,23 +125,27 @@ MICAplot(input_eset = pbmc14k_log2cpm.eset, color_by = "clusterID", X = "UMAP_1"
 
 ## Color-coded by true label of cell types
 
-```{r visualize-mica-output-truelabel, fig.align='center', fig.width=7, fig.height=5}
+```{r visualize-mica-output-truelabel, fig.align='center', fig.width=6.5, fig.height=5}
 MICAplot(input_eset = pbmc14k_log2cpm.eset, color_by = "trueLabel", X = "UMAP_1", Y = "UMAP_2", point.size = 0.1, fontsize.cluster_label = 4)
 ```
 
 ## Color-coded by nUMI, for QC purpose
 
-```{r visualize-mica-output-truelabel, fig.align='center', fig.width=7, fig.height=5}
+```{r visualize-mica-output-numi, fig.align='center', fig.width=6.5, fig.height=5}
 MICAplot(input_eset = pbmc14k_log2cpm.eset, color_by = "nUMI", do.logTransform = TRUE, point.size = 0.1)
 ```
 
 
 ## Color-coded by nFeature, for QC purpose
 
-```{r visualize-mica-output-truelabel, fig.align='center', fig.width=7, fig.height=5}
+```{r visualize-mica-output-nfeature, fig.align='center', fig.width=6.5, fig.height=5}
 MICAplot(input_eset = pbmc14k_log2cpm.eset, color_by = "nFeature", do.logTransform = TRUE, point.size = 0.1)
 ```
+## Color-coded by pctMito, for QC purpose
 
+```{r visualize-mica-output-pctmito, fig.align='center', fig.width=6.5, fig.height=5}
+MICAplot(input_eset = pbmc14k_log2cpm.eset, color_by = "pctMito", do.logTransform = FALSE, point.size = 0.1)
+```
 
 **The mutual information-based clustering analysis is done!**
 

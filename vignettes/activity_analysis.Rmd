@@ -68,8 +68,8 @@ scMINER provides two functions, `getActivity_individual()` and `getActivity_inBa
 ```{r calculate-activity-individually, eval=FALSE}
 ## let's use B cell as an example
 activity_B.eset <- getActivity_individual(input_eset = pbmc14k_log2cpm.eset[, pData(pbmc14k_log2cpm.eset)$trueLabel == "B"],
-                                          network_file.tf = system.file("extdata/demo_pbmc14k/PBMC14K/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
-                                          network_file.sig = system.file("extdata/demo_pbmc14k/PBMC14K/SJARACNe/B/SIG/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
+                                          network_file.tf = system.file("extdata/demo_pbmc14k/PBMC14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
+                                          network_file.sig = system.file("extdata/demo_pbmc14k/PBMC14k/SJARACNe/B/SIG/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
                                           driver_type = "TF_SIG")
 ```
 

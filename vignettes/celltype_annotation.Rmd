@@ -108,7 +108,7 @@ feature_scatterplot(input_eset = pbmc14k_log2cpm.eset, features = genes_of_inter
 ### feature visualization: bubble plot
 ```{r featurePlot-bubble, fig.width=7,fig.height=5, fig.align='center'}
 ## Bubble plot of marker genes across clusters
-feature_bubbleplot(input_eset = pbmc14k_log2cpm.eset, features = genes_of_interest, group_by = "clusterID", xlabel.angel = 45)
+feature_bubbleplot(input_eset = pbmc14k_log2cpm.eset, features = genes_of_interest, group_by = "clusterID", xlabel.angle = 45)
 ```
 
 ### feature visualization: heatmap
@@ -173,7 +173,7 @@ head(pData(pbmc14k_log2cpm.eset))
 The `draw_barplot()` function can visualize the cell composition of self-defined groups. We can use it to show the purity of MICA clusters:
 ```{r group-barplot, fig.width=6, fig.height=6, fig.align='center'}
 ## Violin plot of marker genes across clusters
-draw_barplot(input_eset = pbmc14k_log2cpm.eset, group_by = "cell_type", color_by = "trueLabel_full", xlabel.angel = 45)
+draw_barplot(input_eset = pbmc14k_log2cpm.eset, group_by = "cell_type", color_by = "trueLabel_full", xlabel.angle = 45)
 ```
 
 Don't forget to save the SparseExpressionSet object after the cell type annotation added.

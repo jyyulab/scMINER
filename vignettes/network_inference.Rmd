@@ -149,7 +149,7 @@ The core output of SJARACNe is the network file named `consensus_network_ncol_.t
 - **p.value**: p-value for a hypothesis test whose null hypothesis is that the slope is zero, using Wald Test with t-distribution of the test statistic
 
 ```{r check-network-file-format}
-network_format <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k/SJARACNe/B/TF/bt100_pc001/sjaracne_workflow-fb2a69b9-f98e-47ff-87a0-6d538822fc6e/consensus_network_ncol_.txt", package = "scMINER"),
+network_format <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
                              header = T, sep = "\t", quote = "", stringsAsFactors = F)
 head(network_format)
 ```
