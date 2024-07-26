@@ -227,7 +227,8 @@ MICAplot <- function(input_eset,
       p <- p + scale_color_discrete(labels = lgnd)
     }
 
-    p <- p + guides(col = guide_legend(override.aes = list(size = 10), title = paste0(color_by, "\n(",dim(input)[1] ,")")), ncol = ceiling(length(unique(grps))/10))
+    p <- p + guides(col = guide_legend(override.aes = list(size = 10), title = paste0(color_by, "\n(",dim(input)[1] ,")")), ncol = ceiling(length(unique(grps))/10)) +
+      labs(x = X, y = Y)
   } else {
     if (do.logTransform == TRUE) {
       input[, color_by] <- log2(input[, color_by] + 1)
@@ -237,8 +238,9 @@ MICAplot <- function(input_eset,
     p <- ggplot(input, aes(x = input[, X], y = input[, Y], color = input[, color_by])) +
       geom_point(size = point.size, alpha = point.alpha) +
       scale_colour_gradient(low = "lightgrey", high = "blue")
-  }
 
+    p <- p + labs(color = ifelse(do.logTransform==TRUE, paste0("log2(", color_by, "+1)"), paste0(color_by)), x = X, y = Y)
+  }
 
   p <- p + theme_classic() +
     theme(
