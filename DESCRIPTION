@@ -24,11 +24,11 @@ Depends:
     Biobase (>= 2.50.0),
     Matrix (>= 1.5.3),
     methods (>= 4.0.3),
+    ggplot2 (>= 3.3.3),
     stats (>= 4.0.3)
 Imports: 
     anndata (>= 0.7.5.3),
     dplyr (>= 1.0.6),
-    ggplot2 (>= 3.3.3),
     gridExtra (>= 2.3),
     igraph (>= 1.2.6),
     limma (>= 3.46.0),
