@@ -15,7 +15,7 @@
 #' @param fontsize.strip Integer, font size of the plot strip. Default: 10.
 #' @param fontsize.axis_title Integer, font size of the axis title. Default: 10.
 #' @param fontsize.axis_text Integer, font size of the axis text. Default: 8.
-#' @param xlabel.angel Numeric, the angel of the a-axis title. When it's set not 0, the x-axis text will automatically right-justified. Default: 0.
+#' @param xlabel.angle Numeric, the angle of the a-axis title. When it's set not 0, the x-axis text will automatically right-justified. Default: 0.
 #' @param ylabel.text Character, the title of y-axis. Default: "`Expression (log2CPM)`"
 #' @param stat_method Character or `NULL`. method of the stat point to show: "`median`" (the default), "`mean`". If `NULL`, the stat point won't show up.
 #' @param add_boxplot Logical, whether to add box plot. Default: `FALSE`.
@@ -50,7 +50,7 @@ feature_vlnplot <- function(input_eset,
                             group_by = "clusterID",
                             ncol = 3, colors = NULL,
                             legend.position = "right", fontsize.legend_title = 10, fontsize.legend_text = 8,
-                            fontsize.strip = 10, fontsize.axis_title = 10, fontsize.axis_text = 8, xlabel.angel = 0, ylabel.text = "Expression (log2CPM)",
+                            fontsize.strip = 10, fontsize.axis_title = 10, fontsize.axis_text = 8, xlabel.angle = 0, ylabel.text = "Expression (log2CPM)",
                             stat_method = "median",
                             add_boxplot = FALSE, boxplot.width = 0.3, boxplot.fill = "white", boxplot.alpha = 0.8,
                             add_jitter = FALSE, jitter.height = 0, jitter.width = 0.3, jitter.size = 0.1)
@@ -89,7 +89,7 @@ feature_vlnplot <- function(input_eset,
   # add jitter point
   if (add_jitter == TRUE) {p <- p + geom_jitter(height = jitter.height, width = jitter.width, size = jitter.size)}
 
-  hjust_x = base::ifelse (xlabel.angel == 0, 0.5, 1)
+  hjust_x = base::ifelse (xlabel.angle == 0, 0.5, 1)
   p <- p + facet_wrap(~variable, scales = "free", ncol = ncol) + labs(x = group_by, y = ylabel.text) +
     theme(
       legend.position = legend.position,
@@ -97,7 +97,7 @@ feature_vlnplot <- function(input_eset,
       legend.text = element_text(size = fontsize.legend_text),
       strip.text = element_text(size = fontsize.strip, face = "bold"),
       axis.title = element_text(size = fontsize.axis_title, face = "bold", hjust = 0.5, color = "black"),
-      axis.text.x = element_text(size = fontsize.axis_text, hjust = hjust_x, color = "black", angle = xlabel.angel),
+      axis.text.x = element_text(size = fontsize.axis_text, hjust = hjust_x, color = "black", angle = xlabel.angle),
       axis.text.y = element_text(size = fontsize.axis_text, hjust = 1, color = "black"))
 
   if (is.null(colors) == FALSE) {p <- p + scale_fill_manual(values = colors)}
@@ -122,7 +122,7 @@ feature_vlnplot <- function(input_eset,
 #' @param fontsize.strip Integer, font size of the plot strip. Default: 10.
 #' @param fontsize.axis_title Integer, font size of the axis label and text. Default: 10.
 #' @param fontsize.axis_text Integer, font size of the axis label and text. Default: 8.
-#' @param xlabel.angel Numeric, the angel of the a-axis title. When it's set not 0, the x-axis text will automatically right-justified. Default: 0.
+#' @param xlabel.angle Numeric, the angle of the a-axis title. When it's set not 0, the x-axis text will automatically right-justified. Default: 0.
 #' @param ylabel.text Character, the title of y-axis. Default: "`Expression (log2CPM)`"
 #' @param stat_method Character or NULL. method of the stat point to show: "`median`" (the default), "`mean`". If `NULL`, the stat point won't show up.
 #' @param add_jitter Logical, whether to add jittered points. Default: `FALSE`.
@@ -153,7 +153,7 @@ feature_boxplot <- function(input_eset,
                             group_by = "clusterID",
                             ncol = 3, colors = NULL,
                             legend.position = "right", fontsize.legend_title = 10, fontsize.legend_text = 8,
-                            fontsize.strip = 10, fontsize.axis_title = 10, fontsize.axis_text = 8, xlabel.angel = 0, ylabel.text = "Expression (log2CPM)",
+                            fontsize.strip = 10, fontsize.axis_title = 10, fontsize.axis_text = 8, xlabel.angle = 0, ylabel.text = "Expression (log2CPM)",
                             stat_method = "median",
                             add_jitter = FALSE, jitter.height = 0, jitter.width = 0.3, jitter.size = 0.1)
 {
@@ -190,7 +190,7 @@ feature_boxplot <- function(input_eset,
   # add jitter point
   if (add_jitter == TRUE) {p <- p + geom_jitter(height = jitter.height, width = jitter.width, size = jitter.size)}
 
-  hjust_x = base::ifelse (xlabel.angel == 0, 0.5, 1)
+  hjust_x = base::ifelse (xlabel.angle == 0, 0.5, 1)
   p <- p + facet_wrap(~variable, scales = "free", ncol = ncol) + labs(x = group_by, y = ylabel.text) +
     theme(
       legend.position = legend.position,
@@ -198,7 +198,7 @@ feature_boxplot <- function(input_eset,
       legend.text = element_text(size = fontsize.legend_text),
       strip.text = element_text(size = fontsize.strip, face = "bold"),
       axis.title = element_text(size = fontsize.axis_title, face = "bold", hjust = 0.5, color = "black"),
-      axis.text.x = element_text(size = fontsize.axis_text, hjust = hjust_x, color = "black", angle = xlabel.angel),
+      axis.text.x = element_text(size = fontsize.axis_text, hjust = hjust_x, color = "black", angle = xlabel.angle),
       axis.text.y = element_text(size = fontsize.axis_text, hjust = 1, color = "black"))
 
   if (is.null(colors) == FALSE) {p <- p+ scale_fill_manual(values = colors)}
@@ -314,7 +314,7 @@ feature_scatterplot <- function(input_eset,
 #' @param fontsize.legend_text Integer, font size of the legend text. Default: 8.
 #' @param fontsize.axis_title Integer, font size of the axis label and text. Default: 10.
 #' @param fontsize.axis_text Integer, font size of the axis label and text. Default: 8.
-#' @param xlabel.angel Numeric, the angel of the a-axis title. When it's set not 0, the x-axis text will automatically right-justified. Default: 0.
+#' @param xlabel.angle Numeric, the angle of the a-axis title. When it's set not 0, the x-axis text will automatically right-justified. Default: 0.
 #'
 #' @return A ggplot object of bubble plot
 #' @export
@@ -331,7 +331,7 @@ feature_bubbleplot <- function(input_eset,
                                group_by = "clusterID",
                                colors = NULL,
                                legend.position = "right", fontsize.legend_title = 10, fontsize.legend_text = 8,
-                               fontsize.axis_title = 10, fontsize.axis_text = 8, xlabel.angel = 0)
+                               fontsize.axis_title = 10, fontsize.axis_text = 8, xlabel.angle = 0)
 {
   ## check parameters
   if (is.null(features) == TRUE) {
@@ -367,7 +367,7 @@ feature_bubbleplot <- function(input_eset,
   master <- dplyr::left_join(df_mean.long, df_pct.long, by = c(group_by, "Features"))
 
   # visualize
-  hjust_x = base::ifelse (xlabel.angel == 0, 0.5, 1)
+  hjust_x = base::ifelse (xlabel.angle == 0, 0.5, 1)
   if (is.null(colors) == TRUE) {color.low <- "lightgrey"; color.high <- "red"}
   else {if (length(colors) == 2) {color.low <- colors[1]; color.high <- colors[2]} else {stop('The length of "colors" must be of 2.')}}
   p <- ggplot(master, aes(x = Features, y = as.factor(master[, group_by]))) + geom_point(aes(color = Mean_value, size = Percentage_value), pch = 16, stroke = NA) +
@@ -377,7 +377,7 @@ feature_bubbleplot <- function(input_eset,
       legend.title = element_text(size = fontsize.legend_title, face = "bold"),
       legend.text = element_text(size = fontsize.legend_text),
       axis.title = element_text(size = fontsize.axis_title, face = "bold", hjust = 0.5, color = "black"),
-      axis.text.x = element_text(size = fontsize.axis_text, hjust = hjust_x, color = "black", angle = xlabel.angel),
+      axis.text.x = element_text(size = fontsize.axis_text, hjust = hjust_x, color = "black", angle = xlabel.angle),
       axis.text.y = element_text(size = fontsize.axis_text, hjust = 1, color = "black"))
 
   return(p)
@@ -487,7 +487,7 @@ feature_heatmap <- function(input_eset,
 #' @param color_by Character, name of the column for color-coding, usually the column of cell types or clusters. Default: "`cell_type`".
 #' @param colors A vector of colors for filling the violins. The length should be same as the number of groups. Default: `NULL` (ggplot default colors).
 #' @param legend.position Character, position of legend: "`right`" (the default), "`left`", "`top`", "`bottom`" or "`none`".
-#' @param xlabel.angel Numeric, the angel of the a-axis title. When it's set not 0, the x-axis text will automatically right-justified. Default: 0.
+#' @param xlabel.angle Numeric, the angle of the a-axis title. When it's set not 0, the x-axis text will automatically right-justified. Default: 0.
 #' @param fontsize.legend_title Integer, font size of the legend title. Default: 10.
 #' @param fontsize.legend_text Integer, font size of the legend text. Default: 8.
 #' @param fontsize.axis_title Integer, font size of the axis label and text. Default: 10.
@@ -507,7 +507,7 @@ draw_barplot <- function(input_eset,
                          color_by = "cell_type",
                          colors = NULL,
                          legend.position = "right",
-                         xlabel.angel = 0,
+                         xlabel.angle = 0,
                          fontsize.legend_title = 12, fontsize.legend_text = 10,
                          fontsize.axis_title = 12, fontsize.axis_text = 10)
 {
@@ -519,7 +519,7 @@ draw_barplot <- function(input_eset,
   pd[,group_by] <- as.factor(pd[,group_by])
   pd[,color_by] <- as.factor(pd[,color_by])
 
-  hjust_x = base::ifelse (xlabel.angel == 0, 0.5, 1)
+  hjust_x = base::ifelse (xlabel.angle == 0, 0.5, 1)
   p <- ggplot(data = pd, aes(pd[,group_by])) + theme_classic() + geom_bar(aes(fill = pd[,color_by]), position = "fill") +
     labs(x = group_by, y = "Percent Proportion") + guides(fill = guide_legend(title = color_by)) +
     theme(
@@ -527,7 +527,7 @@ draw_barplot <- function(input_eset,
       legend.title = element_text(size = fontsize.legend_title, face = "bold"),
       legend.text = element_text(size = fontsize.legend_text),
       axis.title = element_text(size = fontsize.axis_title, face = "bold", hjust = 0.5, color = "black"),
-      axis.text.x = element_text(size = fontsize.axis_text, hjust = hjust_x, color = "black", angle = xlabel.angel),
+      axis.text.x = element_text(size = fontsize.axis_text, hjust = hjust_x, color = "black", angle = xlabel.angle),
       axis.text.y = element_text(size = fontsize.axis_text, hjust = 1, color = "black"))
 
   if (is.null(colors) == FALSE) {p <- p + scale_fill_manual(values = colors)}
@@ -550,7 +550,7 @@ draw_barplot <- function(input_eset,
 #' @param fontsize.legend_text Integer, font size of the legend text. Default: 8.
 #' @param fontsize.axis_title Integer, font size of the axis label and text. Default: 10.
 #' @param fontsize.axis_text Integer, font size of the axis label and text. Default: 8.
-#' @param xlabel.angel Numeric, the angel of the a-axis title. When it's set not 0, the x-axis text will automatically right-justified. Default: 0.
+#' @param xlabel.angle Numeric, the angle of the a-axis title. When it's set not 0, the x-axis text will automatically right-justified. Default: 0.
 #'
 #' @return A ggplot object of bubble plot
 #' @export
@@ -569,7 +569,7 @@ draw_bubbleplot <- function(input_eset,
                             group_by = "clusterID",
                             colors = NULL,
                             legend.position = "right", fontsize.legend_title = 10, fontsize.legend_text = 8,
-                            fontsize.axis_title = 10, fontsize.axis_text = 8, xlabel.angel = 0)
+                            fontsize.axis_title = 10, fontsize.axis_text = 8, xlabel.angle = 0)
 {
   ## check parameters
   if (is.null(signature_table) == TRUE) {
@@ -630,7 +630,7 @@ draw_bubbleplot <- function(input_eset,
   master <- dplyr::left_join(df_mean.long, df_pct.long, by = c(group_by, "Signatures"))
 
   # visualize
-  hjust_x = base::ifelse (xlabel.angel == 0, 0.5, 1)
+  hjust_x = base::ifelse (xlabel.angle == 0, 0.5, 1)
   if (is.null(colors) == TRUE) {color.low <- "lightgrey"; color.high <- "red"} else {if (length(colors) == 2) {color.low <- colors[1]; color.high <- colors[2]} else {stop('The length of "colors" must be of 2.')}}
   p <- ggplot(master, aes(x = as.factor(master[, group_by]), y = Signatures)) + geom_point(aes(color = Mean_value, size = Percentage_value), pch = 16) +
     scale_colour_gradient(low = color.low, high = color.high) + theme_classic() + labs(x = group_by, y = "Signatures") +
@@ -639,7 +639,7 @@ draw_bubbleplot <- function(input_eset,
       legend.title = element_text(size = fontsize.legend_title, face = "bold"),
       legend.text = element_text(size = fontsize.legend_text),
       axis.title = element_text(size = fontsize.axis_title, face = "bold", hjust = 0.5, color = "black"),
-      axis.text.x = element_text(size = fontsize.axis_text, hjust = hjust_x, color = "black", angle = xlabel.angel),
+      axis.text.x = element_text(size = fontsize.axis_text, hjust = hjust_x, color = "black", angle = xlabel.angle),
       axis.text.y = element_text(size = fontsize.axis_text, hjust = 1, color = "black"))
 
   return(p)

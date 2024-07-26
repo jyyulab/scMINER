@@ -16,7 +16,7 @@ feature_boxplot(
   fontsize.strip = 10,
   fontsize.axis_title = 10,
   fontsize.axis_text = 8,
-  xlabel.angel = 0,
+  xlabel.angle = 0,
   ylabel.text = "Expression (log2CPM)",
   stat_method = "median",
   add_jitter = FALSE,
@@ -48,7 +48,7 @@ feature_boxplot(
 
 \item{fontsize.axis_text}{Integer, font size of the axis label and text. Default: 8.}
 
-\item{xlabel.angel}{Numeric, the angel of the a-axis title. When it's set not 0, the x-axis text will automatically right-justified. Default: 0.}
+\item{xlabel.angle}{Numeric, the angle of the a-axis title. When it's set not 0, the x-axis text will automatically right-justified. Default: 0.}
 
 \item{ylabel.text}{Character, the title of y-axis. Default: "\code{Expression (log2CPM)}"}
 

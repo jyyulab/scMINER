@@ -10,7 +10,7 @@ draw_barplot(
   color_by = "cell_type",
   colors = NULL,
   legend.position = "right",
-  xlabel.angel = 0,
+  xlabel.angle = 0,
   fontsize.legend_title = 12,
   fontsize.legend_text = 10,
   fontsize.axis_title = 12,
@@ -28,7 +28,7 @@ draw_barplot(
 
 \item{legend.position}{Character, position of legend: "\code{right}" (the default), "\code{left}", "\code{top}", "\code{bottom}" or "\code{none}".}
 
-\item{xlabel.angel}{Numeric, the angel of the a-axis title. When it's set not 0, the x-axis text will automatically right-justified. Default: 0.}
+\item{xlabel.angle}{Numeric, the angle of the a-axis title. When it's set not 0, the x-axis text will automatically right-justified. Default: 0.}
 
 \item{fontsize.legend_title}{Integer, font size of the legend title. Default: 10.}
 
