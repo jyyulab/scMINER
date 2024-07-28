@@ -45,3 +45,4 @@ Suggests:
     SuperCell (>= 1.0),
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
+URL: https://jyyulab.github.io/scMINER/
