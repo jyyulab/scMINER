@@ -14,7 +14,7 @@ createProjectSpace(project_dir, project_name, do.unlink = FALSE)
 \item{do.unlink}{Logical, whether to remove the files and/or folders inside of pre-existing project space. Default: \code{FALSE}.}
 }
 \value{
-It creates a folder of project name and 4 subfolders in the project directory
+It creates a folder of project name and 4 subfolders in the project directory, and returns the path of project space.
 }
 \description{
 This function is used to create a folder of the specified project names in the specified project directory as the project space to run scMINER analysis.

@@ -335,7 +335,7 @@ readInput_table <- function(table_file, sep = "\t", is.geneBYcell = TRUE,
 #' @param project_name The name of the project, will be used as the name of the folder
 #' @param do.unlink Logical, whether to remove the files and/or folders inside of pre-existing project space. Default: `FALSE`.
 #'
-#' @return It creates a folder of project name and 4 subfolders in the project directory
+#' @return It creates a folder of project name and 4 subfolders in the project directory, and returns the path of project space.
 #' @export
 #'
 #' @examples
@@ -377,4 +377,6 @@ createProjectSpace <- function(project_dir,
   if (dir.exists(scminer_dir.plot) == FALSE) {dir.create(scminer_dir.plot)}
 
   cat("The project space has been successfully created:", scminer_dir, "!\n")
+
+  return(scminer_dir)
 }
