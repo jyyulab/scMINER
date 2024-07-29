@@ -40,7 +40,7 @@ Please install all three software for the full access to scMINER framework.
 The scMINER R package requires R 4.2.3 or newer, and can be installed from [GitHub](https://github.com/) with:
 ``` r
 # install.packages("devtools")
-devtools::install_github("https://github.com/jyyulab/scMINER.git@dev-qpan")
+devtools::install_github("jyyulab/scMINER@dev-qpan")
 ```
 
 ### Install MICA and SJARACNe
