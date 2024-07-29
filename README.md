@@ -1,10 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-<p align="center">
-  <img src="man/figures/README-/scMINER_logo.png" width="75%" style="display: block; margin: auto;" />
-</p>
 
----
+## <img src="man/figures/README-/scMINER_logo.png" width="75%" style="display: block; margin: auto;" />
+
 <!-- badges: start -->
 <!-- badges: end -->
 
@@ -54,7 +52,7 @@ from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("https://github.com/jyyulab/scMINER.git@dev-qpan")
+devtools::install_github("jyyulab/scMINER@dev-qpan")
 ```
 
 ### Install MICA and SJARACNe
