@@ -375,7 +375,7 @@ drawNetworkQC <- function(network_file = NULL,
       stop('No input information found. Please specify either network_file or sjaracne_dir, and re-try.')
     } else {
       if (dir.exists(sjaracne_dir)) {
-        cat('The sjaracne_dir is specified for network QC:', sjaracne_dir, '.\n')
+        cat('The network QC will be performed for this directory:', sjaracne_dir, '.\n')
         from_directory <- TRUE
       } else {
         stop('The sjaracne_dir specified was not found.')
@@ -384,7 +384,7 @@ drawNetworkQC <- function(network_file = NULL,
   } else {
     if (is.null(sjaracne_dir)) {
       if (file.exists(network_file)) {
-        cat('The network_file is specified for network QC:', network_file, '.')
+        cat('The network QC will be performed for this file:', network_file, '.')
         from_file <- TRUE
       } else {
         stop('The network_file specified was not found.')
@@ -528,9 +528,9 @@ drawNetworkQC <- function(network_file = NULL,
     targetSize_min <- min(out_degree.driver) # min of target size
     targetSize_max <- max(out_degree.driver) # max of target size
 
-    stats_table[i,1] <- file.tag; stats_table[i,2] <- num_node; stats_table[i,3] <- num_edge; stats_table[i,4] <- num_driver;
-    stats_table[i,5] <- targetSize_mean; stats_table[i,6] <- targetSize_median; stats_table[i,7] <- targetSize_min; stats_table[i,8] <- targetSize_max;
-    stats_table[i,9] <- file.path;
+    stats_table[1,1] <- file.tag; stats_table[1,2] <- num_node; stats_table[1,3] <- num_edge; stats_table[1,4] <- num_driver;
+    stats_table[1,5] <- targetSize_mean; stats_table[1,6] <- targetSize_median; stats_table[1,7] <- targetSize_min; stats_table[1,8] <- targetSize_max;
+    stats_table[1,9] <- file.path;
 
     ## generate html report
     if (generate_html == TRUE) {
