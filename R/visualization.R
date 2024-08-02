@@ -824,7 +824,7 @@ generatePortalInputs <- function(input_expression.eset = NULL,
       network_merged <- data.frame()
       for (i in 1:length(grps)) {
         dir.tmp <- paste0(input_network.dir, "/", grps[i])
-        network.tf <- list.files(path = pasteo(dir.tmp, "/TF"), pattern="consensus_network_ncol_.txt", recursive = TRUE, full.names = TRUE)
+        network.tf <- list.files(path = paste0(dir.tmp, "/TF"), pattern="consensus_network_ncol_.txt", recursive = TRUE, full.names = TRUE)
         if (length(network.tf) == 1) {
           net.tf <- read.delim(file = network.tf, stringsAsFactors = FALSE)
           net.tf$CellGroup <- grps[i]; net.tf$NetworkType <- "TF";
@@ -833,7 +833,7 @@ generatePortalInputs <- function(input_expression.eset = NULL,
         } else {
           stop('Multiple TF network files were found for group:', grps[i], '.')
         }
-        network.sig <- list.files(path = pasteo(dir.tmp, "/SIG"), pattern="consensus_network_ncol_.txt", recursive = TRUE, full.names = TRUE)
+        network.sig <- list.files(path = paste0(dir.tmp, "/SIG"), pattern="consensus_network_ncol_.txt", recursive = TRUE, full.names = TRUE)
         if (length(network.sig) == 1) {
           net.sig <- read.delim(file = network.sig, stringsAsFactors = FALSE)
           net.sig$CellGroup <- grps[i]; net.sig$NetworkType <- "SIG";
