@@ -1,4 +1,82 @@
+title: scMINER
 url: https://jyyulab.github.io/scMINER/
 template:
   bootstrap: 5
+  light-switch: true
+  bslib:
+    pkgdown-nav-height: 100px
+navbar:
+  left:
+  - text: Quick Tutorial
+    href: articles/quick_tutorial.html
+  - text: Full Documentation
+    href: bookdown/index.html
+  - text: Functions
+    href: reference/index.html
+  right:
+  - icon: fa-github
+    href: https://github.com/jyyulab/scMINER
+reference:
+- title: Data preprocessing
+  contents: createProjectSpace
+- subtitle: Data intake
+  desc: Functions to read input data from multiple formats
+  contents:
+  - readInput_10x.dir
+  - readInput_10x.h5
+  - readInput_h5ad
+  - readInput_table
+- subtitle: SparseEset manipulation
+  desc: Functions that help create and filter SparseEset objects
+  contents:
+  - createSparseEset
+  - combineSparseEset
+  - updateSparseEset
+  - filterSparseEset
+  - normalizeSparseEset
+  - drawSparseEsetQC
+- title: MI-based clustering analysis
+  desc: Functions that mainly used in clustering analysis
+  contents:
+  - generateMICAinput
+  - addMICAoutput
+  - MICAplot
+- title: MI-based network inference
+  desc: Functions that principally operate for network inference
+  contents:
+  - getDriverList
+  - generateSJARACNeInput
+  - drawNetworkQC
+  - getActivity_individual
+  - getActivity_inBatch
+- title: Data visualization and sharing
+  desc: Functions that visulize the data analysis and prepare inputs for scMINER Portal
+  contents:
+  - feature_vlnplot
+  - feature_boxplot
+  - feature_scatterplot
+  - feature_bubbleplot
+  - feature_heatmap
+  - draw_barplot
+  - draw_bubbleplot
+  - generatePortalInputs
+- title: Differential analysis
+  desc: Functions that identify the differntially expressed genes (DEGs) or differentially
+    activated drivers (DADs)
+  contents:
+  - getDE
+  - getDA
+  - getTopFeatures
+- title: Helper functions
+  desc: Functions that make the primary functions simpler
+  contents:
+  - combinePvalVector
+  - compare2groups
+  - z_normalization
+  - get_net2target_list
+  - get_target_list2matrix
+  - cal_Activity
+  - SparseExpressionSet-class
+  - pbmc14k_rawCount
+
 
