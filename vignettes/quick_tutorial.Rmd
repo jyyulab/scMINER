@@ -1,0 +1,626 @@
+---
+title: "A quick tutorial to run scMINER"
+author: "Qingfei Pan"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: yeti
+    toc: yes
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+options(rmarkdown.html_vignette.check_title = FALSE)
+```
+
+Welcome to the **quick** tutorial of scMINER! This tutorial aims to provide **immediate and practical guidance** on running scMINER with your own data. For full functionality and detailed documentation of scMINER, please refer to the [Full Documentation](https://qingfeipan.github.io/scMINER_qpan/bookdown/index.html). In this tutorial, we will walk through the core analysis of scMINER step-by-step using a ground truth dataset called **PBMC14k**.
+
+# Get started
+```{r setup, message=FALSE, warning=FALSE}
+library(scMINER)
+library(dplyr)
+library(ggplot2)
+library(anndata)
+library(hdf5r)
+```
+
+# Data preprocessing
+
+## Create project space
+
+The *project space* created by scMINER is a folder that can not only keep your data centralized and organized but also make the scMINER pipeline more smooth and robust. We encourge you to create a project space for each of your studies. 
+
+```{r create-project-space, eval=FALSE}
+scminer_dir <- createProjectSpace(project_dir = "/your-path", project_name = "PBMC14k")
+```
+
+This creates a folder named **`PBMC14k`** in the directory of **`/your-path`**, and creates four subfolders in it:
+
+- **`DATA`**: to save the sparse eSet objects and other files;
+- **`MICA`**: to save the inputs and outputs of mutual information-based clustering analysis;
+- **`SJARACNe`**: to save the inputs and outputs of network inference and quality control;
+- **`PLOT`**: to save the files of data visualization.
+
+## Generate gene expression matrix
+
+scMINER provides four functions to generate gene expression matrix from multiple-format inputs:
+
+```{r generate-gene-expression-matrix, eval=FALSE}
+## Input type 1: Data directory by 10x Genomics, containing matrix.mtx, barcodes.tsv and features.tsv (or genes.tsv)
+demo1_mtx <- readInput_10x.dir(input_dir = system.file("extdata/demo_inputs/cell_matrix_10x", package = "scMINER"),
+                               featureType = "gene_symbol", removeSuffix = TRUE, addPrefix = "demo1")
+
+## Input type 2: Text-table file, eg. txt, tsv, csv
+demo2_mtx <- readInput_table(table_file = system.file("extdata/demo_inputs/table_file/demoData2.txt.gz", package = "scMINER"),
+                             is.geneBYcell = TRUE, # set is.geneBYcell = FALSE to read features in columns and cells in rows
+                             sep = "\t", removeSuffix = TRUE, addPrefix = "demo2") 
+
+## Input type 3: HDF5 file by 10x Genomics
+demo2_mtx <- readInput_10x.h5(h5_file = system.file("extdata/demo_inputs/hdf5_10x/demoData2.h5", package = "scMINER"),
+                              featureType = "gene_symbol", removeSuffix = TRUE, addPrefix = "demo3")
+
+## Input type 4: H5AD file
+demo4_obj <- readInput_h5ad(h5ad_file = system.file("extdata/demo_inputs/h5ad_file/demoData4.h5ad", package = "scMINER"),
+                            removeSuffix = TRUE, addPrefix = "demo4")
+```
+
+The raw count matrix of PBMC14k dataset is embedded in scMINER and can be easily fetched by:
+
+```{r fetch-pbmc14k-rawcount-data}
+## load the raw count matrix of PBMC14k dataset
+data("pbmc14k_rawCount")
+dim(pbmc14k_rawCount)
+pbmc14k_rawCount[1:5,1:4]
+```
+
+## Create SparseEset object
+
+The **`SparseExpressionSet`** (or **`SparseEset`** for short) is a new class created by scMINER to handle the sparsity in scRNA-seq data. It is derived from [ExpressionSet](https://www.bioconductor.org/packages/release/bioc/vignettes/Biobase/inst/doc/ExpressionSetIntroduction.pdf), and enables to compress, store and access efficiently and conveniently. The SparseEset object is the **center** of scRNA-seq data analysis by scMINER.
+
+The SparseEset object can be easily created from the gene expression matrix:
+
+```{r create-sparse-eset-solely-from-matrix, eval=FALSE}
+## Create SparseEset object solely from gene expression matrix, meta data is automatically added
+pbmc14k_raw.eset <- createSparseEset(input_matrix = pbmc14k_rawCount, projectID = "PBMC14k", addMetaData = TRUE)
+```
+
+`createSparseEset()` offers an argument, `addMetaData`, to automatically generate and add 5 meta data statistics for cells and genes into the SparseEset object. It also provides another two arguments, `cellData` and `featureData`, to allow you add your customized `phenoData` or `featureData`. In this case, we have the true labels of cell types and would like to add them to the SparseEset object:
+
+```{r create-sparse-eset-with-cutomized-matadata}
+## Read the true lables of cell types embedded in scMINER R package
+true_label <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k_trueLabel.txt.gz", package = "scMINER"), header = T, row.names = 1, sep = "\t", quote = "", stringsAsFactors = FALSE)
+
+## Create SparseEset object with self-customized metadata
+pbmc14k_raw.eset <- createSparseEset(input_matrix = pbmc14k_rawCount, cellData = true_label, featureData = NULL, projectID = "PBMC14k", addMetaData = TRUE)
+
+head(pData(pbmc14k_raw.eset))
+table(pData(pbmc14k_raw.eset)$trueLabel_full)
+```
+
+If you have **multiple samples for one project**, please create one SparseEset object for each of the samples and combined these SparseEset objects into one:
+
+```{r create-sparse-eset-from-multiple-samples, eval=FALSE}
+## Create SparseEset from multiple samples
+# Step 1: create an SparseEset for each sample
+demo1_mtx <- readInput_10x.dir(input_dir = system.file("extdata/demo_inputs/cell_matrix_10x", package = "scMINER"),
+                               featureType = "gene_symbol", removeSuffix = TRUE)
+demo1.eset <- createSparseEset(input_matrix = demo1_mtx, addMetaData = TRUE)
+
+demo2_mtx <- readInput_table(table_file = system.file("extdata/demo_inputs/table_file/demoData2.txt.gz", package = "scMINER"),
+                             is.geneBYcell = TRUE, sep = "\t", removeSuffix = TRUE) 
+demo2.eset <- createSparseEset(input_matrix = demo2_mtx, addMetaData = TRUE)
+
+# Step 2: combine the SparseEset objects of all samples
+combined.eset <- combineSparseEset(eset_list = c(demo1.eset, demo2.eset),
+                                   projectID = c("sample1", "sample2"),
+                                   addPrefix = c("demo1", "demo2"),
+                                   addSurfix = NULL, addMetaData = TRUE, imputeNA = TRUE)
+```
+
+
+## Filter SparseEset object
+
+As we mentioned before, scMINER can automatically generate and add 5 meta data statistics to SparseEset object. These 5 meta data statistics are the metrics scMINER uses to assess the quality of cells and features:
+
+- For cell quality assessment, scMINER provides 4 metrics that [commonly used by the community](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4758103/):
+  - **nUMI**: number of total UMIs in each cell. Cells with abnormally high nUMI usually indicate doublets, while those with abnormally low nUMI usually indicate poorly sequenced cells or empty droplets.
+  - **nFeature**: number of expressed features/genes in each cell. Similar to nUMI.
+  - **pctMito**: percentage of UMIs of mitochondrial genes (defined by "^mt-|^MT-") in each cell. Cells with aberrantly high pctMito usually indicate dying cells.
+  - **pctSpikeIn**: percentage of UMIs of spike-in RNAs (defined by "^ERCC-|^Ercc-")) in each cell. This is used to estimate the normalization factor. Cells with extremely high or low pctSpikeIn need to be removed.
+  
+- For feature quality assessment, scMINER provides one metrics:
+  - **nCell**: number of cells expressing the features/genes. Genes with extremely low nCell are poorly sequenced and are usually of low variance.
+
+To help assess the data quality and determine the cutoffs used for filtration, scMINER can generate a html-format QC report:
+
+```{r generateQCreport-eset, eval=FALSE}
+## To generate QC report from SparseEset object
+drawSparseEsetQC(input_eset = pbmc14k_raw.eset, output_html_file = "/your-path/PBMC14k/PLOT/pbmc14k_rawCount.html", overwrite = FALSE)
+
+## scMINER also supports group-specific QC highlights
+drawSparseEsetQC(input_eset = pbmc14k_raw.eset, output_html_file = "/your-path/PBMC14k/PLOT/pbmc14k_rawCount.html", overwrite = FALSE, group_by = "trueLabel")
+```
+
+This QC report contains a variety of tables and plot of the key statistics of your data that can help you get a better sense about data quality and determine the cutoffs for filtration.
+
+
+scMINER provides two modes to perform SparseEset object filtration:
+
+- **`auto`**: in this mode, the filtration cutoffs are **automatically** generated by scMINER in `Median ± 3*MAD` (maximum absolute deviation) method. This mode works well in the majority of our test datasets.
+- **`manual`**: in this mode, you can **manually** specify the cutoffs, both low and high, of all 5 metrics. **No cells or features would be removed under the default cutoffs of each metrics**.
+
+To apply the **`auto`** mode in SparseEset filtration:
+
+```{r filter-sparse-eset-auto}
+## Filter SparseEset object with the cutoffs automatically generated by scMINER
+pbmc14k_filtered.eset <- filterSparseEset(pbmc14k_raw.eset, filter_mode = "auto", filter_type = "both")
+```
+
+This command generates a filtered SparseEset object `pbmc14k_filtered.eset` and returns a summary table with detailed information of filtration statistics. You can refer to it and adjust the cutoffs accordingly.
+
+In some cases, you may find that most of the cutoffs generated by the auto mode are good, except one or two. Though there is no 'hybrid' mode, scMINER does allow you to customize some of the cutoffs generated by the auto mode. This can be easily done by adding the cutoffs you would customize under the auto mode:
+```{r filter-sparse-eset-auto-customize, eval=FALSE}
+## Filter eSet under the auto mode, with customized values
+pbmc14k_filtered.eset <- filterSparseEset(pbmc14k_raw.eset, filter_mode = "auto", filter_type = "both", gene.nCell_min = 5)
+```
+
+If the cutoffs generated in auto model do not work well in your case and you would like to go with self-customized cutoffs, you can easily apply them by:
+```{r filter-eset-manual, eval=FALSE}
+## Filter SparseEset object with self-customized cutoffs
+pbmc14k_filtered.eset <- filterSparseEset(pbmc14k_raw.eset, filter_mode = "manual", filter_type = "both", gene.nCell_min = 10, cell.nUMI_min = 500, cell.nUMI_max = 6500, cell.nFeature_min = 200, cell.nFeature_max = 2500, cell.pctMito_max = 0.1)
+```
+
+
+## Normalize SparseEset object
+
+scMINER recommends the **`log2CPM`** method for normalization: the raw counts in each cell are normalized to a library size of 1 million, followed by log2 transformation.
+```{r normalize-sparse-eset}
+pbmc14k_log2cpm.eset <- normalizeSparseEset(pbmc14k_filtered.eset, scale_factor = 1000000, log_base = 2, log_pseudoCount = 1)
+```
+
+This normalized and log-transformed SparseEset object can be directly used for Mutual Information-based clustering, network inference and other downstream analysis. And it's recommended to save it into the project space.
+
+```{r save-eset-log2cpm, eval=FALSE}
+saveRDS(pbmc14k_log2cpm.eset, file = "/your-path/PBMC14k/DATA/pbmc14k_log2cpm.rds")
+```
+
+
+# MI-based clustering analysis
+
+**MICA** (**M**utual **I**nformation-based **C**lustering **A**nalysis) is a clustering tool designed for scRAN-seq data. It is developed with Python to take it's strengths in calculation speed and memory consumption. As a component of scMINER framework, MICA works seamlessly with the scMINER R package and SparseEset object.
+
+## Generate MICA input
+
+The standard input of MICA is **a normalized and log-transformed gene expression matrix**. scMINER can generate this matrix from SparseEset object and save it into a file that can be directly read by MICA.
+
+scMINER uses **`.txt`** as the default input file format. It can by generated by:
+
+MICA accepts `.h5ad` or `.txt` format as the input file, which can be easily generated by embedded function `generateMICAinput()`:
+```{r generate-mica-input-txt, eval=FALSE}
+## Generate MICA input in txt format
+generateMICAinput(input_eset = pbmc14k_log2cpm.eset, output_file = "/your-path/PBMC14k/MICA/micaInput.txt", overwrite = FALSE)
+
+## Check the format of MICA input
+mica_input <- read.delim(system.file("extdata/demo_pbmc14k/PBMC14k/MICA/micaInput.txt", package = "scMINER"), header = T, sep = "\t", row.names = 1)
+mica_input[1:5,1:5]
+```
+
+scMINER also supports **`.h5ad`** as the input file format which is getting more popular in scRNA-seq data storage and sharing. It can by generated by:
+```{r generate-mica-input-h5ad, eval=FALSE}
+## Generate MICA input in h5ad format
+generateMICAinput(input_eset = pbmc14k_log2cpm.eset, output_file = "/your-path/PBMC14k/MICA/micaInput.h5ad", overwrite = FALSE)
+```
+
+In addition to generating the standard MICA input file, `generateMICAinput()` also returns the recommended commands of running MICA. You can copy the commands, modify accordingly and run.
+
+## Run MICA
+
+MICA features two different modes named by their different dimension reduction techniques:
+
+- **Multi-Dimensional Scaling (MDS)** mode: this mode is more accurate and robust for small datasets (less than 5,000 cells, be default) due to its global dimension reduction nature;
+- **Graph Embedding (GE)** mode: this mode works better with large datasets (more than 5,000 cells, by default) using a graph embedding approach to explore distant neighbor cells.
+
+To run **`MDS`** model:
+```{r, run-mica-mds, engine = 'bash', eval=FALSE}
+mica mds -i /your-path/PBMC14k/MICA/micaInput.txt -o /your-path/PBMC14k/MICA/MDS -nck 5 6 7 8 9 10
+```
+
+The MDS model uses **`K-Means`** by default for clustering. The argument `-nck` above specifies the number of cluster for K-Means.
+
+
+In this case, since there are 13,605 cells, we will use the **`GE`** mode for the clustering:
+```{r, run-mica-ge, engine = 'bash', eval=FALSE}
+mica ge -i /your-path/PBMC14k/MICA/micaInput.txt -o /your-path/PBMC14k/MICA/GE -minr 0.1 -maxr 9.0 -ss 0.05 -nw 40
+```
+
+The GE mode uses **`Louvain`** for clustering. The command above will generate the clustering results of multiple resolutions, from 0.1 to 9.0, with a step size of 0.05.
+
+
+## Add MICA output to SparseEset object
+
+MICA generates several files and save all of them in the output directory specified by the user with `-o` argument. The core, and only, output file we need for subsequent analysis is the clustering label file named in the format of `ProjectName_clustering_VisualizeMethod_euclidean_NumberOfDimensions_Resolution.txt`. In this case, since we used a range of resolutions, there are several clustering label files generated, one for each resolution. Based on the knowledge about PBMC14k dataset, we compared the results of different resolutions and picked `clustering_UMAP_euclidean_20_2.05.txt` for subsequent analysis.
+
+```{r mica-output-core}
+## Read the selected MICA output file
+micaOutput <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k/MICA/clustering_UMAP_euclidean_20_2.05.txt", package = "scMINER"), header = TRUE, sep = "\t", quote = "", stringsAsFactors = F)
+head(micaOutput)
+```
+
+As shown above, the clustering label file contains four columns:
+
+- **`ID`**: cell barcodes;
+- **`X`**: coordinates of UMAP_1 or tSNE_1;
+- **`Y`**: coordinates of UMAP_2 or tSNE_2;
+- **`label`**: labels of predicted clusters.
+
+The clustering result can be easily easily added to the SparseEset object by `addMICAoutput()`:
+```{r mica-output-vis}
+## Add MICA output into SparseEset object
+pbmc14k_clustered.eset <- addMICAoutput(input_eset = pbmc14k_log2cpm.eset,
+                                      mica_output_file = system.file("extdata/demo_pbmc14k/PBMC14k/MICA/clustering_UMAP_euclidean_20_2.05.txt", package = "scMINER"), 
+                                      visual_method = "umap") # use "tsne" if t-SNE was used in MICA
+head(pData(pbmc14k_clustered.eset))
+```
+
+It's optional but recommend to save the SparseEset object with clustering resluts added:
+```{r save-eset-clustered, eval=FALSE}
+saveRDS(pbmc14k_clustered.eset, file = "/your-path/PBMC14k/DATA/pbmc14k_clustered.eset")
+```
+
+
+## Visulize MICA output
+
+scMINER provides a function, `MICAplot()` to easily visualize the clustering results on a 2D plot, UMAP or tSNE. And it can be colored by multiple variables, including **cluster label**, **sample source**, **nUMI**, **nFeature**, **pctMito** and more.  
+
+To visualize the clustering results:
+
+```{r visualize-mica-output-cluster, fig.align='center', fig.width=6, fig.height=5}
+MICAplot(input_eset = pbmc14k_clustered.eset, color_by = "clusterID", X = "UMAP_1", Y = "UMAP_2", point.size = 0.1, fontsize.cluster_label = 6)
+```
+
+To visualize the true labels of cell types:
+
+```{r visualize-mica-output-truelabel, fig.align='center', fig.width=6.5, fig.height=5}
+MICAplot(input_eset = pbmc14k_clustered.eset, color_by = "trueLabel", X = "UMAP_1", Y = "UMAP_2", point.size = 0.1, fontsize.cluster_label = 4)
+```
+
+To visualize the **`nUMI`** on UMAP/t-SNE plot:
+
+```{r visualize-mica-output-numi, fig.align='center', fig.width=6.5, fig.height=5}
+MICAplot(input_eset = pbmc14k_clustered.eset, color_by = "nUMI", do.logTransform = TRUE, point.size = 0.1)
+```
+
+You can also visualize the **`nFeature`** **`pctMito`** and **`pctSpikeIn`**:
+
+```{r visualize-mica-output-nfeature, fig.align='center', fig.width=6.5, fig.height=5}
+MICAplot(input_eset = pbmc14k_clustered.eset, color_by = "nFeature", do.logTransform = TRUE, point.size = 0.1)
+MICAplot(input_eset = pbmc14k_clustered.eset, color_by = "pctMito", do.logTransform = FALSE, point.size = 0.1)
+MICAplot(input_eset = pbmc14k_clustered.eset, color_by = "pctSpikeIn", do.logTransform = FALSE, point.size = 0.1)
+```
+
+
+# Cell type annotation
+
+Currently, there are two types of strategies to annotate the clusters: **supervised** and **unsupervised**. The **supervised** methods use a list of known markers of potential cell types curated from some existing studies of the same/similar contexts. While in contrast, the **unsupervised** methods are usually based on the differentially expressed genes. scMINER provides several useful functions to support both types of strategies.
+
+## Supervised cell type annotation
+
+In this showcase, we know the 7 cell types involved in the PBMC14k dataset, and curated a marker list from some existing PBMCs studies. 
+
+### Using signature scores
+
+Given a marker list of candidate cell types, scMINER can estimate a **signature score**, which is mathematically `the weighted mean of the expression of marker genes involved`, for each candidate cell type across all cell cluster. To do so, you will need to generate a signature table with three columns:
+
+- `signature_name`: name of cell types/signatures;
+- `signature_feature`: markers genes/features of corresponding cell type/signature;
+- `weight`: weight of corresponding maker/feature in corresponding cell type/signature. It ranges from -1 to 1, so both positive and negative markers are supported.
+
+```{r signature-table}
+## Signature table of PBMC14k dataset
+signature_table <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k_signatureTable.txt", package = "scMINER"), header = TRUE, sep = "\t", quote = "", stringsAsFactors = FALSE)
+head(signature_table)
+```
+
+With this signature table, `draw_bubbleplot()` can estimate the signature scores and visualize them using bubble plot:
+```{r signature-bubble, fig.width=7, fig.height=5, fig.align='center'}
+## Bubble plot of signature scores across clusters
+draw_bubbleplot(input_eset = pbmc14k_clustered.eset, signature_table = signature_table, group_by = "clusterID")
+```
+
+In the bubble plot above, the color of the bubbles is proportional to the mean of signature scores, and the size of the bubbles is proportional to the percentage of cells with higher signature score than mean.
+
+### Using individual marker genes
+
+scMINER also provides a variety of functions to visualize the selected features:
+
+```{r selected-markers}
+## For the demonstration purposes, we picked two well known markers for each of the 7 known cell types, plus "CD3D" and "CD4".
+genes_of_interest <-c("CD14", "LYZ", "GZMB", "NKG7", "CD19", "MS4A1", "CD8A", "CD8B", "SELL", "CCR7", "IL2RA", "FOXP3", "IL7R", "S100A4", "CD3D", "CD4")
+```
+
+#### feature visualization: violin plot
+```{r featurePlot-vln, fig.width=7, fig.height=6, fig.align='center'}
+## Violin plot of marker genes across clusters
+feature_vlnplot(input_eset = pbmc14k_clustered.eset, features = genes_of_interest, group_by = "clusterID", ncol = 4)
+```
+
+#### feature visualization: box plot
+```{r featurePlot-box, fig.width=7, fig.height=6, fig.align='center'}
+## Box plot of marker genes across clusters
+feature_boxplot(input_eset = pbmc14k_clustered.eset, features = genes_of_interest, group_by = "clusterID", ncol = 4)
+```
+
+#### feature visualization: scatter plot
+```{r featurePlot-scatter, fig.width=7, fig.height=7, fig.align='center'}
+## UMAP scatter plot of marker genes
+feature_scatterplot(input_eset = pbmc14k_clustered.eset, features = genes_of_interest, ncol = 4, location_x = "UMAP_1", location_y =  "UMAP_2", point.size = 0.5, legend.key_height = 0.3, legend.key_width = 0.2, fontsize.legend_title = 8, fontsize.legend_text = 6, fontsize.axis_title = 8, legend.position = "none")
+```
+
+#### feature visualization: bubble plot
+```{r featurePlot-bubble, fig.width=7,fig.height=5, fig.align='center'}
+## Bubble plot of marker genes across clusters
+feature_bubbleplot(input_eset = pbmc14k_clustered.eset, features = genes_of_interest, group_by = "clusterID", xlabel.angle = 45)
+```
+
+#### feature visualization: heatmap
+```{r featurePlot-heatmap, fig.width=7, fig.height=5,fig.align='center'}
+## Heatmap of marker genes across clusters
+feature_heatmap(input_eset = pbmc14k_clustered.eset, features = genes_of_interest, group_by = "clusterID", scale_method = "none", annotation_columns = c("trueLabel"))
+```
+
+
+## Unsupervised cell type annotation
+
+scMINER provides a function, `getDE()`, to perform the differential expression analysis and identify the markers of each cluster. The `getDE()` function supports three different methods to perform the differential expression analysis, `limma`, `wilcoxon` and `t.test`. And it allows the users to define the groups to compare in a highly flexible way:
+
+```{r differential-expression-analysis-1}
+## 1. To perform differential expression analysis in a 1-vs-rest manner for all groups
+de_res1 <- getDE(input_eset = pbmc14k_clustered.eset, group_by = "clusterID", use_method = "limma")
+head(de_res1)
+```
+
+Here is an brief introduction to the results of `getDE()`:
+
+- **feature**: feature name;
+- **g1_tag**: a vector of clusters or subgroups involved in g1, the fore-ground group;
+- **g0_tag**: a vector of clusters or subgroups involved in g0, the back-ground group;
+- **g1_avg**: mean of gene expression of cells in g1;
+- **g0_tag**: mean of gene expression of cells in g0;
+- **g1_pct**: percentage of cells expressing the corresponding genes in group 1;
+- **g0_pct**: percentage of cells expressing the corresponding genes in group 0;
+- **log2FC**: log2Fold change of gene expression between g1 and g0;
+- **Pval**: P values of g1-g0 comparison;
+- **FDR**: FDR of g1-g0 comparison;
+- **Zscore**: Z score of g1-g0 comparison, signed by `log2FC`;
+
+```{r differential-expression-analysis-2, eval=FALSE}
+## 2. To perform differential expression analysis in a 1-vs-rest manner for one specific group
+de_res2 <- getDE(input_eset = pbmc14k_clustered.eset, group_by = "clusterID", g1 = c("1"), use_method = "limma")
+
+## 3. To perform differential expression analysis in a rest-vs-1 manner for one specific group
+de_res3 <- getDE(input_eset = pbmc14k_clustered.eset, group_by = "clusterID", g0 = c("1"), use_method = "limma")
+
+## 4. To perform differential expression analysis in a 1-vs-1 manner for any two groups
+de_res4 <- getDE(input_eset = pbmc14k_clustered.eset, group_by = "clusterID", g1 = c("1", "4"), g0 = c("3","5"), use_method = "limma")
+```
+
+scMINER also provides a function, `getTopFeatures()`, to easily extract the group-specific markers from the differential expression result:
+```{r get-top-markers}
+cluster_markers <- getTopFeatures(input_table = de_res1, number = 10, group_by = "g1_tag", sort_by = "log2FC", sort_decreasing = TRUE)
+dim(cluster_markers)
+head(cluster_markers)
+```
+
+## Add cell type annotation to SparseEset object
+
+Based on the supervised and unsupervised methods, we have annotated the cell types for each cluster. To add the cell type annotation information into the SparseEset object:
+
+```{r add-cell-type-annotation-to-eset}
+## Add cell type annotation to SparseEset object
+pbmc14k_log2cpm_annotated.eset <- pbmc14k_clustered.eset
+celltype_map <- c(`1`="CD4TN", `2`="CD4TCM", `3`="CD8TN", `4`="NK", `5`="B", `6`="Monocyte", `7`="CD4Treg")
+pbmc14k_log2cpm_annotated.eset$cell_type <- as.character(celltype_map[pbmc14k_log2cpm_annotated.eset$clusterID])
+head(pData(pbmc14k_log2cpm_annotated.eset))
+```
+
+The `draw_barplot()` function can visualize the cell composition of self-defined groups. We can use it to show the purity of MICA clusters:
+
+```{r group-barplot, fig.width=6, fig.height=6, fig.align='center'}
+## Show the composition of true labels of cell types among the annotated cell types
+draw_barplot(input_eset = pbmc14k_log2cpm_annotated.eset, group_by = "cell_type", color_by = "trueLabel_full", xlabel.angle = 45)
+```
+
+Don't forget to save the SparseEset object after the cell type annotation is added.
+
+```{r save-eset-annotated, eval=FALSE}
+saveRDS(pbmc14k_log2cpm_annotated.eset, file = "/your-path/PBMC14k/DATA/pbmc14k_log2cpm_annotated.eset")
+```
+
+# Network inference
+
+scMINER constructs the cellular networks using [SJARACNe](https://academic.oup.com/bioinformatics/article/35/12/2165/5156064), a scalable software tool for gene network reverse engineering from big data. Similar to MICA, SJARACNe is also a component of scMINER framework, and can work seamlessly with scMINER R package and SparseEset object.
+
+## Generate SJARACNe inputs
+
+Network inference should be performed on groups of homogeneous cells. Usually it's in a **cluster-** or **cell type-specific** basis. In this showcase, we know the true labels of cell types and would like to use them for grouping:
+
+```{r generate-sjaracne-inputs-from-true-label, eval=FALSE}
+## Columns with any illegal characters can not be used for groupping
+generateSJARACNeInput(input_eset = pbmc14k_log2cpm_annotated.eset, group_name = "trueLabel", sjaracne_dir = "/your-path/PBMC14k/SJARACNe", species_type = "hg", driver_type = "TF_SIG", downSample_N = NULL)
+```
+
+***IMPORTANT NOTE***: Any **illegal characters in path** in group labels may cause issues in subsequent analysis. To avoid it, scMINER only accepts letters(A-Za-z), numbers(0-9), underscores('_') and periods('.').
+
+For big datasets, `generateSJARACNeInput()` provides an argument, `downSample_N`, to allow you to down sample size of each group. The default value of `downSample_N` is 1,000, any group with >= 1,000 cells will be down-sampled to 1,000.
+
+`generateSJARACNeInput()` creates a folder for each of the groups availble in **`trueLabel`** column, and generates the standard input files inside of it:
+  
+- a "**`.exp.txt`**" file: a tab-separated genes/transcripts/proteins by cells/samples expression matrix with the first two columns being ID and symbol.
+- a "**`TF`**" folder containing a "**`.tf.txt`**" file: a list of significant gene/transcript/protein IDs of TF drivers.
+- a "**`SIG`**" folder containing a "**`.sig.txt`**" file: a list of significant gene/transcript/protein IDs of SIG drivers.
+- a bash script (**`runSJARACNe.sh`**) to run SJARACNe. Further modification is needed to run it.
+- a json file (**`config_cwlexec.json`**) containing parameters to run SJARACNe.
+
+## Run SJARACNe
+
+As mentioned above, `generateSJARACNeInput()` generates a `runSJARACNe.sh` file in the folder of each group. You will need to make some modifications before you can run it:
+
+- **remove unneeded lines**: there are usually 4 lines in this file: the lines starting with **`sjaracne lsf`** are the command lines to run on IBM LSF cluster, while those starting with **`sjaracne local`** are the command lines running on a local machine (Linux/OSX). Please select the lines based on your situation and remove the others.
+- **modify some key parameters**:
+
+  - **-n**: number of bootstrap networks to generate. Default: 100.
+  - **-pc**: p value threshold to select edges in building consensus network. Default: `e-2` for single-cell data, `e-3` for meta-cell data, and `e-5` for bulk sample data.
+
+Please use **`sjaracne lsf -h`** or **`sjaracne local -h`** to check more details of arguments available in SJARACNe.
+
+
+There is another file, `config_cwlexec.json`, available in the folder. It contains the information (e.g. memory request for each step of SJARACNe run) used for LSF job submission. This file is only needed for LSF runs and the default values works well in most cases. If you are running SJARACNe on a big dataset, you may need to request more memory from it.
+
+In this case, we use LSF to run the SJARACNe:
+```{r run-sjaracne-lsf, engine = 'bash', eval=FALSE}
+## Let's use B cell as an example
+# For TF
+sjaracne lsf -e /your-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt -g /your-path/PBMC14k/SJARACNe/B/TF/B.835_1902.tf.txt -o /your-path/PBMC14k/SJARACNe/B/TF/bt100_pc001 -n 100 -pc 0.01 -j /your-path/PBMC14k/SJARACNe/B/config_cwlexec.json
+
+# For SIG
+sjaracne lsf -e /your-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt -g /your-path/PBMC14k/SJARACNe/B/SIG/B.4148_1902.sig.txt -o /your-path/PBMC14k/SJARACNe/B/SIG/bt100_pc001 -n 100 -pc 0.01 -j /work-path/PBMC14k/SJARACNe/B/config_cwlexec.json
+```
+
+We manually created a folder named "**bt100_pc001**" in both TF and SIG folders of each group, to save the networks generated under **100 bootstraps** (`-n 100`) and **0.01 consensus p value** (`-pc 0.01`).
+
+To run SJARACNe on a local machine:
+
+```{r run-sjaracne-local, engine = 'bash', eval=FALSE}
+## Let's use B cell as an example
+# For TF
+sjaracne local -e /your-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt -g /your-path/PBMC14k/SJARACNe/B/TF/B.835_1902.tf.txt -o /your-path/PBMC14k/SJARACNe/B/TF/bt100_pc001 -n 100 -pc 0.01
+
+# For SIG
+sjaracne local -e /your-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt -g /your-path/PBMC14k/SJARACNe/B/SIG/B.4148_1902.sig.txt -o /your-path/PBMC14k/SJARACNe/B/SIG/bt100_pc001 -n 100 -pc 0.01
+```
+
+## Quality control of networks
+
+The core output of SJARACNe is the network file named `consensus_network_ncol_.txt`.
+
+```{r check-network-file-format}
+network_format <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
+                             header = T, sep = "\t", quote = "", stringsAsFactors = F)
+head(network_format)
+```
+
+As shown above, it contains 9 columns:
+
+- **source**: ID of the source gene, can be the gene symbol;
+- **target**: ID of the target gene, can be the gene symbol;
+- **source.symbol**: symbol of the source gene;
+- **target.symbol**: symbol of the target gene;
+- **MI**: mutual information of source-gene pair;
+- **pearson**: Pearson correlation coefficient, [-1,1]
+- **pearson**: Spearman correlation coefficient, [-1,1]
+- **slope**: slop of the regression line, returned by `stats.linregression()`
+- **p.value**: p-value for a hypothesis test whose null hypothesis is that the slope is zero, using Wald Test with t-distribution of the test statistic
+
+To help assess the quality of SJARACNe networks, scMINER provides a function `drawNetworkQC()`:
+
+```{r assess-network-quality, eval=FALSE}
+## Network QC on single network file
+network_stats <- drawNetworkQC(network_file = system.file("extdata/demo_pbmc14k/PBMC14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"), generate_html = FALSE)
+
+## Network QC on all network files under a directory
+network_stats <- drawNetworkQC(sjaracne_dir = "/your-path/PBMC14K/SJARACNe", generate_html = FALSE) # Set `generate_html = TRUE` to generate html-format QC report for each network file
+```
+
+```{r show-network-qc-stats}
+## The network QC statistics table is saved separately, for demonstration purposes.
+network_stats <- readRDS(system.file("extdata/demo_pbmc14k/PBMC14k/SJARACNe/network_stats.rds", package = "scMINER"))
+head(network_stats)
+```
+
+`drawNetworkQC()` returns a summary table of key statistics of SJARACNe networks. Empirically, a network with **50-300** target size is good.
+
+# Activity-related analysis
+
+There are many signaling proteins (e.g., kinases), transcription factors, and other factors that are crucial drivers of phenotypes. These factors are not genetically or epigenetically altered, nor are they differentially expressed at the mRNA or protein level. Instead, they are altered by post-translational or other modifications, and are therefore termed ***hidden drivers***. The gene activity-based analysis is proved to be an effective way to expose these hidden driver.
+
+scMINER aims to expose the cell type-specific hidden drivers of various biological activities and provides a few useful functions to effortlessly calculate driver activities, identify the hidden drivers and visualize them in multiple ways.
+
+
+## Calculate driver activities
+
+The **driver activity estimation** is one of the most important features of scMINER. **Mathematically**, the activity of one driver is a type of mean of the expressions of its targets. And **biologically**, the activity can be interpreted as a measure that describes how actively the driver functions, like the enzymes in digesting their subtracts, kinase in activating their downstream genes. Given the gene expression profiles and networks, scMINER can estimate the activities of some predefined drivers, including not only transcription factors (TFs) but also signaling genes (SIGs).
+
+scMINER provides two functions, `getActivity_individual()` and `getActivity_inBatch()`, to calculate the driver activities individually or in batch:
+
+`getActivity_individual()` is designed to calculate the driver activities for individual group. It takes the **SparseEset** and **network files** of group-to-calculate as the inputs:
+
+```{r calculate-activity-individually, eval=FALSE}
+## Let's use B cell as an example
+activity_B.eset <- getActivity_individual(input_eset = pbmc14k_log2cpm_annotated.eset[, pData(pbmc14k_log2cpm_annotated.eset)$trueLabel == "B"],
+                                          network_file.tf = system.file("extdata/demo_pbmc14k/PBMC14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
+                                          network_file.sig = system.file("extdata/demo_pbmc14k/PBMC14k/SJARACNe/B/SIG/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
+                                          driver_type = "TF_SIG")
+```
+
+While `getActivity_inBatch()` is designed to calculate the driver activities in batch. Instead of networks files, it takes the directory that contains the network files of multiples groups and automatically retrieve them for activity estimation: 
+
+```{r calculate-activity-in-batch}
+## let's use B cell as an example
+activity.eset <- getActivity_inBatch(input_eset = pbmc14k_log2cpm_annotated.eset,
+                                     sjaracne_dir = system.file("extdata/demo_pbmc14k/PBMC14k/SJARACNe", package = "scMINER"),
+                                     group_name = "trueLabel", driver_type = "TF_SIG", activity_method = "mean", do.z_normalization = TRUE)
+```
+
+Both functions return an eSet object of driver activities. The full `phenoData` and part of `featureData` of the activity eSet object is inherited from `SparseEset` object.
+
+Don't forget to save the activity eSet object.
+```{r save-activity-eset, eval=FALSE}
+## Save activity eSet object
+saveRDS(activity.eset, file = "/your-path/PBMC14k/DATA/pbmc14k_activity.eset")
+```
+
+
+## Differential activity analysis
+
+scMINER provides a function, `getDA()`, to perform the differential activity analysis and identify the cell type-specific drivers. Similar to `getDE()`, `getDA()` also allows you to compare different groups in a highly flexible way:
+
+```{r differential-activity-analysis-1}
+## 1. To perform differential expression analysis in a 1-vs-rest manner for all groups
+da_res1 <- getDA(input_eset = activity.eset, group_by = "cell_type", use_method = "t.test")
+head(da_res1)
+```
+
+```{r differential-activity-analysis-2, eval=FALSE}
+## 2. To perform differential expression analysis in a 1-vs-rest manner for one specific group
+da_res2 <- getDA(input_eset = activity.eset, group_by = "cell_type", g1 = c("B"), use_method = "t.test")
+
+## 3. To perform differential expression analysis in a rest-vs-1 manner for one specific group
+da_res3 <- getDA(input_eset = activity.eset, group_by = "cell_type", g0 = c("B"), use_method = "t.test")
+
+## 4. To perform differential expression analysis in a 1-vs-1 manner for any two groups
+da_res4 <- getDA(input_eset = activity.eset, group_by = "cell_type", g1 = c("CD4Treg"), g0 = c("CD4TCM"), use_method = "t.test")
+```
+
+The `getTopFeatures()` function can also be used to effortlessly highlight the cell type-specific drivers from the differential activity analysis results:
+
+```{r get-top-drivers}
+top_drivers <- getTopFeatures(input_table = da_res1, number = 10, group_by = "g1_tag", sort_by = "log2FC", sort_decreasing = TRUE)
+dim(top_drivers)
+head(top_drivers)
+```
+
+
+<details>
+<summary>**Session info**</summary>
+```{r session-info}
+sessioninfo::session_info()
+```
+</details>
+\
+
+
+
+
