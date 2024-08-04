@@ -12,24 +12,24 @@ library(Biobase)
 library(ggplot2)
 library(plotly)
 
-eset <- input_eset
+tmp.d <- as.matrix(Biobase::exprs(input_eset))
+tmp.pd <- Biobase::pData(input_eset)
+tmp.fd <- Biobase::fData(input_eset)
 
 if (is.null(group_by) == TRUE) {
   groupID <- "unspecified"
-  eset$unspecified <- "Combined"
+  tmp.pd$unspecified <- "Combined"
 } else {
   groupID <- group_by
 }
-grps <- unique(Biobase::pData(eset)[, groupID])
-
+grps <- unique(tmp.pd[, groupID])
 ```
 
 ## Part I: Key statistics
 
 This part highlights 5 key statistics of the given eset object. 
 ```{r key_stats, echo= FALSE}
-getKeyStatistics <- function(input_eset) {
-  d <- Biobase::exprs(input_eset)
+getKeyStatistics <- function(d) {
   d <- d[Matrix::rowSums(d) > 0,]
   d <- d[,Matrix::colSums(d) > 0]
   
@@ -42,14 +42,14 @@ getKeyStatistics <- function(input_eset) {
 
 key_stats <- c(groupID, "Total cells", "Total genes", "Genes per cell (mean)", "UMIs per cell (mean)", "Cells per gene (mean)")
 if (length(grps) > 1) {
-  key_stats <- c(key_stats, "Combined", getKeyStatistics(eset))
+  key_stats <- c(key_stats, "Combined", getKeyStatistics(tmp.d))
   
   for (i in 1:length(grps)) {
-    eset.sel <- eset[, Biobase::pData(eset)[, groupID] == grps[i]]
-    key_stats <- c(key_stats, grps[i], getKeyStatistics(eset.sel))
+    tmp.d.sel <- tmp.d[, tmp.pd[, groupID] == grps[i]]
+    key_stats <- c(key_stats, grps[i], getKeyStatistics(tmp.d.sel))
   }
 } else {
-  key_stats <- c(key_stats, grps[1], getKeyStatistics(eset))
+  key_stats <- c(key_stats, grps[1], getKeyStatistics(tmp.d))
 }
 
 key_stats.table <- matrix(key_stats, ncol = 6, byrow = T)
@@ -85,8 +85,7 @@ This part summarizes the detailed statistics of 5 key metrics that scMINER uses 
 ### 1. nUMI
 ```{r cell_stats_numi, echo=FALSE}
 nUMI_stats <- c(groupID, "Mean", "Median", "Minimum", "1st Quantile", "3rd Quantile", "Maximum")
-
-nUMI_master <- data.frame(cellID = colnames(eset), group = Biobase::pData(eset)[, groupID], nUMI = colSums(Biobase::exprs(eset)))
+nUMI_master <- data.frame(cellID = colnames(tmp.d), group = tmp.pd[, groupID], nUMI = colSums(tmp.d))
 nUMI_master <- nUMI_master[nUMI_master$nUMI > 0,]
 
 getStatistics_nUMI <- function(numeric_vector) {
@@ -151,7 +150,7 @@ if (length(grps) == 1) {
 ```{r cell_stats_nfeature, echo = FALSE}
 nFeature_stats <- c(groupID, "Mean", "Median", "Minimum", "1st Quantile", "3rd Quantile", "Maximum")
 
-nFeature_master <- data.frame(cellID = colnames(eset), group = Biobase::pData(eset)[, groupID], nFeature = colSums(Biobase::exprs(eset)>0))
+nFeature_master <- data.frame(cellID = colnames(tmp.d), group = tmp.pd[, groupID], nFeature = colSums(tmp.d>0))
 nFeature_master <- nFeature_master[nFeature_master$nFeature > 0,]
 
 getStatistics_nFeature <- function(numeric_vector) {
@@ -214,8 +213,8 @@ if (length(grps) == 1) {
 
 ### 3. pctMito
 ```{r cell_stats_pctmito, echo = FALSE}
-mito_genes <- row.names(eset)[grepl(pattern = "^mt-|^MT-", x = row.names(eset))]
-pctMito_master <- data.frame(cellID = colnames(eset), group = Biobase::pData(eset)[, groupID], pctMito = round(Matrix::colSums(Biobase::exprs(eset)[mito_genes, ]) / Matrix::colSums(Biobase::exprs(eset)), 4))
+mito_genes <- row.names(tmp.d)[grepl(pattern = "^mt-|^MT-", x = row.names(tmp.d))]
+pctMito_master <- data.frame(cellID = colnames(tmp.d), group = tmp.pd[, groupID], pctMito = round(Matrix::colSums(tmp.d[mito_genes, ]) / Matrix::colSums(tmp.d), 4))
 
 getStatistics_pctMito <- function(numeric_vector) {
   res <- round(as.numeric(summary(numeric_vector)),4)
@@ -278,8 +277,8 @@ if (length(grps) == 1) {
 
 ### 4. pctSpikeIn
 ```{r cell_stats_pctspikein, echo = FALSE}
-spikeIn_genes <- row.names(eset)[grepl(pattern = "^Ercc-|^ERCC-", x = row.names(eset))]
-pctSpikeIn_master <- data.frame(cellID = colnames(eset), group = Biobase::pData(eset)[, groupID], pctSpikeIn = round(Matrix::colSums(Biobase::exprs(eset)[spikeIn_genes, ]) / Matrix::colSums(Biobase::exprs(eset)), 4))
+spikeIn_genes <- row.names(tmp.d)[grepl(pattern = "^Ercc-|^ERCC-", x = row.names(tmp.d))]
+pctSpikeIn_master <- data.frame(cellID = colnames(tmp.d), group = tmp.pd[, groupID], pctSpikeIn = round(Matrix::colSums(tmp.d[spikeIn_genes, ]) / Matrix::colSums(tmp.d), 4))
 
 getStatistics_pctSpikeIn <- function(numeric_vector) {
   res <- round(as.numeric(summary(numeric_vector)),4)
@@ -344,8 +343,7 @@ if (length(grps) == 1) {
 ```{r gene_stats_ncell, echo = FALSE}
 nCell_stats <- c(groupID, "Mean", "Median", "Minimum", "1st Quantile", "3rd Quantile", "Maximum")
 
-getStatistics_nCell <- function(input_eset) {
-  d <- Biobase::exprs(input_eset)
+getStatistics_nCell <- function(d) {
   d <- d[Matrix::rowSums(d) > 0,]
   d <- d[,Matrix::colSums(d) > 0]
   
@@ -355,14 +353,14 @@ getStatistics_nCell <- function(input_eset) {
 }
 
 if (length(grps) > 1) {
-  nCell_stats <- c(nCell_stats, "Combined", getStatistics_nCell(eset))
+  nCell_stats <- c(nCell_stats, "Combined", getStatistics_nCell(tmp.d))
   
   for (i in 1:length(grps)) {
-    eset.sel <- eset[, Biobase::pData(eset)[, groupID] == grps[i]]
-    nCell_stats <- c(nCell_stats, grps[i], getStatistics_nCell(eset.sel))
+    tmp.d.sel <- tmp.d[, tmp.pd[, groupID] == grps[i]]
+    nCell_stats <- c(nCell_stats, grps[i], getStatistics_nCell(tmp.d.sel))
   }
 } else {
-  nCell_stats <- c(nCell_stats, grps[1], getStatistics_nCell(eset))
+  nCell_stats <- c(nCell_stats, grps[1], getStatistics_nCell(tmp.d))
 }
 
 nCell_stats.table <- matrix(nCell_stats, ncol = 7, byrow = T)
@@ -388,13 +386,12 @@ if (nrow(nCell_stats.table) < 10) {
 nCell_master <- data.frame()
 if (length(grps) > 1) {
   for (i in 1:length(grps)) {
-    eset.sel <- eset[, Biobase::pData(eset)[, groupID] == grps[i]]
-    d <- Biobase::exprs(eset.sel)
-    d <- d[Matrix::rowSums(d) > 0,]
-    d <- d[,Matrix::colSums(d) > 0]
+    tmp.d.sel <- tmp.d[, tmp.pd[, groupID] == grps[i]]
+    tmp.d.sel <- tmp.d.sel[Matrix::rowSums(tmp.d.sel) > 0,]
+    tmp.d.sel <- tmp.d.sel[,Matrix::colSums(tmp.d.sel) > 0]
 
-    cells_per_gene <- Matrix::rowSums(d != 0)
-    master.sel <- data.frame(geneSymbol = row.names(d), group = grps[i], nCell = cells_per_gene)
+    cells_per_gene <- Matrix::rowSums(tmp.d.sel != 0)
+    master.sel <- data.frame(geneSymbol = row.names(tmp.d.sel), group = grps[i], nCell = cells_per_gene)
     
     if (i == 1) {
       nCell_master <- master.sel
@@ -403,12 +400,11 @@ if (length(grps) > 1) {
     }
   }
 } else {
-  d <- Biobase::exprs(eset)
-  d <- d[Matrix::rowSums(d) > 0,]
-  d <- d[,Matrix::colSums(d) > 0]
+  tmp.d.sel <- tmp.d.sel[Matrix::rowSums(tmp.d.sel) > 0,]
+  tmp.d.sel <- tmp.d.sel[,Matrix::colSums(tmp.d.sel) > 0]
   
-  cells_per_gene <- Matrix::rowSums(d != 0)
-  nCell_master <- data.frame(geneSymbol = row.names(d), group = grps[1], nCell = cells_per_gene)
+  cells_per_gene <- Matrix::rowSums(tmp.d.sel != 0)
+  nCell_master <- data.frame(geneSymbol = row.names(tmp.d.sel), group = grps[1], nCell = cells_per_gene)
 }
 
 p <- ggplot(nCell_master, aes(x=group, y=nCell, fill=group)) + geom_violin(trim = TRUE) +
@@ -439,7 +435,7 @@ This part provides the detailed statistics of each cell and gene.
 <div class = "row">
 <div class= "col-md-4">
 ```{r plot_gene_summary_table, echo = F}
-fd_t <- data.frame(Biobase::fData(eset), pctCell = round(Biobase::fData(eset)[, "nCell"] / ncol(eset), 4))
+fd_t <- data.frame(tmp.fd, pctCell = round(tmp.fd[, "nCell"] / ncol(tmp.d), 4))
 fd_t %>% kableExtra::kable("html", align = "l", row.names = F, caption = "Stats per gene") %>%
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 14) %>%
   kableExtra::kable_classic(full_width = F, html_font = "Arial") %>%
@@ -450,7 +446,7 @@ fd_t %>% kableExtra::kable("html", align = "l", row.names = F, caption = "Stats 
 
 <div class= "col-md-8">
 ```{r plot_cell_summary_table, echo = F}
-pd_t <- Biobase::pData(eset)
+pd_t <- tmp.pd
 pd_t %>% kableExtra::kable("html", align = "l", row.names = F, caption = "Stats per cell") %>%
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 14) %>%
   kableExtra::kable_classic(full_width = F, html_font = "Arial") %>%
@@ -466,52 +462,52 @@ This part provides the cutoffs estimated automatically by scMINER based on Media
 
 ```{r default_cutoff, echo=FALSE,results='asis'}
 ## calculate the default cutoffs
-gene.nCell_min = max(floor(0.005 * dim(eset)[2]), 1)
+gene.nCell_min = max(floor(0.005 * dim(tmp.d)[2]), 1)
 gene.nCell_max = Inf
-cell.nUMI_min = max(floor(exp(median(log(eset$nUMI)) - 3 * mad(log(eset$nUMI)))), 100)
-cell.nUMI_max = ceiling(exp(median(log(eset$nUMI)) + 3 * mad(log(eset$nUMI))))
-cell.nFeature_min = max(floor(exp(median(log(eset$nFeature)) - 3 * mad(log(eset$nFeature)))), 50)
+cell.nUMI_min = max(floor(exp(median(log(tmp.pd$nUMI)) - 3 * mad(log(tmp.pd$nUMI)))), 100)
+cell.nUMI_max = ceiling(exp(median(log(tmp.pd$nUMI)) + 3 * mad(log(tmp.pd$nUMI))))
+cell.nFeature_min = max(floor(exp(median(log(tmp.pd$nFeature)) - 3 * mad(log(tmp.pd$nFeature)))), 50)
 cell.nFeature_max = Inf
 cell.pctMito_min = 0
-cell.pctMito_max = round(median(eset$pctMito) + 3 * mad(eset$pctMito), 4)
+cell.pctMito_max = round(median(tmp.pd$pctMito) + 3 * mad(tmp.pd$pctMito), 4)
 cell.pctSpikeIn_min = 0
-cell.pctSpikeIn_max = round(median(eset$pctSpikeIn) + 3 * mad(eset$pctSpikeIn), 4)
+cell.pctSpikeIn_max = round(median(tmp.pd$pctSpikeIn) + 3 * mad(tmp.pd$pctSpikeIn), 4)
 
 para_table <- matrix(c(gene.nCell_min, cell.nUMI_min, cell.nFeature_min, cell.pctMito_min, cell.pctSpikeIn_min, gene.nCell_max, cell.nUMI_max, cell.nFeature_max, cell.pctMito_max, cell.pctSpikeIn_max), ncol = 5, byrow = T)
 rownames(para_table) <- c("Minimum", "Maximum")
 colnames(para_table) <- c("# Cells per gene (nCell)", "# UMIs per cell (nUMI)", "# Features per cell (nFeature)", "% Mitochondrial genes (pctMito)", "% Spike-In RNAs (pctSpikeIn)")
 
 ## filtering: genes
-fd_pre <- Biobase::fData(eset)
-gene_qualified <- row.names(eset)[fd_pre$nCell >= gene.nCell_min & fd_pre$nCell <= gene.nCell_max]
+fd_pre <- tmp.fd
+gene_qualified <- row.names(fd_pre)[fd_pre$nCell >= gene.nCell_min & fd_pre$nCell <= gene.nCell_max]
 
 gene_table <- matrix(c("Metrics", "Gene_total", "Gene_failed", "Gene_passed",
-                       "nCell", nrow(eset), paste0((nrow(eset)-length(gene_qualified)),"(", round((nrow(eset)-length(gene_qualified))/nrow(eset)*100, 2), "%)"),
-                       paste0(length(gene_qualified),"(", round(length(gene_qualified)/nrow(eset)*100, 2), "%)")), ncol = 2, byrow = FALSE)
+                       "nCell", nrow(tmp.d), paste0((nrow(tmp.d)-length(gene_qualified)),"(", round((nrow(tmp.d)-length(gene_qualified))/nrow(tmp.d)*100, 2), "%)"),
+                       paste0(length(gene_qualified),"(", round(length(gene_qualified)/nrow(tmp.d)*100, 2), "%)")), ncol = 2, byrow = FALSE)
 
 ## filtering: cells
-cell_qualified.nUMI <- which((eset$nUMI >= cell.nUMI_min) & (eset$nUMI <= cell.nUMI_max))
-cell_qualified.nFeature <- which((eset$nFeature >= cell.nFeature_min) & (eset$nFeature <= cell.nFeature_max)); cell_qualified.combined <- intersect(cell_qualified.nUMI, cell_qualified.nFeature)
-cell_qualified.pctMito <- which((eset$pctMito >= cell.pctMito_min) & (eset$pctMito <= cell.pctMito_max)); cell_qualified.combined <- intersect(cell_qualified.combined, cell_qualified.pctMito)
-cell_qualified.pctSpikeIn <- which((eset$pctSpikeIn >= cell.pctSpikeIn_min) & (eset$pctSpikeIn <= cell.pctSpikeIn_max)); cell_qualified.combined <- intersect(cell_qualified.combined, cell_qualified.pctSpikeIn)
-cell_qualified <- colnames(eset)[cell_qualified.combined]
+cell_qualified.nUMI <- which((tmp.pd$nUMI >= cell.nUMI_min) & (tmp.pd$nUMI <= cell.nUMI_max))
+cell_qualified.nFeature <- which((tmp.pd$nFeature >= cell.nFeature_min) & (tmp.pd$nFeature <= cell.nFeature_max)); cell_qualified.combined <- intersect(cell_qualified.nUMI, cell_qualified.nFeature)
+cell_qualified.pctMito <- which((tmp.pd$pctMito >= cell.pctMito_min) & (tmp.pd$pctMito <= cell.pctMito_max)); cell_qualified.combined <- intersect(cell_qualified.combined, cell_qualified.pctMito)
+cell_qualified.pctSpikeIn <- which((tmp.pd$pctSpikeIn >= cell.pctSpikeIn_min) & (tmp.pd$pctSpikeIn <= cell.pctSpikeIn_max)); cell_qualified.combined <- intersect(cell_qualified.combined, cell_qualified.pctSpikeIn)
+cell_qualified <- colnames(tmp.pd)[cell_qualified.combined]
 
 cell_table <- matrix(c("Metrics", "Cell_total", "Cell_failed", "Cell_passed",
-                       "Combined", ncol(eset),
-                       paste0((ncol(eset)-length(cell_qualified.combined)), "(", round(((ncol(eset)-length(cell_qualified.combined))/ncol(eset)*100), 2), "%)"),
-                       paste0(length(cell_qualified.combined), "(", round(length(cell_qualified.combined)/ncol(eset)*100, 2), "%)"),
-                       "nUMI", ncol(eset),
-                       paste0((ncol(eset)-length(cell_qualified.nUMI)), "(", round(((ncol(eset)-length(cell_qualified.nUMI))/ncol(eset)*100), 2), "%)"),
-                       paste0(length(cell_qualified.nUMI), "(", round(length(cell_qualified.nUMI)/ncol(eset)*100, 2), "%)"),
-                       "nFeature", ncol(eset),
-                       paste0((ncol(eset)-length(cell_qualified.nFeature)), "(", round(((ncol(eset)-length(cell_qualified.nFeature))/ncol(eset)*100), 2), "%)"),
-                       paste0(length(cell_qualified.nFeature), "(", round(length(cell_qualified.nFeature)/ncol(eset)*100, 2), "%)"),
-                       "pctMito", ncol(eset),
-                       paste0((ncol(eset)-length(cell_qualified.pctMito)), "(", round(((ncol(eset)-length(cell_qualified.pctMito))/ncol(eset)*100), 2), "%)"),
-                       paste0(length(cell_qualified.pctMito), "(", round(length(cell_qualified.pctMito)/ncol(eset)*100, 2), "%)"),
-                       "pctSpikeIn", ncol(eset),
-                       paste0((ncol(eset)-length(cell_qualified.pctSpikeIn)), "(", round(((ncol(eset)-length(cell_qualified.pctSpikeIn))/ncol(eset)*100), 2), "%)"),
-                       paste0(length(cell_qualified.pctSpikeIn), "(", round(length(cell_qualified.pctSpikeIn)/ncol(eset)*100, 2), "%)")), ncol= 6, byrow = F)
+                       "Combined", ncol(tmp.d),
+                       paste0((ncol(tmp.d)-length(cell_qualified.combined)), "(", round(((ncol(tmp.d)-length(cell_qualified.combined))/ncol(tmp.d)*100), 2), "%)"),
+                       paste0(length(cell_qualified.combined), "(", round(length(cell_qualified.combined)/ncol(tmp.d)*100, 2), "%)"),
+                       "nUMI", ncol(tmp.d),
+                       paste0((ncol(tmp.d)-length(cell_qualified.nUMI)), "(", round(((ncol(tmp.d)-length(cell_qualified.nUMI))/ncol(tmp.d)*100), 2), "%)"),
+                       paste0(length(cell_qualified.nUMI), "(", round(length(cell_qualified.nUMI)/ncol(tmp.d)*100, 2), "%)"),
+                       "nFeature", ncol(tmp.d),
+                       paste0((ncol(tmp.d)-length(cell_qualified.nFeature)), "(", round(((ncol(tmp.d)-length(cell_qualified.nFeature))/ncol(tmp.d)*100), 2), "%)"),
+                       paste0(length(cell_qualified.nFeature), "(", round(length(cell_qualified.nFeature)/ncol(tmp.d)*100, 2), "%)"),
+                       "pctMito", ncol(tmp.d),
+                       paste0((ncol(tmp.d)-length(cell_qualified.pctMito)), "(", round(((ncol(tmp.d)-length(cell_qualified.pctMito))/ncol(tmp.d)*100), 2), "%)"),
+                       paste0(length(cell_qualified.pctMito), "(", round(length(cell_qualified.pctMito)/ncol(tmp.d)*100, 2), "%)"),
+                       "pctSpikeIn", ncol(tmp.d),
+                       paste0((ncol(tmp.d)-length(cell_qualified.pctSpikeIn)), "(", round(((ncol(tmp.d)-length(cell_qualified.pctSpikeIn))/ncol(tmp.d)*100), 2), "%)"),
+                       paste0(length(cell_qualified.pctSpikeIn), "(", round(length(cell_qualified.pctSpikeIn)/ncol(tmp.d)*100, 2), "%)")), ncol= 6, byrow = F)
 
 para_table %>% kableExtra::kable("html", align = "l", caption = "<b>Filtration cutoffs estimicated by scMINER<\b>") %>%
   kableExtra::kable_styling(bootstrap_options = c("striped"), font_size = 14) %>%

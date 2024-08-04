@@ -563,6 +563,7 @@ drawSparseEsetQC <- function(input_eset,
   if (file.exists(output_html_file) == TRUE) {
     if (overwrite == TRUE) {
       cat("\tThe output_html_file", output_html_file, "already exists, and will be overwritten sincel overwrite is set TRUE.\n")
+      file.remove(output_html_file)
     } else {
       stop("The output_html_file", output_html_file, "already exists. Please set overwrite to TRUE to overwrite it, or use another name.\n")
     }
@@ -574,7 +575,6 @@ drawSparseEsetQC <- function(input_eset,
     }
   }
 
-  input_eset <- input_eset
   ## check the input eset
   if (is.null(group_by) == FALSE) {
     cat("Checkinig the group_by information in eset ...\n")
