@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 7 MI-based clustering analysis | scMINER: a mutual information-based framework for identifying hidden drivers from single-cell omics data</title>
+  <meta name="description" content="This is the full documentation of scMINER R package (v-1.1.0)." />
+  <meta name="generator" content="bookdown 0.40 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 7 MI-based clustering analysis | scMINER: a mutual information-based framework for identifying hidden drivers from single-cell omics data" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="This is the full documentation of scMINER R package (v-1.1.0)." />
+  <meta name="github-repo" content="jyyulab/scMINER_documentation" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 7 MI-based clustering analysis | scMINER: a mutual information-based framework for identifying hidden drivers from single-cell omics data" />
+  
+  <meta name="twitter:description" content="This is the full documentation of scMINER R package (v-1.1.0)." />
+  
+
+<meta name="author" content="John Doe" />
+
+
+<meta name="date" content="2024-08-04" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="data-normalization.html"/>
+<link rel="next" href="cell-type-annotation.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">A Minimal Book Example</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><img src="images/scMINER_logo.png" alt="" width="250px"></a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#a-few-concepts"><i class="fa fa-check"></i><b>1.1</b> A few concepts</a>
+<ul>
+<li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#sparseeset"><i class="fa fa-check"></i>SparseEset</a></li>
+<li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#mutual-information"><i class="fa fa-check"></i>Mutual Information</a></li>
+<li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#gene-activity"><i class="fa fa-check"></i>Gene Activity</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="introduction.html"><a href="introduction.html#why-use-scminer"><i class="fa fa-check"></i><b>1.2</b> Why use scMINER</a></li>
+<li class="chapter" data-level="1.3" data-path="introduction.html"><a href="introduction.html#citation"><i class="fa fa-check"></i><b>1.3</b> Citation</a></li>
+<li class="chapter" data-level="1.4" data-path="introduction.html"><a href="introduction.html#support"><i class="fa fa-check"></i><b>1.4</b> Support</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="get-started.html"><a href="get-started.html"><i class="fa fa-check"></i><b>2</b> Get started</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="get-started.html"><a href="get-started.html#installation"><i class="fa fa-check"></i><b>2.1</b> Installation</a>
+<ul>
+<li class="chapter" data-level="" data-path="get-started.html"><a href="get-started.html#install-scminer-r-package"><i class="fa fa-check"></i>Install scMINER R package</a></li>
+<li class="chapter" data-level="" data-path="get-started.html"><a href="get-started.html#install-mica-and-sjaracne"><i class="fa fa-check"></i>Install MICA and SJARACNe</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="get-started.html"><a href="get-started.html#demo-data"><i class="fa fa-check"></i><b>2.2</b> Demo data</a></li>
+<li class="chapter" data-level="2.3" data-path="get-started.html"><a href="get-started.html#create-project-space"><i class="fa fa-check"></i><b>2.3</b> Create project space</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html"><i class="fa fa-check"></i><b>3</b> Generate gene expresion matrix</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html#from-data-directory-by-10x-genomics"><i class="fa fa-check"></i><b>3.1</b> From data directory by 10x Genomics</a></li>
+<li class="chapter" data-level="3.2" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html#from-text-table-file"><i class="fa fa-check"></i><b>3.2</b> From text-table file</a></li>
+<li class="chapter" data-level="3.3" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html#from-hdf5-file-by-10x-genomics"><i class="fa fa-check"></i><b>3.3</b> From HDF5 file by 10x Genomics</a></li>
+<li class="chapter" data-level="3.4" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html#from-h5ad-file"><i class="fa fa-check"></i><b>3.4</b> From H5AD file</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="create-sparseeset-object.html"><a href="create-sparseeset-object.html"><i class="fa fa-check"></i><b>4</b> Create SparseEset object</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="create-sparseeset-object.html"><a href="create-sparseeset-object.html#solely-from-the-gene-expression-matrix"><i class="fa fa-check"></i><b>4.1</b> Solely from the gene expression matrix</a></li>
+<li class="chapter" data-level="4.2" data-path="create-sparseeset-object.html"><a href="create-sparseeset-object.html#using-self-customized-meta-data"><i class="fa fa-check"></i><b>4.2</b> Using self-customized meta data</a></li>
+<li class="chapter" data-level="4.3" data-path="create-sparseeset-object.html"><a href="create-sparseeset-object.html#from-multiple-samples"><i class="fa fa-check"></i><b>4.3</b> From multiple samples</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="data-filtration.html"><a href="data-filtration.html"><i class="fa fa-check"></i><b>5</b> Data filtration</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="data-filtration.html"><a href="data-filtration.html#qc-report"><i class="fa fa-check"></i><b>5.1</b> QC report</a></li>
+<li class="chapter" data-level="5.2" data-path="data-filtration.html"><a href="data-filtration.html#filter-the-sparse-eset-object"><i class="fa fa-check"></i><b>5.2</b> Filter the sparse eset object</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="data-filtration.html"><a href="data-filtration.html#data-filtration-with-auto-mode"><i class="fa fa-check"></i><b>5.2.1</b> Data filtration with auto mode</a></li>
+<li class="chapter" data-level="5.2.2" data-path="data-filtration.html"><a href="data-filtration.html#data-filtration-with-manual-mode"><i class="fa fa-check"></i><b>5.2.2</b> Data filtration with manual mode</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="data-normalization.html"><a href="data-normalization.html"><i class="fa fa-check"></i><b>6</b> Data normalization</a></li>
+<li class="chapter" data-level="7" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html"><i class="fa fa-check"></i><b>7</b> MI-based clustering analysis</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#introduction-to-mica"><i class="fa fa-check"></i><b>7.1</b> Introduction to MICA</a></li>
+<li class="chapter" data-level="7.2" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#generate-mica-input"><i class="fa fa-check"></i><b>7.2</b> Generate MICA input</a></li>
+<li class="chapter" data-level="7.3" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#run-mica"><i class="fa fa-check"></i><b>7.3</b> Run MICA</a></li>
+<li class="chapter" data-level="7.4" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#integrate-mica-outputs-into-sparseeset-object"><i class="fa fa-check"></i><b>7.4</b> Integrate MICA outputs into SparseEset object</a></li>
+<li class="chapter" data-level="7.5" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#visualize-the-mica-output"><i class="fa fa-check"></i><b>7.5</b> Visualize the MICA output</a>
+<ul>
+<li class="chapter" data-level="7.5.1" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#color-coded-by-cluster-labels"><i class="fa fa-check"></i><b>7.5.1</b> Color-coded by cluster labels</a></li>
+<li class="chapter" data-level="7.5.2" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#color-coded-by-true-label-of-cell-types"><i class="fa fa-check"></i><b>7.5.2</b> Color-coded by true label of cell types</a></li>
+<li class="chapter" data-level="7.5.3" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#color-coded-by-numi-for-qc-purpose"><i class="fa fa-check"></i><b>7.5.3</b> Color-coded by nUMI, for QC purpose</a></li>
+<li class="chapter" data-level="7.5.4" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#color-coded-by-nfeature-for-qc-purpose"><i class="fa fa-check"></i><b>7.5.4</b> Color-coded by nFeature, for QC purpose</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html"><i class="fa fa-check"></i><b>8</b> Cell type annotation</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#supervised-cell-type-annotation"><i class="fa fa-check"></i><b>8.1</b> Supervised cell type annotation</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#annotate-using-signature-scores"><i class="fa fa-check"></i><b>8.1.1</b> Annotate using signature scores</a></li>
+<li class="chapter" data-level="8.1.2" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#annotate-using-individual-marker-genes"><i class="fa fa-check"></i><b>8.1.2</b> Annotate using individual marker genes</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#unsupervised-cell-type-annotation"><i class="fa fa-check"></i><b>8.2</b> Unsupervised cell type annotation</a></li>
+<li class="chapter" data-level="8.3" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#add-cell-type-annotations-to-sparseexpressionset-object"><i class="fa fa-check"></i><b>8.3</b> Add cell type annotations to SparseExpressionSet object</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="network-inference.html"><a href="network-inference.html"><i class="fa fa-check"></i><b>9</b> Network inference</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="network-inference.html"><a href="network-inference.html#generate-sjaracne-input-files"><i class="fa fa-check"></i><b>9.1</b> Generate SJARACNe input files</a></li>
+<li class="chapter" data-level="9.2" data-path="network-inference.html"><a href="network-inference.html#run-sjaracne"><i class="fa fa-check"></i><b>9.2</b> Run SJARACNe</a></li>
+<li class="chapter" data-level="9.3" data-path="network-inference.html"><a href="network-inference.html#assess-the-quality-of-networks"><i class="fa fa-check"></i><b>9.3</b> Assess the quality of networks</a>
+<ul>
+<li class="chapter" data-level="9.3.1" data-path="network-inference.html"><a href="network-inference.html#introduction-to-the-network-file-by-sjaracne"><i class="fa fa-check"></i><b>9.3.1</b> Introduction to the network file by SJARACNe</a></li>
+<li class="chapter" data-level="9.3.2" data-path="network-inference.html"><a href="network-inference.html#generate-network-qc-report"><i class="fa fa-check"></i><b>9.3.2</b> Generate network QC report</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html"><i class="fa fa-check"></i><b>10</b> Actvity-based analysis</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#calculate-the-activities"><i class="fa fa-check"></i><b>10.1</b> Calculate the activities</a>
+<ul>
+<li class="chapter" data-level="10.1.1" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#calculate-activities-per-group"><i class="fa fa-check"></i><b>10.1.1</b> Calculate activities per group</a></li>
+<li class="chapter" data-level="10.1.2" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#calculate-activities-in-batch"><i class="fa fa-check"></i><b>10.1.2</b> Calculate activities in batch</a></li>
+<li class="chapter" data-level="10.1.3" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#save-activity-eset-object"><i class="fa fa-check"></i><b>10.1.3</b> Save activity eset object</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#differential-activity-analysis"><i class="fa fa-check"></i><b>10.2</b> Differential activity analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="session-information.html"><a href="session-information.html"><i class="fa fa-check"></i><b>11</b> Session information</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">scMINER: a mutual information-based framework for identifying hidden drivers from single-cell omics data</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="mi-based-clustering-analysis" class="section level1 hasAnchor" number="7">
+<h1><span class="header-section-number">Chapter 7</span> MI-based clustering analysis<a href="mi-based-clustering-analysis.html#mi-based-clustering-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>In this chapter, we will introduce more about the MICA component, and walk you through the MICA workflow, including preparing inputs, runing MICA, visualizing and integrationg MICA outputs into SparseEset object.</p>
+<div id="introduction-to-mica" class="section level2 hasAnchor" number="7.1">
+<h2><span class="header-section-number">7.1</span> Introduction to MICA<a href="mi-based-clustering-analysis.html#introduction-to-mica" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><strong>MICA (Mutual Information-based Clustering Analysis)</strong> is a clustering tool designed for single cell genomics data. Compared to most existing single-cell clustering algorithms, MICA has two unique features:</p>
+<ul>
+<li>MICA uses <strong>mutual information</strong> to measure cell-cell similarity for unsupervised clustering analysis, while most existing tools employ <strong>linear-transformation of PCA</strong> and/or <strong>co-expression analysis using linear Pearson or Spearman correlations</strong> that may not capture the nonlinear cell-cell distance.</li>
+<li>MICA uses <strong>all high-quality features</strong> for clustering, while most existing tools select the top highly variable features to improve the clustering speed. This is arbitrary and may lose the information that can distinguish close cell states.</li>
+</ul>
+<p><strong>MICA</strong> is developed using Python framework, to take its strengths in calculation speed and memory consumption. A lot of effort has been made to improve the interoperability between Python and R. Now MICA works <strong>seamlessly</strong> with the SparseExpressionSet object. The input of MICA can be easily generated from the SparseExpressionSet object by <code>generateMICAinput()</code>, and the output of MICA, the clustering results, can be effortlessly visualized by <code>MICAplot()</code> and integrated into SparseExpressionSet object by <code>addMICAoutput()</code>.</p>
+</div>
+<div id="generate-mica-input" class="section level2 hasAnchor" number="7.2">
+<h2><span class="header-section-number">7.2</span> Generate MICA input<a href="mi-based-clustering-analysis.html#generate-mica-input" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The standard input of MICA is <strong>a normalized and log-transformed gene expression matrix</strong>. scMINER can generate this matrix from sparse eSet object and save it into a file that can be directly read by MICA. MICA accepts <code>.h5ad</code> or <code>.txt</code> format as the input file, which can be easily generated by embedded function <code>generateMICAinput()</code>:</p>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="mi-based-clustering-analysis.html#cb74-1" tabindex="-1"></a><span class="do">## generate MICA input in txt format</span></span>
+<span id="cb74-2"><a href="mi-based-clustering-analysis.html#cb74-2" tabindex="-1"></a><span class="fu">generateMICAinput</span>(<span class="at">input_eset =</span> pbmc14k_log2cpm.eset, <span class="at">output_file =</span> <span class="st">&quot;/work-path/PBMC14k/MICA/micaInput.txt&quot;</span>, <span class="at">overwrite =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb74-3"><a href="mi-based-clustering-analysis.html#cb74-3" tabindex="-1"></a></span>
+<span id="cb74-4"><a href="mi-based-clustering-analysis.html#cb74-4" tabindex="-1"></a><span class="do">## check the format of MICA input</span></span>
+<span id="cb74-5"><a href="mi-based-clustering-analysis.html#cb74-5" tabindex="-1"></a>mica_input <span class="ot">&lt;-</span> <span class="fu">read.delim</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata/demo_pbmc14k/PBMC14k/MICA/micaInput.txt&quot;</span>, <span class="at">package =</span> <span class="st">&quot;scMINER&quot;</span>), <span class="at">header =</span> T, <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st">&quot;</span>, <span class="at">row.names =</span> <span class="dv">1</span>)</span>
+<span id="cb74-6"><a href="mi-based-clustering-analysis.html#cb74-6" tabindex="-1"></a>mica_input[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span></code></pre></div>
+<p>To use the .h5ad format, run the codes below.</p>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="mi-based-clustering-analysis.html#cb75-1" tabindex="-1"></a><span class="do">## generate MICA input in h5ad format: anndata package is needed</span></span>
+<span id="cb75-2"><a href="mi-based-clustering-analysis.html#cb75-2" tabindex="-1"></a><span class="fu">generateMICAinput</span>(<span class="at">input_eset =</span> pbmc14k_log2cpm.eset, <span class="at">output_file =</span> <span class="st">&quot;/work-path/PBMC14k/MICA/micaInput.h5ad&quot;</span>, <span class="at">overwrite =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<p>In addition to generating the standard MICA input file, <code>generateMICAinput()</code> also returns the recommended commands of running MICA. You can copy the commands, modify according and run them.</p>
+</div>
+<div id="run-mica" class="section level2 hasAnchor" number="7.3">
+<h2><span class="header-section-number">7.3</span> Run MICA<a href="mi-based-clustering-analysis.html#run-mica" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>MICA features two different modes named by their different dimension reduction techniques:</p>
+<ul>
+<li><strong>Multi-Dimensional Scaling (MDS)</strong> mode: this mode is more accurate and robust for small datasets (less than 5,000 cells, be default) due to its global dimension reduction nature;</li>
+<li><strong>Graph Embedding (GE)</strong> mode: this mode works better with large datasets (more than 5,000 cells, by default) using a graph embedding approach to explore distant neighbor cells.</li>
+</ul>
+<p>In this case, since there are 13,605 cells, we will use the <code>MICA GE</code> mode for the clustering:</p>
+<div class="sourceCode" id="cb76"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb76-1"><a href="mi-based-clustering-analysis.html#cb76-1" tabindex="-1"></a><span class="ex">mica</span> ge <span class="at">-i</span> /work-path/PBMC14k/MICA/micaInput.txt <span class="at">-o</span> /work-path/PBMC14k/MICA/micaOutput <span class="at">-minr</span> 0.1 <span class="at">-maxr</span> 9.0 <span class="at">-ss</span> 0.05 <span class="at">-nw</span> 40</span></code></pre></div>
+<p>This command will generate the clustering results of multiple resolutions, from 0.1 to 9.0, with a step size of 0.05.</p>
+</div>
+<div id="integrate-mica-outputs-into-sparseeset-object" class="section level2 hasAnchor" number="7.4">
+<h2><span class="header-section-number">7.4</span> Integrate MICA outputs into SparseEset object<a href="mi-based-clustering-analysis.html#integrate-mica-outputs-into-sparseeset-object" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>MICA generates several files and save all of them in the output directory specified by the user with <code>-o</code> argument. The core, and only, output file we need for subsequent analysis is the clustering label file named in the format of <code>ProjectName_clustering_VisualizeMethod_euclidean_NumberOfDimensions_Resolution.txt</code>. In this case, since we used a range of resolutions, there are several clustering label files generated, one for each resolution. Based on the knowledge about PBMC14k dataset, we compared the results of different resolutions and picked <code>clustering_UMAP_euclidean_20_2.05.txt</code> for subsequent analysis.</p>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="mi-based-clustering-analysis.html#cb77-1" tabindex="-1"></a>micaOutput <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata/demo_pbmc14k/PBMC14k/MICA/clustering_UMAP_euclidean_20_2.05.txt&quot;</span>, <span class="at">package =</span> <span class="st">&quot;scMINER&quot;</span>), <span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st">&quot;</span>, <span class="at">quote =</span> <span class="st">&quot;&quot;</span>, <span class="at">stringsAsFactors =</span> F)</span>
+<span id="cb77-2"><a href="mi-based-clustering-analysis.html#cb77-2" tabindex="-1"></a><span class="fu">head</span>(micaOutput)</span></code></pre></div>
+<pre><code>##               ID        X        Y label
+## 1 CACTTTGACGCAAT 14.91650 13.04096     6
+## 2 GTTACGGAAACGAA 14.57031 10.27093     6
+## 3 CACTTATGAGTCGT 14.28869 13.61674     6
+## 4 GCATGTGATTCTGT 14.12546 13.36319     6
+## 5 TAGAATACGTATCG 14.91227 11.19407     6
+## 6 CAAGAAGACCCTCA 15.34154 12.25821     6</code></pre>
+<p>As shown above, the clustering label file contains four columns:</p>
+<ul>
+<li><code>ID</code>: cell barcodes;</li>
+<li><code>X</code>: coordinates of UMAP_1 or tSNE_1;</li>
+<li><code>Y</code>: coordinates of UMAP_2 or tSNE_2;</li>
+<li><code>label</code>: labels of predicted clusters.</li>
+</ul>
+<p>The clustering result can be easily easily added to the SparseExpressionSet object by <code>addMICAoutput()</code>:</p>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="mi-based-clustering-analysis.html#cb79-1" tabindex="-1"></a>pbmc14k_log2cpm.eset <span class="ot">&lt;-</span> <span class="fu">addMICAoutput</span>(pbmc14k_log2cpm.eset, <span class="at">mica_output_file =</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata/demo_pbmc14k/PBMC14k/MICA/clustering_UMAP_euclidean_20_2.05.txt&quot;</span>, <span class="at">package =</span> <span class="st">&quot;scMINER&quot;</span>), <span class="at">visual_method =</span> <span class="st">&quot;umap&quot;</span>)</span>
+<span id="cb79-2"><a href="mi-based-clustering-analysis.html#cb79-2" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">pData</span>(pbmc14k_log2cpm.eset))</span></code></pre></div>
+<pre><code>##                trueLabel_full trueLabel projectID nUMI nFeature    pctMito
+## CACTTTGACGCAAT CD14+ Monocyte  Monocyte   PBMC14k  764      354 0.01832461
+## GTTACGGAAACGAA CD14+ Monocyte  Monocyte   PBMC14k  956      442 0.01569038
+## CACTTATGAGTCGT CD14+ Monocyte  Monocyte   PBMC14k  629      323 0.02066773
+## GCATGTGATTCTGT CD14+ Monocyte  Monocyte   PBMC14k  875      427 0.02628571
+## TAGAATACGTATCG CD14+ Monocyte  Monocyte   PBMC14k 1060      445 0.03207547
+## CAAGAAGACCCTCA CD14+ Monocyte  Monocyte   PBMC14k  849      384 0.01531213
+##                pctSpikeIn         CellID   UMAP_1   UMAP_2 clusterID
+## CACTTTGACGCAAT          0 CACTTTGACGCAAT 14.91650 13.04096         6
+## GTTACGGAAACGAA          0 GTTACGGAAACGAA 14.57031 10.27093         6
+## CACTTATGAGTCGT          0 CACTTATGAGTCGT 14.28869 13.61674         6
+## GCATGTGATTCTGT          0 GCATGTGATTCTGT 14.12546 13.36319         6
+## TAGAATACGTATCG          0 TAGAATACGTATCG 14.91227 11.19407         6
+## CAAGAAGACCCTCA          0 CAAGAAGACCCTCA 15.34154 12.25821         6</code></pre>
+</div>
+<div id="visualize-the-mica-output" class="section level2 hasAnchor" number="7.5">
+<h2><span class="header-section-number">7.5</span> Visualize the MICA output<a href="mi-based-clustering-analysis.html#visualize-the-mica-output" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>scMINER provides a function, <code>MICAplot()</code> to easily visualize the clustering results on a 2D plot, UMAP or tSNE. And it can be colored by multiple variables, including <strong>cluster label</strong>, <strong>sample source</strong>, <strong>nUMI</strong>, <strong>nFeature</strong>, <strong>pctMito</strong> and more.</p>
+<div id="color-coded-by-cluster-labels" class="section level3 hasAnchor" number="7.5.1">
+<h3><span class="header-section-number">7.5.1</span> Color-coded by cluster labels<a href="mi-based-clustering-analysis.html#color-coded-by-cluster-labels" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="mi-based-clustering-analysis.html#cb81-1" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb81-2"><a href="mi-based-clustering-analysis.html#cb81-2" tabindex="-1"></a><span class="fu">MICAplot</span>(<span class="at">input_eset =</span> pbmc14k_log2cpm.eset, <span class="at">color_by =</span> <span class="st">&quot;clusterID&quot;</span>, <span class="at">X =</span> <span class="st">&quot;UMAP_1&quot;</span>, <span class="at">Y =</span> <span class="st">&quot;UMAP_2&quot;</span>, <span class="at">point.size =</span> <span class="fl">0.1</span>, <span class="at">fontsize.cluster_label =</span> <span class="dv">6</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/visualize-mica-output-cluster-1.png" width="576" style="display: block; margin: auto;" /></p>
+</div>
+<div id="color-coded-by-true-label-of-cell-types" class="section level3 hasAnchor" number="7.5.2">
+<h3><span class="header-section-number">7.5.2</span> Color-coded by true label of cell types<a href="mi-based-clustering-analysis.html#color-coded-by-true-label-of-cell-types" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="mi-based-clustering-analysis.html#cb82-1" tabindex="-1"></a><span class="fu">MICAplot</span>(<span class="at">input_eset =</span> pbmc14k_log2cpm.eset, <span class="at">color_by =</span> <span class="st">&quot;trueLabel&quot;</span>, <span class="at">X =</span> <span class="st">&quot;UMAP_1&quot;</span>, <span class="at">Y =</span> <span class="st">&quot;UMAP_2&quot;</span>, <span class="at">point.size =</span> <span class="fl">0.1</span>, <span class="at">fontsize.cluster_label =</span> <span class="dv">4</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/visualize-mica-output-truelabel-1.png" width="624" style="display: block; margin: auto;" /></p>
+</div>
+<div id="color-coded-by-numi-for-qc-purpose" class="section level3 hasAnchor" number="7.5.3">
+<h3><span class="header-section-number">7.5.3</span> Color-coded by nUMI, for QC purpose<a href="mi-based-clustering-analysis.html#color-coded-by-numi-for-qc-purpose" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="mi-based-clustering-analysis.html#cb83-1" tabindex="-1"></a><span class="fu">MICAplot</span>(<span class="at">input_eset =</span> pbmc14k_log2cpm.eset, <span class="at">color_by =</span> <span class="st">&quot;nUMI&quot;</span>, <span class="at">do.logTransform =</span> <span class="cn">TRUE</span>, <span class="at">point.size =</span> <span class="fl">0.1</span>)</span></code></pre></div>
+<pre><code>## The values in &quot;nUMI&quot; have been transformed by log2(value + 1). To turn transformation off, set do.logTransform = FALSE.</code></pre>
+<p><img src="_main_files/figure-html/visualize-mica-output-numi-1.png" width="624" style="display: block; margin: auto;" /></p>
+</div>
+<div id="color-coded-by-nfeature-for-qc-purpose" class="section level3 hasAnchor" number="7.5.4">
+<h3><span class="header-section-number">7.5.4</span> Color-coded by nFeature, for QC purpose<a href="mi-based-clustering-analysis.html#color-coded-by-nfeature-for-qc-purpose" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="mi-based-clustering-analysis.html#cb85-1" tabindex="-1"></a><span class="fu">MICAplot</span>(<span class="at">input_eset =</span> pbmc14k_log2cpm.eset, <span class="at">color_by =</span> <span class="st">&quot;nFeature&quot;</span>, <span class="at">do.logTransform =</span> <span class="cn">TRUE</span>, <span class="at">point.size =</span> <span class="fl">0.1</span>)</span></code></pre></div>
+<pre><code>## The values in &quot;nFeature&quot; have been transformed by log2(value + 1). To turn transformation off, set do.logTransform = FALSE.</code></pre>
+<p><img src="_main_files/figure-html/visualize-mica-output-nfeature-1.png" width="624" style="display: block; margin: auto;" />
+### Color-coded by pctMito, for QC purpose</p>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="mi-based-clustering-analysis.html#cb87-1" tabindex="-1"></a><span class="fu">MICAplot</span>(<span class="at">input_eset =</span> pbmc14k_log2cpm.eset, <span class="at">color_by =</span> <span class="st">&quot;pctMito&quot;</span>, <span class="at">do.logTransform =</span> <span class="cn">FALSE</span>, <span class="at">point.size =</span> <span class="fl">0.1</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/visualize-mica-output-pctmito-1.png" width="624" style="display: block; margin: auto;" /></p>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="data-normalization.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="cell-type-annotation.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/07-clustering-analysis.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

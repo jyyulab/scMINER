@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 8 Cell type annotation | scMINER: a mutual information-based framework for identifying hidden drivers from single-cell omics data</title>
+  <meta name="description" content="This is the full documentation of scMINER R package (v-1.1.0)." />
+  <meta name="generator" content="bookdown 0.40 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 8 Cell type annotation | scMINER: a mutual information-based framework for identifying hidden drivers from single-cell omics data" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="This is the full documentation of scMINER R package (v-1.1.0)." />
+  <meta name="github-repo" content="jyyulab/scMINER_documentation" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 8 Cell type annotation | scMINER: a mutual information-based framework for identifying hidden drivers from single-cell omics data" />
+  
+  <meta name="twitter:description" content="This is the full documentation of scMINER R package (v-1.1.0)." />
+  
+
+<meta name="author" content="John Doe" />
+
+
+<meta name="date" content="2024-08-04" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="mi-based-clustering-analysis.html"/>
+<link rel="next" href="network-inference.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">A Minimal Book Example</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><img src="images/scMINER_logo.png" alt="" width="250px"></a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#a-few-concepts"><i class="fa fa-check"></i><b>1.1</b> A few concepts</a>
+<ul>
+<li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#sparseeset"><i class="fa fa-check"></i>SparseEset</a></li>
+<li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#mutual-information"><i class="fa fa-check"></i>Mutual Information</a></li>
+<li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#gene-activity"><i class="fa fa-check"></i>Gene Activity</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="introduction.html"><a href="introduction.html#why-use-scminer"><i class="fa fa-check"></i><b>1.2</b> Why use scMINER</a></li>
+<li class="chapter" data-level="1.3" data-path="introduction.html"><a href="introduction.html#citation"><i class="fa fa-check"></i><b>1.3</b> Citation</a></li>
+<li class="chapter" data-level="1.4" data-path="introduction.html"><a href="introduction.html#support"><i class="fa fa-check"></i><b>1.4</b> Support</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="get-started.html"><a href="get-started.html"><i class="fa fa-check"></i><b>2</b> Get started</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="get-started.html"><a href="get-started.html#installation"><i class="fa fa-check"></i><b>2.1</b> Installation</a>
+<ul>
+<li class="chapter" data-level="" data-path="get-started.html"><a href="get-started.html#install-scminer-r-package"><i class="fa fa-check"></i>Install scMINER R package</a></li>
+<li class="chapter" data-level="" data-path="get-started.html"><a href="get-started.html#install-mica-and-sjaracne"><i class="fa fa-check"></i>Install MICA and SJARACNe</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="get-started.html"><a href="get-started.html#demo-data"><i class="fa fa-check"></i><b>2.2</b> Demo data</a></li>
+<li class="chapter" data-level="2.3" data-path="get-started.html"><a href="get-started.html#create-project-space"><i class="fa fa-check"></i><b>2.3</b> Create project space</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html"><i class="fa fa-check"></i><b>3</b> Generate gene expresion matrix</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html#from-data-directory-by-10x-genomics"><i class="fa fa-check"></i><b>3.1</b> From data directory by 10x Genomics</a></li>
+<li class="chapter" data-level="3.2" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html#from-text-table-file"><i class="fa fa-check"></i><b>3.2</b> From text-table file</a></li>
+<li class="chapter" data-level="3.3" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html#from-hdf5-file-by-10x-genomics"><i class="fa fa-check"></i><b>3.3</b> From HDF5 file by 10x Genomics</a></li>
+<li class="chapter" data-level="3.4" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html#from-h5ad-file"><i class="fa fa-check"></i><b>3.4</b> From H5AD file</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="create-sparseeset-object.html"><a href="create-sparseeset-object.html"><i class="fa fa-check"></i><b>4</b> Create SparseEset object</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="create-sparseeset-object.html"><a href="create-sparseeset-object.html#solely-from-the-gene-expression-matrix"><i class="fa fa-check"></i><b>4.1</b> Solely from the gene expression matrix</a></li>
+<li class="chapter" data-level="4.2" data-path="create-sparseeset-object.html"><a href="create-sparseeset-object.html#using-self-customized-meta-data"><i class="fa fa-check"></i><b>4.2</b> Using self-customized meta data</a></li>
+<li class="chapter" data-level="4.3" data-path="create-sparseeset-object.html"><a href="create-sparseeset-object.html#from-multiple-samples"><i class="fa fa-check"></i><b>4.3</b> From multiple samples</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="data-filtration.html"><a href="data-filtration.html"><i class="fa fa-check"></i><b>5</b> Data filtration</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="data-filtration.html"><a href="data-filtration.html#qc-report"><i class="fa fa-check"></i><b>5.1</b> QC report</a></li>
+<li class="chapter" data-level="5.2" data-path="data-filtration.html"><a href="data-filtration.html#filter-the-sparse-eset-object"><i class="fa fa-check"></i><b>5.2</b> Filter the sparse eset object</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="data-filtration.html"><a href="data-filtration.html#data-filtration-with-auto-mode"><i class="fa fa-check"></i><b>5.2.1</b> Data filtration with auto mode</a></li>
+<li class="chapter" data-level="5.2.2" data-path="data-filtration.html"><a href="data-filtration.html#data-filtration-with-manual-mode"><i class="fa fa-check"></i><b>5.2.2</b> Data filtration with manual mode</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="data-normalization.html"><a href="data-normalization.html"><i class="fa fa-check"></i><b>6</b> Data normalization</a></li>
+<li class="chapter" data-level="7" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html"><i class="fa fa-check"></i><b>7</b> MI-based clustering analysis</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#introduction-to-mica"><i class="fa fa-check"></i><b>7.1</b> Introduction to MICA</a></li>
+<li class="chapter" data-level="7.2" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#generate-mica-input"><i class="fa fa-check"></i><b>7.2</b> Generate MICA input</a></li>
+<li class="chapter" data-level="7.3" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#run-mica"><i class="fa fa-check"></i><b>7.3</b> Run MICA</a></li>
+<li class="chapter" data-level="7.4" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#integrate-mica-outputs-into-sparseeset-object"><i class="fa fa-check"></i><b>7.4</b> Integrate MICA outputs into SparseEset object</a></li>
+<li class="chapter" data-level="7.5" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#visualize-the-mica-output"><i class="fa fa-check"></i><b>7.5</b> Visualize the MICA output</a>
+<ul>
+<li class="chapter" data-level="7.5.1" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#color-coded-by-cluster-labels"><i class="fa fa-check"></i><b>7.5.1</b> Color-coded by cluster labels</a></li>
+<li class="chapter" data-level="7.5.2" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#color-coded-by-true-label-of-cell-types"><i class="fa fa-check"></i><b>7.5.2</b> Color-coded by true label of cell types</a></li>
+<li class="chapter" data-level="7.5.3" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#color-coded-by-numi-for-qc-purpose"><i class="fa fa-check"></i><b>7.5.3</b> Color-coded by nUMI, for QC purpose</a></li>
+<li class="chapter" data-level="7.5.4" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#color-coded-by-nfeature-for-qc-purpose"><i class="fa fa-check"></i><b>7.5.4</b> Color-coded by nFeature, for QC purpose</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html"><i class="fa fa-check"></i><b>8</b> Cell type annotation</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#supervised-cell-type-annotation"><i class="fa fa-check"></i><b>8.1</b> Supervised cell type annotation</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#annotate-using-signature-scores"><i class="fa fa-check"></i><b>8.1.1</b> Annotate using signature scores</a></li>
+<li class="chapter" data-level="8.1.2" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#annotate-using-individual-marker-genes"><i class="fa fa-check"></i><b>8.1.2</b> Annotate using individual marker genes</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#unsupervised-cell-type-annotation"><i class="fa fa-check"></i><b>8.2</b> Unsupervised cell type annotation</a></li>
+<li class="chapter" data-level="8.3" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#add-cell-type-annotations-to-sparseexpressionset-object"><i class="fa fa-check"></i><b>8.3</b> Add cell type annotations to SparseExpressionSet object</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="network-inference.html"><a href="network-inference.html"><i class="fa fa-check"></i><b>9</b> Network inference</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="network-inference.html"><a href="network-inference.html#generate-sjaracne-input-files"><i class="fa fa-check"></i><b>9.1</b> Generate SJARACNe input files</a></li>
+<li class="chapter" data-level="9.2" data-path="network-inference.html"><a href="network-inference.html#run-sjaracne"><i class="fa fa-check"></i><b>9.2</b> Run SJARACNe</a></li>
+<li class="chapter" data-level="9.3" data-path="network-inference.html"><a href="network-inference.html#assess-the-quality-of-networks"><i class="fa fa-check"></i><b>9.3</b> Assess the quality of networks</a>
+<ul>
+<li class="chapter" data-level="9.3.1" data-path="network-inference.html"><a href="network-inference.html#introduction-to-the-network-file-by-sjaracne"><i class="fa fa-check"></i><b>9.3.1</b> Introduction to the network file by SJARACNe</a></li>
+<li class="chapter" data-level="9.3.2" data-path="network-inference.html"><a href="network-inference.html#generate-network-qc-report"><i class="fa fa-check"></i><b>9.3.2</b> Generate network QC report</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html"><i class="fa fa-check"></i><b>10</b> Actvity-based analysis</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#calculate-the-activities"><i class="fa fa-check"></i><b>10.1</b> Calculate the activities</a>
+<ul>
+<li class="chapter" data-level="10.1.1" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#calculate-activities-per-group"><i class="fa fa-check"></i><b>10.1.1</b> Calculate activities per group</a></li>
+<li class="chapter" data-level="10.1.2" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#calculate-activities-in-batch"><i class="fa fa-check"></i><b>10.1.2</b> Calculate activities in batch</a></li>
+<li class="chapter" data-level="10.1.3" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#save-activity-eset-object"><i class="fa fa-check"></i><b>10.1.3</b> Save activity eset object</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#differential-activity-analysis"><i class="fa fa-check"></i><b>10.2</b> Differential activity analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="session-information.html"><a href="session-information.html"><i class="fa fa-check"></i><b>11</b> Session information</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">scMINER: a mutual information-based framework for identifying hidden drivers from single-cell omics data</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="cell-type-annotation" class="section level1 hasAnchor" number="8">
+<h1><span class="header-section-number">Chapter 8</span> Cell type annotation<a href="cell-type-annotation.html#cell-type-annotation" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Currently, there are two types of strategies to annotate the clusters: <strong>supervised</strong> and <strong>unsupervised</strong>. The <strong>supervised</strong> methods use a list of known markers of potential cell types curated from somoe existing studies of the same/similar contexts. While in contrast, the <strong>unsupervised</strong> methods are usually based on the differentially expressed genes. scMINER provide several useful functions to support both types of strategies.</p>
+<div id="supervised-cell-type-annotation" class="section level2 hasAnchor" number="8.1">
+<h2><span class="header-section-number">8.1</span> Supervised cell type annotation<a href="cell-type-annotation.html#supervised-cell-type-annotation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In the past a few years, the scRNA-seq data has dramatically increased in both quality and quantity. For the majority of tissue types, some existing studies on the same/similar tissue type are most likely available, and from these existing studies, we can figure out a list of candidate cell types to expect and curate a list of markers for each of them. In this case, we know the 7 cell types involved in the dataset, and curated a marker list from some existing PBMCs studies.</p>
+<div id="annotate-using-signature-scores" class="section level3 hasAnchor" number="8.1.1">
+<h3><span class="header-section-number">8.1.1</span> Annotate using signature scores<a href="cell-type-annotation.html#annotate-using-signature-scores" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Given a marker list of candidate cell types, scMINER can estimate a signature score, which is mathematically <code>the weighted mean of the expression of marker genes involved</code>, for each candidate cell type across all cell cluster. To do so, you will need to generate a signature table with three columns:</p>
+<ul>
+<li><code>signature_name</code>: name of cell types/signatures;</li>
+<li><code>signature_feature</code>: markers genes/features of corresponding cell type/signature;</li>
+<li><code>weight</code>: weight of corresponding maker/feature in corresponding cell type/signature. It ranges from -1 to 1, so both positive and negtive markers are supoorted.</li>
+</ul>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="cell-type-annotation.html#cb88-1" tabindex="-1"></a><span class="do">## Signature table of PBMC14k dataset</span></span>
+<span id="cb88-2"><a href="cell-type-annotation.html#cb88-2" tabindex="-1"></a>signature_table <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata/demo_pbmc14k/PBMC14k_signatureTable.txt&quot;</span>, <span class="at">package =</span> <span class="st">&quot;scMINER&quot;</span>), <span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st">&quot;</span>, <span class="at">quote =</span> <span class="st">&quot;&quot;</span>, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb88-3"><a href="cell-type-annotation.html#cb88-3" tabindex="-1"></a><span class="fu">head</span>(signature_table)</span></code></pre></div>
+<pre><code>##   signature_name signature_feature weight
+## 1       Monocyte              CD14      1
+## 2       Monocyte               LYZ      1
+## 3       Monocyte            S100A8      1
+## 4       Monocyte            S100A9      1
+## 5       Monocyte           S100A12      1
+## 6             NK            FCGR3A      1</code></pre>
+<p>With this signature table, <code>draw_bubbleplot()</code> can estimate the signature scores and visualize them using bubble plot:</p>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="cell-type-annotation.html#cb90-1" tabindex="-1"></a><span class="do">## Violin plot of marker genes across clusters</span></span>
+<span id="cb90-2"><a href="cell-type-annotation.html#cb90-2" tabindex="-1"></a><span class="fu">draw_bubbleplot</span>(<span class="at">input_eset =</span> pbmc14k_log2cpm.eset, <span class="at">signature_table =</span> signature_table, <span class="at">group_by =</span> <span class="st">&quot;clusterID&quot;</span>)</span></code></pre></div>
+<pre><code>## 31 features of 7 signatures were found in the input eset and will be used in calculation.</code></pre>
+<p><img src="_main_files/figure-html/signature-bubble-1.png" width="672" style="display: block; margin: auto;" />
+In the bubble plot above, the color of the bubbles is proportional to the mean of signature score, and the size of the bubbles is proportional to the percentage of cells with higher signature score than mean. The cell type of each cluster is clear, except the cluster 7, which shows equally-high signature score of both CD4+ TCM and CD4+ Reg and higher percentage of CD4+ TCM cells.</p>
+</div>
+<div id="annotate-using-individual-marker-genes" class="section level3 hasAnchor" number="8.1.2">
+<h3><span class="header-section-number">8.1.2</span> Annotate using individual marker genes<a href="cell-type-annotation.html#annotate-using-individual-marker-genes" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>scMINER also provides a variety of functions to visualize the selected features:</p>
+<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="cell-type-annotation.html#cb92-1" tabindex="-1"></a><span class="do">## For the demonstration purposes, we picked two well known markers for each of the 7 known cell types, plus &quot;CD3D&quot; and &quot;CD4&quot;.</span></span>
+<span id="cb92-2"><a href="cell-type-annotation.html#cb92-2" tabindex="-1"></a>genes_of_interest <span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">&quot;CD14&quot;</span>, <span class="st">&quot;LYZ&quot;</span>, <span class="st">&quot;GZMB&quot;</span>, <span class="st">&quot;NKG7&quot;</span>, <span class="st">&quot;CD19&quot;</span>, <span class="st">&quot;MS4A1&quot;</span>, <span class="st">&quot;CD8A&quot;</span>, <span class="st">&quot;CD8B&quot;</span>, <span class="st">&quot;SELL&quot;</span>, <span class="st">&quot;CCR7&quot;</span>, <span class="st">&quot;IL2RA&quot;</span>, <span class="st">&quot;FOXP3&quot;</span>, <span class="st">&quot;IL7R&quot;</span>, <span class="st">&quot;S100A4&quot;</span>, <span class="st">&quot;CD3D&quot;</span>, <span class="st">&quot;CD4&quot;</span>)</span></code></pre></div>
+<div id="feature-visualization-violin-plot" class="section level4 hasAnchor" number="8.1.2.1">
+<h4><span class="header-section-number">8.1.2.1</span> feature visualization: violin plot<a href="cell-type-annotation.html#feature-visualization-violin-plot" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="cell-type-annotation.html#cb93-1" tabindex="-1"></a><span class="do">## Violin plot of marker genes across clusters</span></span>
+<span id="cb93-2"><a href="cell-type-annotation.html#cb93-2" tabindex="-1"></a><span class="fu">feature_vlnplot</span>(<span class="at">input_eset =</span> pbmc14k_log2cpm.eset, <span class="at">features =</span> genes_of_interest, <span class="at">group_by =</span> <span class="st">&quot;clusterID&quot;</span>, <span class="at">ncol =</span> <span class="dv">4</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/featurePlot-vln-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="feature-visualization-box-plot" class="section level4 hasAnchor" number="8.1.2.2">
+<h4><span class="header-section-number">8.1.2.2</span> feature visualization: box plot<a href="cell-type-annotation.html#feature-visualization-box-plot" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="cell-type-annotation.html#cb94-1" tabindex="-1"></a><span class="do">## Box plot of marker genes across clusters</span></span>
+<span id="cb94-2"><a href="cell-type-annotation.html#cb94-2" tabindex="-1"></a><span class="fu">feature_boxplot</span>(<span class="at">input_eset =</span> pbmc14k_log2cpm.eset, <span class="at">features =</span> genes_of_interest, <span class="at">group_by =</span> <span class="st">&quot;clusterID&quot;</span>, <span class="at">ncol =</span> <span class="dv">4</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/featurePlot-box-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="feature-visualization-scatter-plot" class="section level4 hasAnchor" number="8.1.2.3">
+<h4><span class="header-section-number">8.1.2.3</span> feature visualization: scatter plot<a href="cell-type-annotation.html#feature-visualization-scatter-plot" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="cell-type-annotation.html#cb95-1" tabindex="-1"></a><span class="do">## UMAP scatter plot of marker genes</span></span>
+<span id="cb95-2"><a href="cell-type-annotation.html#cb95-2" tabindex="-1"></a><span class="fu">feature_scatterplot</span>(<span class="at">input_eset =</span> pbmc14k_log2cpm.eset, <span class="at">features =</span> genes_of_interest, <span class="at">ncol =</span> <span class="dv">4</span>, <span class="at">location_x =</span> <span class="st">&quot;UMAP_1&quot;</span>, <span class="at">location_y =</span>  <span class="st">&quot;UMAP_2&quot;</span>, <span class="at">point.size =</span> <span class="fl">0.5</span>, <span class="at">legend.key_height =</span> <span class="fl">0.3</span>, <span class="at">legend.key_width =</span> <span class="fl">0.2</span>, <span class="at">fontsize.legend_title =</span> <span class="dv">8</span>, <span class="at">fontsize.legend_text =</span> <span class="dv">6</span>, <span class="at">fontsize.axis_title =</span> <span class="dv">8</span>, <span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/featurePlot-scatter-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="feature-visualization-bubble-plot" class="section level4 hasAnchor" number="8.1.2.4">
+<h4><span class="header-section-number">8.1.2.4</span> feature visualization: bubble plot<a href="cell-type-annotation.html#feature-visualization-bubble-plot" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="cell-type-annotation.html#cb96-1" tabindex="-1"></a><span class="do">## Bubble plot of marker genes across clusters</span></span>
+<span id="cb96-2"><a href="cell-type-annotation.html#cb96-2" tabindex="-1"></a><span class="fu">feature_bubbleplot</span>(<span class="at">input_eset =</span> pbmc14k_log2cpm.eset, <span class="at">features =</span> genes_of_interest, <span class="at">group_by =</span> <span class="st">&quot;clusterID&quot;</span>, <span class="at">xlabel.angle =</span> <span class="dv">45</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/featurePlot-bubble-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="feature-visualization-heatmap" class="section level4 hasAnchor" number="8.1.2.5">
+<h4><span class="header-section-number">8.1.2.5</span> feature visualization: heatmap<a href="cell-type-annotation.html#feature-visualization-heatmap" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="cell-type-annotation.html#cb97-1" tabindex="-1"></a><span class="do">## Heatmap of marker genes across clusters</span></span>
+<span id="cb97-2"><a href="cell-type-annotation.html#cb97-2" tabindex="-1"></a><span class="fu">feature_heatmap</span>(<span class="at">input_eset =</span> pbmc14k_log2cpm.eset, <span class="at">features =</span> genes_of_interest, <span class="at">group_by =</span> <span class="st">&quot;clusterID&quot;</span>, <span class="at">scale_method =</span> <span class="st">&quot;none&quot;</span>, <span class="at">annotation_columns =</span> <span class="fu">c</span>(<span class="st">&quot;trueLabel&quot;</span>))</span></code></pre></div>
+<p><img src="_main_files/figure-html/featurePlot-heatmap-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="unsupervised-cell-type-annotation" class="section level2 hasAnchor" number="8.2">
+<h2><span class="header-section-number">8.2</span> Unsupervised cell type annotation<a href="cell-type-annotation.html#unsupervised-cell-type-annotation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Existing studies in the same or similar contexts are not always available, and there is a significant concern regarding the reliability of reference studies. This reliability largely depends on the expertise of the original authors who defined the markers and assigned the cell types. Therefore, we strongly encourage users to also try unsupervised methods, which can serve as a means of cross-validation.</p>
+<p>scMINER provides a function, <code>getDE()</code>, to perform the differential expression analysis and identify the markers of each cluster. The <code>getDE()</code> function supports three different methods to perform the differential expression analysis, <code>limma</code>, <code>wilcoxon</code> and <code>t.test</code>. And it allows the users to define the groups to compare in a flexible way:</p>
+<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="cell-type-annotation.html#cb98-1" tabindex="-1"></a><span class="do">## 1. To perform differential expression analysis in a 1-vs-rest manner for all groups</span></span>
+<span id="cb98-2"><a href="cell-type-annotation.html#cb98-2" tabindex="-1"></a>de_res1 <span class="ot">&lt;-</span> <span class="fu">getDE</span>(<span class="at">input_eset =</span> pbmc14k_log2cpm.eset[<span class="dv">500</span>,], <span class="at">group_by =</span> <span class="st">&quot;clusterID&quot;</span>, <span class="at">use_method =</span> <span class="st">&quot;limma&quot;</span>)</span></code></pre></div>
+<pre><code>## 7 groups were found in group_by column [ clusterID ].
+## Since no group was specified, the differential analysis will be conducted among all groups in the group_by column [ clusterID ] in the 1-vs-rest manner.
+##   1 / 7 : group 1 ( 1 ) vs the rest...
+##   2505 cells were found for g1.
+##   11100 cells were found for g0.
+##   2 / 7 : group 1 ( 2 ) vs the rest...
+##   2022 cells were found for g1.
+##   11583 cells were found for g0.
+##   3 / 7 : group 1 ( 3 ) vs the rest...
+##   2014 cells were found for g1.
+##   11591 cells were found for g0.
+##   4 / 7 : group 1 ( 4 ) vs the rest...
+##   1918 cells were found for g1.
+##   11687 cells were found for g0.
+##   5 / 7 : group 1 ( 5 ) vs the rest...
+##   1912 cells were found for g1.
+##   11693 cells were found for g0.
+##   6 / 7 : group 1 ( 6 ) vs the rest...
+##   1786 cells were found for g1.
+##   11819 cells were found for g0.
+##   7 / 7 : group 1 ( 7 ) vs the rest...
+##   1448 cells were found for g1.
+##   12157 cells were found for g0.</code></pre>
+<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="cell-type-annotation.html#cb100-1" tabindex="-1"></a><span class="fu">head</span>(de_res1)</span></code></pre></div>
+<pre><code>##  [1] feature g1_tag  g0_tag  g1_avg  g0_avg  g1_pct  g0_pct  log2FC  Pval   
+## [10] FDR     Zscore 
+## &lt;0 rows&gt; (or 0-length row.names)</code></pre>
+<p>Here is an brief introduction to the results of <code>getDE()</code>:</p>
+<ul>
+<li><strong>feature</strong>: feature name;</li>
+<li><strong>g1_tag</strong>: a vector of clusters or subgroups involved in g1, the fore-ground group;</li>
+<li><strong>g0_tag</strong>: a vector of clusters or subgroups involved in g0, the back-ground group;</li>
+<li><strong>g1_avg</strong>: mean of gene expression of cells in g1;</li>
+<li><strong>g0_tag</strong>: mean of gene expression of cells in g0;</li>
+<li><strong>g1_pct</strong>: percentage of cells expressing the corresponding genes in group 1;</li>
+<li><strong>g0_pct</strong>: percentage of cells expressing the corresponding genes in group 0;</li>
+<li><strong>log2FC</strong>: log2Fold change of gene expression between g1 and g0;</li>
+<li><strong>Pval</strong>: P values of g1-g0 comparison;</li>
+<li><strong>FDR</strong>: FDR of g1-g0 comparison;</li>
+<li><strong>Zscore</strong>: Z score of g1-g0 comparison, signed by <code>log2FC</code>;</li>
+</ul>
+<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="cell-type-annotation.html#cb102-1" tabindex="-1"></a><span class="do">## 2. To perform differential expression analysis in a 1-vs-rest manner for one specific group</span></span>
+<span id="cb102-2"><a href="cell-type-annotation.html#cb102-2" tabindex="-1"></a>de_res2 <span class="ot">&lt;-</span> <span class="fu">getDE</span>(<span class="at">input_eset =</span> pbmc14k_log2cpm.eset, <span class="at">group_by =</span> <span class="st">&quot;clusterID&quot;</span>, <span class="at">g1 =</span> <span class="fu">c</span>(<span class="st">&quot;1&quot;</span>), <span class="at">use_method =</span> <span class="st">&quot;limma&quot;</span>)</span>
+<span id="cb102-3"><a href="cell-type-annotation.html#cb102-3" tabindex="-1"></a></span>
+<span id="cb102-4"><a href="cell-type-annotation.html#cb102-4" tabindex="-1"></a><span class="do">## 3. To perform differential expression analysis in a rest-vs-1 manner for one specific group</span></span>
+<span id="cb102-5"><a href="cell-type-annotation.html#cb102-5" tabindex="-1"></a>de_res3 <span class="ot">&lt;-</span> <span class="fu">getDE</span>(<span class="at">input_eset =</span> pbmc14k_log2cpm.eset, <span class="at">group_by =</span> <span class="st">&quot;clusterID&quot;</span>, <span class="at">g0 =</span> <span class="fu">c</span>(<span class="st">&quot;1&quot;</span>), <span class="at">use_method =</span> <span class="st">&quot;limma&quot;</span>)</span>
+<span id="cb102-6"><a href="cell-type-annotation.html#cb102-6" tabindex="-1"></a></span>
+<span id="cb102-7"><a href="cell-type-annotation.html#cb102-7" tabindex="-1"></a><span class="do">## 4. To perform differential expression analysis in a 1-vs-1 manner for any two groups</span></span>
+<span id="cb102-8"><a href="cell-type-annotation.html#cb102-8" tabindex="-1"></a>de_res4 <span class="ot">&lt;-</span> <span class="fu">getDE</span>(<span class="at">input_eset =</span> pbmc14k_log2cpm.eset, <span class="at">group_by =</span> <span class="st">&quot;clusterID&quot;</span>, <span class="at">g1 =</span> <span class="fu">c</span>(<span class="st">&quot;1&quot;</span>), <span class="at">g0 =</span> <span class="fu">c</span>(<span class="st">&quot;3&quot;</span>), <span class="at">use_method =</span> <span class="st">&quot;limma&quot;</span>)</span></code></pre></div>
+<p>scMINER also provides a function, <code>getTopFeatures()</code>, to easily extract the group-specific markers from the differential expression result:</p>
+<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="cell-type-annotation.html#cb103-1" tabindex="-1"></a>cluster_markers <span class="ot">&lt;-</span> <span class="fu">getTopFeatures</span>(<span class="at">input_table =</span> de_res1, <span class="at">number =</span> <span class="dv">10</span>, <span class="at">group_by =</span> <span class="st">&quot;g1_tag&quot;</span>, <span class="at">sort_by =</span> <span class="st">&quot;log2FC&quot;</span>, <span class="at">sort_decreasing =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb103-2"><a href="cell-type-annotation.html#cb103-2" tabindex="-1"></a><span class="fu">dim</span>(cluster_markers)</span></code></pre></div>
+<pre><code>## [1]  0 11</code></pre>
+<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="cell-type-annotation.html#cb105-1" tabindex="-1"></a><span class="fu">head</span>(cluster_markers)</span></code></pre></div>
+<pre><code>##  [1] feature g1_tag  g0_tag  g1_avg  g0_avg  g1_pct  g0_pct  log2FC  Pval   
+## [10] FDR     Zscore 
+## &lt;0 rows&gt; (or 0-length row.names)</code></pre>
+</div>
+<div id="add-cell-type-annotations-to-sparseexpressionset-object" class="section level2 hasAnchor" number="8.3">
+<h2><span class="header-section-number">8.3</span> Add cell type annotations to SparseExpressionSet object<a href="cell-type-annotation.html#add-cell-type-annotations-to-sparseexpressionset-object" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Based on the supervised and unsupervised methods, we have annotated the cell types for each cluster. To add the cell type annotation information into the sparse eset object:</p>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="cell-type-annotation.html#cb107-1" tabindex="-1"></a>celltype_map <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">1</span><span class="st">`</span><span class="ot">=</span><span class="st">&quot;CD4TN&quot;</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span><span class="ot">=</span><span class="st">&quot;CD4TCM&quot;</span>, <span class="st">`</span><span class="at">3</span><span class="st">`</span><span class="ot">=</span><span class="st">&quot;CD8TN&quot;</span>, <span class="st">`</span><span class="at">4</span><span class="st">`</span><span class="ot">=</span><span class="st">&quot;NK&quot;</span>, <span class="st">`</span><span class="at">5</span><span class="st">`</span><span class="ot">=</span><span class="st">&quot;B&quot;</span>, <span class="st">`</span><span class="at">6</span><span class="st">`</span><span class="ot">=</span><span class="st">&quot;Monocyte&quot;</span>, <span class="st">`</span><span class="at">7</span><span class="st">`</span><span class="ot">=</span><span class="st">&quot;CD4Treg&quot;</span>)</span>
+<span id="cb107-2"><a href="cell-type-annotation.html#cb107-2" tabindex="-1"></a>pbmc14k_log2cpm.eset<span class="sc">$</span>cell_type <span class="ot">&lt;-</span> <span class="fu">as.character</span>(celltype_map[pbmc14k_log2cpm.eset<span class="sc">$</span>clusterID])</span>
+<span id="cb107-3"><a href="cell-type-annotation.html#cb107-3" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">pData</span>(pbmc14k_log2cpm.eset))</span></code></pre></div>
+<pre><code>##                trueLabel_full trueLabel projectID nUMI nFeature    pctMito
+## CACTTTGACGCAAT CD14+ Monocyte  Monocyte   PBMC14k  764      354 0.01832461
+## GTTACGGAAACGAA CD14+ Monocyte  Monocyte   PBMC14k  956      442 0.01569038
+## CACTTATGAGTCGT CD14+ Monocyte  Monocyte   PBMC14k  629      323 0.02066773
+## GCATGTGATTCTGT CD14+ Monocyte  Monocyte   PBMC14k  875      427 0.02628571
+## TAGAATACGTATCG CD14+ Monocyte  Monocyte   PBMC14k 1060      445 0.03207547
+## CAAGAAGACCCTCA CD14+ Monocyte  Monocyte   PBMC14k  849      384 0.01531213
+##                pctSpikeIn         CellID   UMAP_1   UMAP_2 clusterID cell_type
+## CACTTTGACGCAAT          0 CACTTTGACGCAAT 14.91650 13.04096         6  Monocyte
+## GTTACGGAAACGAA          0 GTTACGGAAACGAA 14.57031 10.27093         6  Monocyte
+## CACTTATGAGTCGT          0 CACTTATGAGTCGT 14.28869 13.61674         6  Monocyte
+## GCATGTGATTCTGT          0 GCATGTGATTCTGT 14.12546 13.36319         6  Monocyte
+## TAGAATACGTATCG          0 TAGAATACGTATCG 14.91227 11.19407         6  Monocyte
+## CAAGAAGACCCTCA          0 CAAGAAGACCCTCA 15.34154 12.25821         6  Monocyte</code></pre>
+<p>The <code>draw_barplot()</code> function can visualize the cell composition of self-defined groups. We can use it to show the purity of MICA clusters:</p>
+<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="cell-type-annotation.html#cb109-1" tabindex="-1"></a><span class="do">## Violin plot of marker genes across clusters</span></span>
+<span id="cb109-2"><a href="cell-type-annotation.html#cb109-2" tabindex="-1"></a><span class="fu">draw_barplot</span>(<span class="at">input_eset =</span> pbmc14k_log2cpm.eset, <span class="at">group_by =</span> <span class="st">&quot;cell_type&quot;</span>, <span class="at">color_by =</span> <span class="st">&quot;trueLabel_full&quot;</span>, <span class="at">xlabel.angle =</span> <span class="dv">45</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/group-barplot-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>Don’t forget to save the SparseEset object after the cell type annotation added.</p>
+<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb110-1"><a href="cell-type-annotation.html#cb110-1" tabindex="-1"></a><span class="fu">saveRDS</span>(pbmc14k_log2cpm.eset, <span class="at">file =</span> <span class="st">&quot;/your-path/PBMC14k/DATA/pbmc14k_log2CPM_annotated.rds&quot;</span>)</span></code></pre></div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="mi-based-clustering-analysis.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="network-inference.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/08-celltype-annotation.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

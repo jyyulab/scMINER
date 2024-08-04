@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 9 Network inference | scMINER: a mutual information-based framework for identifying hidden drivers from single-cell omics data</title>
+  <meta name="description" content="This is the full documentation of scMINER R package (v-1.1.0)." />
+  <meta name="generator" content="bookdown 0.40 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 9 Network inference | scMINER: a mutual information-based framework for identifying hidden drivers from single-cell omics data" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="This is the full documentation of scMINER R package (v-1.1.0)." />
+  <meta name="github-repo" content="jyyulab/scMINER_documentation" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 9 Network inference | scMINER: a mutual information-based framework for identifying hidden drivers from single-cell omics data" />
+  
+  <meta name="twitter:description" content="This is the full documentation of scMINER R package (v-1.1.0)." />
+  
+
+<meta name="author" content="John Doe" />
+
+
+<meta name="date" content="2024-08-04" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="cell-type-annotation.html"/>
+<link rel="next" href="actvity-based-analysis.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">A Minimal Book Example</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><img src="images/scMINER_logo.png" alt="" width="250px"></a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#a-few-concepts"><i class="fa fa-check"></i><b>1.1</b> A few concepts</a>
+<ul>
+<li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#sparseeset"><i class="fa fa-check"></i>SparseEset</a></li>
+<li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#mutual-information"><i class="fa fa-check"></i>Mutual Information</a></li>
+<li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#gene-activity"><i class="fa fa-check"></i>Gene Activity</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="introduction.html"><a href="introduction.html#why-use-scminer"><i class="fa fa-check"></i><b>1.2</b> Why use scMINER</a></li>
+<li class="chapter" data-level="1.3" data-path="introduction.html"><a href="introduction.html#citation"><i class="fa fa-check"></i><b>1.3</b> Citation</a></li>
+<li class="chapter" data-level="1.4" data-path="introduction.html"><a href="introduction.html#support"><i class="fa fa-check"></i><b>1.4</b> Support</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="get-started.html"><a href="get-started.html"><i class="fa fa-check"></i><b>2</b> Get started</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="get-started.html"><a href="get-started.html#installation"><i class="fa fa-check"></i><b>2.1</b> Installation</a>
+<ul>
+<li class="chapter" data-level="" data-path="get-started.html"><a href="get-started.html#install-scminer-r-package"><i class="fa fa-check"></i>Install scMINER R package</a></li>
+<li class="chapter" data-level="" data-path="get-started.html"><a href="get-started.html#install-mica-and-sjaracne"><i class="fa fa-check"></i>Install MICA and SJARACNe</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="get-started.html"><a href="get-started.html#demo-data"><i class="fa fa-check"></i><b>2.2</b> Demo data</a></li>
+<li class="chapter" data-level="2.3" data-path="get-started.html"><a href="get-started.html#create-project-space"><i class="fa fa-check"></i><b>2.3</b> Create project space</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html"><i class="fa fa-check"></i><b>3</b> Generate gene expresion matrix</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html#from-data-directory-by-10x-genomics"><i class="fa fa-check"></i><b>3.1</b> From data directory by 10x Genomics</a></li>
+<li class="chapter" data-level="3.2" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html#from-text-table-file"><i class="fa fa-check"></i><b>3.2</b> From text-table file</a></li>
+<li class="chapter" data-level="3.3" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html#from-hdf5-file-by-10x-genomics"><i class="fa fa-check"></i><b>3.3</b> From HDF5 file by 10x Genomics</a></li>
+<li class="chapter" data-level="3.4" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html#from-h5ad-file"><i class="fa fa-check"></i><b>3.4</b> From H5AD file</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="create-sparseeset-object.html"><a href="create-sparseeset-object.html"><i class="fa fa-check"></i><b>4</b> Create SparseEset object</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="create-sparseeset-object.html"><a href="create-sparseeset-object.html#solely-from-the-gene-expression-matrix"><i class="fa fa-check"></i><b>4.1</b> Solely from the gene expression matrix</a></li>
+<li class="chapter" data-level="4.2" data-path="create-sparseeset-object.html"><a href="create-sparseeset-object.html#using-self-customized-meta-data"><i class="fa fa-check"></i><b>4.2</b> Using self-customized meta data</a></li>
+<li class="chapter" data-level="4.3" data-path="create-sparseeset-object.html"><a href="create-sparseeset-object.html#from-multiple-samples"><i class="fa fa-check"></i><b>4.3</b> From multiple samples</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="data-filtration.html"><a href="data-filtration.html"><i class="fa fa-check"></i><b>5</b> Data filtration</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="data-filtration.html"><a href="data-filtration.html#qc-report"><i class="fa fa-check"></i><b>5.1</b> QC report</a></li>
+<li class="chapter" data-level="5.2" data-path="data-filtration.html"><a href="data-filtration.html#filter-the-sparse-eset-object"><i class="fa fa-check"></i><b>5.2</b> Filter the sparse eset object</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="data-filtration.html"><a href="data-filtration.html#data-filtration-with-auto-mode"><i class="fa fa-check"></i><b>5.2.1</b> Data filtration with auto mode</a></li>
+<li class="chapter" data-level="5.2.2" data-path="data-filtration.html"><a href="data-filtration.html#data-filtration-with-manual-mode"><i class="fa fa-check"></i><b>5.2.2</b> Data filtration with manual mode</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="data-normalization.html"><a href="data-normalization.html"><i class="fa fa-check"></i><b>6</b> Data normalization</a></li>
+<li class="chapter" data-level="7" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html"><i class="fa fa-check"></i><b>7</b> MI-based clustering analysis</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#introduction-to-mica"><i class="fa fa-check"></i><b>7.1</b> Introduction to MICA</a></li>
+<li class="chapter" data-level="7.2" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#generate-mica-input"><i class="fa fa-check"></i><b>7.2</b> Generate MICA input</a></li>
+<li class="chapter" data-level="7.3" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#run-mica"><i class="fa fa-check"></i><b>7.3</b> Run MICA</a></li>
+<li class="chapter" data-level="7.4" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#integrate-mica-outputs-into-sparseeset-object"><i class="fa fa-check"></i><b>7.4</b> Integrate MICA outputs into SparseEset object</a></li>
+<li class="chapter" data-level="7.5" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#visualize-the-mica-output"><i class="fa fa-check"></i><b>7.5</b> Visualize the MICA output</a>
+<ul>
+<li class="chapter" data-level="7.5.1" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#color-coded-by-cluster-labels"><i class="fa fa-check"></i><b>7.5.1</b> Color-coded by cluster labels</a></li>
+<li class="chapter" data-level="7.5.2" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#color-coded-by-true-label-of-cell-types"><i class="fa fa-check"></i><b>7.5.2</b> Color-coded by true label of cell types</a></li>
+<li class="chapter" data-level="7.5.3" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#color-coded-by-numi-for-qc-purpose"><i class="fa fa-check"></i><b>7.5.3</b> Color-coded by nUMI, for QC purpose</a></li>
+<li class="chapter" data-level="7.5.4" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#color-coded-by-nfeature-for-qc-purpose"><i class="fa fa-check"></i><b>7.5.4</b> Color-coded by nFeature, for QC purpose</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html"><i class="fa fa-check"></i><b>8</b> Cell type annotation</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#supervised-cell-type-annotation"><i class="fa fa-check"></i><b>8.1</b> Supervised cell type annotation</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#annotate-using-signature-scores"><i class="fa fa-check"></i><b>8.1.1</b> Annotate using signature scores</a></li>
+<li class="chapter" data-level="8.1.2" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#annotate-using-individual-marker-genes"><i class="fa fa-check"></i><b>8.1.2</b> Annotate using individual marker genes</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#unsupervised-cell-type-annotation"><i class="fa fa-check"></i><b>8.2</b> Unsupervised cell type annotation</a></li>
+<li class="chapter" data-level="8.3" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#add-cell-type-annotations-to-sparseexpressionset-object"><i class="fa fa-check"></i><b>8.3</b> Add cell type annotations to SparseExpressionSet object</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="network-inference.html"><a href="network-inference.html"><i class="fa fa-check"></i><b>9</b> Network inference</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="network-inference.html"><a href="network-inference.html#generate-sjaracne-input-files"><i class="fa fa-check"></i><b>9.1</b> Generate SJARACNe input files</a></li>
+<li class="chapter" data-level="9.2" data-path="network-inference.html"><a href="network-inference.html#run-sjaracne"><i class="fa fa-check"></i><b>9.2</b> Run SJARACNe</a></li>
+<li class="chapter" data-level="9.3" data-path="network-inference.html"><a href="network-inference.html#assess-the-quality-of-networks"><i class="fa fa-check"></i><b>9.3</b> Assess the quality of networks</a>
+<ul>
+<li class="chapter" data-level="9.3.1" data-path="network-inference.html"><a href="network-inference.html#introduction-to-the-network-file-by-sjaracne"><i class="fa fa-check"></i><b>9.3.1</b> Introduction to the network file by SJARACNe</a></li>
+<li class="chapter" data-level="9.3.2" data-path="network-inference.html"><a href="network-inference.html#generate-network-qc-report"><i class="fa fa-check"></i><b>9.3.2</b> Generate network QC report</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html"><i class="fa fa-check"></i><b>10</b> Actvity-based analysis</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#calculate-the-activities"><i class="fa fa-check"></i><b>10.1</b> Calculate the activities</a>
+<ul>
+<li class="chapter" data-level="10.1.1" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#calculate-activities-per-group"><i class="fa fa-check"></i><b>10.1.1</b> Calculate activities per group</a></li>
+<li class="chapter" data-level="10.1.2" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#calculate-activities-in-batch"><i class="fa fa-check"></i><b>10.1.2</b> Calculate activities in batch</a></li>
+<li class="chapter" data-level="10.1.3" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#save-activity-eset-object"><i class="fa fa-check"></i><b>10.1.3</b> Save activity eset object</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#differential-activity-analysis"><i class="fa fa-check"></i><b>10.2</b> Differential activity analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="session-information.html"><a href="session-information.html"><i class="fa fa-check"></i><b>11</b> Session information</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">scMINER: a mutual information-based framework for identifying hidden drivers from single-cell omics data</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="network-inference" class="section level1 hasAnchor" number="9">
+<h1><span class="header-section-number">Chapter 9</span> Network inference<a href="network-inference.html#network-inference" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p><a href="https://academic.oup.com/bioinformatics/article/35/12/2165/5156064">SJARACNe</a> is a scalable software tool for gene network reverse engineering from big data. As an improved implementation of the ARACNe, SJARACNe achieves a dramatic improvement in computational performance in both time and memory usage and implements new features while preserving the network inference accuracy of the original algorithm.</p>
+<p>Similar to MICA, SJARACNe is also a component of scMINER framework, and can work seamlessly with the SparseExpressionSet object. The input for MICA can be easily generated from the SparseExpressionSet object by <code>generateSJARACNeInput()</code>, and the output of SJARACNe, the networks, can be effortlessly assessed by <code>drawNetworkQC()</code> and directly taken for driver activity estimation by <code>getActivity_individual()</code> and <code>getActivity_inBatch()</code>.</p>
+<div id="generate-sjaracne-input-files" class="section level2 hasAnchor" number="9.1">
+<h2><span class="header-section-number">9.1</span> Generate SJARACNe input files<a href="network-inference.html#generate-sjaracne-input-files" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The network inference is usually conducted in a <strong>cluster-</strong> or <strong>cell type-specific</strong> basis. Given the column names for grouping, <code>generateSJARACNeInput()</code> will create a folder for each group named by the group label.</p>
+<p><strong><em>IMPORTANT NOTE</em></strong>: Any <strong>illegal characters in path</strong> in group labels may cause issues in subsequent analysis. To avoid it, scMINER only accept letters(A-Za-z), numbers(0-9), underscores(’_‘) and periods(’.’).</p>
+<p>In this case, the true labels of cell type are available, so we use them to define the groups for network inference.</p>
+<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="network-inference.html#cb111-1" tabindex="-1"></a><span class="do">## Columns with any illegal characters can not be used for groupping</span></span>
+<span id="cb111-2"><a href="network-inference.html#cb111-2" tabindex="-1"></a><span class="fu">generateSJARACNeInput</span>(<span class="at">input_eset =</span> pbmc14k_log2cpm.eset, <span class="at">group_name =</span> <span class="st">&quot;trueLabel&quot;</span>, <span class="at">sjaracne_dir =</span> <span class="st">&quot;/work-path/PBMC14k/SJARACNe&quot;</span>, <span class="at">species_type =</span> <span class="st">&quot;hg&quot;</span>, <span class="at">driver_type =</span> <span class="st">&quot;TF_SIG&quot;</span>, <span class="at">downSample_N =</span> <span class="cn">NULL</span>)</span></code></pre></div>
+<p>For big datasets, <code>generateSJARACNeInput()</code> provides an argument, <code>downSample_N</code>, to allow users to down sample size of each group. The default value of <code>downSample_N</code> is 1,000, any group with &gt;= 1,000 cells will be down-sample to 1,000.</p>
+<div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb112-1"><a href="network-inference.html#cb112-1" tabindex="-1"></a><span class="do">## one folder for each group</span></span>
+<span id="cb112-2"><a href="network-inference.html#cb112-2" tabindex="-1"></a><span class="fu">list.dirs</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata/demo_pbmc14k/PBMC14k/SJARACNe&quot;</span>, <span class="at">package =</span> <span class="st">&quot;scMINER&quot;</span>), <span class="at">full.names =</span> <span class="cn">FALSE</span>, <span class="at">recursive =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;B&quot;        &quot;CD4TCM&quot;   &quot;CD4TN&quot;    &quot;CD4Treg&quot;  &quot;CD8TN&quot;    &quot;Monocyte&quot; &quot;NK&quot;</code></pre>
+<div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb114-1"><a href="network-inference.html#cb114-1" tabindex="-1"></a><span class="do">## file structure of each folder</span></span>
+<span id="cb114-2"><a href="network-inference.html#cb114-2" tabindex="-1"></a><span class="fu">list.files</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata/demo_pbmc14k/PBMC14k/SJARACNe/B&quot;</span>, <span class="at">package =</span> <span class="st">&quot;scMINER&quot;</span>), <span class="at">full.names =</span> <span class="cn">FALSE</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">include.dirs =</span> <span class="cn">FALSE</span>, <span class="at">pattern =</span> <span class="st">&quot;[^consensus_network_ncol_.txt]&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;B.8572_1902.exp.txt&quot;     &quot;config_cwlexec.json&quot;    
+## [3] &quot;runSJARACNe.sh&quot;          &quot;SIG/B.4148_1902.sig.txt&quot;
+## [5] &quot;TF/B.835_1902.tf.txt&quot;</code></pre>
+<p>The standard input files of SJARACNe, for each group, include:</p>
+<ul>
+<li>a “<strong><code>.exp.txt</code></strong>” file: a tab-separated genes/transcripts/proteins by cells/samples expression matrix with the first two columns being ID and symbol.</li>
+<li>a “<strong><code>TF</code></strong>” folder containing a “<strong><code>.tf.txt</code></strong>” file: a list of significant gene/transcript/protein IDs of TF drivers.</li>
+<li>a “<strong><code>SIG</code></strong>” folder containing a “<strong><code>.sig.txt</code></strong>” file: a list of significant gene/transcript/protein IDs of SIG drivers.</li>
+<li>a bash script (<strong><code>runSJARACNe.sh</code></strong>) to run SJARACNe. Further modification is needed to run it.</li>
+<li>a json file (<strong><code>config_cwlexec.json</code></strong>) containing parameters to run SJARACNe.</li>
+</ul>
+<p>Usually, the ground truth of cell types is not available. Then the <strong>cluster labels</strong>, or <strong>cell type annotations of the clusters</strong>, can be used for grouping in network rewiring, since it’s expected that cells with same cluster label/annotated cell type are of similar gene expression profiles. To generate from annotated cell types, you can run:</p>
+<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb116-1"><a href="network-inference.html#cb116-1" tabindex="-1"></a><span class="fu">generateSJARACNeInput</span>(<span class="at">input_eset =</span> pbmc14k_log2cpm.eset, <span class="at">group_name =</span> <span class="st">&quot;cell_type&quot;</span>, <span class="at">sjaracne_dir =</span> <span class="st">&quot;/work-path/PBMC14k/SJARACNe/bycelltype&quot;</span>, <span class="at">species_type =</span> <span class="st">&quot;hg&quot;</span>, <span class="at">driver_type =</span> <span class="st">&quot;TF_SIG&quot;</span>)</span></code></pre></div>
+</div>
+<div id="run-sjaracne" class="section level2 hasAnchor" number="9.2">
+<h2><span class="header-section-number">9.2</span> Run SJARACNe<a href="network-inference.html#run-sjaracne" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>By default, the <code>generateSJARACNeInput()</code> function also generates a <code>runSJARACNe.sh</code> file in the folder of each group. This file much be modified before you can run it:</p>
+<ul>
+<li><strong>removed unneeded lines</strong>: There are usually 4 lines in this file: the lines starting with “sjaracne lsf” are the command lines to run on IBM LSF cluster, while the lines starting with “sjaracne local” are the command lines runing on a single machine (Linux/OSX). Please select the lines based on your situation and remove the others.</li>
+<li><strong>-n</strong>: number of bootstrap networks to generate. Default: 100.</li>
+<li><strong>-pc</strong>: p value threshold to select edges in building consensus network. Default: e-2 for single-cell data, e-3 for meta-cell data, and e-5 for bulk sample data.
+Please use “sjaracne lsf -h” or “sjaracne local -h” to check more details of arguments available in SJARACNe.</li>
+</ul>
+<p>There is another file, <code>config_cwlexec.json</code>, available in the folder. It contains the information (e.g. memory request for each step of SJARACNe run) used for LSF job submission. This file is only needed for LSF runs and the default values works well in most cases. If you are running SJARACNe on a big dataset, you may need to request more memory from it.</p>
+<p>In this case, we use LSF to run the SJARACNe:</p>
+<div class="sourceCode" id="cb117"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb117-1"><a href="network-inference.html#cb117-1" tabindex="-1"></a><span class="co">## let&#39;s use B cell as an example</span></span>
+<span id="cb117-2"><a href="network-inference.html#cb117-2" tabindex="-1"></a><span class="co"># for TF</span></span>
+<span id="cb117-3"><a href="network-inference.html#cb117-3" tabindex="-1"></a><span class="ex">sjaracne</span> lsf <span class="at">-e</span> /work-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt <span class="at">-g</span> /work-path/PBMC14k/SJARACNe/B/TF/B.835_1902.tf.txt <span class="at">-o</span> /work-path/PBMC14k/SJARACNe/B/TF/bt100_pc001 <span class="at">-n</span> 100 <span class="at">-pc</span> 0.01 <span class="at">-j</span> /work-path/PBMC14k/SJARACNe/B/config_cwlexec.json</span>
+<span id="cb117-4"><a href="network-inference.html#cb117-4" tabindex="-1"></a></span>
+<span id="cb117-5"><a href="network-inference.html#cb117-5" tabindex="-1"></a><span class="co"># for SIG</span></span>
+<span id="cb117-6"><a href="network-inference.html#cb117-6" tabindex="-1"></a><span class="ex">sjaracne</span> lsf <span class="at">-e</span> /work-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt <span class="at">-g</span> /work-path/PBMC14k/SJARACNe/B/SIG/B.4148_1902.sig.txt <span class="at">-o</span> /work-path/PBMC14k/SJARACNe/B/SIG/bt100_pc001 <span class="at">-n</span> 100 <span class="at">-pc</span> 0.01 <span class="at">-j</span> /work-path/PBMC14k/SJARACNe/B/config_cwlexec.json</span></code></pre></div>
+<p>We created a folder named “<strong>bt100_pc001</strong>” in both TF and SIG folders of each group, to save the networks generated under <strong>100 bootstraps</strong> (<code>-n 100</code>) and <strong>0.01 consensus p value</strong> (<code>-pc 0.01</code>).</p>
+<p>To run SJARACNe on a local machine:</p>
+<div class="sourceCode" id="cb118"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb118-1"><a href="network-inference.html#cb118-1" tabindex="-1"></a><span class="co">## let&#39;s use B cell as an example</span></span>
+<span id="cb118-2"><a href="network-inference.html#cb118-2" tabindex="-1"></a><span class="co"># for TF</span></span>
+<span id="cb118-3"><a href="network-inference.html#cb118-3" tabindex="-1"></a><span class="ex">sjaracne</span> local <span class="at">-e</span> /work-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt <span class="at">-g</span> /work-path/PBMC14k/SJARACNe/B/TF/B.835_1902.tf.txt <span class="at">-o</span> /work-path/PBMC14k/SJARACNe/B/TF/bt100_pc001 <span class="at">-n</span> 100 <span class="at">-pc</span> 0.01</span>
+<span id="cb118-4"><a href="network-inference.html#cb118-4" tabindex="-1"></a></span>
+<span id="cb118-5"><a href="network-inference.html#cb118-5" tabindex="-1"></a><span class="co"># for SIG</span></span>
+<span id="cb118-6"><a href="network-inference.html#cb118-6" tabindex="-1"></a><span class="ex">sjaracne</span> local <span class="at">-e</span> /work-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt <span class="at">-g</span> /work-path/PBMC14k/SJARACNe/B/SIG/B.4148_1902.sig.txt <span class="at">-o</span> /work-path/PBMC14k/SJARACNe/B/SIG/bt100_pc001 <span class="at">-n</span> 100 <span class="at">-pc</span> 0.01</span></code></pre></div>
+</div>
+<div id="assess-the-quality-of-networks" class="section level2 hasAnchor" number="9.3">
+<h2><span class="header-section-number">9.3</span> Assess the quality of networks<a href="network-inference.html#assess-the-quality-of-networks" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="introduction-to-the-network-file-by-sjaracne" class="section level3 hasAnchor" number="9.3.1">
+<h3><span class="header-section-number">9.3.1</span> Introduction to the network file by SJARACNe<a href="network-inference.html#introduction-to-the-network-file-by-sjaracne" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The core output of SJARACNe is the network file named <code>consensus_network_ncol_.txt</code>. It contains 9 columns:</p>
+<ul>
+<li><strong>source</strong>: ID of the source gene, can be the gene symbol;</li>
+<li><strong>target</strong>: ID of the target gene, can be the gene symbol;</li>
+<li><strong>source.symbol</strong>: symbol of the source gene;</li>
+<li><strong>target.symbol</strong>: symbol of the target gene;</li>
+<li><strong>MI</strong>: mutual information of source-gene pair;</li>
+<li><strong>pearson</strong>: Pearson correlation coefficient, [-1,1]</li>
+<li><strong>pearson</strong>: Spearman correlation coefficient, [-1,1]</li>
+<li><strong>slope</strong>: slop of the regression line, returned by <code>stats.linregression()</code></li>
+<li><strong>p.value</strong>: p-value for a hypothesis test whose null hypothesis is that the slope is zero, using Wald Test with t-distribution of the test statistic</li>
+</ul>
+<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="network-inference.html#cb119-1" tabindex="-1"></a>network_format <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata/demo_pbmc14k/PBMC14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt&quot;</span>, <span class="at">package =</span> <span class="st">&quot;scMINER&quot;</span>),</span>
+<span id="cb119-2"><a href="network-inference.html#cb119-2" tabindex="-1"></a>                             <span class="at">header =</span> T, <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st">&quot;</span>, <span class="at">quote =</span> <span class="st">&quot;&quot;</span>, <span class="at">stringsAsFactors =</span> F)</span>
+<span id="cb119-3"><a href="network-inference.html#cb119-3" tabindex="-1"></a><span class="fu">head</span>(network_format)</span></code></pre></div>
+<pre><code>##   source     target source.symbol target.symbol     MI pearson spearman   slope
+## 1   AATF      ACBD3          AATF         ACBD3 0.0509 -0.0310  -0.0311 -0.0193
+## 2   AATF       ADD3          AATF          ADD3 0.0486  0.0228   0.0258  0.0307
+## 3   AATF        AES          AATF           AES 0.0511  0.0311   0.0289  0.0668
+## 4   AATF     AKR7A2          AATF        AKR7A2 0.0498  0.0319   0.0366  0.0421
+## 5   AATF AL928768.3          AATF    AL928768.3 0.0447  0.0247   0.0293  0.0335
+## 6   AATF       ALG8          AATF          ALG8 0.0479  0.0358   0.0373  0.0234
+##   p.value
+## 1  0.1761
+## 2  0.3204
+## 3  0.1756
+## 4  0.1646
+## 5  0.2815
+## 6  0.1183</code></pre>
+</div>
+<div id="generate-network-qc-report" class="section level3 hasAnchor" number="9.3.2">
+<h3><span class="header-section-number">9.3.2</span> Generate network QC report<a href="network-inference.html#generate-network-qc-report" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>There is no simple standards to tell the reliability of networks. Empirically, a network with <strong>50-300</strong> target size is good. scMINER provides a function, <code>drawNetworkQC()</code>, to quickly assess the quality of networks in batch.</p>
+<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="network-inference.html#cb121-1" tabindex="-1"></a>network_stats <span class="ot">&lt;-</span> <span class="fu">drawNetworkQC</span>(<span class="at">sjaracne_dir =</span> <span class="st">&quot;/work-path/PBMC14K/SJARACNe&quot;</span>, <span class="at">generate_html =</span> <span class="cn">FALSE</span>) <span class="co"># Set `generate_html = TRUE` to generate html-format QC report for each network file</span></span></code></pre></div>
+<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="network-inference.html#cb122-1" tabindex="-1"></a><span class="do">## The network QC statistics table is saved seperately, for demonstration purposes.</span></span>
+<span id="cb122-2"><a href="network-inference.html#cb122-2" tabindex="-1"></a>network_stats <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata/demo_pbmc14k/PBMC14k/SJARACNe/network_stats.rds&quot;</span>, <span class="at">package =</span> <span class="st">&quot;scMINER&quot;</span>))</span>
+<span id="cb122-3"><a href="network-inference.html#cb122-3" tabindex="-1"></a><span class="fu">head</span>(network_stats)</span></code></pre></div>
+<pre><code>##              network_tag network_node network_edge driver_count targetSize_mean
+## 1      B.SIG.bt100_pc001         8572       391889         4148        94.47662
+## 2       B.TF.bt100_pc001         8572        95341          835       114.18084
+## 3 CD4TCM.SIG.bt100_pc001         8660       382153         4209        90.79425
+## 4  CD4TCM.TF.bt100_pc001         8660        94319          838       112.55251
+## 5  CD4TN.SIG.bt100_pc001         8612       401658         4180        96.09043
+## 6   CD4TN.TF.bt100_pc001         8612        95152          831       114.50301
+##   targetSize_median targetSize_minimum targetSize_maximum
+## 1              94.0                 33                396
+## 2              96.0                 64                913
+## 3              91.0                 31                281
+## 4              95.5                 60                689
+## 5              95.0                 43                303
+## 6              99.0                 64                743
+##                                                                                                                                                                                               network_path
+## 1      /Volumes/projects/scRNASeq/yu3grp/scMINER/NG_Revision/QPan/scminer_R/Datasets/PBMC14K/SJARACNe/B/SIG/bt100_pc001/sjaracne_workflow-df798096-8dee-4baf-8f70-891c689dc769/consensus_network_ncol_.txt
+## 2       /Volumes/projects/scRNASeq/yu3grp/scMINER/NG_Revision/QPan/scminer_R/Datasets/PBMC14K/SJARACNe/B/TF/bt100_pc001/sjaracne_workflow-fb2a69b9-f98e-47ff-87a0-6d538822fc6e/consensus_network_ncol_.txt
+## 3 /Volumes/projects/scRNASeq/yu3grp/scMINER/NG_Revision/QPan/scminer_R/Datasets/PBMC14K/SJARACNe/CD4TCM/SIG/bt100_pc001/sjaracne_workflow-424f1068-13d1-4f0e-9c26-56acd9a2027c/consensus_network_ncol_.txt
+## 4  /Volumes/projects/scRNASeq/yu3grp/scMINER/NG_Revision/QPan/scminer_R/Datasets/PBMC14K/SJARACNe/CD4TCM/TF/bt100_pc001/sjaracne_workflow-52b3cdf5-5914-4c8c-a77a-05f17c755d83/consensus_network_ncol_.txt
+## 5  /Volumes/projects/scRNASeq/yu3grp/scMINER/NG_Revision/QPan/scminer_R/Datasets/PBMC14K/SJARACNe/CD4TN/SIG/bt100_pc001/sjaracne_workflow-7b5bb68e-1de5-4d0e-80ec-8d8aa037866f/consensus_network_ncol_.txt
+## 6   /Volumes/projects/scRNASeq/yu3grp/scMINER/NG_Revision/QPan/scminer_R/Datasets/PBMC14K/SJARACNe/CD4TN/TF/bt100_pc001/sjaracne_workflow-89716541-eb53-435c-8a45-bab63d6b5198/consensus_network_ncol_.txt</code></pre>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="cell-type-annotation.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="actvity-based-analysis.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/09-network-inference.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

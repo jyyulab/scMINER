@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 3 Generate gene expresion matrix | scMINER: a mutual information-based framework for identifying hidden drivers from single-cell omics data</title>
+  <meta name="description" content="This is the full documentation of scMINER R package (v-1.1.0)." />
+  <meta name="generator" content="bookdown 0.40 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 3 Generate gene expresion matrix | scMINER: a mutual information-based framework for identifying hidden drivers from single-cell omics data" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="This is the full documentation of scMINER R package (v-1.1.0)." />
+  <meta name="github-repo" content="jyyulab/scMINER_documentation" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 3 Generate gene expresion matrix | scMINER: a mutual information-based framework for identifying hidden drivers from single-cell omics data" />
+  
+  <meta name="twitter:description" content="This is the full documentation of scMINER R package (v-1.1.0)." />
+  
+
+<meta name="author" content="John Doe" />
+
+
+<meta name="date" content="2024-08-04" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="get-started.html"/>
+<link rel="next" href="create-sparseeset-object.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">A Minimal Book Example</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><img src="images/scMINER_logo.png" alt="" width="250px"></a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#a-few-concepts"><i class="fa fa-check"></i><b>1.1</b> A few concepts</a>
+<ul>
+<li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#sparseeset"><i class="fa fa-check"></i>SparseEset</a></li>
+<li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#mutual-information"><i class="fa fa-check"></i>Mutual Information</a></li>
+<li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#gene-activity"><i class="fa fa-check"></i>Gene Activity</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="introduction.html"><a href="introduction.html#why-use-scminer"><i class="fa fa-check"></i><b>1.2</b> Why use scMINER</a></li>
+<li class="chapter" data-level="1.3" data-path="introduction.html"><a href="introduction.html#citation"><i class="fa fa-check"></i><b>1.3</b> Citation</a></li>
+<li class="chapter" data-level="1.4" data-path="introduction.html"><a href="introduction.html#support"><i class="fa fa-check"></i><b>1.4</b> Support</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="get-started.html"><a href="get-started.html"><i class="fa fa-check"></i><b>2</b> Get started</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="get-started.html"><a href="get-started.html#installation"><i class="fa fa-check"></i><b>2.1</b> Installation</a>
+<ul>
+<li class="chapter" data-level="" data-path="get-started.html"><a href="get-started.html#install-scminer-r-package"><i class="fa fa-check"></i>Install scMINER R package</a></li>
+<li class="chapter" data-level="" data-path="get-started.html"><a href="get-started.html#install-mica-and-sjaracne"><i class="fa fa-check"></i>Install MICA and SJARACNe</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="get-started.html"><a href="get-started.html#demo-data"><i class="fa fa-check"></i><b>2.2</b> Demo data</a></li>
+<li class="chapter" data-level="2.3" data-path="get-started.html"><a href="get-started.html#create-project-space"><i class="fa fa-check"></i><b>2.3</b> Create project space</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html"><i class="fa fa-check"></i><b>3</b> Generate gene expresion matrix</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html#from-data-directory-by-10x-genomics"><i class="fa fa-check"></i><b>3.1</b> From data directory by 10x Genomics</a></li>
+<li class="chapter" data-level="3.2" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html#from-text-table-file"><i class="fa fa-check"></i><b>3.2</b> From text-table file</a></li>
+<li class="chapter" data-level="3.3" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html#from-hdf5-file-by-10x-genomics"><i class="fa fa-check"></i><b>3.3</b> From HDF5 file by 10x Genomics</a></li>
+<li class="chapter" data-level="3.4" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html#from-h5ad-file"><i class="fa fa-check"></i><b>3.4</b> From H5AD file</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="create-sparseeset-object.html"><a href="create-sparseeset-object.html"><i class="fa fa-check"></i><b>4</b> Create SparseEset object</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="create-sparseeset-object.html"><a href="create-sparseeset-object.html#solely-from-the-gene-expression-matrix"><i class="fa fa-check"></i><b>4.1</b> Solely from the gene expression matrix</a></li>
+<li class="chapter" data-level="4.2" data-path="create-sparseeset-object.html"><a href="create-sparseeset-object.html#using-self-customized-meta-data"><i class="fa fa-check"></i><b>4.2</b> Using self-customized meta data</a></li>
+<li class="chapter" data-level="4.3" data-path="create-sparseeset-object.html"><a href="create-sparseeset-object.html#from-multiple-samples"><i class="fa fa-check"></i><b>4.3</b> From multiple samples</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="data-filtration.html"><a href="data-filtration.html"><i class="fa fa-check"></i><b>5</b> Data filtration</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="data-filtration.html"><a href="data-filtration.html#qc-report"><i class="fa fa-check"></i><b>5.1</b> QC report</a></li>
+<li class="chapter" data-level="5.2" data-path="data-filtration.html"><a href="data-filtration.html#filter-the-sparse-eset-object"><i class="fa fa-check"></i><b>5.2</b> Filter the sparse eset object</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="data-filtration.html"><a href="data-filtration.html#data-filtration-with-auto-mode"><i class="fa fa-check"></i><b>5.2.1</b> Data filtration with auto mode</a></li>
+<li class="chapter" data-level="5.2.2" data-path="data-filtration.html"><a href="data-filtration.html#data-filtration-with-manual-mode"><i class="fa fa-check"></i><b>5.2.2</b> Data filtration with manual mode</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="data-normalization.html"><a href="data-normalization.html"><i class="fa fa-check"></i><b>6</b> Data normalization</a></li>
+<li class="chapter" data-level="7" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html"><i class="fa fa-check"></i><b>7</b> MI-based clustering analysis</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#introduction-to-mica"><i class="fa fa-check"></i><b>7.1</b> Introduction to MICA</a></li>
+<li class="chapter" data-level="7.2" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#generate-mica-input"><i class="fa fa-check"></i><b>7.2</b> Generate MICA input</a></li>
+<li class="chapter" data-level="7.3" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#run-mica"><i class="fa fa-check"></i><b>7.3</b> Run MICA</a></li>
+<li class="chapter" data-level="7.4" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#integrate-mica-outputs-into-sparseeset-object"><i class="fa fa-check"></i><b>7.4</b> Integrate MICA outputs into SparseEset object</a></li>
+<li class="chapter" data-level="7.5" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#visualize-the-mica-output"><i class="fa fa-check"></i><b>7.5</b> Visualize the MICA output</a>
+<ul>
+<li class="chapter" data-level="7.5.1" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#color-coded-by-cluster-labels"><i class="fa fa-check"></i><b>7.5.1</b> Color-coded by cluster labels</a></li>
+<li class="chapter" data-level="7.5.2" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#color-coded-by-true-label-of-cell-types"><i class="fa fa-check"></i><b>7.5.2</b> Color-coded by true label of cell types</a></li>
+<li class="chapter" data-level="7.5.3" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#color-coded-by-numi-for-qc-purpose"><i class="fa fa-check"></i><b>7.5.3</b> Color-coded by nUMI, for QC purpose</a></li>
+<li class="chapter" data-level="7.5.4" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#color-coded-by-nfeature-for-qc-purpose"><i class="fa fa-check"></i><b>7.5.4</b> Color-coded by nFeature, for QC purpose</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html"><i class="fa fa-check"></i><b>8</b> Cell type annotation</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#supervised-cell-type-annotation"><i class="fa fa-check"></i><b>8.1</b> Supervised cell type annotation</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#annotate-using-signature-scores"><i class="fa fa-check"></i><b>8.1.1</b> Annotate using signature scores</a></li>
+<li class="chapter" data-level="8.1.2" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#annotate-using-individual-marker-genes"><i class="fa fa-check"></i><b>8.1.2</b> Annotate using individual marker genes</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#unsupervised-cell-type-annotation"><i class="fa fa-check"></i><b>8.2</b> Unsupervised cell type annotation</a></li>
+<li class="chapter" data-level="8.3" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#add-cell-type-annotations-to-sparseexpressionset-object"><i class="fa fa-check"></i><b>8.3</b> Add cell type annotations to SparseExpressionSet object</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="network-inference.html"><a href="network-inference.html"><i class="fa fa-check"></i><b>9</b> Network inference</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="network-inference.html"><a href="network-inference.html#generate-sjaracne-input-files"><i class="fa fa-check"></i><b>9.1</b> Generate SJARACNe input files</a></li>
+<li class="chapter" data-level="9.2" data-path="network-inference.html"><a href="network-inference.html#run-sjaracne"><i class="fa fa-check"></i><b>9.2</b> Run SJARACNe</a></li>
+<li class="chapter" data-level="9.3" data-path="network-inference.html"><a href="network-inference.html#assess-the-quality-of-networks"><i class="fa fa-check"></i><b>9.3</b> Assess the quality of networks</a>
+<ul>
+<li class="chapter" data-level="9.3.1" data-path="network-inference.html"><a href="network-inference.html#introduction-to-the-network-file-by-sjaracne"><i class="fa fa-check"></i><b>9.3.1</b> Introduction to the network file by SJARACNe</a></li>
+<li class="chapter" data-level="9.3.2" data-path="network-inference.html"><a href="network-inference.html#generate-network-qc-report"><i class="fa fa-check"></i><b>9.3.2</b> Generate network QC report</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html"><i class="fa fa-check"></i><b>10</b> Actvity-based analysis</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#calculate-the-activities"><i class="fa fa-check"></i><b>10.1</b> Calculate the activities</a>
+<ul>
+<li class="chapter" data-level="10.1.1" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#calculate-activities-per-group"><i class="fa fa-check"></i><b>10.1.1</b> Calculate activities per group</a></li>
+<li class="chapter" data-level="10.1.2" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#calculate-activities-in-batch"><i class="fa fa-check"></i><b>10.1.2</b> Calculate activities in batch</a></li>
+<li class="chapter" data-level="10.1.3" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#save-activity-eset-object"><i class="fa fa-check"></i><b>10.1.3</b> Save activity eset object</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#differential-activity-analysis"><i class="fa fa-check"></i><b>10.2</b> Differential activity analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="session-information.html"><a href="session-information.html"><i class="fa fa-check"></i><b>11</b> Session information</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">scMINER: a mutual information-based framework for identifying hidden drivers from single-cell omics data</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="generate-gene-expresion-matrix" class="section level1 hasAnchor" number="3">
+<h1><span class="header-section-number">Chapter 3</span> Generate gene expresion matrix<a href="generate-gene-expresion-matrix.html#generate-gene-expresion-matrix" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>In this chapter, we will generate the <strong>gene expression matrix</strong>, genes by cells, from multiple input formats commonly used in single-cell RNA sequencing, including <strong>sparse matrix by 10x Genomics</strong>, <strong>text-table file</strong>, <strong>HDF5 file by 10x Genomics</strong> and <strong>H5AD file</strong>.</p>
+<p>For demonstration purposes, scMINER embedded four datasets in <strong><code>extdata/demoData_readInput</code></strong>, with one for each input format. All of these four samples were generated by downsampling the real scRNA-seq data.</p>
+<div id="from-data-directory-by-10x-genomics" class="section level2 hasAnchor" number="3.1">
+<h2><span class="header-section-number">3.1</span> From data directory by 10x Genomics<a href="generate-gene-expresion-matrix.html#from-data-directory-by-10x-genomics" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>This is the most popular input format of scRNA-seq data generated by 10x Genomics. Usually, the data directory contains three files:</p>
+<ul>
+<li><strong>matrix.mtx</strong>: a sparse matrix format containing the raw UMI count per cell-gene combination</li>
+<li><strong>barcodes.tsv</strong>: a tab-separated matrix containing the cell barcodes</li>
+<li><strong>features.tsv</strong>: a tab-separated matrix containing the features/genes and their annotations</li>
+</ul>
+<p>For more details about this format, please check out <a href="https://www.10xgenomics.com/support/software/cell-ranger/latest/analysis/outputs/cr-outputs-mex-matrices">here</a>.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="generate-gene-expresion-matrix.html#cb9-1" tabindex="-1"></a>data_dir <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata/demo_inputs/cell_matrix_10x&quot;</span>, <span class="at">package =</span> <span class="st">&quot;scMINER&quot;</span>)</span>
+<span id="cb9-2"><a href="generate-gene-expresion-matrix.html#cb9-2" tabindex="-1"></a><span class="fu">list.files</span>(<span class="at">path =</span> data_dir, <span class="at">full.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;barcodes.tsv.gz&quot; &quot;features.tsv.gz&quot; &quot;matrix.mtx.gz&quot;</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="generate-gene-expresion-matrix.html#cb11-1" tabindex="-1"></a>demo1_mtx <span class="ot">&lt;-</span> <span class="fu">readInput_10x.dir</span>(<span class="at">input_dir =</span> data_dir, <span class="at">featureType =</span> <span class="st">&quot;gene_symbol&quot;</span>, <span class="at">removeSuffix =</span> <span class="cn">TRUE</span>, <span class="at">addPrefix =</span> <span class="st">&quot;demo1&quot;</span>)</span></code></pre></div>
+<pre><code>## Reading 10x Genomcis data from: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/library/scMINER/extdata/demo_inputs/cell_matrix_10x ...
+##  Multiple data modalities were found: Gene Expression, Peaks . Only the gene expression data (under &quot;Gene Expression&quot;) was kept.
+## Done! The sparse gene expression matrix has been generated: 500 genes, 100 cells.</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="generate-gene-expresion-matrix.html#cb13-1" tabindex="-1"></a>demo1_mtx[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span></code></pre></div>
+<pre><code>## 5 x 5 sparse Matrix of class &quot;dgTMatrix&quot;
+##            demo1_AAACAGCCAAACGGGC demo1_AAACAGCCAACTAGCC demo1_AAACAGCCAATTAGGA
+## AL590822.3                      .                      .                      .
+## MORN1                           .                      .                      .
+## AL589739.1                      .                      .                      .
+## AL513477.2                      .                      .                      .
+## RER1                            .                      .                      .
+##            demo1_AAACAGCCAGCCAGTT demo1_AAACATGCAAAGCTCC
+## AL590822.3                      .                      .
+## MORN1                           .                      .
+## AL589739.1                      .                      .
+## AL513477.2                      .                      .
+## RER1                            1                      .</code></pre>
+<p>The <code>readInput_10x.dir()</code> function can handle these conditions:</p>
+<ul>
+<li>Alternative file names for feature data: for the datasets generated by CellRanger 3.0 or earlier, the file name is <strong>genes.tsv</strong>;</li>
+<li>Compressed input files: one or more input files are compressed, usually in “<strong>.gz</strong>” format;</li>
+<li>Data with multiple modalities: like the single cell multiome data. In this case, <code>readInput_10x.dir()</code> only retains the data of “Gene Expression” by default.</li>
+</ul>
+</div>
+<div id="from-text-table-file" class="section level2 hasAnchor" number="3.2">
+<h2><span class="header-section-number">3.2</span> From text-table file<a href="generate-gene-expresion-matrix.html#from-text-table-file" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>This is definitely the most compatible text format for scRNA-seq data. which can be used by all single-cell RNA-seq technologies, like 10x Genomics, Smart-Seq, Drop-Seq and more. The commonly used text table file formats include <strong>txt</strong> (text file format), <strong>csv</strong> (comma-separated values) and <strong>tsv</strong> (tab-separated values).</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="generate-gene-expresion-matrix.html#cb15-1" tabindex="-1"></a>table_file <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata/demo_inputs/table_file/demoData2.txt.gz&quot;</span>, <span class="at">package =</span> <span class="st">&quot;scMINER&quot;</span>)</span>
+<span id="cb15-2"><a href="generate-gene-expresion-matrix.html#cb15-2" tabindex="-1"></a>demo3_mtx <span class="ot">&lt;-</span> <span class="fu">readInput_table</span>(<span class="at">table_file =</span> table_file, <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st">&quot;</span>, <span class="at">is.geneBYcell =</span> <span class="cn">TRUE</span>, <span class="at">removeSuffix =</span> <span class="cn">TRUE</span>, <span class="at">addPrefix =</span> <span class="st">&quot;demo3&quot;</span>) <span class="co"># set is.geneBYcell = FALSE to read features in columns and cell in in rows</span></span></code></pre></div>
+<pre><code>## Reading table file: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/library/scMINER/extdata/demo_inputs/table_file/demoData2.txt.gz ...
+##  Suffix removal was specified but skipped, since some barcodes do not carry &quot;-1&quot; suffix.
+## Done! The sparse gene expression matrix has been generated: 1000 genes, 100 cells.</code></pre>
+<p><strong><em>NOTE:</em></strong> A major concern to read the gene expression matrix from text-table files is that <strong>the special characters in column names might change to dots (“.”)</strong>, especially when the matrix is organized in cells by genes. This may cause failures in the identification of mitochondrial genes (usually defined by “MT-|mt-”) or spike-in RNAs (usually defined by “ERCC-|Ercc-”). The <code>readInput_table()</code> function has set <code>check.names = FALSE</code> to avoid this issue. However, if this issue already exists in the source data, you will have to fix it manually.</p>
+</div>
+<div id="from-hdf5-file-by-10x-genomics" class="section level2 hasAnchor" number="3.3">
+<h2><span class="header-section-number">3.3</span> From HDF5 file by 10x Genomics<a href="generate-gene-expresion-matrix.html#from-hdf5-file-by-10x-genomics" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>This is another popular input format of scRNA-seq data generated by 10x Genomics. The Hierarchical Data Format version 5 (HDF5 or H5) is a binary format that can compress and access data much more efficiently than text formats. It’s super useful when dealing with large datasets.</p>
+<p>For more details about this format, please check out <a href="https://www.10xgenomics.com/support/software/cell-ranger/latest/analysis/outputs/cr-outputs-h5-matrices">here</a>.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="generate-gene-expresion-matrix.html#cb17-1" tabindex="-1"></a><span class="fu">library</span>(hdh5r)</span>
+<span id="cb17-2"><a href="generate-gene-expresion-matrix.html#cb17-2" tabindex="-1"></a>h5_file <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata/demo_inputs/hdf5_10x/demoData3.h5&quot;</span>, <span class="at">package =</span> <span class="st">&quot;scMINER&quot;</span>)</span>
+<span id="cb17-3"><a href="generate-gene-expresion-matrix.html#cb17-3" tabindex="-1"></a>demo2_mtx <span class="ot">&lt;-</span> <span class="fu">readInput_10x.h5</span>(<span class="at">h5_file =</span> h5_file, <span class="at">featureType =</span> <span class="st">&quot;gene_symbol&quot;</span>, <span class="at">removeSuffix =</span> <span class="cn">TRUE</span>, <span class="at">addPrefix =</span> <span class="st">&quot;demo2&quot;</span>)</span></code></pre></div>
+<p><strong><em>NOTE:</em></strong> The <code>readInput_10x.h5()</code> function is developed exclusively for the HDF5 file generated by CellRanger of 10x Genomics. The HDF5 files from other source may have different hierarchical structures and can not be read by this function.</p>
+</div>
+<div id="from-h5ad-file" class="section level2 hasAnchor" number="3.4">
+<h2><span class="header-section-number">3.4</span> From H5AD file<a href="generate-gene-expresion-matrix.html#from-h5ad-file" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The H5AD file is another well-used format for scRNA-seq data. Derived from HDF5 file format, the H5AD file is designed to store large amounts of data efficiently and to facilitate fast access to subsets of the data. Now it’s getting more and more popular in scRNA-seq data analysis, visualization and sharing.</p>
+<p>For more details about this format, please check out <a href="https://anndata.dynverse.org/">here</a>.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="generate-gene-expresion-matrix.html#cb18-1" tabindex="-1"></a><span class="fu">library</span>(anndata)</span>
+<span id="cb18-2"><a href="generate-gene-expresion-matrix.html#cb18-2" tabindex="-1"></a>h5ad_file <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata/demo_inputs/h5ad_file/demoData4.h5ad&quot;</span>, <span class="at">package =</span> <span class="st">&quot;scMINER&quot;</span>)</span>
+<span id="cb18-3"><a href="generate-gene-expresion-matrix.html#cb18-3" tabindex="-1"></a>demo4_obj <span class="ot">&lt;-</span> <span class="fu">readInput_h5ad</span>(<span class="at">h5ad_file =</span> h5ad_file, <span class="at">removeSuffix =</span> <span class="cn">TRUE</span>, <span class="at">addPrefix =</span> <span class="st">&quot;demo4&quot;</span>) <span class="co"># set is.geneBYcell = FALSE to read features in columns and cell in in rows</span></span></code></pre></div>
+<pre><code>## Reading h5ad file: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/library/scMINER/extdata/demo_inputs/h5ad_file/demoData4.h5ad ...
+##  Suffix removal was specified but skipped, since some barcodes do not carry &quot;-1&quot; suffix.
+## Done! The sparse gene expression matrix has been generated: 1000 genes, 100 cells.</code></pre>
+<p><strong><em>NOTE:</em></strong> Unlike the other three readInput functions which return a gene expression matrx, the <code>readInput_h5ad()</code> returns an AnnData object. Here are the key components of an AnnData object:</p>
+<ul>
+<li><strong>X</strong>: the primary data matrix, cells by genes;</li>
+<li><strong>obs</strong>: observations (cells) metadata;</li>
+<li><strong>var</strong>: variables (features/genes) metadata.</li>
+</ul>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="get-started.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="create-sparseeset-object.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/03-generate-gex.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 1 Introduction | scMINER: a mutual information-based framework for identifying hidden drivers from single-cell omics data</title>
+  <meta name="description" content="This is the full documentation of scMINER R package (v-1.1.0)." />
+  <meta name="generator" content="bookdown 0.40 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 1 Introduction | scMINER: a mutual information-based framework for identifying hidden drivers from single-cell omics data" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="This is the full documentation of scMINER R package (v-1.1.0)." />
+  <meta name="github-repo" content="jyyulab/scMINER_documentation" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 1 Introduction | scMINER: a mutual information-based framework for identifying hidden drivers from single-cell omics data" />
+  
+  <meta name="twitter:description" content="This is the full documentation of scMINER R package (v-1.1.0)." />
+  
+
+<meta name="author" content="John Doe" />
+
+
+<meta name="date" content="2024-08-04" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html"/>
+<link rel="next" href="get-started.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">A Minimal Book Example</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><img src="images/scMINER_logo.png" alt="" width="250px"></a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#a-few-concepts"><i class="fa fa-check"></i><b>1.1</b> A few concepts</a>
+<ul>
+<li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#sparseeset"><i class="fa fa-check"></i>SparseEset</a></li>
+<li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#mutual-information"><i class="fa fa-check"></i>Mutual Information</a></li>
+<li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html#gene-activity"><i class="fa fa-check"></i>Gene Activity</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="introduction.html"><a href="introduction.html#why-use-scminer"><i class="fa fa-check"></i><b>1.2</b> Why use scMINER</a></li>
+<li class="chapter" data-level="1.3" data-path="introduction.html"><a href="introduction.html#citation"><i class="fa fa-check"></i><b>1.3</b> Citation</a></li>
+<li class="chapter" data-level="1.4" data-path="introduction.html"><a href="introduction.html#support"><i class="fa fa-check"></i><b>1.4</b> Support</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="get-started.html"><a href="get-started.html"><i class="fa fa-check"></i><b>2</b> Get started</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="get-started.html"><a href="get-started.html#installation"><i class="fa fa-check"></i><b>2.1</b> Installation</a>
+<ul>
+<li class="chapter" data-level="" data-path="get-started.html"><a href="get-started.html#install-scminer-r-package"><i class="fa fa-check"></i>Install scMINER R package</a></li>
+<li class="chapter" data-level="" data-path="get-started.html"><a href="get-started.html#install-mica-and-sjaracne"><i class="fa fa-check"></i>Install MICA and SJARACNe</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="get-started.html"><a href="get-started.html#demo-data"><i class="fa fa-check"></i><b>2.2</b> Demo data</a></li>
+<li class="chapter" data-level="2.3" data-path="get-started.html"><a href="get-started.html#create-project-space"><i class="fa fa-check"></i><b>2.3</b> Create project space</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html"><i class="fa fa-check"></i><b>3</b> Generate gene expresion matrix</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html#from-data-directory-by-10x-genomics"><i class="fa fa-check"></i><b>3.1</b> From data directory by 10x Genomics</a></li>
+<li class="chapter" data-level="3.2" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html#from-text-table-file"><i class="fa fa-check"></i><b>3.2</b> From text-table file</a></li>
+<li class="chapter" data-level="3.3" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html#from-hdf5-file-by-10x-genomics"><i class="fa fa-check"></i><b>3.3</b> From HDF5 file by 10x Genomics</a></li>
+<li class="chapter" data-level="3.4" data-path="generate-gene-expresion-matrix.html"><a href="generate-gene-expresion-matrix.html#from-h5ad-file"><i class="fa fa-check"></i><b>3.4</b> From H5AD file</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="create-sparseeset-object.html"><a href="create-sparseeset-object.html"><i class="fa fa-check"></i><b>4</b> Create SparseEset object</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="create-sparseeset-object.html"><a href="create-sparseeset-object.html#solely-from-the-gene-expression-matrix"><i class="fa fa-check"></i><b>4.1</b> Solely from the gene expression matrix</a></li>
+<li class="chapter" data-level="4.2" data-path="create-sparseeset-object.html"><a href="create-sparseeset-object.html#using-self-customized-meta-data"><i class="fa fa-check"></i><b>4.2</b> Using self-customized meta data</a></li>
+<li class="chapter" data-level="4.3" data-path="create-sparseeset-object.html"><a href="create-sparseeset-object.html#from-multiple-samples"><i class="fa fa-check"></i><b>4.3</b> From multiple samples</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="data-filtration.html"><a href="data-filtration.html"><i class="fa fa-check"></i><b>5</b> Data filtration</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="data-filtration.html"><a href="data-filtration.html#qc-report"><i class="fa fa-check"></i><b>5.1</b> QC report</a></li>
+<li class="chapter" data-level="5.2" data-path="data-filtration.html"><a href="data-filtration.html#filter-the-sparse-eset-object"><i class="fa fa-check"></i><b>5.2</b> Filter the sparse eset object</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="data-filtration.html"><a href="data-filtration.html#data-filtration-with-auto-mode"><i class="fa fa-check"></i><b>5.2.1</b> Data filtration with auto mode</a></li>
+<li class="chapter" data-level="5.2.2" data-path="data-filtration.html"><a href="data-filtration.html#data-filtration-with-manual-mode"><i class="fa fa-check"></i><b>5.2.2</b> Data filtration with manual mode</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="data-normalization.html"><a href="data-normalization.html"><i class="fa fa-check"></i><b>6</b> Data normalization</a></li>
+<li class="chapter" data-level="7" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html"><i class="fa fa-check"></i><b>7</b> MI-based clustering analysis</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#introduction-to-mica"><i class="fa fa-check"></i><b>7.1</b> Introduction to MICA</a></li>
+<li class="chapter" data-level="7.2" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#generate-mica-input"><i class="fa fa-check"></i><b>7.2</b> Generate MICA input</a></li>
+<li class="chapter" data-level="7.3" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#run-mica"><i class="fa fa-check"></i><b>7.3</b> Run MICA</a></li>
+<li class="chapter" data-level="7.4" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#integrate-mica-outputs-into-sparseeset-object"><i class="fa fa-check"></i><b>7.4</b> Integrate MICA outputs into SparseEset object</a></li>
+<li class="chapter" data-level="7.5" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#visualize-the-mica-output"><i class="fa fa-check"></i><b>7.5</b> Visualize the MICA output</a>
+<ul>
+<li class="chapter" data-level="7.5.1" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#color-coded-by-cluster-labels"><i class="fa fa-check"></i><b>7.5.1</b> Color-coded by cluster labels</a></li>
+<li class="chapter" data-level="7.5.2" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#color-coded-by-true-label-of-cell-types"><i class="fa fa-check"></i><b>7.5.2</b> Color-coded by true label of cell types</a></li>
+<li class="chapter" data-level="7.5.3" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#color-coded-by-numi-for-qc-purpose"><i class="fa fa-check"></i><b>7.5.3</b> Color-coded by nUMI, for QC purpose</a></li>
+<li class="chapter" data-level="7.5.4" data-path="mi-based-clustering-analysis.html"><a href="mi-based-clustering-analysis.html#color-coded-by-nfeature-for-qc-purpose"><i class="fa fa-check"></i><b>7.5.4</b> Color-coded by nFeature, for QC purpose</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html"><i class="fa fa-check"></i><b>8</b> Cell type annotation</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#supervised-cell-type-annotation"><i class="fa fa-check"></i><b>8.1</b> Supervised cell type annotation</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#annotate-using-signature-scores"><i class="fa fa-check"></i><b>8.1.1</b> Annotate using signature scores</a></li>
+<li class="chapter" data-level="8.1.2" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#annotate-using-individual-marker-genes"><i class="fa fa-check"></i><b>8.1.2</b> Annotate using individual marker genes</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#unsupervised-cell-type-annotation"><i class="fa fa-check"></i><b>8.2</b> Unsupervised cell type annotation</a></li>
+<li class="chapter" data-level="8.3" data-path="cell-type-annotation.html"><a href="cell-type-annotation.html#add-cell-type-annotations-to-sparseexpressionset-object"><i class="fa fa-check"></i><b>8.3</b> Add cell type annotations to SparseExpressionSet object</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="network-inference.html"><a href="network-inference.html"><i class="fa fa-check"></i><b>9</b> Network inference</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="network-inference.html"><a href="network-inference.html#generate-sjaracne-input-files"><i class="fa fa-check"></i><b>9.1</b> Generate SJARACNe input files</a></li>
+<li class="chapter" data-level="9.2" data-path="network-inference.html"><a href="network-inference.html#run-sjaracne"><i class="fa fa-check"></i><b>9.2</b> Run SJARACNe</a></li>
+<li class="chapter" data-level="9.3" data-path="network-inference.html"><a href="network-inference.html#assess-the-quality-of-networks"><i class="fa fa-check"></i><b>9.3</b> Assess the quality of networks</a>
+<ul>
+<li class="chapter" data-level="9.3.1" data-path="network-inference.html"><a href="network-inference.html#introduction-to-the-network-file-by-sjaracne"><i class="fa fa-check"></i><b>9.3.1</b> Introduction to the network file by SJARACNe</a></li>
+<li class="chapter" data-level="9.3.2" data-path="network-inference.html"><a href="network-inference.html#generate-network-qc-report"><i class="fa fa-check"></i><b>9.3.2</b> Generate network QC report</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html"><i class="fa fa-check"></i><b>10</b> Actvity-based analysis</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#calculate-the-activities"><i class="fa fa-check"></i><b>10.1</b> Calculate the activities</a>
+<ul>
+<li class="chapter" data-level="10.1.1" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#calculate-activities-per-group"><i class="fa fa-check"></i><b>10.1.1</b> Calculate activities per group</a></li>
+<li class="chapter" data-level="10.1.2" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#calculate-activities-in-batch"><i class="fa fa-check"></i><b>10.1.2</b> Calculate activities in batch</a></li>
+<li class="chapter" data-level="10.1.3" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#save-activity-eset-object"><i class="fa fa-check"></i><b>10.1.3</b> Save activity eset object</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="actvity-based-analysis.html"><a href="actvity-based-analysis.html#differential-activity-analysis"><i class="fa fa-check"></i><b>10.2</b> Differential activity analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="session-information.html"><a href="session-information.html"><i class="fa fa-check"></i><b>11</b> Session information</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">scMINER: a mutual information-based framework for identifying hidden drivers from single-cell omics data</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="introduction" class="section level1 hasAnchor" number="1">
+<h1><span class="header-section-number">Chapter 1</span> Introduction<a href="introduction.html#introduction" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>This chapter will introduce some principal concepts and unique features of scMINER.</p>
+<div id="a-few-concepts" class="section level2 hasAnchor" number="1.1">
+<h2><span class="header-section-number">1.1</span> A few concepts<a href="introduction.html#a-few-concepts" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>There are a few concepts that may help you understand scMINER better.</p>
+<div id="sparseeset" class="section level3 unnumbered hasAnchor">
+<h3>SparseEset<a href="introduction.html#sparseeset" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The <strong><code>SparseExpressionSet</code></strong> (or <strong><code>SparseEset</code></strong> for short) is a new class created by scMINER to handle the sparsity in scRNA-seq data. It is derived from <a href="https://www.bioconductor.org/packages/release/bioc/vignettes/Biobase/inst/doc/ExpressionSetIntroduction.pdf">ExpressionSet</a>, and enables to compress, store and access efficiently and conveniently.</p>
+<p>The SparseEset object is the <strong>center</strong> of scRNA-seq data analysis by scMINER.</p>
+</div>
+<div id="mutual-information" class="section level3 unnumbered hasAnchor">
+<h3>Mutual Information<a href="introduction.html#mutual-information" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><a href="https://en.wikipedia.org/wiki/Mutual_information">Mutual information</a> is a measure of the mutual dependence between two random variables. It quantifies the amount of information obtained about one variable through the other variable. In other words, it measures how much knowing the value of one variable reduces uncertainty about the value of the other variable. It’s widely used in probability theory and information theory.</p>
+<p>Compared with the linear correlation that used by most existing tools for scRNA-seq data clustering, mutual information provides a <strong>more general measure</strong> of dependence that can capture <strong><em>both linear and non-linear relationships</em></strong>, and hence may increases the accuracy and sensitivity of scRNA-seq data clustering.</p>
+<table>
+<caption><strong>Comparison of Linear Correlation and Mutual Information (powered by ChatGPT)</strong></caption>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">Linear Correlation</th>
+<th align="left">Mutual Information</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Definition</td>
+<td align="left">Measures linear relationship</td>
+<td align="left">Measures mutual dependence (both linear and non-linear)</td>
+</tr>
+<tr class="even">
+<td align="left">Range</td>
+<td align="left">-1 to 1</td>
+<td align="left">0 to Inf</td>
+</tr>
+<tr class="odd">
+<td align="left">Sensitivity to outliers</td>
+<td align="left">Sensitive</td>
+<td align="left">Less sensitive</td>
+</tr>
+<tr class="even">
+<td align="left">Captures Non-linear Relationships</td>
+<td align="left">No</td>
+<td align="left">Yes</td>
+</tr>
+<tr class="odd">
+<td align="left">Common Applications</td>
+<td align="left">Regression, finance, science</td>
+<td align="left">Feature selection, clustering, network inference</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="gene-activity" class="section level3 unnumbered hasAnchor">
+<h3>Gene Activity<a href="introduction.html#gene-activity" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The gene activity estimation is one of the most important features of scMINER. <strong><em>Mathematically</em></strong>, the activity of one gene is a type of mean of the expressions of its targets. And <strong><em>biologically</em></strong>, the activity can be interpreted as a measure that describes how actively the driver functions, like the enzymes in digesting their subtracts, kinase in activating their downstream genes. Given the gene expression profiles and networks, scMINER can estimate the activities of some predefined drivers, including not only transcription factors (TFs) but also signaling genes (SIGs).</p>
+</div>
+</div>
+<div id="why-use-scminer" class="section level2 hasAnchor" number="1.2">
+<h2><span class="header-section-number">1.2</span> Why use scMINER<a href="introduction.html#why-use-scminer" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>(more details to be added)</p>
+<p>scMINER includes the following key functions:</p>
+<ul>
+<li><p><strong>Mutual information-based clustering</strong>: scMINER measures the cell-cell similarities with <strong>full feature-derived mutual information</strong>. It can catch both linear and non-linear correlations and performs better in cell clustering, especially for those of close states.</p></li>
+<li><p><strong>Gene activity estimation</strong>: scMINER rewires the cell-type specific gene networks solely from the scRNA-seq data, and then estimates the gene activities of not only <strong>transcription factors (TFs)</strong> but also <strong>signaling genes (SIGs)</strong>. The gene activity-based analysis can expose the <strong>main regulators of various biological activities</strong>, like cellular linage differentiation and tissue specificity.</p></li>
+<li><p><strong>SparseEset-centered full-feature tool</strong>: scMINER provides a wide range of functions for <strong>data intake</strong>, <strong>quality control and filtration</strong>, <strong>MI-based clustering</strong>, <strong>network inference</strong>, <strong>gene activity estimation</strong>, <strong>cell type annotation</strong>, <strong>differential expression/activity analysis</strong>, and <strong>data visualization and sharing</strong>. Most of these functions are developed in an object-oriented manner for the <strong>SparseEset object</strong>.</p></li>
+</ul>
+</div>
+<div id="citation" class="section level2 hasAnchor" number="1.3">
+<h2><span class="header-section-number">1.3</span> Citation<a href="introduction.html#citation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Please consider citing <a href="https://www.biorxiv.org/content/10.1101/2023.01.26.523391v1">this paper</a> if you find scMINER useful in your research.</p>
+</div>
+<div id="support" class="section level2 hasAnchor" number="1.4">
+<h2><span class="header-section-number">1.4</span> Support<a href="introduction.html#support" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We welcome your feedback! The scMINER software is developed and maintained by the <a href="https://www.stjude.org/research/labs/yu-lab.html">Yu Lab @ St. Jude Children’s Research Hospital</a> and is released under the Apache License (Version 2.0). Feel free to open an <a href="https://github.com/jyyulab/scMINER/issues">issue</a>, or send us an <a href="mailto:jiyang.yu@stjude.org">email</a> if you encounter a bug, need our help or just want to make a comment/suggestion.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="get-started.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/01-introduction.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
