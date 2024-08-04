@@ -6,6 +6,10 @@ output:
   html_document:
     theme: yeti
     toc: yes
+vignette: >
+  %\VignetteIndexEntry{Integrating TCGA Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -204,7 +208,7 @@ MICA accepts `.h5ad` or `.txt` format as the input file, which can be easily gen
 generateMICAinput(input_eset = pbmc14k_log2cpm.eset, output_file = "/your-path/PBMC14k/MICA/micaInput.txt", overwrite = FALSE)
 
 ## Check the format of MICA input
-mica_input <- read.delim(system.file("extdata/demo_pbmc14k/PBMC14k/MICA/micaInput.txt", package = "scMINER"), header = T, sep = "\t", row.names = 1)
+mica_input <- read.delim(system.file("extdata/demo_pbmc14k/MICA/micaInput.txt", package = "scMINER"), header = T, sep = "\t", row.names = 1)
 mica_input[1:5,1:5]
 ```
 
@@ -245,7 +249,7 @@ MICA generates several files and save all of them in the output directory specif
 
 ```{r mica-output-core}
 ## Read the selected MICA output file
-micaOutput <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k/MICA/clustering_UMAP_euclidean_20_2.05.txt", package = "scMINER"), header = TRUE, sep = "\t", quote = "", stringsAsFactors = F)
+micaOutput <- read.table(system.file("extdata/demo_pbmc14k/MICA/clustering_UMAP_euclidean_20_2.05.txt", package = "scMINER"), header = TRUE, sep = "\t", quote = "", stringsAsFactors = F)
 head(micaOutput)
 ```
 
@@ -260,7 +264,7 @@ The clustering result can be easily easily added to the SparseEset object by `ad
 ```{r mica-output-vis}
 ## Add MICA output into SparseEset object
 pbmc14k_clustered.eset <- addMICAoutput(input_eset = pbmc14k_log2cpm.eset,
-                                      mica_output_file = system.file("extdata/demo_pbmc14k/PBMC14k/MICA/clustering_UMAP_euclidean_20_2.05.txt", package = "scMINER"), 
+                                      mica_output_file = system.file("extdata/demo_pbmc14k/MICA/clustering_UMAP_euclidean_20_2.05.txt", package = "scMINER"), 
                                       visual_method = "umap") # use "tsne" if t-SNE was used in MICA
 head(pData(pbmc14k_clustered.eset))
 ```
@@ -507,7 +511,7 @@ sjaracne local -e /your-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt -g /your-pat
 The core output of SJARACNe is the network file named `consensus_network_ncol_.txt`.
 
 ```{r check-network-file-format}
-network_format <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
+network_format <- read.table(system.file("extdata/demo_pbmc14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
                              header = T, sep = "\t", quote = "", stringsAsFactors = F)
 head(network_format)
 ```
@@ -528,7 +532,7 @@ To help assess the quality of SJARACNe networks, scMINER provides a function `dr
 
 ```{r assess-network-quality, eval=FALSE}
 ## Network QC on single network file
-network_stats <- drawNetworkQC(network_file = system.file("extdata/demo_pbmc14k/PBMC14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"), generate_html = FALSE)
+network_stats <- drawNetworkQC(network_file = system.file("extdata/demo_pbmc14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"), generate_html = FALSE)
 
 ## Network QC on all network files under a directory
 network_stats <- drawNetworkQC(sjaracne_dir = "/your-path/PBMC14K/SJARACNe", generate_html = FALSE) # Set `generate_html = TRUE` to generate html-format QC report for each network file
@@ -536,7 +540,7 @@ network_stats <- drawNetworkQC(sjaracne_dir = "/your-path/PBMC14K/SJARACNe", gen
 
 ```{r show-network-qc-stats}
 ## The network QC statistics table is saved separately, for demonstration purposes.
-network_stats <- readRDS(system.file("extdata/demo_pbmc14k/PBMC14k/SJARACNe/network_stats.rds", package = "scMINER"))
+network_stats <- readRDS(system.file("extdata/demo_pbmc14k/SJARACNe/network_stats.rds", package = "scMINER"))
 head(network_stats)
 ```
 
@@ -560,8 +564,8 @@ scMINER provides two functions, `getActivity_individual()` and `getActivity_inBa
 ```{r calculate-activity-individually, eval=FALSE}
 ## Let's use B cell as an example
 activity_B.eset <- getActivity_individual(input_eset = pbmc14k_log2cpm_annotated.eset[, pData(pbmc14k_log2cpm_annotated.eset)$trueLabel == "B"],
-                                          network_file.tf = system.file("extdata/demo_pbmc14k/PBMC14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
-                                          network_file.sig = system.file("extdata/demo_pbmc14k/PBMC14k/SJARACNe/B/SIG/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
+                                          network_file.tf = system.file("extdata/demo_pbmc14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
+                                          network_file.sig = system.file("extdata/demo_pbmc14k/SJARACNe/B/SIG/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
                                           driver_type = "TF_SIG")
 ```
 
@@ -570,7 +574,7 @@ While `getActivity_inBatch()` is designed to calculate the driver activities in 
 ```{r calculate-activity-in-batch}
 ## let's use B cell as an example
 activity.eset <- getActivity_inBatch(input_eset = pbmc14k_log2cpm_annotated.eset,
-                                     sjaracne_dir = system.file("extdata/demo_pbmc14k/PBMC14k/SJARACNe", package = "scMINER"),
+                                     sjaracne_dir = system.file("extdata/demo_pbmc14k/SJARACNe", package = "scMINER"),
                                      group_name = "trueLabel", driver_type = "TF_SIG", activity_method = "mean", do.z_normalization = TRUE)
 ```
 
