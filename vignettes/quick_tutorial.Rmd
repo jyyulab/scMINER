@@ -7,7 +7,7 @@ output:
     theme: yeti
     toc: yes
 vignette: >
-  %\VignetteIndexEntry{Integrating TCGA Data}
+  %\VignetteIndexEntry{quick_tutorial}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
