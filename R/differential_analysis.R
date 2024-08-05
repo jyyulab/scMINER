@@ -95,6 +95,7 @@ combinePvalVector <- function(pvals,
 #' @param use_method Character, method used for differential analysis: "`limma`" (the default), "`wilcoxon`", and "`t.test`".
 #'
 #' @return A data frame. Rows are genes/drivers, and columns are 11 statistics of differential analysis.
+#' @import limma
 #'
 #' @examples
 #' ## to call this function

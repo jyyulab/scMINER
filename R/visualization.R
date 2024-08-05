@@ -28,6 +28,7 @@
 #' @param jitter.size Numeric, size of the jittered points. Default: 0.1.
 #'
 #' @return A ggplot object with one or multiple violin plots
+#' @import ggplot2
 #' @export
 #'
 #' @examples
@@ -400,6 +401,7 @@ feature_bubbleplot <- function(input_eset,
 #' @param cluster_rows Logical, whether to cluster the rows. If `TRUE`, the rows will be clustered. If `FALSE`, the rows are displays following the order in '`features`'. Default: `FALSE`.
 #'
 #' @return Print the heatmap to screen
+#' @import pheatmap
 #' @export
 #'
 #' @examples

@@ -8,6 +8,7 @@
 #' @param driver_type Character, type of drivers to be extracted: "`TF`" for transcriptional factor, "`SIG`" for signaling genes, and "`TF_SIG`" for both. Default: "`TF`".
 #'
 #' @return A vector of pre-defined driver genes
+#' @importFrom dplyr filter
 #' @export
 #'
 #' @examples
@@ -72,6 +73,7 @@ getDriverList <- function(species_type = "hg",
 #'      - a "**`SIG`**" folder containing a "**`.sig.txt`**" file: this file contains the SIG driver list.
 #'      - a bash script (**`runSJARACNe.sh`**) to run SJARACNe. Further modification is needed to run it.
 #'      - a json file (**`config_cwlexec.json`**) containing parameters to run SJARACNe.
+#' @importFrom dplyr filter
 #' @export
 #'
 #' @examples
@@ -353,6 +355,8 @@ generateSJARACNeInput <- function(input_eset,
 #' @param prefix Character or `NULL`, the character string to add in front of the html report file name. Default: `NULL`. Ignored if `generate_html` = `FALSE`.
 #'
 #' @return This function will print the statistics of several key quality metrics of network(s). If `generate_html` is set `TRUE`, it also generates a html file of quality control report and save it to the same folder of the network file (by default) or the folder specified by "`outdir`".
+#' @import igraph
+#' @import rmarkdown
 #' @export
 #'
 #' @examples

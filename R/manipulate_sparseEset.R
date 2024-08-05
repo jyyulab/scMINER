@@ -3,7 +3,7 @@
 #'
 #' @title SparseExpressionSet
 #' @exportClass SparseExpressionSet
-#' @importFrom Biobase ExpressionSet
+#' @import Biobase
 methods::setClass(Class = "SparseExpressionSet",
                   contains = "ExpressionSet",
                   prototype = methods::prototype(methods::new("VersionedBiobase", versions = c(Biobase::classVersion("ExpressionSet"), SparseExpressionSet = "1.0.0" )))
@@ -267,6 +267,7 @@ combineSparseEset <- function(eset_list,
 #' @param addMetaData Logical, whether to update the meta data of features and cells based on the expression matrix. Default: `FALSE`.
 #'
 #' @return A sparse eset object with updated information
+#' @import Biobase
 #' @export
 #'
 #' @examples

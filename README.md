@@ -52,7 +52,7 @@ from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("jyyulab/scMINER@dev-qpan")
+devtools::install_github("jyyulab/scMINER")
 ```
 
 ### Install MICA and SJARACNe

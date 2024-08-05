@@ -178,6 +178,7 @@ addMICAoutput <- function(input_eset,
 #' @param fontsize.axis_text Integer, font size of the axis text. Default: 8.
 #'
 #' @return A UMAP or T-SNE plot. It also print the plot to screen.
+#' @import ggplot2
 #' @export
 #'
 #' @examples
