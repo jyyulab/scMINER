@@ -82,7 +82,7 @@ sjaracne -h                                         # Check if SJARACNe works
 
 # Tutorial
 
-Read the [documentation](https://jyyulab.github.io/scMINER/site/) for
+Read the [documentation](https://jyyulab.github.io/scMINER/) for
 detailed installation instruction and guided analysis.
 
 If you’d like to contribute, please open an issue or a pull request in
