@@ -400,7 +400,7 @@ if (length(grps) > 1) {
     }
   }
 } else {
-  tmp.d.sel <- tmp.d.sel[Matrix::rowSums(tmp.d.sel) > 0,]
+  tmp.d.sel <- tmp.d[Matrix::rowSums(tmp.d) > 0,]
   tmp.d.sel <- tmp.d.sel[,Matrix::colSums(tmp.d.sel) > 0]
   
   cells_per_gene <- Matrix::rowSums(tmp.d.sel != 0)
