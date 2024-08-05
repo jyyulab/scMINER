@@ -23,7 +23,7 @@
 <meta name="author" content="John Doe" />
 
 
-<meta name="date" content="2024-08-04" />
+<meta name="date" content="2024-08-05" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -291,7 +291,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="integrate-mica-outputs-into-sparseeset-object" class="section level2 hasAnchor" number="7.4">
 <h2><span class="header-section-number">7.4</span> Integrate MICA outputs into SparseEset object<a href="mi-based-clustering-analysis.html#integrate-mica-outputs-into-sparseeset-object" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>MICA generates several files and save all of them in the output directory specified by the user with <code>-o</code> argument. The core, and only, output file we need for subsequent analysis is the clustering label file named in the format of <code>ProjectName_clustering_VisualizeMethod_euclidean_NumberOfDimensions_Resolution.txt</code>. In this case, since we used a range of resolutions, there are several clustering label files generated, one for each resolution. Based on the knowledge about PBMC14k dataset, we compared the results of different resolutions and picked <code>clustering_UMAP_euclidean_20_2.05.txt</code> for subsequent analysis.</p>
-<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="mi-based-clustering-analysis.html#cb77-1" tabindex="-1"></a>micaOutput <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata/demo_pbmc14k/PBMC14k/MICA/clustering_UMAP_euclidean_20_2.05.txt&quot;</span>, <span class="at">package =</span> <span class="st">&quot;scMINER&quot;</span>), <span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st">&quot;</span>, <span class="at">quote =</span> <span class="st">&quot;&quot;</span>, <span class="at">stringsAsFactors =</span> F)</span>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="mi-based-clustering-analysis.html#cb77-1" tabindex="-1"></a>micaOutput <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata/demo_pbmc14k/MICA/clustering_UMAP_euclidean_20_2.05.txt&quot;</span>, <span class="at">package =</span> <span class="st">&quot;scMINER&quot;</span>), <span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st">&quot;</span>, <span class="at">quote =</span> <span class="st">&quot;&quot;</span>, <span class="at">stringsAsFactors =</span> F)</span>
 <span id="cb77-2"><a href="mi-based-clustering-analysis.html#cb77-2" tabindex="-1"></a><span class="fu">head</span>(micaOutput)</span></code></pre></div>
 <pre><code>##               ID        X        Y label
 ## 1 CACTTTGACGCAAT 14.91650 13.04096     6
@@ -308,7 +308,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><code>label</code>: labels of predicted clusters.</li>
 </ul>
 <p>The clustering result can be easily easily added to the SparseExpressionSet object by <code>addMICAoutput()</code>:</p>
-<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="mi-based-clustering-analysis.html#cb79-1" tabindex="-1"></a>pbmc14k_log2cpm.eset <span class="ot">&lt;-</span> <span class="fu">addMICAoutput</span>(pbmc14k_log2cpm.eset, <span class="at">mica_output_file =</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata/demo_pbmc14k/PBMC14k/MICA/clustering_UMAP_euclidean_20_2.05.txt&quot;</span>, <span class="at">package =</span> <span class="st">&quot;scMINER&quot;</span>), <span class="at">visual_method =</span> <span class="st">&quot;umap&quot;</span>)</span>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="mi-based-clustering-analysis.html#cb79-1" tabindex="-1"></a>pbmc14k_log2cpm.eset <span class="ot">&lt;-</span> <span class="fu">addMICAoutput</span>(pbmc14k_log2cpm.eset, <span class="at">mica_output_file =</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata/demo_pbmc14k/MICA/clustering_UMAP_euclidean_20_2.05.txt&quot;</span>, <span class="at">package =</span> <span class="st">&quot;scMINER&quot;</span>), <span class="at">visual_method =</span> <span class="st">&quot;umap&quot;</span>)</span>
 <span id="cb79-2"><a href="mi-based-clustering-analysis.html#cb79-2" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">pData</span>(pbmc14k_log2cpm.eset))</span></code></pre></div>
 <pre><code>##                trueLabel_full trueLabel projectID nUMI nFeature    pctMito
 ## CACTTTGACGCAAT CD14+ Monocyte  Monocyte   PBMC14k  764      354 0.01832461
