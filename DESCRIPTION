@@ -44,5 +44,7 @@ Suggests:
     Seurat (>= 5.0.0),
     SuperCell (>= 1.0),
     testthat (>= 3.0.0)
+Remotes:
+  github::GfellerLab/SuperCell
 VignetteBuilder: knitr
 URL: https://jyyulab.github.io/scMINER/
