@@ -191,7 +191,7 @@ if (nrow(nFeature_stats.table) < 10) {
 
 ```{r, fig.align='center', echo=FALSE} 
 p <- ggplot(nFeature_master, aes(x=group, y=nFeature, fill=group)) + geom_violin(trim = TRUE) +
-  geom_jitter(height = 0, width = 0.3, size = 0.1) + labs(x = "", y = "Number of UMIs") +
+  geom_jitter(height = 0, width = 0.3, size = 0.1) + labs(x = "", y = "Number of Features") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
         panel.background = element_blank(), axis.line = element_line(colour = "black"),
         legend.position = "none",
@@ -255,7 +255,7 @@ if (nrow(pctMito_stats.table) < 10) {
 
 ```{r, fig.align='center', echo=FALSE} 
 p <- ggplot(pctMito_master, aes(x=group, y=pctMito, fill=group)) + geom_violin(trim = TRUE) +
-  geom_jitter(height = 0, width = 0.3, size = 0.1) + labs(x = "", y = "Number of UMIs") +
+  geom_jitter(height = 0, width = 0.3, size = 0.1) + labs(x = "", y = "Percentage of mitochondrial UMIs") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
         panel.background = element_blank(), axis.line = element_line(colour = "black"),
         legend.position = "none",
@@ -319,7 +319,7 @@ if (nrow(pctSpikeIn_stats.table) < 10) {
 
 ```{r, fig.align='center', echo=FALSE} 
 p <- ggplot(pctSpikeIn_master, aes(x=group, y=pctSpikeIn, fill=group)) + geom_violin(trim = TRUE) +
-  geom_jitter(height = 0, width = 0.3, size = 0.1) + labs(x = "", y = "Number of UMIs") +
+  geom_jitter(height = 0, width = 0.3, size = 0.1) + labs(x = "", y = "Percentage of SpikeIn UMIs") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
         panel.background = element_blank(), axis.line = element_line(colour = "black"),
         legend.position = "none",
