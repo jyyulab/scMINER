@@ -109,14 +109,14 @@ compare2groups <- function(input_eset,
   if ((group_by %in% colnames(Biobase::pData(input_eset))) == FALSE) {stop('The group_by column,', group_by, ', was not found in the input set. Please check and re-try.')}
 
   pd <- Biobase::pData(input_eset)
-  g1.cells <- row.names(pd[pd[,group_by] %in% g1,])
+  g1.cells <- row.names(pd)[pd[,group_by] %in% g1]
   if (length(g1.cells) > 0) {cat("\t", length(g1.cells), "cells were found for g1.\n")} else {stop('No cell was found for g1. Please check and re-try.')}
-  g0.cells <- row.names(pd[pd[,group_by] %in% g0,])
+  g0.cells <- row.names(pd)[pd[,group_by] %in% g0]
   if (length(g0.cells) > 0) {cat("\t", length(g0.cells), "cells were found for g0.\n")} else {stop('No cell was found for g0. Please check and re-try.')}
 
   ## prepare matrix for limma
   use_samples <- c(g1.cells, g0.cells)
-  exp_mat <- Biobase::exprs(input_eset[, use_samples])
+  exp_mat <- Biobase::exprs(input_eset)[, use_samples]
 
   ## calculate the average and percentage
   exp_mat.g1 <- as.matrix(exp_mat[, g1.cells, drop = FALSE])
