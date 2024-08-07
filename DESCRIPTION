@@ -4,7 +4,7 @@ Title: Single-cell Mutual Information-based Network Enginerring Ranger
 Version: 1.1.0
 Authors@R: c(
     person(given = "Qingfei", family = "Pan", email = "qingfei.pan@stjude.org", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-0243-6898")),
-    person(given = "Jiayu", family = "Zhou", email = "jiayu.zhou@stjude.org", role = c("aut", "cre")),
+    person(given = "Jiayu", family = "Zhou", email = "jiayu.zhou@stjude.org", role = c("aut")),
     person(given = "Liang", family = "Ding", email = "liang.ding@stjude.org", role = c("aut")),
     person(given = "Hao", family = "Shi", email = "hao.shi@stjude.org", role = c("aut")),
     person(given = "Xinran", family = "Dong", email = "xinran.done@foxmail.com", role = c("aut")),
