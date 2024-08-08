@@ -697,8 +697,8 @@ generatePortalInputs <- function(input_expression.eset = NULL,
   }
 
   ## prepare expression data
-  if (is.null(input_expression.eset)) {
-    if (is.null(input_expression.seuratObj)) {
+  if (is.null(input_expression.eset) == TRUE) {
+    if (is.null(input_expression.seuratObj) == TRUE) {
       cat("The expression data preparation for scMINER Portal has been skipped, since no inputs was provided.\n")
     } else {
       cat("The expression data for scMINER Portal will be prepared from the input Seurat object...\n")
@@ -725,7 +725,13 @@ generatePortalInputs <- function(input_expression.eset = NULL,
       # meta data
       cat("\tChecking the meta.data ...")
       seurat_metadata <- data.frame(CellID = row.names(input_expression.seuratObj@meta.data), input_expression.seuratObj@meta.data, CellGroup = Seurat::Idents(input_expression.seuratObj))
-      if (is.null(group_by) == FALSE) {seurat_metadata[, "CellGroup"] <- seurat_metadata[, group_by]}
+      if (is.null(group_by) == FALSE) {
+        if (group_by %in% colnames(seurat_metadata)) {
+          seurat_metadata[, "CellGroup"] <- seurat_metadata[, group_by]
+        } else {
+          stop("The group_by was not found in meta.data. Please check and re-try.")
+        }
+      }
       cat("\t\tDone! The meta.data are ready.\n")
 
       # expression matrix
@@ -750,6 +756,7 @@ generatePortalInputs <- function(input_expression.eset = NULL,
 
       ## check pheno data
       pd <- Biobase::pData(input_expression.eset)
+      if (("CellID" %in% colnames(pd)) == FALSE) {pd$CellID <- row.names(pd)}
 
       cat("\tChecking the reduction results ...")
       reductions_col <- grepl("umap|tsne", colnames(pd), ignore.case = TRUE)
@@ -761,20 +768,24 @@ generatePortalInputs <- function(input_expression.eset = NULL,
 
       cat("\tChecking the group info ...")
       if (is.null(group_by) == FALSE) {
-        pd[, "CellGroup"] <- pd[, group_by]
+        if (group_by %in% colnames(pd)) {
+          pd[, "CellGroup"] <- pd[, group_by]
+        } else {
+          stop("The group_by was not found in input eset object. Please check and re-try.")
+        }
         cat("\t\tDone! The CellGroup column had been set by:", group_by, ".\n")
       } else {
         if ("clusterID" %in% colnames(pd)) {
           pd[, "CellGroup"] <- pd[, "clusterID"]
-          cat("\t\tDone! The CellGroup column had been set by: clusterID.\n")
+          cat("\t\tDone! The 'group_by' is not specified and the default value is used: 'clusterID'. To change it, please specify 'group_by' argument.\n")
         } else {
           stop('Please specify "group_by" to define the group info.')
         }
       }
 
       expression.eset <- updateSparseEset(input_expression.eset, cellData = pd, addMetaData = FALSE)
-      saveRDS(expression.eset, file = paste0(output_dir, "/expression.eset"))
-      cat("The expression data for scMINER Portal has been generated:", paste0(output_dir, "/expression.eset"),".\n")
+      saveRDS(expression.eset, file = paste0(output_dir, "/expression.rds"))
+      cat("The expression data for scMINER Portal has been generated:", paste0(output_dir, "/expression.rds"),".\n")
     } else {
       stop('Please use ONLY ONE of "input_expression.eset" or "input_expression.seuratObj" to specify the input expression data.')
     }
@@ -783,6 +794,12 @@ generatePortalInputs <- function(input_expression.eset = NULL,
   ## prepare activity data
   if (is.null(input_activity.eset) == FALSE) {
     cat("The activity data for scMINER Portal will be prepared from the input eset object ...\n")
+
+    fd <- Biobase::fData(input_activity.eset)
+    if (("GeneSymbol" %in% colnames(fd)) == FALSE) {fd$GeneSymbol <- gsub("[_TF|_SIG]", "", row.names(fd))}
+
+    pd <- Biobase::pData(input_activity.eset)
+    if (("CellID" %in% colnames(pd)) == FALSE) {pd$CellID <- row.names(pd)}
 
     cat("\tChecking the reduction results ...")
     reductions_col <- grepl("umap|tsne", colnames(pd), ignore.case = TRUE)
@@ -794,7 +811,11 @@ generatePortalInputs <- function(input_expression.eset = NULL,
 
     cat("\tChecking the group info ...")
     if (is.null(group_by) == FALSE) {
-      pd[, "CellGroup"] <- pd[, group_by]
+      if (group_by %in% colnames(pd)) {
+        pd[, "CellGroup"] <- pd[, group_by]
+      } else {
+        stop("The group_by was not found in input eset object. Please check and re-try.")
+      }
       cat("\t\tDone! The CellGroup column had been set by:", group_by, ".\n")
     } else {
       if ("clusterID" %in% colnames(pd)) {
@@ -805,9 +826,9 @@ generatePortalInputs <- function(input_expression.eset = NULL,
       }
     }
 
-    activity.eset <- updateSparseEset(input_expression.eset, cellData = pd, addMetaData = FALSE)
-    saveRDS(activity.eset, file = paste0(output_dir, "/activity.eset"))
-    cat("The activity data for scMINER Portal has been generated:", paste0(output_dir, "/activity.eset"),".\n")
+    activity.eset <- updateSparseEset(input_activity.eset, cellData = pd, featureData = fd, addMetaData = FALSE)
+    saveRDS(activity.eset, file = paste0(output_dir, "/activity.rds"))
+    cat("The activity data for scMINER Portal has been generated:", paste0(output_dir, "/activity.rds"),".\n")
   } else {
     cat("The activity data preparation for scMINER Portal has been skipped, since no inputs was provided.\n")
   }
@@ -826,7 +847,7 @@ generatePortalInputs <- function(input_expression.eset = NULL,
       network_merged <- data.frame()
       for (i in 1:length(grps)) {
         dir.tmp <- paste0(input_network.dir, "/", grps[i])
-        network.tf <- list.files(path = paste0(dir.tmp, "/TF"), pattern="consensus_network_ncol_.txt", recursive = TRUE, full.names = TRUE)
+        network.tf <- list.files(path = paste0(dir.tmp, "/TF"), pattern = "consensus_network_ncol_.txt", recursive = TRUE, full.names = TRUE)
         if (length(network.tf) == 1) {
           net.tf <- read.delim(file = network.tf, stringsAsFactors = FALSE)
           net.tf$CellGroup <- grps[i]; net.tf$NetworkType <- "TF";
@@ -835,7 +856,8 @@ generatePortalInputs <- function(input_expression.eset = NULL,
         } else {
           stop('Multiple TF network files were found for group:', grps[i], '.')
         }
-        network.sig <- list.files(path = paste0(dir.tmp, "/SIG"), pattern="consensus_network_ncol_.txt", recursive = TRUE, full.names = TRUE)
+
+        network.sig <- list.files(path = paste0(dir.tmp, "/SIG"), pattern = "consensus_network_ncol_.txt", recursive = TRUE, full.names = TRUE)
         if (length(network.sig) == 1) {
           net.sig <- read.delim(file = network.sig, stringsAsFactors = FALSE)
           net.sig$CellGroup <- grps[i]; net.sig$NetworkType <- "SIG";
@@ -844,12 +866,13 @@ generatePortalInputs <- function(input_expression.eset = NULL,
         } else {
           stop('Multiple SIG network files were found for group:', grps[i], '.')
         }
+
         network.grp <- rbind(net.tf, net.sig)
 
         if (i == 1) {network_merged <- network.grp} else {network_merged <- rbind(network_merged, network.grp)}
       }
 
-      write.table(network_merged, file = paste0(output_dir, "/networks.txt"))
+      write.table(network_merged, file = paste0(output_dir, "/networks.txt"), quote = FALSE, col.names = TRUE, row.names = FALSE, sep = "\t")
       cat("The network data for scMINER Portal has been generated:", paste0(output_dir, "/networks.txt"),".\n")
     }
   } else {
@@ -880,7 +903,7 @@ generatePortalInputs <- function(input_expression.eset = NULL,
         if (i == 1) {network_merged <- net.tmp} else {network_merged <- rbind(network_merged, net.tmp)}
       }
 
-      write.table(network_merged, file = paste0(output_dir, "/networks.txt"))
+      write.table(network_merged, file = paste0(output_dir, "/networks.txt"), quote = FALSE, col.names = TRUE, row.names = FALSE, sep = "\t")
       cat("The network data for scMINER Portal has been generated:", paste0(output_dir, "/networks.txt"),".\n")
     } else {
       cat("The network data preparation for scMINER Portal has been skipped, since no inputs was provided.\n")
