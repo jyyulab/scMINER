@@ -37,16 +37,25 @@ This function is used to generated the standard input files that can be directly
 }
 \examples{
 ## 1. the most commonly used command
-generatePortalInputs(input_expression.eset = expression_clustered.eset, group_by = "cellType", input_activity.eset = activity_clustered.eset, input_network.dir = "./SJARACNe", output_dir = "./scMINERportal")
+generatePortalInputs(input_expression.eset = expression_clustered.eset,
+                     group_by = "cellType",
+                     input_activity.eset = activity_clustered.eset,
+                     input_network.dir = "./SJARACNe",
+                     output_dir = "./scMINERportal")
 
 ## 2. prepare expression data from Seurat object ("pbmc14.obj")
-generatePortalInputs(input_expression.seuratObj = pbmc14.obj, output_dir = "./path-to-output_dir")
+generatePortalInputs(input_expression.seuratObj = pbmc14.obj,
+                     output_dir = "./path-to-output_dir")
 
 ## 3. prepare network data from a table
-network.table <- data.frame(CellGroup = c("CD4__CD25_T_Reg", "CD4__CD25_T_Reg", "CD19__B", "CD19__B"),NetworkType = c("SIG", "TF", "SIG", "TF"),
-                            NetworkFile = c("./sjaracne/CD4__CD25_T_Reg/SIG/b100_pce-3/sjaracne_workflow-1474c41b-067b-4f86-ab99-09f73dadb16g/consensus_network_ncol_.txt",
-                                            "./sjaracne/CD4__CD25_T_Reg/TF/b100_pce-3/sjaracne_workflow-a93cd6db-7253-4ffb-ae4e-633b9dedf11d/consensus_network_ncol_.txt",
-                                            "./sjaracne/CD19__B/SIG/sjaracne_workflow-da0c3c72-7afb-44fa-973b-e4d767e20b6f/consensus_network_ncol_.txt",
-                                            "./sjaracne/CD19__B/TF/sjaracne_workflow-0426ea12-10bf-428c-b199-d5bd1a7aab5f/consensus_network_ncol_.txt"))
-generatePortalInputs(input_expression.eset = expression_clustered.eset, group_by = "cellType", input_network.table = network.table, output_dir = "./path-to-output_dir")
+network.table <- data.frame(CellGroup = c("CD4Treg", "CD4Treg", "B", "B"),
+                            NetworkType = c("SIG", "TF", "SIG", "TF"),
+                            NetworkFile = c("./sjaracne/CD4Treg/SIG/consensus_network_ncol_.txt",
+                                            "./sjaracne/CD4Treg/TF/consensus_network_ncol_.txt",
+                                            "./sjaracne/B/SIG/consensus_network_ncol_.txt",
+                                            "./sjaracne/B/TF/consensus_network_ncol_.txt"))
+generatePortalInputs(input_expression.eset = expression_clustered.eset,
+                     group_by = "cellType",
+                     input_network.table = network.table,
+                     output_dir = "./path-to-output_dir")
 }

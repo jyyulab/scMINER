@@ -9,18 +9,27 @@ readInput_h5ad(h5ad_file, removeSuffix = FALSE, addPrefix = NULL)
 \arguments{
 \item{h5ad_file}{H5ad file of sc/snRNA-seq data}
 
-\item{removeSuffix}{Logical, whether to remove the suffix "\strong{-1}" when present in all cell barcodes. Default: \code{TRUE}.}
+\item{removeSuffix}{Logical, whether to remove the suffix "\strong{-1}" when
+present in all cell barcodes. Default: \code{TRUE}.}
 
-\item{addPrefix}{Character or \code{NULL}, add a prefix to the cell barcodes, like Sample ID. It is highly recommended to use a prefix containing letters and/or numbers only,
-and not starting with numbers. Default: \code{NULL}.}
+\item{addPrefix}{Character or \code{NULL}, add a prefix to the cell barcodes, like
+Sample ID. It is highly recommended to use a prefix containing letters
+and/or numbers only, and not starting with numbers. Default: \code{NULL}.}
 }
 \value{
-A AnnData object containing \code{"X"} (a observations x variables data matrix), \code{"obs"} (data frame of observations), \code{"var"} (data frame of variables) and more. For more details, please check out \url{https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html}.
+A AnnData object containing \code{"X"} (a observations x variables data
+matrix), \code{"obs"} (data frame of observations), \code{"var"} (data frame of
+variables) and more. For more details, please check out
+\url{https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.html}.
 }
 \description{
-This function is used to read the h5ad file, a popular file format for storing and sharing single-cell RNA sequencing data. The \verb{**anndata**} package is needed to use this function.
+This function is used to read the h5ad file, a popular file
+format for storing and sharing single-cell RNA sequencing data. The
+\verb{**anndata**} package is needed to use this function.
 }
 \examples{
-h5ad_file <- 'path-to-h5ad_file'
-sparseMatrix <- readInput_h5ad(h5ad_file, removeSuffix = FALSE, addPrefix = "demoSample")
+h5ad_file <- system.file("extdata/demo_inputs/h5ad_file/demoData4.h5ad", package = "scMINER") # path to h5ad file
+sparseMatrix <- readInput_h5ad(h5ad_file,
+                               removeSuffix = FALSE,
+                               addPrefix = "demoSample")
 }

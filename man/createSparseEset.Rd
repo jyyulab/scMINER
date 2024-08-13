@@ -45,5 +45,8 @@ It can also generate the meta data for both automatically, if \strong{\code{addM
 }
 }
 \examples{
-expression_raw.eset <- createSparseEset(input_matrix = sparseMatrix, projectID = "demoSample", addMetaData = T)
+data("pbmc14k_rawCount")
+pbmc14k_raw.eset <- createSparseEset(input_matrix = pbmc14k_rawCount,
+                                     projectID = "PBMC14k",
+                                     addMetaData = TRUE)
 }

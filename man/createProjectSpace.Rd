@@ -9,17 +9,23 @@ createProjectSpace(project_dir, project_name, do.unlink = FALSE)
 \arguments{
 \item{project_dir}{The directory to create the project space in}
 
-\item{project_name}{The name of the project, will be used as the name of the folder}
+\item{project_name}{The name of the project, will be used as the name of the
+folder}
 
-\item{do.unlink}{Logical, whether to remove the files and/or folders inside of pre-existing project space. Default: \code{FALSE}.}
+\item{do.unlink}{Logical, whether to remove the files and/or folders inside
+of pre-existing project space. Default: \code{FALSE}.}
 }
 \value{
-It creates a folder of project name and 4 subfolders in the project directory, and returns the path of project space.
+It creates a folder of project name and 4 subfolders in the project
+directory, and returns the path of project space.
 }
 \description{
-This function is used to create a folder of the specified project names in the specified project directory as the project space to run scMINER analysis.
-It also creastes 4 subfolers inside of it: "\code{DATA}", "\code{MICA}", "\code{SJARACNe}" and "\code{PLOT}".
+This function is used to create a folder of the specified
+project names in the specified project directory as the project space to run
+scMINER analysis. It also creastes 4 subfolers inside of it: "\code{DATA}",
+"\code{MICA}", "\code{SJARACNe}" and "\code{PLOT}".
 }
 \examples{
-createProjectSpace(project_dir = "path-to-a-folder", project_name = "PBMC14k")
+scminer_dir <- createProjectSpace(project_dir = "path-to-a-folder",
+                                  project_name = "PBMC14k")
 }

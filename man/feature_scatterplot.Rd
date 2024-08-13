@@ -61,11 +61,19 @@ This function is used to draw a scatter plot of selected features on UMAP or t-S
 }
 \examples{
 ## 1. scatter plots with UMAP projections
-p_scatter <- feature_scatterplot(input_eset = clustered.eset, features = c("CD14", "CD19", "CD8A"), location_x = "UMAP_1", location_y = "UMAP_2")
+feature_scatterplot(input_eset = clustered.eset,
+                    features = c("CD14", "CD19", "CD8A"),
+                    location_x = "UMAP_1", location_y = "UMAP_2")
 
 ## 2. scatter plots with t-SNE projections
-p_scatter <- feature_scatterplot(input_eset = clustered.eset, features = c("CD14", "CD19", "CD8A"), location_x = "tSNE_1", location_y = "tSNE_2")
+feature_scatterplot(input_eset = clustered.eset,
+                    features = c("CD14", "CD19", "CD8A"),
+                    location_x = "tSNE_1", location_y = "tSNE_2")
 
 ## 3. change the point size and font size
-p_scatter <- feature_scatterplot(input_eset = clustered.eset, features = c("CD14", "CD19", "CD8A"), location_x = "UMAP_1", location_y = "UMAP_2", point.size = 1, fontsize.strip = 12, fontsize.axis = 10)
+feature_scatterplot(input_eset = clustered.eset,
+                    features = c("CD14", "CD19", "CD8A"),
+                    location_x = "UMAP_1", location_y = "UMAP_2",
+                    point.size = 1,
+                    fontsize.strip = 12, fontsize.axis = 10)
 }

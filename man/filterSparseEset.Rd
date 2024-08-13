@@ -59,6 +59,15 @@ features would be removed under the default cutoffs of each metrics.
 }
 }
 \examples{
-filtered.eset <- filterSparseEset(raw.eset) ## filter the input eset using the cutoffs calculated by scMINER.
-filtered.eset <- filterSparseEset(raw.eset, gene.nCell_min = 10, cell.nUMI_min = 500, cell.nFeature_min = 100, cell.nFeature_max = 5000, cell.pctMito_max = 0.15)
+## 1. using the cutoffs automatically calculated by scMINER
+pbmc14k_filtered.eset <- filterSparseEset(pbmc14k_raw.eset, filter_mode = "auto", filter_type = "both")
+
+## 2. using the cutoffs manually specified
+pbmc14k_filtered_manual.eset <- filterSparseEset(pbmc14k_raw.eset, filter_mode = "manual", filter_type = "both",
+                                                 gene.nCell_min = 10,
+                                                 cell.nUMI_min = 500,
+                                                 cell.nUMI_max = 6500,
+                                                 cell.nFeature_min = 200,
+                                                 cell.nFeature_max = 2500,
+                                                 cell.pctMito_max = 0.1)
 }

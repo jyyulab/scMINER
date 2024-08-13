@@ -28,5 +28,15 @@ This function is used to generate a html quality control report from a sparse es
 contains more comprehensive and detailed QC results and can be used to estimate the cutoffs to filter the eset object. It also contains some plots for presentation purpose.
 }
 \examples{
-drawSparseEsetQC(input_eset, output_html_file = "./QC/esetQCreport.html", overwrite = FALSE, group = "projectID")
+## 1. To generate the QC report in a group-specific manner, recommended whenever group information is avaiable.
+drawSparseEsetQC(input_eset = pbmc14k_raw.eset,
+                 output_html_file = "/your-path/PBMC14k/PLOT/pbmc14k_rawCount.html",
+                 overwrite = FALSE,
+                 group_by = "trueLabel")
+
+## 2. To generate the QC report from a whole view
+drawSparseEsetQC(input_eset = pbmc14k_raw.eset,
+                 output_html_file = "/your-path/PBMC14k/PLOT/pbmc14k_rawCount.html",
+                 overwrite = FALSE,
+                 group_by = NULL)
 }

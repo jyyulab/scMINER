@@ -49,8 +49,13 @@ marker_file <- system.file('PBMC14KDS_DemoDataSet/DATA/', 'Immune_signatures.xls
 signature_table <- openxlsx::read.xlsx(marker_file)
 head(signature_table)
 ## 1. the most commonly used command
-p_bubbleplot <- draw_bubbleplot(input_eset = clustered.eset, signature_table = signature_table, group_by = "clusterID")
+draw_bubbleplot(input_eset = clustered.eset,
+                signature_table = signature_table,
+                group_by = "clusterID")
 
 ## 2. customize the colors
-p_bubbleplot <- draw_bubbleplot(input_eset = clustered.eset, signature_table = signature_table, group_by = "clusterID", colors = c("lightgrey", "red"))
+draw_bubbleplot(input_eset = clustered.eset,
+                signature_table = signature_table,
+                group_by = "clusterID",
+                colors = c("lightgrey", "red"))
 }

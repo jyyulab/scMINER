@@ -46,8 +46,13 @@ This function is used to draw a bar plot showing the cell composition of self-de
 }
 \examples{
 ## 1. bar plot grouped by clusters ("clusterID") and colored by true labels ("true_label)
-p_bar <- draw_barplot(input_eset = clustered.eset, group_by = "clusterID", color_by = "true_label")
+draw_barplot(input_eset = clustered.eset,
+             group_by = "clusterID",
+             color_by = "true_label")
 
 ## 2. customize the colors
-p_bar <- draw_barplot(input_eset = clustered.eset, group_by = "clusterID", color_by = "true_label", colors = c("green", "red", "blue", "grey", "orange", "purple", "yellow"))
+draw_barplot(input_eset = clustered.eset,
+             group_by = "clusterID",
+             color_by = "true_label",
+             colors = c("green", "red", "blue", "grey", "orange", "purple", "yellow"))
 }

@@ -34,7 +34,10 @@ methods::setClass(Class = "SparseExpressionSet",
 #' @export
 #'
 #' @examples
-#' expression_raw.eset <- createSparseEset(input_matrix = sparseMatrix, projectID = "demoSample", addMetaData = T)
+#' data("pbmc14k_rawCount")
+#' pbmc14k_raw.eset <- createSparseEset(input_matrix = pbmc14k_rawCount,
+#'                                      projectID = "PBMC14k",
+#'                                      addMetaData = TRUE)
 createSparseEset <- function(input_matrix,
                              do.sparseConversion = TRUE,
                              cellData = NULL,
@@ -140,7 +143,18 @@ createSparseEset <- function(input_matrix,
 #' @export
 #'
 #' @examples
-#' combined.eset <- combineSparseEset(c(sample_1.eset, sample_2.eset, sample_3.eset), projectID = c("sample1", "sample2", "sample3"), addPrefix = c("tag1", "tag2", "tag3"), addMetaData = TRUE)
+#' demo1_mtx <- readInput_10x.dir(input_dir = system.file("extdata/demo_inputs/cell_matrix_10x", package = "scMINER"),
+#'                                featureType = "gene_symbol", removeSuffix = TRUE)
+#' demo1.eset <- createSparseEset(input_matrix = demo1_mtx, projectID = "demo1", addMetaData = TRUE)
+#' demo2_mtx <- readInput_table(table_file = system.file("extdata/demo_inputs/table_file/demoData2.txt.gz", package = "scMINER"),
+#'                              is.geneBYcell = TRUE, removeSuffix = TRUE)
+#' demo2.eset <- createSparseEset(input_matrix = demo2_mtx, projectID = "demo2", addMetaData = TRUE)
+#' combined.eset <- combineSparseEset(eset_list = c(demo1.eset, demo2.eset),
+#'                                    projectID = c("sample1", "sample2"),
+#'                                    addPrefix = c("demo1", "demo2"),
+#'                                    addSurfix = NULL,
+#'                                    addMetaData = TRUE,
+#'                                    imputeNA = TRUE)
 combineSparseEset <- function(eset_list,
                               projectID = NULL,
                               addPrefix = NULL,
@@ -271,7 +285,13 @@ combineSparseEset <- function(eset_list,
 #' @export
 #'
 #' @examples
-#' updated.eset <- updateSparseEset(input_eset = input.eset, cellData = data.frame(pData(input.eset), cellType = "B_cells"), addMetaData = TRUE)
+#' true_label <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k_trueLabel.txt.gz", package = "scMINER"),
+#'                          header = T, row.names = 1, sep = "\t", quote = "", stringsAsFactors = FALSE)
+#' pbmc14k_raw.eset <- createSparseEset(input_matrix = pbmc14k_rawCount,
+#'                                      cellData = true_label,
+#'                                      featureData = NULL,
+#'                                      projectID = "PBMC14k",
+#'                                      addMetaData = TRUE)
 updateSparseEset <- function(input_eset,
                              dataMatrix = NULL,
                              cellData = NULL,
@@ -381,8 +401,17 @@ updateSparseEset <- function(input_eset,
 #' @export
 #'
 #' @examples
-#' filtered.eset <- filterSparseEset(raw.eset) ## filter the input eset using the cutoffs calculated by scMINER.
-#' filtered.eset <- filterSparseEset(raw.eset, gene.nCell_min = 10, cell.nUMI_min = 500, cell.nFeature_min = 100, cell.nFeature_max = 5000, cell.pctMito_max = 0.15)
+#' ## 1. using the cutoffs automatically calculated by scMINER
+#' pbmc14k_filtered.eset <- filterSparseEset(pbmc14k_raw.eset, filter_mode = "auto", filter_type = "both")
+#'
+#' ## 2. using the cutoffs manually specified
+#' pbmc14k_filtered_manual.eset <- filterSparseEset(pbmc14k_raw.eset, filter_mode = "manual", filter_type = "both",
+#'                                                  gene.nCell_min = 10,
+#'                                                  cell.nUMI_min = 500,
+#'                                                  cell.nUMI_max = 6500,
+#'                                                  cell.nFeature_min = 200,
+#'                                                  cell.nFeature_max = 2500,
+#'                                                  cell.pctMito_max = 0.1)
 filterSparseEset <- function(input_eset,
                              filter_mode = "auto",
                              filter_type = "both",
@@ -508,7 +537,11 @@ filterSparseEset <- function(input_eset,
 #' @return A sparse eset object that has been normalized and log-transformed
 #' @export
 #'
-#' @examples normalized.eset <- normalizeSparseEset(input_eset = filtered.eset, scale_factor = 1000000, do.logTransform = TRUE)
+#' @examples
+#' pbmc14k_log2cpm.eset <- normalizeSparseEset(pbmc14k_filtered.eset,
+#'                                             scale_factor = 1000000,
+#'                                             log_base = 2,
+#'                                             log_pseudoCount = 1)
 normalizeSparseEset <- function(input_eset,
                                 scale_factor = 1000000,
                                 do.logTransform = TRUE,
@@ -527,6 +560,7 @@ normalizeSparseEset <- function(input_eset,
     cat("Done! The data matrix of eset has been normalized but NOT log-transformed!\n")
   }
 
+  exp_mat.normalized <- Matrix::Matrix(exp_mat.normalized, sparse = TRUE)
   eset <- new( "SparseExpressionSet",
                assayData = assayDataNew("environment", exprs = exp_mat.normalized),
                phenoData = new("AnnotatedDataFrame", data = Biobase::pData(input_eset)),
@@ -551,7 +585,17 @@ normalizeSparseEset <- function(input_eset,
 #' @export
 #'
 #' @examples
-#' drawSparseEsetQC(input_eset, output_html_file = "./QC/esetQCreport.html", overwrite = FALSE, group = "projectID")
+#' ## 1. To generate the QC report in a group-specific manner, recommended whenever group information is avaiable.
+#' drawSparseEsetQC(input_eset = pbmc14k_raw.eset,
+#'                  output_html_file = "/your-path/PBMC14k/PLOT/pbmc14k_rawCount.html",
+#'                  overwrite = FALSE,
+#'                  group_by = "trueLabel")
+#'
+#' ## 2. To generate the QC report from a whole view
+#' drawSparseEsetQC(input_eset = pbmc14k_raw.eset,
+#'                  output_html_file = "/your-path/PBMC14k/PLOT/pbmc14k_rawCount.html",
+#'                  overwrite = FALSE,
+#'                  group_by = NULL)
 drawSparseEsetQC <- function(input_eset,
                              output_html_file,
                              overwrite = FALSE,

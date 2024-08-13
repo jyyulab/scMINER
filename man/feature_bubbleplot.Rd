@@ -47,8 +47,13 @@ This function is used to draw a bubble plot of selected features among self-defi
 \examples{
 features_of_interest <- c("CD3D","CD27","IL7R","SELL","CCR7","IL32","GZMA","GZMK","DUSP2","CD8A","GZMH","GZMB","CD79A","CD79B","CD86","CD14")
 ## 1. the most commonly used command
-p_bubble <- feature_bubbleplot(input_eset = clustered.eset, features = features_of_interest, group_by = "clusterID")
+feature_bubbleplot(input_eset = clustered.eset,
+                   features = features_of_interest,
+                   group_by = "clusterID")
 
 ## 2. customize the colors
-p_bubble <- feature_bubbleplot(input_eset = clustered.eset, features = features_of_interest, group_by = "clusterID", colors = c("lightgrey", "red"))
+feature_bubbleplot(input_eset = clustered.eset,
+                   features = features_of_interest,
+                   group_by = "clusterID",
+                   colors = c("lightgrey", "red"))
 }

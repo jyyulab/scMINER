@@ -34,5 +34,16 @@ This function is used to combine the sparse expression set objects. The combined
 different features, \code{NA} values will be generated and automatically imputed by the minimum value of the combined gene expression matrix.
 }
 \examples{
-combined.eset <- combineSparseEset(c(sample_1.eset, sample_2.eset, sample_3.eset), projectID = c("sample1", "sample2", "sample3"), addPrefix = c("tag1", "tag2", "tag3"), addMetaData = TRUE)
+demo1_mtx <- readInput_10x.dir(input_dir = system.file("extdata/demo_inputs/cell_matrix_10x", package = "scMINER"),
+                               featureType = "gene_symbol", removeSuffix = TRUE)
+demo1.eset <- createSparseEset(input_matrix = demo1_mtx, projectID = "demo1", addMetaData = TRUE)
+demo2_mtx <- readInput_table(table_file = system.file("extdata/demo_inputs/table_file/demoData2.txt.gz", package = "scMINER"),
+                             is.geneBYcell = TRUE, removeSuffix = TRUE)
+demo2.eset <- createSparseEset(input_matrix = demo2_mtx, projectID = "demo2", addMetaData = TRUE)
+combined.eset <- combineSparseEset(eset_list = c(demo1.eset, demo2.eset),
+                                   projectID = c("sample1", "sample2"),
+                                   addPrefix = c("demo1", "demo2"),
+                                   addSurfix = NULL,
+                                   addMetaData = TRUE,
+                                   imputeNA = TRUE)
 }

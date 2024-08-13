@@ -13,28 +13,39 @@ readInput_table(
 )
 }
 \arguments{
-\item{table_file}{The table format file (e.g. \strong{txt}, \strong{tsv}, \strong{csv}, and others) which the data are to be read from.}
+\item{table_file}{The table format file (e.g. \strong{txt}, \strong{tsv}, \strong{csv}, and
+others) which the data are to be read from.}
 
 \item{sep}{String, The field separator character. Default: \code{"\\t"}.}
 
-\item{is.geneBYcell}{Logical, whether the table is organized in \strong{gene (row) by cell (column)} format. If \code{FALSE}, the rows will be treated as cells. Default: \code{TRUE}.}
+\item{is.geneBYcell}{Logical, whether the table is organized in \strong{gene (row)
+by cell (column)} format. If \code{FALSE}, the rows will be treated as cells.
+Default: \code{TRUE}.}
 
-\item{removeSuffix}{Logical, whether to remove the suffix "\strong{-1}" when present in all cell barcodes. Default: \code{FALSE}.}
+\item{removeSuffix}{Logical, whether to remove the suffix "\strong{-1}" when
+present in all cell barcodes. Default: \code{FALSE}.}
 
-\item{addPrefix}{Character or \code{NULL}, add a prefix to the cell barcodes, like Sample ID. It is highly recommended to use a prefix containing letters and/or numbers only,
-and not starting with numbers. Default: \code{NULL}.}
+\item{addPrefix}{Character or \code{NULL}, add a prefix to the cell barcodes, like
+Sample ID. It is highly recommended to use a prefix containing letters
+and/or numbers only, and not starting with numbers. Default: \code{NULL}.}
 }
 \value{
 A sparse gene expression matrix, genes by cells
 }
 \description{
-This function is used to read data from a table-format file. The user needs to specify the format of the table using the parameter \strong{\code{is.geneBYcell}}:
+This function is used to read data from a table-format file. The
+user needs to specify the format of the table using the parameter
+\strong{\code{is.geneBYcell}}:
 \itemize{
 \item \code{TRUE} (the default): the rows will be treated as genes, while the columns will be treated as cells;
 \item \code{FALSE}: the rows will be treated as cells, while the columns will be treated as genes.
 }
 }
 \examples{
-table_file <- 'path-to-table_file'
-sparseMatrix <- readInput_table(table_file, sep = "\t", is.geneBYcell = TRUE, removeSuffix = FALSE, addPrefix = "demoSample")
+table_file <- system.file("extdata/demo_inputs/table_file/demoData2.txt.gz", package = "scMINER") # path to text-table file
+sparseMatrix <- readInput_table(table_file,
+                                sep = "\t",
+                                is.geneBYcell = TRUE,
+                                removeSuffix = FALSE,
+                                addPrefix = "demoSample")
 }

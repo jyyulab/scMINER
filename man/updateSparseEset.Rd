@@ -30,5 +30,11 @@ A sparse eset object with updated information
 This function is used to update the three slots ('\strong{assayData}', '\strong{phenoData}', '\strong{featureData}') and/or '\strong{meta data}' of sparse eset object.
 }
 \examples{
-updated.eset <- updateSparseEset(input_eset = input.eset, cellData = data.frame(pData(input.eset), cellType = "B_cells"), addMetaData = TRUE)
+true_label <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k_trueLabel.txt.gz", package = "scMINER"),
+                         header = T, row.names = 1, sep = "\t", quote = "", stringsAsFactors = FALSE)
+pbmc14k_raw.eset <- createSparseEset(input_matrix = pbmc14k_rawCount,
+                                     cellData = true_label,
+                                     featureData = NULL,
+                                     projectID = "PBMC14k",
+                                     addMetaData = TRUE)
 }

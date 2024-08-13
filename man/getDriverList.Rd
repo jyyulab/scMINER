@@ -18,6 +18,9 @@ A vector of pre-defined driver genes
 This function is used to extract the pre-defined driver lists of human or mouse.
 }
 \examples{
-hg_tf <- getDriverList(species_type = "hg", driver_type = "TF") # get the TF driver list of human
-mm_driver <- getDriverList(species_type = "mm", driver_type = "TF_SIG") # get the total driver list, including both TF and SIG, of mouse
+## 1. Get the TF driver list of human
+hg_tf <- getDriverList(species_type = "hg", driver_type = "TF")
+
+## 2. Get the total driver list, including both TF and SIG, of mouse
+mm_driver <- getDriverList(species_type = "mm", driver_type = "TF_SIG")
 }

@@ -12,8 +12,11 @@
 #' @export
 #'
 #' @examples
-#' hg_tf <- getDriverList(species_type = "hg", driver_type = "TF") # get the TF driver list of human
-#' mm_driver <- getDriverList(species_type = "mm", driver_type = "TF_SIG") # get the total driver list, including both TF and SIG, of mouse
+#' ## 1. Get the TF driver list of human
+#' hg_tf <- getDriverList(species_type = "hg", driver_type = "TF")
+#'
+#' ## 2. Get the total driver list, including both TF and SIG, of mouse
+#' mm_driver <- getDriverList(species_type = "mm", driver_type = "TF_SIG")
 getDriverList <- function(species_type = "hg",
                           driver_type = "TF")
 {
@@ -78,20 +81,38 @@ getDriverList <- function(species_type = "hg",
 #'
 #' @examples
 #' ## 1. The most commonly used command: pre-defined driver lists, automatic down-sampling, no metacell method
-#' generateSJARACNeInput(input_eset = normalized.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG")
+#' generateSJARACNeInput(input_eset = normalized.eset,
+#'                       group_name = "cell_type",
+#'                       sjaracne_dir = "./SJARACNe",
+#'                       species_type = "hg",
+#'                       driver_type = "TF_SIG")
 #'
 #' ## 2. to disable the downsampling
-#' generateSJARACNeInput(input_eset = normalized.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG", downSample_N = NULL)
+#' generateSJARACNeInput(input_eset = normalized.eset,
+#'                       group_name = "cell_type",
+#'                       sjaracne_dir = "./SJARACNe",
+#'                       species_type = "hg",
+#'                       driver_type = "TF_SIG",
+#'                       downSample_N = NULL)
 #'
-#' ## 3. Use the customized driver list: TUBB4A is the gene of interest but currently not in the pre-defined driver list.
-#' hg_driver <- getDriverList(species_type = "hg", driver_type = "TF_SIG")
-#' "TUBB4A" %in% hg_driver # It would returen FALSE if TUBB4A is not in the pre-defined driver lists
-#' generateSJARACNeInput(input_eset = normalized.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG", customDriver_TF = c(getDriverList(species_type = "hg", driver_type = "TF"), "TUBB4A")) # when the driver-to-add is known as a transcription factor
-#' generateSJARACNeInput(input_eset = normalized.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG", customDriver_SIG = c(getDriverList(species_type = "hg", driver_type = "SIG"), "TUBB4A")) # when the driver-to-add is known as a non-transcription factor
-#' generateSJARACNeInput(input_eset = normalized.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG", customDriver_TF = c(getDriverList(species_type = "hg", driver_type = "TF"), "TUBB4A"), customDriver_SIG = c(getDriverList(species_type = "hg", driver_type = "SIG"), "TUBB4A")) # when it's ambiguous to tell if the driver-to-add is a transcriptional factor
+#' ## 3. Use the customized driver list: (add TUBB4A is the gene of interest but currently not in the pre-defined driver list)
+#'
+#' # when the driver-to-add is known as a transcription factor
+#' generateSJARACNeInput(input_eset = normalized.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
+#'                       customDriver_TF = c(getDriverList(species_type = "hg", driver_type = "TF"), "TUBB4A"))
+#'
+#' # when the driver-to-add is known as a non-transcription factor
+#' generateSJARACNeInput(input_eset = normalized.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
+#'                       customDriver_SIG = c(getDriverList(species_type = "hg", driver_type = "SIG"), "TUBB4A"))
+#'
+#' # when it's ambiguous to tell if the driver-to-add is a transcriptional factor
+#' generateSJARACNeInput(input_eset = normalized.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
+#'                       customDriver_TF = c(getDriverList(species_type = "hg", driver_type = "TF"), "TUBB4A"),
+#'                       customDriver_SIG = c(getDriverList(species_type = "hg", driver_type = "SIG"), "TUBB4A"))
 #'
 #' ## 4. Use the metacell method
-#' generateSJARACNeInput(input_eset = normalized.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG", superCell_N = 1000, superCell_count = 100, seed = 123)
+#' generateSJARACNeInput(input_eset = normalized.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
+#'                       superCell_N = 1000, superCell_count = 100, seed = 123)
 generateSJARACNeInput <- function(input_eset,
                                   group_name = "clusterID",
                                   group_name.refine = FALSE,
@@ -360,13 +381,15 @@ generateSJARACNeInput <- function(input_eset,
 #' @export
 #'
 #' @examples
-#' ## 1. assess the quality of network from a network file
-#' drawNetworkQC(network_file = ./SJARACNE/B/SIG/b100/consensus_network_ncol_.txt, generate_htmal = TRUE) # the html file will be saved to the same folder as the network file
-#' drawNetworkQC(network_file = ./SJARACNE/B/SIG/b100/consensus_network_ncol_.txt, generate_htmal = TRUE, outdir = "/path-to-cutomized-folder") # the html file will be saved to the customized folder
-#' drawNetworkQC(network_file = ./SJARACNE/B/SIG/b100/consensus_network_ncol_.txt, generate_htmal = TRUE, prefix = "PBMC14") # add the "PBMC14" in front of the default name of html report
+#' ## 1. assess the quality of network from network files
+#' drawNetworkQC(network_file = ./SJARACNE/B/SIG/b100/consensus_network_ncol_.txt, generate_htmal = TRUE)
+#' drawNetworkQC(network_file = ./SJARACNE/B/SIG/b100/consensus_network_ncol_.txt, generate_htmal = TRUE,
+#'               outdir = "/path-to-cutomized-folder")
+#' drawNetworkQC(network_file = ./SJARACNE/B/SIG/b100/consensus_network_ncol_.txt, generate_htmal = TRUE,
+#'               prefix = "PBMC14")
 #'
-#' ## 2. assess the qulity of network from a directory
-#' drawNetworkQC(sjaracne_dir = ./SJARACNE, generate_html = TRUE) # the html file will be saved to the same folder as the network file
+#' ## 2. assess the quality of network from the directory of network files
+#' drawNetworkQC(sjaracne_dir = ./SJARACNE, generate_html = TRUE)
 drawNetworkQC <- function(network_file = NULL,
                           sjaracne_dir = NULL,
                           directed = TRUE, weighted = TRUE,
@@ -595,7 +618,8 @@ z_normalization <- function(x) {
 #'
 #' @return A list of source genes, for each source gene, the value is a data frame with "`target`", "`MI`" and "`spearman`" as the columns
 #'
-#' @examples net_data <-  read.table("./consensus_network_ncol_.txt", header = T, sep = "\t", stringsAsFactors = F, quote = "")
+#' @examples
+#' net_data <-  read.table("./consensus_network_ncol_.txt", header = T, sep = "\t", stringsAsFactors = F, quote = "")
 #' target_list <- get_net2target_list(net_data)
 get_net2target_list <- function(net_dat = NULL) {
   all_source <- base::unique(net_dat$source)
@@ -660,7 +684,8 @@ get_target_list2matrix <- function(target_list = NULL, activity_method = 'mean')
 #'
 #' @return a matrix of activities, drivers by cells
 #'
-#' @examples act_mat <- cal_Activity(target_list = target_list, cal_mat = exprs(normalized.eset), activity_method = 'mean', do.std = TRUE)
+#' @examples
+#' act_mat <- cal_Activity(target_list = target_list, cal_mat = exprs(normalized.eset), activity_method = 'mean', do.std = TRUE)
 cal_Activity <- function(target_list = NULL, cal_mat = NULL, activity_method = 'mean', do.std = TRUE) {
   ## check parameters
   if (is.null(target_list) == TRUE) {
@@ -675,7 +700,7 @@ cal_Activity <- function(target_list = NULL, cal_mat = NULL, activity_method = '
     message('The cal_mat is not specified.'); return(FALSE)
   }
 
-  ## prepare matrixes
+  ## prepare matrices
   mat_weight <- get_target_list2matrix(target_list, activity_method = activity_method) # matrix contains 0 (no edge) and signed MI
   mat_binary <- get_target_list2matrix(target_list, activity_method = 'mean') # matrix contains 0 (no edge) and 1 (with edge) only
 
@@ -737,7 +762,10 @@ cal_Activity <- function(target_list = NULL, cal_mat = NULL, activity_method = '
 #' @export
 #'
 #' @examples
-#' activity_group.eset <- getActivity_individual(input_eset = group_specific.est, network_file.tf = "consensus_network_ncol_.txt", network_file.sig = "consensus_network_ncol_.txt", driver_type = "TF_SIG")
+#' activity_group.eset <- getActivity_individual(input_eset = group_specific.est,
+#'                                               network_file.tf = "consensus_network_ncol_.txt",
+#'                                               network_file.sig = "consensus_network_ncol_.txt",
+#'                                               driver_type = "TF_SIG")
 getActivity_individual <- function(input_eset,
                                    network_file.tf = NULL,
                                    network_file.sig = NULL,
@@ -833,19 +861,53 @@ getActivity_individual <- function(input_eset,
 #'
 #' @examples
 #' ## 1. when no tag was used in runing SJARACNE: the network file folder ("sjaracne_workflow-*") is directly under TF/SIG folder of each group.
-#' activity.eset <- getActivity_inBatch(input_eset = normalized.eset, sjaracne_dir = "./SJARACNe", group_name = "cell_type", driver_type = "TF_SIG", activity_method = "mean", do.z_normalization = TRUE)
+#' activity.eset <- getActivity_inBatch(input_eset = normalized.eset,
+#'                                      sjaracne_dir = "./SJARACNe",
+#'                                      group_name = "cell_type",
+#'                                      driver_type = "TF_SIG",
+#'                                      activity_method = "mean",
+#'                                      do.z_normalization = TRUE)
 #'
 #' ## 2. when tag (e.g. "bs_100" ) was used: the nework file folder ("sjaracne_workflow-*") is directly under a subfolder "bs_100" of the TF/SIG folder of each group.
-#' activity.eset <- getActivity_inBatch(input_eset = normalized.eset, sjaracne_dir = "./SJARACNe", group_name = "cell_type", network_tag.tf = "bs_100", network_tag.sig = "bs_100", driver_type = "TF_SIG", activity_method = "mean", do.z_normalization = TRUE)
+#' activity.eset <- getActivity_inBatch(input_eset = normalized.eset,
+#'                                      sjaracne_dir = "./SJARACNe",
+#'                                      group_name = "cell_type",
+#'                                      network_tag.tf = "bs_100",
+#'                                      network_tag.sig = "bs_100",
+#'                                      driver_type = "TF_SIG",
+#'                                      activity_method = "mean",
+#'                                      do.z_normalization = TRUE)
 #'
 #' ## 3. to calculate the activities of TF only
-#' activity.eset <- getActivity_inBatch(input_eset = normalized.eset, sjaracne_dir = "./SJARACNe", group_name = "cell_type", network_tag.tf = "bs_100", network_tag.sig = "bs_100", driver_type = "TF", activity_method = "mean", do.z_normalization = TRUE)
+#' activity.eset <- getActivity_inBatch(input_eset = normalized.eset,
+#'                                      sjaracne_dir = "./SJARACNe",
+#'                                      group_name = "cell_type",
+#'                                      network_tag.tf = "bs_100",
+#'                                      network_tag.sig = "bs_100",
+#'                                      driver_type = "TF",
+#'                                      activity_method = "mean",
+#'                                      do.z_normalization = TRUE)
 #'
 #' ## 4. to exclude some groups in the activity calculation (e.g. "NK" and "Monocyte")
-#' activity.eset <- getActivity_inBatch(input_eset = normalized.eset, sjaracne_dir = "./SJARACNe", group_name = "cell_type", group_exclude = c("NK", "Monocyte"), network_tag.tf = "bs_100", network_tag.sig = "bs_100", driver_type = "TF", activity_method = "mean", do.z_normalization = TRUE)
+#' activity.eset <- getActivity_inBatch(input_eset = normalized.eset,
+#'                                      sjaracne_dir = "./SJARACNe",
+#'                                      group_name = "cell_type",
+#'                                      group_exclude = c("NK", "Monocyte"),
+#'                                      network_tag.tf = "bs_100",
+#'                                      network_tag.sig = "bs_100",
+#'                                      driver_type = "TF",
+#'                                      activity_method = "mean",
+#'                                      do.z_normalization = TRUE)
 #'
 #' ## 5. when calculate the activities from the gene expression values scaled by other methods (e.g. ScaleData() from Seurat package)
-#' activity.eset <- getActivity_inBatch(input_eset = normalized.eset, sjaracne_dir = "./SJARACNe", group_name = "cell_type", network_tag.tf = "bs_100", network_tag.sig = "bs_100", driver_type = "TF_SIG", activity_method = "mean", do.z_normalization = FALSE)
+#' activity.eset <- getActivity_inBatch(input_eset = normalized.eset,
+#'                                      sjaracne_dir = "./SJARACNe",
+#'                                      group_name = "cell_type",
+#'                                      network_tag.tf = "bs_100",
+#'                                      network_tag.sig = "bs_100",
+#'                                      driver_type = "TF_SIG",
+#'                                      activity_method = "mean",
+#'                                      do.z_normalization = FALSE)
 getActivity_inBatch <- function(input_eset,
                                 sjaracne_dir,
                                 group_name, group_exclude = NULL,
@@ -1031,7 +1093,7 @@ getActivity_inBatch <- function(input_eset,
   }
 
   ## prepare activity eset
-  acs_mtx <- data.frame(acs_master)
+  acs_mtx <- data.frame(acs_master, check.names = FALSE)
   acs_mtx <- acs_mtx[!is.na(acs_mtx$driver_id),]
   row.names(acs_mtx) <- acs_mtx$driver_id
   acs_mtx <- acs_mtx[,-1]

@@ -47,17 +47,32 @@ This function is used to draw a heatmap of selected features among self-defined 
 \examples{
 features_of_interest <- c("CD3D","CD27","IL7R","SELL","CCR7","IL32","GZMA","GZMK","DUSP2","CD8A","GZMH","GZMB","CD79A","CD79B","CD86","CD14")
 ## 1. the most commonly used command
-feature_heatmap(input_eset = clustered.eset, features = features_of_interest, group_by = "clusterID")
+feature_heatmap(input_eset = clustered.eset,
+                features = features_of_interest,
+                group_by = "clusterID")
 
 ## 2. add one more column ('true_label') for cell annotation
-feature_heatmap(input_eset = clustered.eset, features = features_of_interest, group_by = "clusterID", annotation_columns = c("true_label"))
+feature_heatmap(input_eset = clustered.eset,
+                features = features_of_interest,
+                group_by = "clusterID",
+                annotation_columns = c("true_label"))
 
 ## 3. scale the data by row
-feature_heatmap(input_eset = clustered.eset, features = features_of_interest, group_by = "clusterID", scale_method = "row")
+feature_heatmap(input_eset = clustered.eset,
+                features = features_of_interest,
+                group_by = "clusterID",
+                scale_method = "row")
 
 ## 4. cluster the rows
-feature_heatmap(input_eset = clustered.eset, features = features_of_interest, group_by = "clusterID", cluster_rows = TRUE)
+feature_heatmap(input_eset = clustered.eset,
+                features = features_of_interest,
+                group_by = "clusterID",
+                cluster_rows = TRUE)
 
 ## 5. add gaps
-feature_heatmap(input_eset = clustered.eset, features = features_of_interest, group_by = "clusterID", use_gaps.column = TRUE, use_gaps.row = TRUE)
+feature_heatmap(input_eset = clustered.eset,
+                features = features_of_interest,
+                group_by = "clusterID",
+                use_gaps.column = TRUE,
+                use_gaps.row = TRUE)
 }

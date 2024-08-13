@@ -32,20 +32,34 @@
 #' @export
 #'
 #' @examples
+#' data(pbmc14k_expression.eset)
+#'
 #' ## 1. violin plots grouped by clusters (say the column name is 'clusterID')
-#' p_vln <- feature_vlnplot(input_eset = clustered.eset, features = c("CD14", "CD19", "CD8A"), group_by = "clusterID")
+#' p_vln <- feature_vlnplot(input_eset = pbmc14k_expression.eset,
+#'                          features = c("CD14", "CD19", "CD8A"),
+#'                          group_by = "clusterID")
 #'
 #' ## 2. violin plots grouped by cell types (say the column name is 'cellType')
-#' p_vln <- feature_vlnplot(input_eset = clustered.eset, features = c("CD14", "CD19", "CD8A"), group_by = "cellType")
+#' p_vln <- feature_vlnplot(input_eset = pbmc14k_expression.eset,
+#'                          features = c("CD14", "CD19", "CD8A"),
+#'                          group_by = "cellType")
 #'
 #' ## 3. customize the colors to fill the violin plots
-#' p_vln <- feature_vlnplot(input_eset = clustered.eset, features = c("CD14", "CD19", "CD8A"), group_by = "clusterID", colors = c("blue", "red", "green"))
+#' p_vln <- feature_vlnplot(input_eset = pbmc14k_expression.eset,
+#'                          features = c("CD14", "CD19", "CD8A"),
+#'                          group_by = "clusterID",
+#'                          colors = c("blue", "red", "green"))
 #'
 #' ## 4. add jittered points
-#' p_vln <- feature_vlnplot(input_eset = clustered.eset, features = c("CD14", "CD19", "CD8A"), group_by = "clusterID", add_jitter = TRUE, jitter.width = 0.5, jitter.size = 0.5)
+#' p_vln <- feature_vlnplot(input_eset = pbmc14k_expression.eset,
+#'                          features = c("CD14", "CD19", "CD8A"),
+#'                          group_by = "clusterID",
+#'                          add_jitter = TRUE, jitter.width = 0.5, jitter.size = 0.5)
 #'
 #' ## 5. using activity data
-#' p_vln <- feature_vlnplot(input_eset = activity_clustered.eset, features = c("CD14_SIG", "CD19_SIG", "CD8A_SIG"), group_by = "clusterID", ylabel_text = "Activity")
+#' p_vln <- feature_vlnplot(input_eset = activity_clustered.eset,
+#'                          features = c("CD14_SIG", "CD19_SIG", "CD8A_SIG"),
+#'                          group_by = "clusterID", ylabel_text = "Activity")
 feature_vlnplot <- function(input_eset,
                             features = NULL,
                             group_by = "clusterID",
@@ -136,19 +150,32 @@ feature_vlnplot <- function(input_eset,
 #'
 #' @examples
 #' ## 1. violin plots grouped by clusters (say the column name is 'clusterID')
-#' p_box <- feature_boxplot(input_eset = clustered.eset, features = c("CD14", "CD19", "CD8A"), group_by = "clusterID")
+#' p_box <- feature_boxplot(input_eset = clustered.eset,
+#'                          features = c("CD14", "CD19", "CD8A"),
+#'                          group_by = "clusterID")
 #'
 #' ## 2. violin plots grouped by cell types (say the column name is 'cellType')
-#' p_box <- feature_boxplot(input_eset = clustered.eset, features = c("CD14", "CD19", "CD8A"), group_by = "cellType")
+#' p_box <- feature_boxplot(input_eset = clustered.eset,
+#'                          features = c("CD14", "CD19", "CD8A"),
+#'                          group_by = "cellType")
 #'
 #' ## 3. customize the colors to fill the violin plots
-#' p_box <- feature_boxplot(input_eset = clustered.eset, features = c("CD14", "CD19", "CD8A"), group_by = "clusterID", colors = c("blue", "red", "green"))
+#' p_box <- feature_boxplot(input_eset = clustered.eset,
+#'                          features = c("CD14", "CD19", "CD8A"),
+#'                          group_by = "clusterID",
+#'                          colors = c("blue", "red", "green"))
 #'
 #' ## 4. add jittered points
-#' p_box <- feature_boxplot(input_eset = clustered.eset, features = c("CD14", "CD19", "CD8A"), group_by = "clusterID", add_jitter = TRUE, jitter.width = 0.5, jitter.size = 0.5)
+#' p_box <- feature_boxplot(input_eset = clustered.eset,
+#'                          features = c("CD14", "CD19", "CD8A"),
+#'                          group_by = "clusterID",
+#'                          add_jitter = TRUE,
+#'                          jitter.width = 0.5, jitter.size = 0.5)
 #'
 #' ## 5. using activity data
-#' p_box <- feature_boxplot(input_eset = activity_clustered.eset, features = c("CD14_SIG", "CD19_SIG", "CD8A_SIG"), group_by = "clusterID", ylabel_text = "Activity")
+#' p_box <- feature_boxplot(input_eset = activity_clustered.eset,
+#'                          features = c("CD14_SIG", "CD19_SIG", "CD8A_SIG"),
+#'                          group_by = "clusterID", ylabel_text = "Activity")
 feature_boxplot <- function(input_eset,
                             features = NULL,
                             group_by = "clusterID",
@@ -234,13 +261,21 @@ feature_boxplot <- function(input_eset,
 #'
 #' @examples
 #' ## 1. scatter plots with UMAP projections
-#' p_scatter <- feature_scatterplot(input_eset = clustered.eset, features = c("CD14", "CD19", "CD8A"), location_x = "UMAP_1", location_y = "UMAP_2")
+#' feature_scatterplot(input_eset = clustered.eset,
+#'                     features = c("CD14", "CD19", "CD8A"),
+#'                     location_x = "UMAP_1", location_y = "UMAP_2")
 #'
 #' ## 2. scatter plots with t-SNE projections
-#' p_scatter <- feature_scatterplot(input_eset = clustered.eset, features = c("CD14", "CD19", "CD8A"), location_x = "tSNE_1", location_y = "tSNE_2")
+#' feature_scatterplot(input_eset = clustered.eset,
+#'                     features = c("CD14", "CD19", "CD8A"),
+#'                     location_x = "tSNE_1", location_y = "tSNE_2")
 #'
 #' ## 3. change the point size and font size
-#' p_scatter <- feature_scatterplot(input_eset = clustered.eset, features = c("CD14", "CD19", "CD8A"), location_x = "UMAP_1", location_y = "UMAP_2", point.size = 1, fontsize.strip = 12, fontsize.axis = 10)
+#' feature_scatterplot(input_eset = clustered.eset,
+#'                     features = c("CD14", "CD19", "CD8A"),
+#'                     location_x = "UMAP_1", location_y = "UMAP_2",
+#'                     point.size = 1,
+#'                     fontsize.strip = 12, fontsize.axis = 10)
 feature_scatterplot <- function(input_eset,
                                 features = NULL,
                                 location_x = "UMAP_1", location_y = "UMAP_2",
@@ -323,10 +358,15 @@ feature_scatterplot <- function(input_eset,
 #' @examples
 #' features_of_interest <- c("CD3D","CD27","IL7R","SELL","CCR7","IL32","GZMA","GZMK","DUSP2","CD8A","GZMH","GZMB","CD79A","CD79B","CD86","CD14")
 #' ## 1. the most commonly used command
-#' p_bubble <- feature_bubbleplot(input_eset = clustered.eset, features = features_of_interest, group_by = "clusterID")
+#' feature_bubbleplot(input_eset = clustered.eset,
+#'                    features = features_of_interest,
+#'                    group_by = "clusterID")
 #'
 #' ## 2. customize the colors
-#' p_bubble <- feature_bubbleplot(input_eset = clustered.eset, features = features_of_interest, group_by = "clusterID", colors = c("lightgrey", "red"))
+#' feature_bubbleplot(input_eset = clustered.eset,
+#'                    features = features_of_interest,
+#'                    group_by = "clusterID",
+#'                    colors = c("lightgrey", "red"))
 feature_bubbleplot <- function(input_eset,
                                features = NULL,
                                group_by = "clusterID",
@@ -407,19 +447,34 @@ feature_bubbleplot <- function(input_eset,
 #' @examples
 #' features_of_interest <- c("CD3D","CD27","IL7R","SELL","CCR7","IL32","GZMA","GZMK","DUSP2","CD8A","GZMH","GZMB","CD79A","CD79B","CD86","CD14")
 #' ## 1. the most commonly used command
-#' feature_heatmap(input_eset = clustered.eset, features = features_of_interest, group_by = "clusterID")
+#' feature_heatmap(input_eset = clustered.eset,
+#'                 features = features_of_interest,
+#'                 group_by = "clusterID")
 #'
 #' ## 2. add one more column ('true_label') for cell annotation
-#' feature_heatmap(input_eset = clustered.eset, features = features_of_interest, group_by = "clusterID", annotation_columns = c("true_label"))
+#' feature_heatmap(input_eset = clustered.eset,
+#'                 features = features_of_interest,
+#'                 group_by = "clusterID",
+#'                 annotation_columns = c("true_label"))
 #'
 #' ## 3. scale the data by row
-#' feature_heatmap(input_eset = clustered.eset, features = features_of_interest, group_by = "clusterID", scale_method = "row")
+#' feature_heatmap(input_eset = clustered.eset,
+#'                 features = features_of_interest,
+#'                 group_by = "clusterID",
+#'                 scale_method = "row")
 #'
 #' ## 4. cluster the rows
-#' feature_heatmap(input_eset = clustered.eset, features = features_of_interest, group_by = "clusterID", cluster_rows = TRUE)
+#' feature_heatmap(input_eset = clustered.eset,
+#'                 features = features_of_interest,
+#'                 group_by = "clusterID",
+#'                 cluster_rows = TRUE)
 #'
 #' ## 5. add gaps
-#' feature_heatmap(input_eset = clustered.eset, features = features_of_interest, group_by = "clusterID", use_gaps.column = TRUE, use_gaps.row = TRUE)
+#' feature_heatmap(input_eset = clustered.eset,
+#'                 features = features_of_interest,
+#'                 group_by = "clusterID",
+#'                 use_gaps.column = TRUE,
+#'                 use_gaps.row = TRUE)
 feature_heatmap <- function(input_eset,
                             features = NULL,
                             group_by = "clusterID",
@@ -500,10 +555,15 @@ feature_heatmap <- function(input_eset,
 #'
 #' @examples
 #' ## 1. bar plot grouped by clusters ("clusterID") and colored by true labels ("true_label)
-#' p_bar <- draw_barplot(input_eset = clustered.eset, group_by = "clusterID", color_by = "true_label")
+#' draw_barplot(input_eset = clustered.eset,
+#'              group_by = "clusterID",
+#'              color_by = "true_label")
 #'
 #' ## 2. customize the colors
-#' p_bar <- draw_barplot(input_eset = clustered.eset, group_by = "clusterID", color_by = "true_label", colors = c("green", "red", "blue", "grey", "orange", "purple", "yellow"))
+#' draw_barplot(input_eset = clustered.eset,
+#'              group_by = "clusterID",
+#'              color_by = "true_label",
+#'              colors = c("green", "red", "blue", "grey", "orange", "purple", "yellow"))
 draw_barplot <- function(input_eset,
                          group_by = "clusterID",
                          color_by = "cell_type",
@@ -562,10 +622,15 @@ draw_barplot <- function(input_eset,
 #' signature_table <- openxlsx::read.xlsx(marker_file)
 #' head(signature_table)
 #' ## 1. the most commonly used command
-#' p_bubbleplot <- draw_bubbleplot(input_eset = clustered.eset, signature_table = signature_table, group_by = "clusterID")
+#' draw_bubbleplot(input_eset = clustered.eset,
+#'                 signature_table = signature_table,
+#'                 group_by = "clusterID")
 #'
 #' ## 2. customize the colors
-#' p_bubbleplot <- draw_bubbleplot(input_eset = clustered.eset, signature_table = signature_table, group_by = "clusterID", colors = c("lightgrey", "red"))
+#' draw_bubbleplot(input_eset = clustered.eset,
+#'                 signature_table = signature_table,
+#'                 group_by = "clusterID",
+#'                 colors = c("lightgrey", "red"))
 draw_bubbleplot <- function(input_eset,
                             signature_table = NULL,
                             group_by = "clusterID",
@@ -666,18 +731,27 @@ draw_bubbleplot <- function(input_eset,
 #'
 #' @examples
 #' ## 1. the most commonly used command
-#' generatePortalInputs(input_expression.eset = expression_clustered.eset, group_by = "cellType", input_activity.eset = activity_clustered.eset, input_network.dir = "./SJARACNe", output_dir = "./scMINERportal")
+#' generatePortalInputs(input_expression.eset = expression_clustered.eset,
+#'                      group_by = "cellType",
+#'                      input_activity.eset = activity_clustered.eset,
+#'                      input_network.dir = "./SJARACNe",
+#'                      output_dir = "./scMINERportal")
 #'
 #' ## 2. prepare expression data from Seurat object ("pbmc14.obj")
-#' generatePortalInputs(input_expression.seuratObj = pbmc14.obj, output_dir = "./path-to-output_dir")
+#' generatePortalInputs(input_expression.seuratObj = pbmc14.obj,
+#'                      output_dir = "./path-to-output_dir")
 #'
 #' ## 3. prepare network data from a table
-#' network.table <- data.frame(CellGroup = c("CD4__CD25_T_Reg", "CD4__CD25_T_Reg", "CD19__B", "CD19__B"),NetworkType = c("SIG", "TF", "SIG", "TF"),
-#'                             NetworkFile = c("./sjaracne/CD4__CD25_T_Reg/SIG/b100_pce-3/sjaracne_workflow-1474c41b-067b-4f86-ab99-09f73dadb16g/consensus_network_ncol_.txt",
-#'                                             "./sjaracne/CD4__CD25_T_Reg/TF/b100_pce-3/sjaracne_workflow-a93cd6db-7253-4ffb-ae4e-633b9dedf11d/consensus_network_ncol_.txt",
-#'                                             "./sjaracne/CD19__B/SIG/sjaracne_workflow-da0c3c72-7afb-44fa-973b-e4d767e20b6f/consensus_network_ncol_.txt",
-#'                                             "./sjaracne/CD19__B/TF/sjaracne_workflow-0426ea12-10bf-428c-b199-d5bd1a7aab5f/consensus_network_ncol_.txt"))
-#' generatePortalInputs(input_expression.eset = expression_clustered.eset, group_by = "cellType", input_network.table = network.table, output_dir = "./path-to-output_dir")
+#' network.table <- data.frame(CellGroup = c("CD4Treg", "CD4Treg", "B", "B"),
+#'                             NetworkType = c("SIG", "TF", "SIG", "TF"),
+#'                             NetworkFile = c("./sjaracne/CD4Treg/SIG/consensus_network_ncol_.txt",
+#'                                             "./sjaracne/CD4Treg/TF/consensus_network_ncol_.txt",
+#'                                             "./sjaracne/B/SIG/consensus_network_ncol_.txt",
+#'                                             "./sjaracne/B/TF/consensus_network_ncol_.txt"))
+#' generatePortalInputs(input_expression.eset = expression_clustered.eset,
+#'                      group_by = "cellType",
+#'                      input_network.table = network.table,
+#'                      output_dir = "./path-to-output_dir")
 generatePortalInputs <- function(input_expression.eset = NULL,
                                  input_expression.seuratObj = NULL,
                                  group_by = NULL,

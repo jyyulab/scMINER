@@ -31,14 +31,26 @@ This function is used to perform the differential expression analysis on sparse 
 }
 \examples{
 ## 1. To perform differential expression analysis in a 1-vs-rest manner for all groups in "clusterID" column
-de_res <- getDE(input_eset = clustered.eset, group_by = "clusterID", use_method = "limma")
+de_res <- getDE(input_eset = clustered.eset,
+                group_by = "clusterID",
+                use_method = "limma")
 
 ## 2. To perform differential expression analysis in a 1-vs-rest manner for one specific group in "clusterID" column
-de_res <- getDE(input_eset = clustered.eset, group_by = "clusterID", g1 = c("1"), use_method = "limma")
+de_res <- getDE(input_eset = clustered.eset,
+                group_by = "clusterID",
+                g1 = c("1"),
+                use_method = "limma")
 
 ## 3. To perform differential expression analysis in a rest-vs-1 manner for one specific group in "clusterID" column
-de_res <- getDE(input_eset = clustered.eset, group_by = "clusterID", g0 = c("1"), use_method = "limma")
+de_res <- getDE(input_eset = clustered.eset,
+                group_by = "clusterID",
+                g0 = c("1"),
+                use_method = "limma")
 
 ## 4. To perform differential expression analysis in a 1-vs-1 manner for groups in "clusterID" column
-de_res <- getDE(input_eset = clustered.eset, group_by = "clusterID", g1 = c("1"), g0 = c("3"), use_method = "limma")
+de_res <- getDE(input_eset = clustered.eset,
+                group_by = "clusterID",
+                g1 = c("1"),
+                g0 = c("3"),
+                use_method = "limma")
 }

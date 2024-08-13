@@ -70,17 +70,30 @@ This function is used to draw a box plot of selected features among self-defined
 }
 \examples{
 ## 1. violin plots grouped by clusters (say the column name is 'clusterID')
-p_box <- feature_boxplot(input_eset = clustered.eset, features = c("CD14", "CD19", "CD8A"), group_by = "clusterID")
+p_box <- feature_boxplot(input_eset = clustered.eset,
+                         features = c("CD14", "CD19", "CD8A"),
+                         group_by = "clusterID")
 
 ## 2. violin plots grouped by cell types (say the column name is 'cellType')
-p_box <- feature_boxplot(input_eset = clustered.eset, features = c("CD14", "CD19", "CD8A"), group_by = "cellType")
+p_box <- feature_boxplot(input_eset = clustered.eset,
+                         features = c("CD14", "CD19", "CD8A"),
+                         group_by = "cellType")
 
 ## 3. customize the colors to fill the violin plots
-p_box <- feature_boxplot(input_eset = clustered.eset, features = c("CD14", "CD19", "CD8A"), group_by = "clusterID", colors = c("blue", "red", "green"))
+p_box <- feature_boxplot(input_eset = clustered.eset,
+                         features = c("CD14", "CD19", "CD8A"),
+                         group_by = "clusterID",
+                         colors = c("blue", "red", "green"))
 
 ## 4. add jittered points
-p_box <- feature_boxplot(input_eset = clustered.eset, features = c("CD14", "CD19", "CD8A"), group_by = "clusterID", add_jitter = TRUE, jitter.width = 0.5, jitter.size = 0.5)
+p_box <- feature_boxplot(input_eset = clustered.eset,
+                         features = c("CD14", "CD19", "CD8A"),
+                         group_by = "clusterID",
+                         add_jitter = TRUE,
+                         jitter.width = 0.5, jitter.size = 0.5)
 
 ## 5. using activity data
-p_box <- feature_boxplot(input_eset = activity_clustered.eset, features = c("CD14_SIG", "CD19_SIG", "CD8A_SIG"), group_by = "clusterID", ylabel_text = "Activity")
+p_box <- feature_boxplot(input_eset = activity_clustered.eset,
+                         features = c("CD14_SIG", "CD19_SIG", "CD8A_SIG"),
+                         group_by = "clusterID", ylabel_text = "Activity")
 }

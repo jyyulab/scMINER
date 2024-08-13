@@ -43,17 +43,51 @@ This function is used to calculate the driver activities of multiple groups from
 }
 \examples{
 ## 1. when no tag was used in runing SJARACNE: the network file folder ("sjaracne_workflow-*") is directly under TF/SIG folder of each group.
-activity.eset <- getActivity_inBatch(input_eset = normalized.eset, sjaracne_dir = "./SJARACNe", group_name = "cell_type", driver_type = "TF_SIG", activity_method = "mean", do.z_normalization = TRUE)
+activity.eset <- getActivity_inBatch(input_eset = normalized.eset,
+                                     sjaracne_dir = "./SJARACNe",
+                                     group_name = "cell_type",
+                                     driver_type = "TF_SIG",
+                                     activity_method = "mean",
+                                     do.z_normalization = TRUE)
 
 ## 2. when tag (e.g. "bs_100" ) was used: the nework file folder ("sjaracne_workflow-*") is directly under a subfolder "bs_100" of the TF/SIG folder of each group.
-activity.eset <- getActivity_inBatch(input_eset = normalized.eset, sjaracne_dir = "./SJARACNe", group_name = "cell_type", network_tag.tf = "bs_100", network_tag.sig = "bs_100", driver_type = "TF_SIG", activity_method = "mean", do.z_normalization = TRUE)
+activity.eset <- getActivity_inBatch(input_eset = normalized.eset,
+                                     sjaracne_dir = "./SJARACNe",
+                                     group_name = "cell_type",
+                                     network_tag.tf = "bs_100",
+                                     network_tag.sig = "bs_100",
+                                     driver_type = "TF_SIG",
+                                     activity_method = "mean",
+                                     do.z_normalization = TRUE)
 
 ## 3. to calculate the activities of TF only
-activity.eset <- getActivity_inBatch(input_eset = normalized.eset, sjaracne_dir = "./SJARACNe", group_name = "cell_type", network_tag.tf = "bs_100", network_tag.sig = "bs_100", driver_type = "TF", activity_method = "mean", do.z_normalization = TRUE)
+activity.eset <- getActivity_inBatch(input_eset = normalized.eset,
+                                     sjaracne_dir = "./SJARACNe",
+                                     group_name = "cell_type",
+                                     network_tag.tf = "bs_100",
+                                     network_tag.sig = "bs_100",
+                                     driver_type = "TF",
+                                     activity_method = "mean",
+                                     do.z_normalization = TRUE)
 
 ## 4. to exclude some groups in the activity calculation (e.g. "NK" and "Monocyte")
-activity.eset <- getActivity_inBatch(input_eset = normalized.eset, sjaracne_dir = "./SJARACNe", group_name = "cell_type", group_exclude = c("NK", "Monocyte"), network_tag.tf = "bs_100", network_tag.sig = "bs_100", driver_type = "TF", activity_method = "mean", do.z_normalization = TRUE)
+activity.eset <- getActivity_inBatch(input_eset = normalized.eset,
+                                     sjaracne_dir = "./SJARACNe",
+                                     group_name = "cell_type",
+                                     group_exclude = c("NK", "Monocyte"),
+                                     network_tag.tf = "bs_100",
+                                     network_tag.sig = "bs_100",
+                                     driver_type = "TF",
+                                     activity_method = "mean",
+                                     do.z_normalization = TRUE)
 
 ## 5. when calculate the activities from the gene expression values scaled by other methods (e.g. ScaleData() from Seurat package)
-activity.eset <- getActivity_inBatch(input_eset = normalized.eset, sjaracne_dir = "./SJARACNe", group_name = "cell_type", network_tag.tf = "bs_100", network_tag.sig = "bs_100", driver_type = "TF_SIG", activity_method = "mean", do.z_normalization = FALSE)
+activity.eset <- getActivity_inBatch(input_eset = normalized.eset,
+                                     sjaracne_dir = "./SJARACNe",
+                                     group_name = "cell_type",
+                                     network_tag.tf = "bs_100",
+                                     network_tag.sig = "bs_100",
+                                     driver_type = "TF_SIG",
+                                     activity_method = "mean",
+                                     do.z_normalization = FALSE)
 }

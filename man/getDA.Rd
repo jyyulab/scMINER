@@ -31,14 +31,26 @@ Perform differential activity analysis on expression set
 }
 \examples{
 ## 1. To perform differential activity analysis in a 1-vs-rest manner for all groups in "clusterID" column
-da_res <- getDA(input_eset = activity_clustered.eset, group_by = "clusterID", use_method = "t.test")
+da_res <- getDA(input_eset = activity_clustered.eset,
+                group_by = "clusterID",
+                use_method = "t.test")
 
 ## 2. To perform differential activity analysis in a 1-vs-rest manner for one specific group in "clusterID" column
-da_res <- getDA(input_eset = activity_clustered.eset, group_by = "clusterID", g1 = c("1"), use_method = "t.test")
+da_res <- getDA(input_eset = activity_clustered.eset,
+                group_by = "clusterID",
+                g1 = c("1"),
+                use_method = "t.test")
 
 ## 3. To perform differential activity analysis in a rest-vs-1 manner for one specific group in "clusterID" column
-da_res <- getDA(input_eset = activity_clustered.eset, group_by = "clusterID", g0 = c("1"), use_method = "t.test")
+da_res <- getDA(input_eset = activity_clustered.eset,
+                group_by = "clusterID",
+                g0 = c("1"),
+                use_method = "t.test")
 
 ## 4. To perform differential activity analysis in a 1-vs-1 manner for groups in "clusterID" column
-da_res <- getDA(input_eset = activity_clustered.eset, group_by = "clusterID", g1 = c("1"), g0 = c("3"), use_method = "t.test")
+da_res <- getDA(input_eset = activity_clustered.eset,
+                group_by = "clusterID",
+                g1 = c("1"),
+                g0 = c("3"),
+                use_method = "t.test")
 }
