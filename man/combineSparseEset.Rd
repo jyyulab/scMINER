@@ -46,4 +46,5 @@ combined.eset <- combineSparseEset(eset_list = c(demo1.eset, demo2.eset),
                                    addSurfix = NULL,
                                    addMetaData = TRUE,
                                    imputeNA = TRUE)
+
 }

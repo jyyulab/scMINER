@@ -47,4 +47,5 @@ sparseMatrix <- readInput_10x.dir(input_dir,
                                   featureType = "gene_symbol",
                                   removeSuffix = TRUE,
                                   addPrefix = "demoSample")
+
 }

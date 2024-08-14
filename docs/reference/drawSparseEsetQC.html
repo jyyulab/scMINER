@@ -92,10 +92,27 @@ contains more comprehensive and detailed QC results and can be used to estimate 
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">drawSparseEsetQC</span><span class="op">(</span><span class="va">input_eset</span>, output_html_file <span class="op">=</span> <span class="st">"./QC/esetQCreport.html"</span>, overwrite <span class="op">=</span> <span class="cn">FALSE</span>, group <span class="op">=</span> <span class="st">"projectID"</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## 1. To generate the QC report in a group-specific manner, recommended whenever group information is avaiable.</span></span></span>
+<span class="r-in"><span><span class="fu">drawSparseEsetQC</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_raw.eset</span>,</span></span>
+<span class="r-in"><span>                 output_html_file <span class="op">=</span> <span class="st">"/your-path/PBMC14k/PLOT/pbmc14k_rawCount.html"</span>,</span></span>
+<span class="r-in"><span>                 overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>                 group_by <span class="op">=</span> <span class="st">"trueLabel"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Checkinig the output html file ...</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>cannot create dir '/your-path/PBMC14k', reason 'No such file or directory'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	The directory of output html file does not exists. Now it has been created!</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Checkinig the group_by information in eset ...</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'object' in selecting a method for function 'pData': object 'input_eset' not found</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'object' in selecting a method for function 'pData': object 'pbmc14k_raw.eset' not found</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 2. To generate the QC report from a whole view</span></span></span>
+<span class="r-in"><span><span class="fu">drawSparseEsetQC</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_raw.eset</span>,</span></span>
+<span class="r-in"><span>                 output_html_file <span class="op">=</span> <span class="st">"/your-path/PBMC14k/PLOT/pbmc14k_rawCount.html"</span>,</span></span>
+<span class="r-in"><span>                 overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>                 group_by <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Checkinig the output html file ...</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>cannot create dir '/your-path/PBMC14k', reason 'No such file or directory'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	The directory of output html file does not exists. Now it has been created!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Checking the availability of the 5 metrics ('nCell', 'nUMI', 'nFeature', 'pctMito', 'pctSpikeIn') used for quanlity control ...</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'object' in selecting a method for function 'fData': object 'pbmc14k_raw.eset' not found</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

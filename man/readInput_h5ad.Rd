@@ -32,4 +32,5 @@ h5ad_file <- system.file("extdata/demo_inputs/h5ad_file/demoData4.h5ad", package
 sparseMatrix <- readInput_h5ad(h5ad_file,
                                removeSuffix = FALSE,
                                addPrefix = "demoSample")
+
 }

@@ -48,4 +48,5 @@ sparseMatrix <- readInput_table(table_file,
                                 is.geneBYcell = TRUE,
                                 removeSuffix = FALSE,
                                 addPrefix = "demoSample")
+
 }

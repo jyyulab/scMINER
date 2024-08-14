@@ -31,7 +31,8 @@ This function is used to generate the standard input files for MICA (Mutual Info
 supports two file formats, "\strong{.txt}" or "\strong{.h5ad}". To generate a "\strong{.h5ad}" file, the "\strong{anndata}" package is required.
 }
 \examples{
-generateMICAinput(input_eset = pbmc14k_log2cpm.eset,
+data(pbmc14k_expression.eset)
+generateMICAinput(input_eset = pbmc14k_expression.eset,
                   output_file = "/work-path/PBMC14k/MICA/micaInput.txt",
                   overwrite = FALSE)
 }

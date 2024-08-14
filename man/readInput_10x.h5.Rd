@@ -40,4 +40,5 @@ sparseMatrix <- readInput_10x.h5(h5_file,
                                  featureType = "gene_symbol",
                                  removeSuffix = TRUE,
                                  addPrefix = "demoSample")
+
 }

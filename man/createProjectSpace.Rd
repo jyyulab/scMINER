@@ -26,6 +26,9 @@ scMINER analysis. It also creastes 4 subfolers inside of it: "\code{DATA}",
 "\code{MICA}", "\code{SJARACNe}" and "\code{PLOT}".
 }
 \examples{
+\dontrun{
 scminer_dir <- createProjectSpace(project_dir = "path-to-a-folder",
                                   project_name = "PBMC14k")
+}
+
 }

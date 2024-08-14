@@ -81,24 +81,26 @@ A ggplot object with one or multiple violin plots
 This function is used to draw a violin plot of selected features among self-defined groups from a sparse eset object.
 }
 \examples{
+data(pbmc14k_expression.eset)
+
 ## 1. violin plots grouped by clusters (say the column name is 'clusterID')
-p_vln <- feature_vlnplot(input_eset = pbmc14k_log2cpm.eset,
+p_vln <- feature_vlnplot(input_eset = pbmc14k_expression.eset,
                          features = c("CD14", "CD19", "CD8A"),
                          group_by = "clusterID")
 
 ## 2. violin plots grouped by cell types (say the column name is 'cellType')
-p_vln <- feature_vlnplot(input_eset = pbmc14k_log2cpm.eset,
+p_vln <- feature_vlnplot(input_eset = pbmc14k_expression.eset,
                          features = c("CD14", "CD19", "CD8A"),
                          group_by = "cellType")
 
 ## 3. customize the colors to fill the violin plots
-p_vln <- feature_vlnplot(input_eset = pbmc14k_log2cpm.eset,
+p_vln <- feature_vlnplot(input_eset = pbmc14k_expression.eset,
                          features = c("CD14", "CD19", "CD8A"),
                          group_by = "clusterID",
                          colors = c("blue", "red", "green"))
 
 ## 4. add jittered points
-p_vln <- feature_vlnplot(input_eset = pbmc14k_log2cpm.eset,
+p_vln <- feature_vlnplot(input_eset = pbmc14k_expression.eset,
                          features = c("CD14", "CD19", "CD8A"),
                          group_by = "clusterID",
                          add_jitter = TRUE, jitter.width = 0.5, jitter.size = 0.5)

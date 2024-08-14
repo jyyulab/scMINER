@@ -78,5 +78,6 @@ reference:
   - cal_Activity
   - SparseExpressionSet-class
   - pbmc14k_rawCount
+  - pbmc14k_expression.eset
 
 

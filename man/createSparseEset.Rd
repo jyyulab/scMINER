@@ -46,7 +46,18 @@ It can also generate the meta data for both automatically, if \strong{\code{addM
 }
 \examples{
 data("pbmc14k_rawCount")
+## 1. Create SparseEset object solely from raw count matrix
 pbmc14k_raw.eset <- createSparseEset(input_matrix = pbmc14k_rawCount,
                                      projectID = "PBMC14k",
                                      addMetaData = TRUE)
+
+## 2. Create SparseEset with customized meta data
+true_label <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k_trueLabel.txt.gz", package = "scMINER"),
+                         header = T, row.names = 1, sep = "\t", quote = "", stringsAsFactors = FALSE)
+pbmc14k_raw.eset <- createSparseEset(input_matrix = pbmc14k_rawCount,
+                                     cellData = true_label,
+                                     featureData = NULL,
+                                     projectID = "PBMC14k",
+                                     addMetaData = TRUE)
+
 }
