@@ -130,12 +130,21 @@ features would be removed under the default cutoffs of each metrics.</p></li>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">filtered.eset</span> <span class="op">&lt;-</span> <span class="fu">filterSparseEset</span><span class="op">(</span><span class="va">raw.eset</span><span class="op">)</span> <span class="co">## filter the input eset using the cutoffs calculated by scMINER.</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## 1. using the cutoffs automatically calculated by scMINER</span></span></span>
+<span class="r-in"><span><span class="va">pbmc14k_filtered.eset</span> <span class="op">&lt;-</span> <span class="fu">filterSparseEset</span><span class="op">(</span><span class="va">pbmc14k_raw.eset</span>, filter_mode <span class="op">=</span> <span class="st">"auto"</span>, filter_type <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Checking the availability of the 5 metrics ('nCell', 'nUMI', 'nFeature', 'pctMito', 'pctSpikeIn') used for filtration ...</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'object' in selecting a method for function 'fData': object 'raw.eset' not found</span>
-<span class="r-in"><span><span class="va">filtered.eset</span> <span class="op">&lt;-</span> <span class="fu">filterSparseEset</span><span class="op">(</span><span class="va">raw.eset</span>, gene.nCell_min <span class="op">=</span> <span class="fl">10</span>, cell.nUMI_min <span class="op">=</span> <span class="fl">500</span>, cell.nFeature_min <span class="op">=</span> <span class="fl">100</span>, cell.nFeature_max <span class="op">=</span> <span class="fl">5000</span>, cell.pctMito_max <span class="op">=</span> <span class="fl">0.15</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'object' in selecting a method for function 'fData': object 'pbmc14k_raw.eset' not found</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 2. using the cutoffs manually specified</span></span></span>
+<span class="r-in"><span><span class="va">pbmc14k_filtered_manual.eset</span> <span class="op">&lt;-</span> <span class="fu">filterSparseEset</span><span class="op">(</span><span class="va">pbmc14k_raw.eset</span>, filter_mode <span class="op">=</span> <span class="st">"manual"</span>, filter_type <span class="op">=</span> <span class="st">"both"</span>,</span></span>
+<span class="r-in"><span>                                                 gene.nCell_min <span class="op">=</span> <span class="fl">10</span>,</span></span>
+<span class="r-in"><span>                                                 cell.nUMI_min <span class="op">=</span> <span class="fl">500</span>,</span></span>
+<span class="r-in"><span>                                                 cell.nUMI_max <span class="op">=</span> <span class="fl">6500</span>,</span></span>
+<span class="r-in"><span>                                                 cell.nFeature_min <span class="op">=</span> <span class="fl">200</span>,</span></span>
+<span class="r-in"><span>                                                 cell.nFeature_max <span class="op">=</span> <span class="fl">2500</span>,</span></span>
+<span class="r-in"><span>                                                 cell.pctMito_max <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Checking the availability of the 5 metrics ('nCell', 'nUMI', 'nFeature', 'pctMito', 'pctSpikeIn') used for filtration ...</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'object' in selecting a method for function 'fData': object 'raw.eset' not found</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'object' in selecting a method for function 'fData': object 'pbmc14k_raw.eset' not found</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -73,8 +73,11 @@ dimension reduction coordinates of each cell, either UMAP ot tSNE.
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">clustered.eset</span> <span class="op">&lt;-</span> <span class="fu">addMICAoutput</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">input_eset</span>, mica_output_file <span class="op">=</span> <span class="st">"/path-to-mica-input/clustering_UMAP_euclidean_20_2.22554.txt"</span>, visual_method <span class="op">=</span> <span class="st">"umap"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in addMICAoutput(input_eset = input_eset, mica_output_file = "/path-to-mica-input/clustering_UMAP_euclidean_20_2.22554.txt",     visual_method = "umap"):</span> The MICA output file is not found: /path-to-mica-input/clustering_UMAP_euclidean_20_2.22554.txt.</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">pbmc14k_expression.eset</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pbmc14k_log2cpm.eset</span> <span class="op">&lt;-</span> <span class="fu">addMICAoutput</span><span class="op">(</span><span class="va">pbmc14k_expression.eset</span>,</span></span>
+<span class="r-in"><span>                                      mica_output_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo_pbmc14k/MICA/clustering_UMAP_euclidean_20_2.05.txt"</span>, package <span class="op">=</span> <span class="st">"scMINER"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                      visual_method <span class="op">=</span> <span class="st">"umap"</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in addMICAoutput(pbmc14k_expression.eset, mica_output_file = system.file("extdata/demo_pbmc14k/MICA/clustering_UMAP_euclidean_20_2.05.txt",     package = "scMINER"), visual_method = "umap"):</span> The eset and the mica_output_file do not match. Please check and re-try.</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
