@@ -30,6 +30,7 @@
 #'                                   featureType = "gene_symbol",
 #'                                   removeSuffix = TRUE,
 #'                                   addPrefix = "demoSample")
+#'
 readInput_10x.dir <- function(input_dir,
                               featureType = "gene_symbol",
                               removeSuffix = TRUE, addPrefix = NULL)
@@ -145,6 +146,7 @@ readInput_10x.dir <- function(input_dir,
 #'                                  featureType = "gene_symbol",
 #'                                  removeSuffix = TRUE,
 #'                                  addPrefix = "demoSample")
+#'
 readInput_10x.h5 <- function(h5_file,
                              featureType = "gene_symbol",
                              removeSuffix = TRUE,
@@ -252,6 +254,7 @@ readInput_10x.h5 <- function(h5_file,
 #' sparseMatrix <- readInput_h5ad(h5ad_file,
 #'                                removeSuffix = FALSE,
 #'                                addPrefix = "demoSample")
+#'
 readInput_h5ad <- function(h5ad_file,
                            removeSuffix = FALSE, addPrefix = NULL)
 {
@@ -322,6 +325,7 @@ readInput_h5ad <- function(h5ad_file,
 #'                                 is.geneBYcell = TRUE,
 #'                                 removeSuffix = FALSE,
 #'                                 addPrefix = "demoSample")
+#'
 readInput_table <- function(table_file, sep = "\t", is.geneBYcell = TRUE,
                             removeSuffix = FALSE, addPrefix = NULL)
 {
@@ -378,8 +382,11 @@ readInput_table <- function(table_file, sep = "\t", is.geneBYcell = TRUE,
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' scminer_dir <- createProjectSpace(project_dir = "path-to-a-folder",
 #'                                   project_name = "PBMC14k")
+#' }
+#'
 createProjectSpace <- function(project_dir,
                                project_name,
                                do.unlink = FALSE)

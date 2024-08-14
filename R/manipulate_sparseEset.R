@@ -4,6 +4,7 @@
 #' @title SparseExpressionSet
 #' @exportClass SparseExpressionSet
 #' @import Biobase
+#'
 methods::setClass(Class = "SparseExpressionSet",
                   contains = "ExpressionSet",
                   prototype = methods::prototype(methods::new("VersionedBiobase", versions = c(Biobase::classVersion("ExpressionSet"), SparseExpressionSet = "1.0.0" )))
@@ -35,9 +36,20 @@ methods::setClass(Class = "SparseExpressionSet",
 #'
 #' @examples
 #' data("pbmc14k_rawCount")
+#' ## 1. Create SparseEset object solely from raw count matrix
 #' pbmc14k_raw.eset <- createSparseEset(input_matrix = pbmc14k_rawCount,
 #'                                      projectID = "PBMC14k",
 #'                                      addMetaData = TRUE)
+#'
+#' ## 2. Create SparseEset with customized meta data
+#' true_label <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k_trueLabel.txt.gz", package = "scMINER"),
+#'                          header = T, row.names = 1, sep = "\t", quote = "", stringsAsFactors = FALSE)
+#' pbmc14k_raw.eset <- createSparseEset(input_matrix = pbmc14k_rawCount,
+#'                                      cellData = true_label,
+#'                                      featureData = NULL,
+#'                                      projectID = "PBMC14k",
+#'                                      addMetaData = TRUE)
+#'
 createSparseEset <- function(input_matrix,
                              do.sparseConversion = TRUE,
                              cellData = NULL,
@@ -155,6 +167,7 @@ createSparseEset <- function(input_matrix,
 #'                                    addSurfix = NULL,
 #'                                    addMetaData = TRUE,
 #'                                    imputeNA = TRUE)
+#'
 combineSparseEset <- function(eset_list,
                               projectID = NULL,
                               addPrefix = NULL,
@@ -285,13 +298,11 @@ combineSparseEset <- function(eset_list,
 #' @export
 #'
 #' @examples
-#' true_label <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k_trueLabel.txt.gz", package = "scMINER"),
-#'                          header = T, row.names = 1, sep = "\t", quote = "", stringsAsFactors = FALSE)
-#' pbmc14k_raw.eset <- createSparseEset(input_matrix = pbmc14k_rawCount,
-#'                                      cellData = true_label,
-#'                                      featureData = NULL,
+#' data("pbmc14k_expression.eset")
+#' pbmc14k_raw.eset <- updateSparseEset(input_eset = pbmc14k_expression.eset,
 #'                                      projectID = "PBMC14k",
 #'                                      addMetaData = TRUE)
+#'
 updateSparseEset <- function(input_eset,
                              dataMatrix = NULL,
                              cellData = NULL,
