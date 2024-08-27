@@ -79,12 +79,13 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## to call this function</span></span></span>
-<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">compare2groups</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">input_eset</span>,</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">pbmc14k_expression.eset</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">compare2groups</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_expression.eset</span>,</span></span>
 <span class="r-in"><span>                      group_by <span class="op">=</span> <span class="va">group_by</span>,</span></span>
 <span class="r-in"><span>                      g1 <span class="op">=</span> <span class="va">g1_tmp</span>,</span></span>
 <span class="r-in"><span>                      g0 <span class="op">=</span> <span class="va">g0_tmp</span>,</span></span>
 <span class="r-in"><span>                      use_method <span class="op">=</span> <span class="va">use_method</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in compare2groups(input_eset = input_eset, group_by = group_by,     g1 = g1_tmp, g0 = g0_tmp, use_method = use_method):</span> could not find function "compare2groups"</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in compare2groups(input_eset = pbmc14k_expression.eset, group_by = group_by,     g1 = g1_tmp, g0 = g0_tmp, use_method = use_method):</span> could not find function "compare2groups"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

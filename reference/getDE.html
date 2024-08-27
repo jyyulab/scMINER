@@ -78,33 +78,68 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## 1. To perform differential expression analysis in a 1-vs-rest manner for all groups in "clusterID" column</span></span></span>
-<span class="r-in"><span><span class="va">de_res</span> <span class="op">&lt;-</span> <span class="fu">getDE</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">clustered.eset</span>,</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">pbmc14k_expression.eset</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## 1. To perform differential expression analysis in a 1-vs-rest manner for all groups in "clusterID" column</span></span></span>
+<span class="r-in"><span><span class="va">de_res</span> <span class="op">&lt;-</span> <span class="fu">getDE</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_expression.eset</span>,</span></span>
 <span class="r-in"><span>                group_by <span class="op">=</span> <span class="st">"clusterID"</span>,</span></span>
 <span class="r-in"><span>                use_method <span class="op">=</span> <span class="st">"limma"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'object' in selecting a method for function 'pData': object 'clustered.eset' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 groups were found in group_by column [ clusterID ].</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Since no group was specified, the differential analysis will be conducted among all groups in the group_by column [ clusterID ] in the 1-vs-rest manner.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 1 / 7 : group 1 ( 1 ) vs the rest...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 634 cells were found for g1.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 2866 cells were found for g0.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 2 / 7 : group 1 ( 2 ) vs the rest...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 514 cells were found for g1.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 2986 cells were found for g0.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 3 / 7 : group 1 ( 3 ) vs the rest...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 508 cells were found for g1.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 2992 cells were found for g0.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 4 / 7 : group 1 ( 4 ) vs the rest...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 492 cells were found for g1.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 3008 cells were found for g0.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 5 / 7 : group 1 ( 5 ) vs the rest...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 501 cells were found for g1.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 2999 cells were found for g0.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 6 / 7 : group 1 ( 6 ) vs the rest...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 486 cells were found for g1.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 3014 cells were found for g0.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 7 / 7 : group 1 ( 7 ) vs the rest...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 365 cells were found for g1.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 3135 cells were found for g0.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 2. To perform differential expression analysis in a 1-vs-rest manner for one specific group in "clusterID" column</span></span></span>
-<span class="r-in"><span><span class="va">de_res</span> <span class="op">&lt;-</span> <span class="fu">getDE</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">clustered.eset</span>,</span></span>
+<span class="r-in"><span><span class="va">de_res</span> <span class="op">&lt;-</span> <span class="fu">getDE</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_expression.eset</span>,</span></span>
 <span class="r-in"><span>                group_by <span class="op">=</span> <span class="st">"clusterID"</span>,</span></span>
 <span class="r-in"><span>                g1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                use_method <span class="op">=</span> <span class="st">"limma"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'object' in selecting a method for function 'pData': object 'clustered.eset' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 groups were found in group_by column [ clusterID ].</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Since g1 was specified but g0 was not, all the other cells except those of g1 will be defined as g0.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 1 / 1 : group 1 ( 1 ) vs group 0 ( 2, 3, 4, 5, 6, 7 ) ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 634 cells were found for g1.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 2866 cells were found for g0.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 3. To perform differential expression analysis in a rest-vs-1 manner for one specific group in "clusterID" column</span></span></span>
-<span class="r-in"><span><span class="va">de_res</span> <span class="op">&lt;-</span> <span class="fu">getDE</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">clustered.eset</span>,</span></span>
+<span class="r-in"><span><span class="va">de_res</span> <span class="op">&lt;-</span> <span class="fu">getDE</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_expression.eset</span>,</span></span>
 <span class="r-in"><span>                group_by <span class="op">=</span> <span class="st">"clusterID"</span>,</span></span>
 <span class="r-in"><span>                g0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                use_method <span class="op">=</span> <span class="st">"limma"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'object' in selecting a method for function 'pData': object 'clustered.eset' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 groups were found in group_by column [ clusterID ].</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Since g0 was specified but g1 was not, all the other cells except those of g0 will be defined as g1.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 1 / 1 : group 1 ( 2, 3, 4, 5, 6, 7 ) vs group 0 ( 1 ) ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 2866 cells were found for g1.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 634 cells were found for g0.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 4. To perform differential expression analysis in a 1-vs-1 manner for groups in "clusterID" column</span></span></span>
-<span class="r-in"><span><span class="va">de_res</span> <span class="op">&lt;-</span> <span class="fu">getDE</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">clustered.eset</span>,</span></span>
+<span class="r-in"><span><span class="va">de_res</span> <span class="op">&lt;-</span> <span class="fu">getDE</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_expression.eset</span>,</span></span>
 <span class="r-in"><span>                group_by <span class="op">=</span> <span class="st">"clusterID"</span>,</span></span>
 <span class="r-in"><span>                g1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                g0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"3"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                use_method <span class="op">=</span> <span class="st">"limma"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'object' in selecting a method for function 'pData': object 'clustered.eset' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 groups were found in group_by column [ clusterID ].</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 1 / 1 : group 1 ( 1 ) vs group 0 ( 3 ) ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 634 cells were found for g1.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	 508 cells were found for g0.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Zero sample variances detected, have been offset away from zero</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
