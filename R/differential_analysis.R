@@ -99,7 +99,8 @@ combinePvalVector <- function(pvals,
 #'
 #' @examples
 #' ## to call this function
-#' res <- compare2groups(input_eset = input_eset,
+#' data(pbmc14k_expression.eset)
+#' res <- compare2groups(input_eset = pbmc14k_expression.eset,
 #'                       group_by = group_by,
 #'                       g1 = g1_tmp,
 #'                       g0 = g0_tmp,
@@ -203,25 +204,26 @@ compare2groups <- function(input_eset,
 #' @export
 #'
 #' @examples
+#' data(pbmc14k_expression.eset)
 #' ## 1. To perform differential expression analysis in a 1-vs-rest manner for all groups in "clusterID" column
-#' de_res <- getDE(input_eset = clustered.eset,
+#' de_res <- getDE(input_eset = pbmc14k_expression.eset,
 #'                 group_by = "clusterID",
 #'                 use_method = "limma")
 #'
 #' ## 2. To perform differential expression analysis in a 1-vs-rest manner for one specific group in "clusterID" column
-#' de_res <- getDE(input_eset = clustered.eset,
+#' de_res <- getDE(input_eset = pbmc14k_expression.eset,
 #'                 group_by = "clusterID",
 #'                 g1 = c("1"),
 #'                 use_method = "limma")
 #'
 #' ## 3. To perform differential expression analysis in a rest-vs-1 manner for one specific group in "clusterID" column
-#' de_res <- getDE(input_eset = clustered.eset,
+#' de_res <- getDE(input_eset = pbmc14k_expression.eset,
 #'                 group_by = "clusterID",
 #'                 g0 = c("1"),
 #'                 use_method = "limma")
 #'
 #' ## 4. To perform differential expression analysis in a 1-vs-1 manner for groups in "clusterID" column
-#' de_res <- getDE(input_eset = clustered.eset,
+#' de_res <- getDE(input_eset = pbmc14k_expression.eset,
 #'                 group_by = "clusterID",
 #'                 g1 = c("1"),
 #'                 g0 = c("3"),
@@ -306,6 +308,7 @@ getDE <- function(input_eset,
 #' @export
 #'
 #' @examples
+#' data(pbmc14k_expression.eset)
 #' ## 1. To perform differential activity analysis in a 1-vs-rest manner for all groups in "clusterID" column
 #' da_res <- getDA(input_eset = activity_clustered.eset,
 #'                 group_by = "clusterID",

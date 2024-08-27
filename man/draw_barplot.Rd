@@ -45,13 +45,15 @@ A ggplot object that can be visualized by "\code{p}" or \code{ggsave(file = "out
 This function is used to draw a bar plot showing the cell composition of self-defined groups.
 }
 \examples{
+data(pbmc14k_expression.eset)
+
 ## 1. bar plot grouped by clusters ("clusterID") and colored by true labels ("true_label)
-draw_barplot(input_eset = clustered.eset,
+draw_barplot(input_eset = pbmc14k_expression.eset,
              group_by = "clusterID",
              color_by = "true_label")
 
 ## 2. customize the colors
-draw_barplot(input_eset = clustered.eset,
+draw_barplot(input_eset = pbmc14k_expression.eset,
              group_by = "clusterID",
              color_by = "true_label",
              colors = c("green", "red", "blue", "grey", "orange", "purple", "yellow"))

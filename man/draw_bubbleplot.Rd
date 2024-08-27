@@ -45,16 +45,18 @@ A ggplot object of bubble plot
 This function is used to draw a bubble plot of signature scores among self-defined groups.
 }
 \examples{
-marker_file <- system.file('PBMC14KDS_DemoDataSet/DATA/', 'Immune_signatures.xlsx', package = "scMINER")
+data(pbmc14k_expression.eset)
+marker_file <- system.file('extdata/demo_pbmc14k/PBMC14k_signatureTable.txt', package = "scMINER")
 signature_table <- openxlsx::read.xlsx(marker_file)
 head(signature_table)
+
 ## 1. the most commonly used command
-draw_bubbleplot(input_eset = clustered.eset,
+draw_bubbleplot(input_eset = pbmc14k_expression.eset,
                 signature_table = signature_table,
                 group_by = "clusterID")
 
 ## 2. customize the colors
-draw_bubbleplot(input_eset = clustered.eset,
+draw_bubbleplot(input_eset = pbmc14k_expression.eset,
                 signature_table = signature_table,
                 group_by = "clusterID",
                 colors = c("lightgrey", "red"))

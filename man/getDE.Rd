@@ -30,25 +30,26 @@ A data frame. Rows are genes/drivers, and columns are 11 statistics of different
 This function is used to perform the differential expression analysis on sparse eset object. It supports there methods: "\code{limma}", "\code{wilcoxon}", and "\code{t.test}".
 }
 \examples{
+data(pbmc14k_expression.eset)
 ## 1. To perform differential expression analysis in a 1-vs-rest manner for all groups in "clusterID" column
-de_res <- getDE(input_eset = clustered.eset,
+de_res <- getDE(input_eset = pbmc14k_expression.eset,
                 group_by = "clusterID",
                 use_method = "limma")
 
 ## 2. To perform differential expression analysis in a 1-vs-rest manner for one specific group in "clusterID" column
-de_res <- getDE(input_eset = clustered.eset,
+de_res <- getDE(input_eset = pbmc14k_expression.eset,
                 group_by = "clusterID",
                 g1 = c("1"),
                 use_method = "limma")
 
 ## 3. To perform differential expression analysis in a rest-vs-1 manner for one specific group in "clusterID" column
-de_res <- getDE(input_eset = clustered.eset,
+de_res <- getDE(input_eset = pbmc14k_expression.eset,
                 group_by = "clusterID",
                 g0 = c("1"),
                 use_method = "limma")
 
 ## 4. To perform differential expression analysis in a 1-vs-1 manner for groups in "clusterID" column
-de_res <- getDE(input_eset = clustered.eset,
+de_res <- getDE(input_eset = pbmc14k_expression.eset,
                 group_by = "clusterID",
                 g1 = c("1"),
                 g0 = c("3"),

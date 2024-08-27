@@ -149,24 +149,26 @@ feature_vlnplot <- function(input_eset,
 #' @export
 #'
 #' @examples
+#' data(pbmc14k_expression.eset)
+#'
 #' ## 1. violin plots grouped by clusters (say the column name is 'clusterID')
-#' p_box <- feature_boxplot(input_eset = clustered.eset,
+#' p_box <- feature_boxplot(input_eset = pbmc14k_expression.eset,
 #'                          features = c("CD14", "CD19", "CD8A"),
 #'                          group_by = "clusterID")
 #'
 #' ## 2. violin plots grouped by cell types (say the column name is 'cellType')
-#' p_box <- feature_boxplot(input_eset = clustered.eset,
+#' p_box <- feature_boxplot(input_eset = pbmc14k_expression.eset,
 #'                          features = c("CD14", "CD19", "CD8A"),
 #'                          group_by = "cellType")
 #'
 #' ## 3. customize the colors to fill the violin plots
-#' p_box <- feature_boxplot(input_eset = clustered.eset,
+#' p_box <- feature_boxplot(input_eset = pbmc14k_expression.eset,
 #'                          features = c("CD14", "CD19", "CD8A"),
 #'                          group_by = "clusterID",
 #'                          colors = c("blue", "red", "green"))
 #'
 #' ## 4. add jittered points
-#' p_box <- feature_boxplot(input_eset = clustered.eset,
+#' p_box <- feature_boxplot(input_eset = pbmc14k_expression.eset,
 #'                          features = c("CD14", "CD19", "CD8A"),
 #'                          group_by = "clusterID",
 #'                          add_jitter = TRUE,
@@ -260,18 +262,20 @@ feature_boxplot <- function(input_eset,
 #' @export
 #'
 #' @examples
+#' data(pbmc14k_expression.eset)
+#'
 #' ## 1. scatter plots with UMAP projections
-#' feature_scatterplot(input_eset = clustered.eset,
+#' feature_scatterplot(input_eset = pbmc14k_expression.eset,
 #'                     features = c("CD14", "CD19", "CD8A"),
 #'                     location_x = "UMAP_1", location_y = "UMAP_2")
 #'
 #' ## 2. scatter plots with t-SNE projections
-#' feature_scatterplot(input_eset = clustered.eset,
+#' feature_scatterplot(input_eset = pbmc14k_expression.eset,
 #'                     features = c("CD14", "CD19", "CD8A"),
 #'                     location_x = "tSNE_1", location_y = "tSNE_2")
 #'
 #' ## 3. change the point size and font size
-#' feature_scatterplot(input_eset = clustered.eset,
+#' feature_scatterplot(input_eset = pbmc14k_expression.eset,
 #'                     features = c("CD14", "CD19", "CD8A"),
 #'                     location_x = "UMAP_1", location_y = "UMAP_2",
 #'                     point.size = 1,
@@ -356,14 +360,16 @@ feature_scatterplot <- function(input_eset,
 #' @export
 #'
 #' @examples
-#' features_of_interest <- c("CD3D","CD27","IL7R","SELL","CCR7","IL32","GZMA","GZMK","DUSP2","CD8A","GZMH","GZMB","CD79A","CD79B","CD86","CD14")
+#' data(pbmc14k_expression.eset)
+#' features_of_interest <- c("CD3D","CD27","IL7R","SELL","CCR7","IL32","GZMA","GZMK",
+#'                           "DUSP2","CD8A","GZMH","GZMB","CD79A","CD79B","CD86","CD14")
 #' ## 1. the most commonly used command
-#' feature_bubbleplot(input_eset = clustered.eset,
+#' feature_bubbleplot(input_eset = pbmc14k_expression.eset,
 #'                    features = features_of_interest,
 #'                    group_by = "clusterID")
 #'
 #' ## 2. customize the colors
-#' feature_bubbleplot(input_eset = clustered.eset,
+#' feature_bubbleplot(input_eset = pbmc14k_expression.eset,
 #'                    features = features_of_interest,
 #'                    group_by = "clusterID",
 #'                    colors = c("lightgrey", "red"))
@@ -445,32 +451,34 @@ feature_bubbleplot <- function(input_eset,
 #' @export
 #'
 #' @examples
-#' features_of_interest <- c("CD3D","CD27","IL7R","SELL","CCR7","IL32","GZMA","GZMK","DUSP2","CD8A","GZMH","GZMB","CD79A","CD79B","CD86","CD14")
+#' data(pbmc14k_expression.eset)
+#' features_of_interest <- c("CD3D","CD27","IL7R","SELL","CCR7","IL32","GZMA","GZMK",
+#'                           "DUSP2","CD8A","GZMH","GZMB","CD79A","CD79B","CD86","CD14")
 #' ## 1. the most commonly used command
-#' feature_heatmap(input_eset = clustered.eset,
+#' feature_heatmap(input_eset = pbmc14k_expression.eset,
 #'                 features = features_of_interest,
 #'                 group_by = "clusterID")
 #'
 #' ## 2. add one more column ('true_label') for cell annotation
-#' feature_heatmap(input_eset = clustered.eset,
+#' feature_heatmap(input_eset = pbmc14k_expression.eset,
 #'                 features = features_of_interest,
 #'                 group_by = "clusterID",
 #'                 annotation_columns = c("true_label"))
 #'
 #' ## 3. scale the data by row
-#' feature_heatmap(input_eset = clustered.eset,
+#' feature_heatmap(input_eset = pbmc14k_expression.eset,
 #'                 features = features_of_interest,
 #'                 group_by = "clusterID",
 #'                 scale_method = "row")
 #'
 #' ## 4. cluster the rows
-#' feature_heatmap(input_eset = clustered.eset,
+#' feature_heatmap(input_eset = pbmc14k_expression.eset,
 #'                 features = features_of_interest,
 #'                 group_by = "clusterID",
 #'                 cluster_rows = TRUE)
 #'
 #' ## 5. add gaps
-#' feature_heatmap(input_eset = clustered.eset,
+#' feature_heatmap(input_eset = pbmc14k_expression.eset,
 #'                 features = features_of_interest,
 #'                 group_by = "clusterID",
 #'                 use_gaps.column = TRUE,
@@ -554,13 +562,15 @@ feature_heatmap <- function(input_eset,
 #' @export
 #'
 #' @examples
+#' data(pbmc14k_expression.eset)
+#'
 #' ## 1. bar plot grouped by clusters ("clusterID") and colored by true labels ("true_label)
-#' draw_barplot(input_eset = clustered.eset,
+#' draw_barplot(input_eset = pbmc14k_expression.eset,
 #'              group_by = "clusterID",
 #'              color_by = "true_label")
 #'
 #' ## 2. customize the colors
-#' draw_barplot(input_eset = clustered.eset,
+#' draw_barplot(input_eset = pbmc14k_expression.eset,
 #'              group_by = "clusterID",
 #'              color_by = "true_label",
 #'              colors = c("green", "red", "blue", "grey", "orange", "purple", "yellow"))
@@ -618,16 +628,18 @@ draw_barplot <- function(input_eset,
 #' @export
 #'
 #' @examples
-#' marker_file <- system.file('PBMC14KDS_DemoDataSet/DATA/', 'Immune_signatures.xlsx', package = "scMINER")
+#' data(pbmc14k_expression.eset)
+#' marker_file <- system.file('extdata/demo_pbmc14k/PBMC14k_signatureTable.txt', package = "scMINER")
 #' signature_table <- openxlsx::read.xlsx(marker_file)
 #' head(signature_table)
+#'
 #' ## 1. the most commonly used command
-#' draw_bubbleplot(input_eset = clustered.eset,
+#' draw_bubbleplot(input_eset = pbmc14k_expression.eset,
 #'                 signature_table = signature_table,
 #'                 group_by = "clusterID")
 #'
 #' ## 2. customize the colors
-#' draw_bubbleplot(input_eset = clustered.eset,
+#' draw_bubbleplot(input_eset = pbmc14k_expression.eset,
 #'                 signature_table = signature_table,
 #'                 group_by = "clusterID",
 #'                 colors = c("lightgrey", "red"))
@@ -730,8 +742,10 @@ draw_bubbleplot <- function(input_eset,
 #' @export
 #'
 #' @examples
+#' data(pbmc14k_expression.eset)
+#'
 #' ## 1. the most commonly used command
-#' generatePortalInputs(input_expression.eset = expression_clustered.eset,
+#' generatePortalInputs(input_expression.eset = pbmc14k_expression.eset,
 #'                      group_by = "cellType",
 #'                      input_activity.eset = activity_clustered.eset,
 #'                      input_network.dir = "./SJARACNe",
@@ -748,7 +762,7 @@ draw_bubbleplot <- function(input_eset,
 #'                                             "./sjaracne/CD4Treg/TF/consensus_network_ncol_.txt",
 #'                                             "./sjaracne/B/SIG/consensus_network_ncol_.txt",
 #'                                             "./sjaracne/B/TF/consensus_network_ncol_.txt"))
-#' generatePortalInputs(input_expression.eset = expression_clustered.eset,
+#' generatePortalInputs(input_expression.eset = pbmc14k_expression.eset,
 #'                      group_by = "cellType",
 #'                      input_network.table = network.table,
 #'                      output_dir = "./path-to-output_dir")

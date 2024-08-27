@@ -36,8 +36,10 @@ This function generated 1-3 standard files which can be uploaded to scMINER Port
 This function is used to generated the standard input files that can be directly uploaded to scMINER Portal for visualization and beyond.
 }
 \examples{
+data(pbmc14k_expression.eset)
+
 ## 1. the most commonly used command
-generatePortalInputs(input_expression.eset = expression_clustered.eset,
+generatePortalInputs(input_expression.eset = pbmc14k_expression.eset,
                      group_by = "cellType",
                      input_activity.eset = activity_clustered.eset,
                      input_network.dir = "./SJARACNe",
@@ -54,7 +56,7 @@ network.table <- data.frame(CellGroup = c("CD4Treg", "CD4Treg", "B", "B"),
                                             "./sjaracne/CD4Treg/TF/consensus_network_ncol_.txt",
                                             "./sjaracne/B/SIG/consensus_network_ncol_.txt",
                                             "./sjaracne/B/TF/consensus_network_ncol_.txt"))
-generatePortalInputs(input_expression.eset = expression_clustered.eset,
+generatePortalInputs(input_expression.eset = pbmc14k_expression.eset,
                      group_by = "cellType",
                      input_network.table = network.table,
                      output_dir = "./path-to-output_dir")

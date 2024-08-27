@@ -31,7 +31,8 @@ This function is used to perform the differential analysis between two groups. I
 }
 \examples{
 ## to call this function
-res <- compare2groups(input_eset = input_eset,
+data(pbmc14k_expression.eset)
+res <- compare2groups(input_eset = pbmc14k_expression.eset,
                       group_by = group_by,
                       g1 = g1_tmp,
                       g0 = g0_tmp,

@@ -45,14 +45,16 @@ A ggplot object of bubble plot
 This function is used to draw a bubble plot of selected features among self-defined groups from a sparse eset object.
 }
 \examples{
-features_of_interest <- c("CD3D","CD27","IL7R","SELL","CCR7","IL32","GZMA","GZMK","DUSP2","CD8A","GZMH","GZMB","CD79A","CD79B","CD86","CD14")
+data(pbmc14k_expression.eset)
+features_of_interest <- c("CD3D","CD27","IL7R","SELL","CCR7","IL32","GZMA","GZMK",
+                          "DUSP2","CD8A","GZMH","GZMB","CD79A","CD79B","CD86","CD14")
 ## 1. the most commonly used command
-feature_bubbleplot(input_eset = clustered.eset,
+feature_bubbleplot(input_eset = pbmc14k_expression.eset,
                    features = features_of_interest,
                    group_by = "clusterID")
 
 ## 2. customize the colors
-feature_bubbleplot(input_eset = clustered.eset,
+feature_bubbleplot(input_eset = pbmc14k_expression.eset,
                    features = features_of_interest,
                    group_by = "clusterID",
                    colors = c("lightgrey", "red"))

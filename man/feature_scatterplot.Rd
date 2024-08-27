@@ -60,18 +60,20 @@ Print a plot to screen and return a gtable containing a list of plots, can be vi
 This function is used to draw a scatter plot of selected features on UMAP or t-SNE coordinates from a sparse eset object.
 }
 \examples{
+data(pbmc14k_expression.eset)
+
 ## 1. scatter plots with UMAP projections
-feature_scatterplot(input_eset = clustered.eset,
+feature_scatterplot(input_eset = pbmc14k_expression.eset,
                     features = c("CD14", "CD19", "CD8A"),
                     location_x = "UMAP_1", location_y = "UMAP_2")
 
 ## 2. scatter plots with t-SNE projections
-feature_scatterplot(input_eset = clustered.eset,
+feature_scatterplot(input_eset = pbmc14k_expression.eset,
                     features = c("CD14", "CD19", "CD8A"),
                     location_x = "tSNE_1", location_y = "tSNE_2")
 
 ## 3. change the point size and font size
-feature_scatterplot(input_eset = clustered.eset,
+feature_scatterplot(input_eset = pbmc14k_expression.eset,
                     features = c("CD14", "CD19", "CD8A"),
                     location_x = "UMAP_1", location_y = "UMAP_2",
                     point.size = 1,

@@ -80,15 +80,16 @@ getDriverList <- function(species_type = "hg",
 #' @export
 #'
 #' @examples
+#' data(pbmc14k_expression.eset)
 #' ## 1. The most commonly used command: pre-defined driver lists, automatic down-sampling, no metacell method
-#' generateSJARACNeInput(input_eset = normalized.eset,
+#' generateSJARACNeInput(input_eset = pbmc14k_expression.eset,
 #'                       group_name = "cell_type",
 #'                       sjaracne_dir = "./SJARACNe",
 #'                       species_type = "hg",
 #'                       driver_type = "TF_SIG")
 #'
 #' ## 2. to disable the downsampling
-#' generateSJARACNeInput(input_eset = normalized.eset,
+#' generateSJARACNeInput(input_eset = pbmc14k_expression.eset,
 #'                       group_name = "cell_type",
 #'                       sjaracne_dir = "./SJARACNe",
 #'                       species_type = "hg",
@@ -98,20 +99,20 @@ getDriverList <- function(species_type = "hg",
 #' ## 3. Use the customized driver list: (add TUBB4A is the gene of interest but currently not in the pre-defined driver list)
 #'
 #' # when the driver-to-add is known as a transcription factor
-#' generateSJARACNeInput(input_eset = normalized.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
+#' generateSJARACNeInput(input_eset = pbmc14k_expression.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
 #'                       customDriver_TF = c(getDriverList(species_type = "hg", driver_type = "TF"), "TUBB4A"))
 #'
 #' # when the driver-to-add is known as a non-transcription factor
-#' generateSJARACNeInput(input_eset = normalized.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
+#' generateSJARACNeInput(input_eset = pbmc14k_expression.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
 #'                       customDriver_SIG = c(getDriverList(species_type = "hg", driver_type = "SIG"), "TUBB4A"))
 #'
 #' # when it's ambiguous to tell if the driver-to-add is a transcriptional factor
-#' generateSJARACNeInput(input_eset = normalized.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
+#' generateSJARACNeInput(input_eset = pbmc14k_expression.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
 #'                       customDriver_TF = c(getDriverList(species_type = "hg", driver_type = "TF"), "TUBB4A"),
 #'                       customDriver_SIG = c(getDriverList(species_type = "hg", driver_type = "SIG"), "TUBB4A"))
 #'
 #' ## 4. Use the metacell method
-#' generateSJARACNeInput(input_eset = normalized.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
+#' generateSJARACNeInput(input_eset = pbmc14k_expression.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
 #'                       superCell_N = 1000, superCell_count = 100, seed = 123)
 generateSJARACNeInput <- function(input_eset,
                                   group_name = "clusterID",
@@ -762,7 +763,8 @@ cal_Activity <- function(target_list = NULL, cal_mat = NULL, activity_method = '
 #' @export
 #'
 #' @examples
-#' activity_group.eset <- getActivity_individual(input_eset = group_specific.est,
+#' data(pbmc14k_expression.eset)
+#' activity_group.eset <- getActivity_individual(input_eset = pbmc14k_expression.eset,
 #'                                               network_file.tf = "consensus_network_ncol_.txt",
 #'                                               network_file.sig = "consensus_network_ncol_.txt",
 #'                                               driver_type = "TF_SIG")
@@ -860,8 +862,10 @@ getActivity_individual <- function(input_eset,
 #' @export
 #'
 #' @examples
+#' data(pbmc14k_expression.eset)
+#'
 #' ## 1. when no tag was used in runing SJARACNE: the network file folder ("sjaracne_workflow-*") is directly under TF/SIG folder of each group.
-#' activity.eset <- getActivity_inBatch(input_eset = normalized.eset,
+#' activity.eset <- getActivity_inBatch(input_eset = pbmc14k_expression.eset,
 #'                                      sjaracne_dir = "./SJARACNe",
 #'                                      group_name = "cell_type",
 #'                                      driver_type = "TF_SIG",
@@ -869,7 +873,7 @@ getActivity_individual <- function(input_eset,
 #'                                      do.z_normalization = TRUE)
 #'
 #' ## 2. when tag (e.g. "bs_100" ) was used: the nework file folder ("sjaracne_workflow-*") is directly under a subfolder "bs_100" of the TF/SIG folder of each group.
-#' activity.eset <- getActivity_inBatch(input_eset = normalized.eset,
+#' activity.eset <- getActivity_inBatch(input_eset = pbmc14k_expression.eset,
 #'                                      sjaracne_dir = "./SJARACNe",
 #'                                      group_name = "cell_type",
 #'                                      network_tag.tf = "bs_100",
@@ -879,7 +883,7 @@ getActivity_individual <- function(input_eset,
 #'                                      do.z_normalization = TRUE)
 #'
 #' ## 3. to calculate the activities of TF only
-#' activity.eset <- getActivity_inBatch(input_eset = normalized.eset,
+#' activity.eset <- getActivity_inBatch(input_eset = pbmc14k_expression.eset,
 #'                                      sjaracne_dir = "./SJARACNe",
 #'                                      group_name = "cell_type",
 #'                                      network_tag.tf = "bs_100",
@@ -889,7 +893,7 @@ getActivity_individual <- function(input_eset,
 #'                                      do.z_normalization = TRUE)
 #'
 #' ## 4. to exclude some groups in the activity calculation (e.g. "NK" and "Monocyte")
-#' activity.eset <- getActivity_inBatch(input_eset = normalized.eset,
+#' activity.eset <- getActivity_inBatch(input_eset = pbmc14k_expression.eset,
 #'                                      sjaracne_dir = "./SJARACNe",
 #'                                      group_name = "cell_type",
 #'                                      group_exclude = c("NK", "Monocyte"),
@@ -900,7 +904,7 @@ getActivity_individual <- function(input_eset,
 #'                                      do.z_normalization = TRUE)
 #'
 #' ## 5. when calculate the activities from the gene expression values scaled by other methods (e.g. ScaleData() from Seurat package)
-#' activity.eset <- getActivity_inBatch(input_eset = normalized.eset,
+#' activity.eset <- getActivity_inBatch(input_eset = pbmc14k_expression.eset,
 #'                                      sjaracne_dir = "./SJARACNe",
 #'                                      group_name = "cell_type",
 #'                                      network_tag.tf = "bs_100",
