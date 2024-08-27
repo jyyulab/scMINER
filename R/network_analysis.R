@@ -316,15 +316,25 @@ generateSJARACNeInput <- function(input_eset,
 
     # command line
     if (do.supercell) {
-      sjaracne_cmd.lsf_tf <- sprintf('sjaracne lsf -e %s -g %s -o %s -n 100 -pc 1e-3 -j %s/config_cwlexec.json', gex.file, tf.file, grp_dir.tf, grp_dir)
-      sjaracne_cmd.lsf_sig <- sprintf('sjaracne lsf -e %s -g %s -o %s -n 100 -pc 1e-3 -j %s/config_cwlexec.json', gex.file, sig.file, grp_dir.sig, grp_dir)
-      sjaracne_cmd.local_tf <- sprintf('sjaracne local -e %s -g %s -o %s -n 100 -pc 1e-3', gex.file, tf.file, grp_dir.tf)
-      sjaracne_cmd.local_sig <- sprintf('sjaracne local -e %s -g %s -o %s -n 100 -pc 1e-3', gex.file, sig.file, grp_dir.sig)
+      if (driver_type %in% c("TF_SIG", "TF")) {
+        sjaracne_cmd.lsf_tf <- sprintf('sjaracne lsf -e %s -g %s -o %s -n 100 -pc 1e-3 -j %s/config_cwlexec.json', gex.file, tf.file, grp_dir.tf, grp_dir)
+        sjaracne_cmd.local_tf <- sprintf('sjaracne local -e %s -g %s -o %s -n 100 -pc 1e-3', gex.file, tf.file, grp_dir.tf)
+      }
+
+      if (driver_type %in% c("TF_SIG", "SIG")) {
+        sjaracne_cmd.lsf_sig <- sprintf('sjaracne lsf -e %s -g %s -o %s -n 100 -pc 1e-3 -j %s/config_cwlexec.json', gex.file, sig.file, grp_dir.sig, grp_dir)
+        sjaracne_cmd.local_sig <- sprintf('sjaracne local -e %s -g %s -o %s -n 100 -pc 1e-3', gex.file, sig.file, grp_dir.sig)
+      }
     } else {
-      sjaracne_cmd.lsf_tf <- sprintf('sjaracne lsf -e %s -g %s -o %s -n 100 -pc 1e-2 -j %s/config_cwlexec.json', gex.file, tf.file, grp_dir.tf, grp_dir)
-      sjaracne_cmd.lsf_sig <- sprintf('sjaracne lsf -e %s -g %s -o %s -n 100 -pc 1e-2 -j %s/config_cwlexec.json', gex.file, sig.file, grp_dir.sig, grp_dir)
-      sjaracne_cmd.local_tf <- sprintf('sjaracne local -e %s -g %s -o %s -n 100 -pc 1e-2', gex.file, tf.file, grp_dir.tf)
-      sjaracne_cmd.local_sig <- sprintf('sjaracne local -e %s -g %s -o %s -n 100 -pc 1e-2', gex.file, sig.file, grp_dir.sig)
+      if (driver_type %in% c("TF_SIG", "TF")) {
+        sjaracne_cmd.lsf_tf <- sprintf('sjaracne lsf -e %s -g %s -o %s -n 100 -pc 1e-2 -j %s/config_cwlexec.json', gex.file, tf.file, grp_dir.tf, grp_dir)
+        sjaracne_cmd.local_tf <- sprintf('sjaracne local -e %s -g %s -o %s -n 100 -pc 1e-2', gex.file, tf.file, grp_dir.tf)
+      }
+
+      if (driver_type %in% c("TF_SIG", "SIG")) {
+        sjaracne_cmd.lsf_sig <- sprintf('sjaracne lsf -e %s -g %s -o %s -n 100 -pc 1e-2 -j %s/config_cwlexec.json', gex.file, sig.file, grp_dir.sig, grp_dir)
+        sjaracne_cmd.local_sig <- sprintf('sjaracne local -e %s -g %s -o %s -n 100 -pc 1e-2', gex.file, sig.file, grp_dir.sig)
+      }
     }
     # command line parameters
     cmd_paras <- sprintf('-e: input expression file;
