@@ -298,7 +298,7 @@ generateSJARACNeInput <- function(input_eset,
       write.table(tf.df, file = tf.file, sep = "\t", row.names = FALSE, quote = FALSE, col.names = FALSE)
     }
 
-    if (driver_type %in% c("TF_SIG", "TF")) {
+    if (driver_type %in% c("TF_SIG", "SIG")) {
       sig.final <- driverlist_sig[driverlist_sig %in% rownames(gex.final)]
       sig.df <- data.frame(sig_drivers = sig.final)
       sig.file <- paste0(grp_dir.sig, "/", grp_tag, ".", length(sig.final), "_", nCell.final, ".sig.txt")
