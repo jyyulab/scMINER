@@ -392,6 +392,7 @@ createProjectSpace <- function(project_dir,
                                do.unlink = FALSE)
 {
   ## check parameters
+  project_dir <- gsub("/+$", "", project_dir)
   scminer_dir <- sprintf('%s/%s', project_dir, project_name)
 
   if (dir.exists(scminer_dir) == TRUE) {

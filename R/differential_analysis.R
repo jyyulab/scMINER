@@ -121,7 +121,7 @@ compare2groups <- function(input_eset,
 
   ## prepare matrix for limma
   use_samples <- c(g1.cells, g0.cells)
-  exp_mat <- Biobase::exprs(input_eset)[, use_samples]
+  exp_mat <- Biobase::exprs(input_eset)[, use_samples, drop = FALSE]
 
   ## calculate the average and percentage
   exp_mat.g1 <- as.matrix(exp_mat[, g1.cells, drop = FALSE])
@@ -146,7 +146,8 @@ compare2groups <- function(input_eset,
     contrasts <- limma::makeContrasts(g1 - g0, levels = design) # create contrast matrix
     fit2 <- limma::contrasts.fit(fit, contrasts = contrasts) # fit contrasts
     fit2 <- limma::eBayes(fit2, trend = TRUE) # apply empirical Bayes moderation to improve the estimates
-    topTable <- limma::topTable(fit2, adjust.method = "fdr", number = Inf, coef = 1)
+    topTable <- limma::topTable(fit2, adjust.method = "fdr", number = Inf, coef = 1, sort.by = "none")
+    if (nrow(topTable) == 1) {row.names(topTable) <- row.names(exp_mat)}
     df_pval <- data.frame(feature = row.names(topTable), Pval = topTable$P.Value, FDR = topTable$adj.P.Val)
   } else if (use_method == "wilcoxon") {
     group_id <- factor(c(rep("g1", length(g1.cells)), rep("g0", length(g0.cells)))) # prepare group vector

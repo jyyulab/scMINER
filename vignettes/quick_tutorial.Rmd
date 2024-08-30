@@ -194,7 +194,7 @@ saveRDS(pbmc14k_log2cpm.eset, file = "/your-path/PBMC14k/DATA/pbmc14k_log2cpm.rd
 
 # MI-based clustering analysis
 
-**MICA** (**M**utual **I**nformation-based **C**lustering **A**nalysis) is a clustering tool designed for scRAN-seq data. It is developed with Python to take it's strengths in calculation speed and memory consumption. As a component of scMINER framework, MICA works seamlessly with the scMINER R package and SparseEset object.
+**MICA** (**M**utual **I**nformation-based **C**lustering **A**nalysis) is a clustering tool designed for scRNA-seq data. It is developed with Python to take it's strengths in calculation speed and memory consumption. As a component of scMINER framework, MICA works seamlessly with the scMINER R package and SparseEset object.
 
 ## Generate MICA input
 
