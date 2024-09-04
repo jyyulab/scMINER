@@ -20,10 +20,10 @@
   <meta name="twitter:description" content="This is the full documentation of scMINER R package (v-1.1.0)." />
   
 
-<meta name="author" content="John Doe" />
+<meta name="author" content="Qingfei Pan" />
 
 
-<meta name="date" content="2024-08-05" />
+<meta name="date" content="2024-09-04" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -276,7 +276,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb60-2"><a href="data-filtration.html#cb60-2" tabindex="-1"></a><span class="fu">drawSparseEsetQC</span>(<span class="at">input_eset =</span> pbmc14k_raw.eset, <span class="at">output_html_file =</span> <span class="st">&quot;/your-path/PBMC14k/PLOT/pbmc14k_rawCount.html&quot;</span>, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb60-3"><a href="data-filtration.html#cb60-3" tabindex="-1"></a></span>
 <span id="cb60-4"><a href="data-filtration.html#cb60-4" tabindex="-1"></a><span class="do">## scMINER supports group-specific QC highlights</span></span>
-<span id="cb60-5"><a href="data-filtration.html#cb60-5" tabindex="-1"></a><span class="fu">drawSparseEsetQC</span>(<span class="at">input_eset =</span> pbmc14k_raw.eset, <span class="at">output_html_file =</span> <span class="st">&quot;/your-path/PBMC14k/PLOT/pbmc14k_rawCount.html&quot;</span>, <span class="at">overwrite =</span> <span class="cn">FALSE</span>, <span class="at">group_by =</span> <span class="st">&quot;true_label&quot;</span>)</span></code></pre></div>
+<span id="cb60-5"><a href="data-filtration.html#cb60-5" tabindex="-1"></a><span class="fu">drawSparseEsetQC</span>(<span class="at">input_eset =</span> pbmc14k_raw.eset, <span class="at">output_html_file =</span> <span class="st">&quot;/your-path/PBMC14k/PLOT/pbmc14k_rawCount.html&quot;</span>, <span class="at">overwrite =</span> <span class="cn">FALSE</span>, <span class="at">group_by =</span> <span class="st">&quot;trueLabel&quot;</span>)</span></code></pre></div>
 <p>The quality control report consists of 4 parts:</p>
 <ul>
 <li><strong>Key Statistics</strong>: it highlights 5 key statistics of given eset object, including number of cells, number of genes, mean of genes per cell, mean of UMIs per cell and mean of cells per gene.</li>
