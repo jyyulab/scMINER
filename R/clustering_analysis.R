@@ -234,19 +234,19 @@ MICAplot <- function(input_eset,
     }
   }
 
-  if (is.numeric(input[,color_by]) == FALSE) {
-    p <- ggplot(input, aes(x = input[, X], y = input[, Y], color = input[, color_by])) +
-      geom_point(size = point.size, alpha = point.alpha)
+  master <- input[,c(X, Y, color_by)]; colnames(master) <- c("cor_X", "cor_Y", "pt_color")
+  if (is.numeric(master$pt_color) == FALSE) {
+    p <- ggplot(master, aes(x = cor_X, y = cor_Y, color = pt_color)) + geom_point(size = point.size, alpha = point.alpha)
 
     ## add cluster label
     if (show.cluster_label == TRUE) {
-      loc <- stats::aggregate(input[, c(X,Y)], by = list(GroupID = input[, color_by]), mean)
-      p <- p + geom_text(data = loc, aes(x = loc[, X], y = loc[, Y], label = loc[, "GroupID"]),
+      loc <- stats::aggregate(master[, c("cor_X", "cor_Y")], by = list(GroupID = master[, "pt_color"]), mean)
+      p <- p + geom_text(data = loc, aes(x = cor_X, y = cor_Y, label = GroupID),
                          check_overlap = TRUE, na.rm = FALSE, size = fontsize.cluster_label, show.legend = F, inherit.aes = FALSE)
     }
 
     # add legend
-    grps <- input[, color_by]
+    grps <- master$pt_color
     lgnd <- paste0(names(table(grps))," (",table(grps),")")
 
     if (is.null(colors) == FALSE) {
@@ -259,11 +259,11 @@ MICAplot <- function(input_eset,
       labs(x = X, y = Y)
   } else {
     if (do.logTransform == TRUE) {
-      input[, color_by] <- log2(input[, color_by] + 1)
+      master$pt_color <- log2(master$pt_color + 1)
       message('The values in "', color_by, '" have been transformed by log2(value + 1). To turn transformation off, set do.logTransform = FALSE.')
     }
 
-    p <- ggplot(input, aes(x = input[, X], y = input[, Y], color = input[, color_by])) +
+    p <- ggplot(master, aes(x = cor_X, y = cor_Y, color = pt_color)) +
       geom_point(size = point.size, alpha = point.alpha) +
       scale_colour_gradient(low = "lightgrey", high = "blue")
 
