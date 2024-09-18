@@ -828,8 +828,14 @@ getActivity_individual <- function(input_eset,
   acs <- cal_Activity(target_list = target_list, cal_mat = exprs(input_eset), activity_method = activity_method, do.std = do.z_normalization)
 
   ## prepare activity eset
-  acs_mtx <- data.frame(acs)
+  acs_mtx <- data.frame(acs, check.names = FALSE)
   acs_mtx <- acs_mtx[!is.na(row.names(acs_mtx)),]
+
+  if (any(is.na(acs_mtx))) {
+    min_v <- min(acs_mtx, na.rm = T)
+    acs_mtx[is.na(acs_mtx)] <- min_v
+    cat('NAs were found in the activity matrix and have been replaced by the minimum value: ', min_v, '.\n')
+  }
 
   if (any(is.na(acs_mtx))) {
     min_v <- min(acs_mtx, na.rm = T)
