@@ -30,7 +30,7 @@ A data frame. Rows are genes/drivers, and columns are 11 statistics of different
 Perform differential activity analysis on expression set
 }
 \examples{
-data(pbmc14k_expression.eset)
+\dontrun{
 ## 1. To perform differential activity analysis in a 1-vs-rest manner for all groups in "clusterID" column
 da_res <- getDA(input_eset = activity_clustered.eset,
                 group_by = "clusterID",
@@ -54,4 +54,6 @@ da_res <- getDA(input_eset = activity_clustered.eset,
                 g1 = c("1"),
                 g0 = c("3"),
                 use_method = "t.test")
+}
+
 }

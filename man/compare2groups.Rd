@@ -33,8 +33,9 @@ This function is used to perform the differential analysis between two groups. I
 ## to call this function
 data(pbmc14k_expression.eset)
 res <- compare2groups(input_eset = pbmc14k_expression.eset,
-                      group_by = group_by,
-                      g1 = g1_tmp,
-                      g0 = g0_tmp,
-                      use_method = use_method)
+                      group_by = "cellType",
+                      g1 = c("CD4TCM", "CD4TN", "CD4Treg", "CD8TN", "Monocyte", "NK"),
+                      g0 = c("B"),
+                      use_method = "limma")
+
 }

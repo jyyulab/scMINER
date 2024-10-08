@@ -30,5 +30,8 @@ A data frame with top genes/driver of each group
 This function is used to pick the top genes/drivers for each group from differential analysis results based on either \verb{fold change}, \verb{p value} or \code{FDR}.
 }
 \examples{
+\dontrun{
 top_drivers <- getTopFeature(da_res, number = 10, group_by, "g1_tag")
+}
+
 }

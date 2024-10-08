@@ -299,9 +299,13 @@ combineSparseEset <- function(eset_list,
 #'
 #' @examples
 #' data("pbmc14k_expression.eset")
-#' pbmc14k_raw.eset <- updateSparseEset(input_eset = pbmc14k_expression.eset,
-#'                                      projectID = "PBMC14k",
-#'                                      addMetaData = TRUE)
+#'
+#' ## 1. Update the QC metrics: this will recalculate the 'nUMI', 'nFeature', 'pctMito', 'pctSpikeIn' and 'nCell'. This is very helpful when the SparseEset is subsetted or combined.
+#' pbmc14k_raw.eset <- updateSparseEset(input_eset = pbmc14k_expression.eset, addMetaData = TRUE)
+#'
+#' ## 2. Update the meta data of cells: with this, the user can add more information of cells, like clustering results, cell type.
+#' true_label <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k_trueLabel.txt.gz", package = "scMINER"), header = T, row.names = 1, sep = "\t", quote = "", stringsAsFactors = FALSE)
+#' pbmc14k_raw.eset <- updateSparseEset(input_eset = pbmc14k_expression.eset, cellData = true_label, addMetaData = TRUE)
 #'
 updateSparseEset <- function(input_eset,
                              dataMatrix = NULL,
@@ -412,8 +416,11 @@ updateSparseEset <- function(input_eset,
 #' @export
 #'
 #' @examples
+#' data("pbmc14k_rawCount")
+#' pbmc14k_raw.eset <- createSparseEset(input_matrix = pbmc14k_rawCount, projectID = "PBMC14k", addMetaData = TRUE)
+#'
 #' ## 1. using the cutoffs automatically calculated by scMINER
-#' pbmc14k_filtered.eset <- filterSparseEset(pbmc14k_raw.eset, filter_mode = "auto", filter_type = "both")
+#' pbmc14k_filtered_auto.eset <- filterSparseEset(pbmc14k_raw.eset, filter_mode = "auto", filter_type = "both")
 #'
 #' ## 2. using the cutoffs manually specified
 #' pbmc14k_filtered_manual.eset <- filterSparseEset(pbmc14k_raw.eset, filter_mode = "manual", filter_type = "both",
@@ -549,10 +556,15 @@ filterSparseEset <- function(input_eset,
 #' @export
 #'
 #' @examples
+#' data("pbmc14k_rawCount")
+#' pbmc14k_raw.eset <- createSparseEset(input_matrix = pbmc14k_rawCount, projectID = "PBMC14k", addMetaData = TRUE)
+#' pbmc14k_filtered.eset <- filterSparseEset(pbmc14k_raw.eset, filter_mode = "auto", filter_type = "both")
+#'
 #' pbmc14k_log2cpm.eset <- normalizeSparseEset(pbmc14k_filtered.eset,
 #'                                             scale_factor = 1000000,
 #'                                             log_base = 2,
 #'                                             log_pseudoCount = 1)
+#'
 normalizeSparseEset <- function(input_eset,
                                 scale_factor = 1000000,
                                 do.logTransform = TRUE,
@@ -596,7 +608,8 @@ normalizeSparseEset <- function(input_eset,
 #' @export
 #'
 #' @examples
-#' ## 1. To generate the QC report in a group-specific manner, recommended whenever group information is avaiable.
+#' \dontrun{
+#' ## 1. To generate the QC report in a group-specific manner, recommended whenever group information is available.
 #' drawSparseEsetQC(input_eset = pbmc14k_raw.eset,
 #'                  output_html_file = "/your-path/PBMC14k/PLOT/pbmc14k_rawCount.html",
 #'                  overwrite = FALSE,
@@ -607,6 +620,8 @@ normalizeSparseEset <- function(input_eset,
 #'                  output_html_file = "/your-path/PBMC14k/PLOT/pbmc14k_rawCount.html",
 #'                  overwrite = FALSE,
 #'                  group_by = NULL)
+#' }
+#'
 drawSparseEsetQC <- function(input_eset,
                              output_html_file,
                              overwrite = FALSE,

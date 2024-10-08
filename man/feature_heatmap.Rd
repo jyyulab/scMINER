@@ -48,6 +48,7 @@ This function is used to draw a heatmap of selected features among self-defined 
 data(pbmc14k_expression.eset)
 features_of_interest <- c("CD3D","CD27","IL7R","SELL","CCR7","IL32","GZMA","GZMK",
                           "DUSP2","CD8A","GZMH","GZMB","CD79A","CD79B","CD86","CD14")
+
 ## 1. the most commonly used command
 feature_heatmap(input_eset = pbmc14k_expression.eset,
                 features = features_of_interest,
@@ -57,7 +58,7 @@ feature_heatmap(input_eset = pbmc14k_expression.eset,
 feature_heatmap(input_eset = pbmc14k_expression.eset,
                 features = features_of_interest,
                 group_by = "clusterID",
-                annotation_columns = c("true_label"))
+                annotation_columns = c("trueLabel"))
 
 ## 3. scale the data by row
 feature_heatmap(input_eset = pbmc14k_expression.eset,
@@ -77,4 +78,5 @@ feature_heatmap(input_eset = pbmc14k_expression.eset,
                 group_by = "clusterID",
                 use_gaps.column = TRUE,
                 use_gaps.row = TRUE)
+
 }

@@ -80,6 +80,7 @@ getDriverList <- function(species_type = "hg",
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' data(pbmc14k_expression.eset)
 #' ## 1. The most commonly used command: pre-defined driver lists, automatic down-sampling, no metacell method
 #' generateSJARACNeInput(input_eset = pbmc14k_expression.eset,
@@ -99,21 +100,23 @@ getDriverList <- function(species_type = "hg",
 #' ## 3. Use the customized driver list: (add TUBB4A is the gene of interest but currently not in the pre-defined driver list)
 #'
 #' # when the driver-to-add is known as a transcription factor
-#' generateSJARACNeInput(input_eset = pbmc14k_expression.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
+#' generateSJARACNeInput(input_eset = pbmc14k_expression.eset, group_name = "trueLabel", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
 #'                       customDriver_TF = c(getDriverList(species_type = "hg", driver_type = "TF"), "TUBB4A"))
 #'
 #' # when the driver-to-add is known as a non-transcription factor
-#' generateSJARACNeInput(input_eset = pbmc14k_expression.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
+#' generateSJARACNeInput(input_eset = pbmc14k_expression.eset, group_name = "trueLabel", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
 #'                       customDriver_SIG = c(getDriverList(species_type = "hg", driver_type = "SIG"), "TUBB4A"))
 #'
 #' # when it's ambiguous to tell if the driver-to-add is a transcriptional factor
-#' generateSJARACNeInput(input_eset = pbmc14k_expression.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
+#' generateSJARACNeInput(input_eset = pbmc14k_expression.eset, group_name = "trueLabel", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
 #'                       customDriver_TF = c(getDriverList(species_type = "hg", driver_type = "TF"), "TUBB4A"),
 #'                       customDriver_SIG = c(getDriverList(species_type = "hg", driver_type = "SIG"), "TUBB4A"))
 #'
 #' ## 4. Use the metacell method
-#' generateSJARACNeInput(input_eset = pbmc14k_expression.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
+#' generateSJARACNeInput(input_eset = pbmc14k_expression.eset, group_name = "trueLabel", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
 #'                       superCell_N = 1000, superCell_count = 100, seed = 123)
+#' }
+#'
 generateSJARACNeInput <- function(input_eset,
                                   group_name = "clusterID",
                                   group_name.refine = FALSE,
@@ -392,15 +395,18 @@ generateSJARACNeInput <- function(input_eset,
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' ## 1. assess the quality of network from network files
-#' drawNetworkQC(network_file = ./SJARACNE/B/SIG/b100/consensus_network_ncol_.txt, generate_htmal = TRUE)
-#' drawNetworkQC(network_file = ./SJARACNE/B/SIG/b100/consensus_network_ncol_.txt, generate_htmal = TRUE,
+#' drawNetworkQC(network_file = /project_space/SJARACNE/B/SIG/b100/consensus_network_ncol_.txt, generate_html = TRUE)
+#' drawNetworkQC(network_file = /project_space/SJARACNE/B/SIG/b100/consensus_network_ncol_.txt, generate_html = TRUE,
 #'               outdir = "/path-to-cutomized-folder")
-#' drawNetworkQC(network_file = ./SJARACNE/B/SIG/b100/consensus_network_ncol_.txt, generate_htmal = TRUE,
+#' drawNetworkQC(network_file = /project_space/SJARACNE/B/SIG/b100/consensus_network_ncol_.txt, generate_html = TRUE,
 #'               prefix = "PBMC14")
 #'
 #' ## 2. assess the quality of network from the directory of network files
-#' drawNetworkQC(sjaracne_dir = ./SJARACNE, generate_html = TRUE)
+#' drawNetworkQC(sjaracne_dir = /project_space/SJARACNE, generate_html = TRUE)
+#' }
+#'
 drawNetworkQC <- function(network_file = NULL,
                           sjaracne_dir = NULL,
                           directed = TRUE, weighted = TRUE,
@@ -612,7 +618,7 @@ drawNetworkQC <- function(network_file = NULL,
 #'
 #' @return a vector of numbers with z-normalized
 #'
-#' @examples do.std(c(1,2,3,4,5,NA,6,7,8,9))
+#' @examples z_normalization(c(1,2,3,4,5,NA,6,7,8,9))
 z_normalization <- function(x) {
   x <- x[!is.na(x)]
   (x - base::mean(x, na.rm = TRUE)) / stats::sd(x, na.rm = TRUE)
@@ -630,8 +636,11 @@ z_normalization <- function(x) {
 #' @return A list of source genes, for each source gene, the value is a data frame with "`target`", "`MI`" and "`spearman`" as the columns
 #'
 #' @examples
-#' net_data <-  read.table("./consensus_network_ncol_.txt", header = T, sep = "\t", stringsAsFactors = F, quote = "")
+#' net_data <-  read.table(system.file("extdata/demo_pbmc14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
+#'                         header = TRUE, sep = "\t", stringsAsFactors = FALSE, quote = "",
+#'                         colClasses = c("character", "character", "character", "character", "numeric", "numeric", "numeric", "numeric", "numeric"))
 #' target_list <- get_net2target_list(net_data)
+#'
 get_net2target_list <- function(net_dat = NULL) {
   all_source <- base::unique(net_dat$source)
   all_target <- base::lapply(all_source, function(x) {
@@ -668,7 +677,14 @@ get_net2target_list <- function(net_dat = NULL) {
 #' @return If "`weightedmean`" is given, it returns a matrix of signed (by Spearman correlation coefficient) mutual information, the sign of which will be used for activity calculation. For
 #' all the other methods ("`mean`", "`absmean`" or "`maxmean`"), it returns a matrix of 1.
 #'
-#' @examples weight_matrix <- get_target_list2matrix(target_list)
+#' @examples
+#' net_data <-  read.table(system.file("extdata/demo_pbmc14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
+#'                         header = TRUE, sep = "\t", stringsAsFactors = FALSE, quote = "",
+#'                         colClasses = c("character", "character", "character", "character", "numeric", "numeric", "numeric", "numeric", "numeric"))
+#' target_list <- get_net2target_list(net_data)
+#'
+#' weight_matrix <- get_target_list2matrix(target_list)
+#'
 get_target_list2matrix <- function(target_list = NULL, activity_method = 'mean') {
   all_source <- names(target_list)
   all_target <- base::unique(unlist(base::lapply(target_list, function(x) rownames(x))))
@@ -696,7 +712,14 @@ get_target_list2matrix <- function(target_list = NULL, activity_method = 'mean')
 #' @return a matrix of activities, drivers by cells
 #'
 #' @examples
-#' act_mat <- cal_Activity(target_list = target_list, cal_mat = exprs(normalized.eset), activity_method = 'mean', do.std = TRUE)
+#' net_data <-  read.table(system.file("extdata/demo_pbmc14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
+#'                         header = TRUE, sep = "\t", stringsAsFactors = FALSE, quote = "",
+#'                         colClasses = c("character", "character", "character", "character", "numeric", "numeric", "numeric", "numeric", "numeric"))
+#' target_list <- get_net2target_list(net_data)
+#'
+#' data(pbmc14k_expression.eset)
+#'
+#' act_mat <- cal_Activity(target_list = target_list, cal_mat = exprs(pbmc14k_expression.eset), activity_method = 'mean', do.std = TRUE)
 cal_Activity <- function(target_list = NULL, cal_mat = NULL, activity_method = 'mean', do.std = TRUE) {
   ## check parameters
   if (is.null(target_list) == TRUE) {
@@ -774,9 +797,9 @@ cal_Activity <- function(target_list = NULL, cal_mat = NULL, activity_method = '
 #'
 #' @examples
 #' data(pbmc14k_expression.eset)
-#' activity_group.eset <- getActivity_individual(input_eset = pbmc14k_expression.eset,
-#'                                               network_file.tf = "consensus_network_ncol_.txt",
-#'                                               network_file.sig = "consensus_network_ncol_.txt",
+#' activity_group.eset <- getActivity_individual(input_eset = pbmc14k_expression.eset[, pbmc14k_expression.eset$trueLabel == "B"],
+#'                                               network_file.tf = system.file("extdata/demo_pbmc14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
+#'                                               network_file.sig = system.file("extdata/demo_pbmc14k/SJARACNe/B/SIG/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
 #'                                               driver_type = "TF_SIG")
 getActivity_individual <- function(input_eset,
                                    network_file.tf = NULL,
@@ -880,54 +903,55 @@ getActivity_individual <- function(input_eset,
 #' @examples
 #' data(pbmc14k_expression.eset)
 #'
-#' ## 1. when no tag was used in runing SJARACNE: the network file folder ("sjaracne_workflow-*") is directly under TF/SIG folder of each group.
+#' ## 1. when no tag was used in running SJARACNE: the network file folder ("sjaracne_workflow-*") is directly under TF/SIG folder of each group.
 #' activity.eset <- getActivity_inBatch(input_eset = pbmc14k_expression.eset,
-#'                                      sjaracne_dir = "./SJARACNe",
-#'                                      group_name = "cell_type",
+#'                                      sjaracne_dir = system.file("extdata/demo_pbmc14k/SJARACNe", package = "scMINER"),
+#'                                      group_name = "trueLabel",
 #'                                      driver_type = "TF_SIG",
 #'                                      activity_method = "mean",
 #'                                      do.z_normalization = TRUE)
 #'
-#' ## 2. when tag (e.g. "bs_100" ) was used: the nework file folder ("sjaracne_workflow-*") is directly under a subfolder "bs_100" of the TF/SIG folder of each group.
+#' ## 2. when tag (e.g. "bt100_pc001" ) was used: the network file folder ("sjaracne_workflow-*") is directly under a subfolder "bs_100" of the TF/SIG folder of each group.
 #' activity.eset <- getActivity_inBatch(input_eset = pbmc14k_expression.eset,
-#'                                      sjaracne_dir = "./SJARACNe",
-#'                                      group_name = "cell_type",
-#'                                      network_tag.tf = "bs_100",
-#'                                      network_tag.sig = "bs_100",
+#'                                      sjaracne_dir = system.file("extdata/demo_pbmc14k/SJARACNe", package = "scMINER"),
+#'                                      group_name = "trueLabel",
+#'                                      network_tag.tf = "bt100_pc001",
+#'                                      network_tag.sig = "bt100_pc001",
 #'                                      driver_type = "TF_SIG",
 #'                                      activity_method = "mean",
 #'                                      do.z_normalization = TRUE)
 #'
 #' ## 3. to calculate the activities of TF only
 #' activity.eset <- getActivity_inBatch(input_eset = pbmc14k_expression.eset,
-#'                                      sjaracne_dir = "./SJARACNe",
-#'                                      group_name = "cell_type",
-#'                                      network_tag.tf = "bs_100",
-#'                                      network_tag.sig = "bs_100",
+#'                                      sjaracne_dir = system.file("extdata/demo_pbmc14k/SJARACNe", package = "scMINER"),
+#'                                      group_name = "trueLabel",
+#'                                      network_tag.tf = "bt100_pc001",
+#'                                      network_tag.sig = "bt100_pc001",
 #'                                      driver_type = "TF",
 #'                                      activity_method = "mean",
 #'                                      do.z_normalization = TRUE)
 #'
 #' ## 4. to exclude some groups in the activity calculation (e.g. "NK" and "Monocyte")
 #' activity.eset <- getActivity_inBatch(input_eset = pbmc14k_expression.eset,
-#'                                      sjaracne_dir = "./SJARACNe",
-#'                                      group_name = "cell_type",
+#'                                      sjaracne_dir = system.file("extdata/demo_pbmc14k/SJARACNe", package = "scMINER"),
+#'                                      group_name = "trueLabel",
 #'                                      group_exclude = c("NK", "Monocyte"),
-#'                                      network_tag.tf = "bs_100",
-#'                                      network_tag.sig = "bs_100",
+#'                                      network_tag.tf = "bt100_pc001",
+#'                                      network_tag.sig = "bt100_pc001",
 #'                                      driver_type = "TF",
 #'                                      activity_method = "mean",
 #'                                      do.z_normalization = TRUE)
 #'
 #' ## 5. when calculate the activities from the gene expression values scaled by other methods (e.g. ScaleData() from Seurat package)
 #' activity.eset <- getActivity_inBatch(input_eset = pbmc14k_expression.eset,
-#'                                      sjaracne_dir = "./SJARACNe",
-#'                                      group_name = "cell_type",
-#'                                      network_tag.tf = "bs_100",
-#'                                      network_tag.sig = "bs_100",
+#'                                      sjaracne_dir = system.file("extdata/demo_pbmc14k/SJARACNe", package = "scMINER"),
+#'                                      group_name = "trueLabel",
+#'                                      network_tag.tf = "bt100_pc001",
+#'                                      network_tag.sig = "bt100_pc001",
 #'                                      driver_type = "TF_SIG",
 #'                                      activity_method = "mean",
 #'                                      do.z_normalization = FALSE)
+#'
 getActivity_inBatch <- function(input_eset,
                                 sjaracne_dir,
                                 group_name, group_exclude = NULL,

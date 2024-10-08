@@ -264,8 +264,8 @@ The clustering result can be easily easily added to the SparseEset object by `ad
 ```{r mica-output-vis}
 ## Add MICA output into SparseEset object
 pbmc14k_clustered.eset <- addMICAoutput(input_eset = pbmc14k_log2cpm.eset,
-                                      mica_output_file = system.file("extdata/demo_pbmc14k/MICA/clustering_UMAP_euclidean_20_2.05.txt", package = "scMINER"), 
-                                      visual_method = "umap") # use "tsne" if t-SNE was used in MICA
+                                        mica_output_file = system.file("extdata/demo_pbmc14k/MICA/clustering_UMAP_euclidean_20_2.05.txt", package = "scMINER"),
+                                        visual_method = "umap") # use "tsne" if t-SNE was used in MICA
 head(pData(pbmc14k_clustered.eset))
 ```
 

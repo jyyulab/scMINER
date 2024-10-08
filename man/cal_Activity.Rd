@@ -27,5 +27,12 @@ a matrix of activities, drivers by cells
 This function is used to calculate activities from gene expression matrix and networks. This is an internal function for \code{cal_Activity()}, \code{getActivity_individual()}, \code{getActivity_inBatch()}.
 }
 \examples{
-act_mat <- cal_Activity(target_list = target_list, cal_mat = exprs(normalized.eset), activity_method = 'mean', do.std = TRUE)
+net_data <-  read.table(system.file("extdata/demo_pbmc14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
+                        header = TRUE, sep = "\t", stringsAsFactors = FALSE, quote = "",
+                        colClasses = c("character", "character", "character", "character", "numeric", "numeric", "numeric", "numeric", "numeric"))
+target_list <- get_net2target_list(net_data)
+
+data(pbmc14k_expression.eset)
+
+act_mat <- cal_Activity(target_list = target_list, cal_mat = exprs(pbmc14k_expression.eset), activity_method = 'mean', do.std = TRUE)
 }

@@ -48,7 +48,7 @@
 #' p_vln <- feature_vlnplot(input_eset = pbmc14k_expression.eset,
 #'                          features = c("CD14", "CD19", "CD8A"),
 #'                          group_by = "clusterID",
-#'                          colors = c("blue", "red", "green"))
+#'                          colors = c("blue", "red", "green", "orange", "purple", "grey", "brown"))
 #'
 #' ## 4. add jittered points
 #' p_vln <- feature_vlnplot(input_eset = pbmc14k_expression.eset,
@@ -56,10 +56,6 @@
 #'                          group_by = "clusterID",
 #'                          add_jitter = TRUE, jitter.width = 0.5, jitter.size = 0.5)
 #'
-#' ## 5. using activity data
-#' p_vln <- feature_vlnplot(input_eset = activity_clustered.eset,
-#'                          features = c("CD14_SIG", "CD19_SIG", "CD8A_SIG"),
-#'                          group_by = "clusterID", ylabel_text = "Activity")
 feature_vlnplot <- function(input_eset,
                             features = NULL,
                             group_by = "clusterID",
@@ -165,7 +161,7 @@ feature_vlnplot <- function(input_eset,
 #' p_box <- feature_boxplot(input_eset = pbmc14k_expression.eset,
 #'                          features = c("CD14", "CD19", "CD8A"),
 #'                          group_by = "clusterID",
-#'                          colors = c("blue", "red", "green"))
+#'                          colors = c("blue", "red", "green", "orange", "purple", "grey", "brown"))
 #'
 #' ## 4. add jittered points
 #' p_box <- feature_boxplot(input_eset = pbmc14k_expression.eset,
@@ -174,10 +170,6 @@ feature_vlnplot <- function(input_eset,
 #'                          add_jitter = TRUE,
 #'                          jitter.width = 0.5, jitter.size = 0.5)
 #'
-#' ## 5. using activity data
-#' p_box <- feature_boxplot(input_eset = activity_clustered.eset,
-#'                          features = c("CD14_SIG", "CD19_SIG", "CD8A_SIG"),
-#'                          group_by = "clusterID", ylabel_text = "Activity")
 feature_boxplot <- function(input_eset,
                             features = NULL,
                             group_by = "clusterID",
@@ -264,22 +256,18 @@ feature_boxplot <- function(input_eset,
 #' @examples
 #' data(pbmc14k_expression.eset)
 #'
-#' ## 1. scatter plots with UMAP projections
+#' ## 1. scatter plots with UMAP/tSNE projections
 #' feature_scatterplot(input_eset = pbmc14k_expression.eset,
 #'                     features = c("CD14", "CD19", "CD8A"),
 #'                     location_x = "UMAP_1", location_y = "UMAP_2")
 #'
-#' ## 2. scatter plots with t-SNE projections
-#' feature_scatterplot(input_eset = pbmc14k_expression.eset,
-#'                     features = c("CD14", "CD19", "CD8A"),
-#'                     location_x = "tSNE_1", location_y = "tSNE_2")
-#'
-#' ## 3. change the point size and font size
+#' ## 2. change the point size and font size
 #' feature_scatterplot(input_eset = pbmc14k_expression.eset,
 #'                     features = c("CD14", "CD19", "CD8A"),
 #'                     location_x = "UMAP_1", location_y = "UMAP_2",
-#'                     point.size = 1,
-#'                     fontsize.strip = 12, fontsize.axis = 10)
+#'                     point.size = 1, fontsize.strip = 12,
+#'                     fontsize.axis_title = 10, fontsize.axis_text = 8)
+#'
 feature_scatterplot <- function(input_eset,
                                 features = NULL,
                                 location_x = "UMAP_1", location_y = "UMAP_2",
@@ -372,7 +360,8 @@ feature_scatterplot <- function(input_eset,
 #' feature_bubbleplot(input_eset = pbmc14k_expression.eset,
 #'                    features = features_of_interest,
 #'                    group_by = "clusterID",
-#'                    colors = c("lightgrey", "red"))
+#'                    colors = c("lightgrey", "blue"))
+#'
 feature_bubbleplot <- function(input_eset,
                                features = NULL,
                                group_by = "clusterID",
@@ -454,6 +443,7 @@ feature_bubbleplot <- function(input_eset,
 #' data(pbmc14k_expression.eset)
 #' features_of_interest <- c("CD3D","CD27","IL7R","SELL","CCR7","IL32","GZMA","GZMK",
 #'                           "DUSP2","CD8A","GZMH","GZMB","CD79A","CD79B","CD86","CD14")
+#'
 #' ## 1. the most commonly used command
 #' feature_heatmap(input_eset = pbmc14k_expression.eset,
 #'                 features = features_of_interest,
@@ -463,7 +453,7 @@ feature_bubbleplot <- function(input_eset,
 #' feature_heatmap(input_eset = pbmc14k_expression.eset,
 #'                 features = features_of_interest,
 #'                 group_by = "clusterID",
-#'                 annotation_columns = c("true_label"))
+#'                 annotation_columns = c("trueLabel"))
 #'
 #' ## 3. scale the data by row
 #' feature_heatmap(input_eset = pbmc14k_expression.eset,
@@ -483,6 +473,7 @@ feature_bubbleplot <- function(input_eset,
 #'                 group_by = "clusterID",
 #'                 use_gaps.column = TRUE,
 #'                 use_gaps.row = TRUE)
+#'
 feature_heatmap <- function(input_eset,
                             features = NULL,
                             group_by = "clusterID",
@@ -567,13 +558,14 @@ feature_heatmap <- function(input_eset,
 #' ## 1. bar plot grouped by clusters ("clusterID") and colored by true labels ("true_label)
 #' draw_barplot(input_eset = pbmc14k_expression.eset,
 #'              group_by = "clusterID",
-#'              color_by = "true_label")
+#'              color_by = "trueLabel")
 #'
 #' ## 2. customize the colors
 #' draw_barplot(input_eset = pbmc14k_expression.eset,
 #'              group_by = "clusterID",
-#'              color_by = "true_label",
+#'              color_by = "trueLabel",
 #'              colors = c("green", "red", "blue", "grey", "orange", "purple", "yellow"))
+#'
 draw_barplot <- function(input_eset,
                          group_by = "clusterID",
                          color_by = "cell_type",
@@ -629,8 +621,7 @@ draw_barplot <- function(input_eset,
 #'
 #' @examples
 #' data(pbmc14k_expression.eset)
-#' marker_file <- system.file('extdata/demo_pbmc14k/PBMC14k_signatureTable.txt', package = "scMINER")
-#' signature_table <- openxlsx::read.xlsx(marker_file)
+#' signature_table <- read.table(system.file('extdata/demo_pbmc14k/PBMC14k_signatureTable.txt', package = "scMINER"), header = TRUE, sep = "\t", quote = "", stringsAsFactors = FALSE)
 #' head(signature_table)
 #'
 #' ## 1. the most commonly used command
@@ -643,6 +634,7 @@ draw_barplot <- function(input_eset,
 #'                 signature_table = signature_table,
 #'                 group_by = "clusterID",
 #'                 colors = c("lightgrey", "red"))
+#'
 draw_bubbleplot <- function(input_eset,
                             signature_table = NULL,
                             group_by = "clusterID",
@@ -742,8 +734,7 @@ draw_bubbleplot <- function(input_eset,
 #' @export
 #'
 #' @examples
-#' data(pbmc14k_expression.eset)
-#'
+#' \dontrun{
 #' ## 1. the most commonly used command
 #' generatePortalInputs(input_expression.eset = pbmc14k_expression.eset,
 #'                      group_by = "cellType",
@@ -766,6 +757,8 @@ draw_bubbleplot <- function(input_eset,
 #'                      group_by = "cellType",
 #'                      input_network.table = network.table,
 #'                      output_dir = "./path-to-output_dir")
+#' }
+#'
 generatePortalInputs <- function(input_expression.eset = NULL,
                                  input_expression.seuratObj = NULL,
                                  group_by = NULL,

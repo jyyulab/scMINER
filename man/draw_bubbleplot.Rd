@@ -46,8 +46,7 @@ This function is used to draw a bubble plot of signature scores among self-defin
 }
 \examples{
 data(pbmc14k_expression.eset)
-marker_file <- system.file('extdata/demo_pbmc14k/PBMC14k_signatureTable.txt', package = "scMINER")
-signature_table <- openxlsx::read.xlsx(marker_file)
+signature_table <- read.table(system.file('extdata/demo_pbmc14k/PBMC14k_signatureTable.txt', package = "scMINER"), header = TRUE, sep = "\t", quote = "", stringsAsFactors = FALSE)
 head(signature_table)
 
 ## 1. the most commonly used command
@@ -60,4 +59,5 @@ draw_bubbleplot(input_eset = pbmc14k_expression.eset,
                 signature_table = signature_table,
                 group_by = "clusterID",
                 colors = c("lightgrey", "red"))
+
 }

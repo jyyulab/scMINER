@@ -30,8 +30,13 @@ A sparse eset object that has been normalized and log-transformed
 This function is used to normalize and log-transform the sparse eset object. The default method is "log21p".
 }
 \examples{
+data("pbmc14k_rawCount")
+pbmc14k_raw.eset <- createSparseEset(input_matrix = pbmc14k_rawCount, projectID = "PBMC14k", addMetaData = TRUE)
+pbmc14k_filtered.eset <- filterSparseEset(pbmc14k_raw.eset, filter_mode = "auto", filter_type = "both")
+
 pbmc14k_log2cpm.eset <- normalizeSparseEset(pbmc14k_filtered.eset,
                                             scale_factor = 1000000,
                                             log_base = 2,
                                             log_pseudoCount = 1)
+
 }

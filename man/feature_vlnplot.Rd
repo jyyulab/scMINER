@@ -97,7 +97,7 @@ p_vln <- feature_vlnplot(input_eset = pbmc14k_expression.eset,
 p_vln <- feature_vlnplot(input_eset = pbmc14k_expression.eset,
                          features = c("CD14", "CD19", "CD8A"),
                          group_by = "clusterID",
-                         colors = c("blue", "red", "green"))
+                         colors = c("blue", "red", "green", "orange", "purple", "grey", "brown"))
 
 ## 4. add jittered points
 p_vln <- feature_vlnplot(input_eset = pbmc14k_expression.eset,
@@ -105,8 +105,4 @@ p_vln <- feature_vlnplot(input_eset = pbmc14k_expression.eset,
                          group_by = "clusterID",
                          add_jitter = TRUE, jitter.width = 0.5, jitter.size = 0.5)
 
-## 5. using activity data
-p_vln <- feature_vlnplot(input_eset = activity_clustered.eset,
-                         features = c("CD14_SIG", "CD19_SIG", "CD8A_SIG"),
-                         group_by = "clusterID", ylabel_text = "Activity")
 }

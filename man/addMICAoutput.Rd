@@ -26,6 +26,6 @@ This function is used to add the clustering results by MICA into the sparse eset
 \examples{
 data(pbmc14k_expression.eset)
 pbmc14k_log2cpm.eset <- addMICAoutput(pbmc14k_expression.eset,
-                                      mica_output_file = system.file("extdata/demo_pbmc14k/MICA/clustering_UMAP_euclidean_20_2.05.txt", package = "scMINER"),
+                                      mica_output_file = system.file("extdata/demo_pbmc14k/MICA/clustering_UMAP_euclidean_20_2.05_3500.txt", package = "scMINER"),
                                       visual_method = "umap")
 }

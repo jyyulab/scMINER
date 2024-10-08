@@ -31,6 +31,7 @@ This function is used to perform the differential expression analysis on sparse 
 }
 \examples{
 data(pbmc14k_expression.eset)
+
 ## 1. To perform differential expression analysis in a 1-vs-rest manner for all groups in "clusterID" column
 de_res <- getDE(input_eset = pbmc14k_expression.eset,
                 group_by = "clusterID",
@@ -54,4 +55,5 @@ de_res <- getDE(input_eset = pbmc14k_expression.eset,
                 g1 = c("1"),
                 g0 = c("3"),
                 use_method = "limma")
+
 }

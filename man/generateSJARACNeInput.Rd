@@ -85,6 +85,7 @@ This function will generate several folders and files in the directory specified
 This function is used to generate the standard input files for SJARACNe, a scalable software tool for gene network reverse engineering from big data.
 }
 \examples{
+\dontrun{
 data(pbmc14k_expression.eset)
 ## 1. The most commonly used command: pre-defined driver lists, automatic down-sampling, no metacell method
 generateSJARACNeInput(input_eset = pbmc14k_expression.eset,
@@ -104,19 +105,21 @@ generateSJARACNeInput(input_eset = pbmc14k_expression.eset,
 ## 3. Use the customized driver list: (add TUBB4A is the gene of interest but currently not in the pre-defined driver list)
 
 # when the driver-to-add is known as a transcription factor
-generateSJARACNeInput(input_eset = pbmc14k_expression.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
+generateSJARACNeInput(input_eset = pbmc14k_expression.eset, group_name = "trueLabel", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
                       customDriver_TF = c(getDriverList(species_type = "hg", driver_type = "TF"), "TUBB4A"))
 
 # when the driver-to-add is known as a non-transcription factor
-generateSJARACNeInput(input_eset = pbmc14k_expression.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
+generateSJARACNeInput(input_eset = pbmc14k_expression.eset, group_name = "trueLabel", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
                       customDriver_SIG = c(getDriverList(species_type = "hg", driver_type = "SIG"), "TUBB4A"))
 
 # when it's ambiguous to tell if the driver-to-add is a transcriptional factor
-generateSJARACNeInput(input_eset = pbmc14k_expression.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
+generateSJARACNeInput(input_eset = pbmc14k_expression.eset, group_name = "trueLabel", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
                       customDriver_TF = c(getDriverList(species_type = "hg", driver_type = "TF"), "TUBB4A"),
                       customDriver_SIG = c(getDriverList(species_type = "hg", driver_type = "SIG"), "TUBB4A"))
 
 ## 4. Use the metacell method
-generateSJARACNeInput(input_eset = pbmc14k_expression.eset, group_name = "cell_type", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
+generateSJARACNeInput(input_eset = pbmc14k_expression.eset, group_name = "trueLabel", sjaracne_dir = "./SJARACNe", species_type = "hg", driver_type = "TF_SIG",
                       superCell_N = 1000, superCell_count = 100, seed = 123)
+}
+
 }

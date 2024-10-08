@@ -34,8 +34,8 @@ This function is used to calculate the driver activities of one single group fro
 }
 \examples{
 data(pbmc14k_expression.eset)
-activity_group.eset <- getActivity_individual(input_eset = pbmc14k_expression.eset,
-                                              network_file.tf = "consensus_network_ncol_.txt",
-                                              network_file.sig = "consensus_network_ncol_.txt",
+activity_group.eset <- getActivity_individual(input_eset = pbmc14k_expression.eset[, pbmc14k_expression.eset$trueLabel == "B"],
+                                              network_file.tf = system.file("extdata/demo_pbmc14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
+                                              network_file.sig = system.file("extdata/demo_pbmc14k/SJARACNe/B/SIG/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
                                               driver_type = "TF_SIG")
 }

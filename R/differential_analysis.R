@@ -15,9 +15,12 @@
 #' ## 1. combine P values from a vector
 #' combinePvalVector(c(0.1,1e-3,1e-5), method = 'Stouffer')
 #'
+#' \dontrun{
 #' ## 2. combine P values from a table
 #' df_Pcombined <- sapply(df$Pval*sign(df$log2FC), function(x) {combinePvalVector(x, twosided = TRUE)[2]})
 #' df_Zscore <- sapply(df$Pval*sign(df$log2FC), function(x) {combinePvalVector(x, twosided = TRUE)[1]})
+#' }
+#'
 combinePvalVector <- function(pvals,
                               method = 'Stouffer',
                               signed = TRUE,
@@ -101,10 +104,11 @@ combinePvalVector <- function(pvals,
 #' ## to call this function
 #' data(pbmc14k_expression.eset)
 #' res <- compare2groups(input_eset = pbmc14k_expression.eset,
-#'                       group_by = group_by,
-#'                       g1 = g1_tmp,
-#'                       g0 = g0_tmp,
-#'                       use_method = use_method)
+#'                       group_by = "cellType",
+#'                       g1 = c("CD4TCM", "CD4TN", "CD4Treg", "CD8TN", "Monocyte", "NK"),
+#'                       g0 = c("B"),
+#'                       use_method = "limma")
+#'
 compare2groups <- function(input_eset,
                            group_by = "clusterID",
                            g1 = NULL, g0 = NULL,
@@ -206,6 +210,7 @@ compare2groups <- function(input_eset,
 #'
 #' @examples
 #' data(pbmc14k_expression.eset)
+#'
 #' ## 1. To perform differential expression analysis in a 1-vs-rest manner for all groups in "clusterID" column
 #' de_res <- getDE(input_eset = pbmc14k_expression.eset,
 #'                 group_by = "clusterID",
@@ -229,6 +234,7 @@ compare2groups <- function(input_eset,
 #'                 g1 = c("1"),
 #'                 g0 = c("3"),
 #'                 use_method = "limma")
+#'
 getDE <- function(input_eset,
                   group_by = "clusterID",
                   g1 = NULL, g0 = NULL,
@@ -309,7 +315,7 @@ getDE <- function(input_eset,
 #' @export
 #'
 #' @examples
-#' data(pbmc14k_expression.eset)
+#' \dontrun{
 #' ## 1. To perform differential activity analysis in a 1-vs-rest manner for all groups in "clusterID" column
 #' da_res <- getDA(input_eset = activity_clustered.eset,
 #'                 group_by = "clusterID",
@@ -333,6 +339,8 @@ getDE <- function(input_eset,
 #'                 g1 = c("1"),
 #'                 g0 = c("3"),
 #'                 use_method = "t.test")
+#' }
+#'
 getDA <- function(input_eset,
                   group_by = "clusterID",
                   g1 = NULL, g0 = NULL,
@@ -418,7 +426,10 @@ getDA <- function(input_eset,
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' top_drivers <- getTopFeature(da_res, number = 10, group_by, "g1_tag")
+#' }
+#'
 getTopFeatures <- function(input_table,
                            number = 10,
                            group_by = "g1_tag",

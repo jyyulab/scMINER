@@ -36,8 +36,7 @@ This function generated 1-3 standard files which can be uploaded to scMINER Port
 This function is used to generated the standard input files that can be directly uploaded to scMINER Portal for visualization and beyond.
 }
 \examples{
-data(pbmc14k_expression.eset)
-
+\dontrun{
 ## 1. the most commonly used command
 generatePortalInputs(input_expression.eset = pbmc14k_expression.eset,
                      group_by = "cellType",
@@ -60,4 +59,6 @@ generatePortalInputs(input_expression.eset = pbmc14k_expression.eset,
                      group_by = "cellType",
                      input_network.table = network.table,
                      output_dir = "./path-to-output_dir")
+}
+
 }

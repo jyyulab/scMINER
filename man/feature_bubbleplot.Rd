@@ -57,5 +57,6 @@ feature_bubbleplot(input_eset = pbmc14k_expression.eset,
 feature_bubbleplot(input_eset = pbmc14k_expression.eset,
                    features = features_of_interest,
                    group_by = "clusterID",
-                   colors = c("lightgrey", "red"))
+                   colors = c("lightgrey", "blue"))
+
 }

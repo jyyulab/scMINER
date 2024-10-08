@@ -44,52 +44,53 @@ This function is used to calculate the driver activities of multiple groups from
 \examples{
 data(pbmc14k_expression.eset)
 
-## 1. when no tag was used in runing SJARACNE: the network file folder ("sjaracne_workflow-*") is directly under TF/SIG folder of each group.
+## 1. when no tag was used in running SJARACNE: the network file folder ("sjaracne_workflow-*") is directly under TF/SIG folder of each group.
 activity.eset <- getActivity_inBatch(input_eset = pbmc14k_expression.eset,
-                                     sjaracne_dir = "./SJARACNe",
-                                     group_name = "cell_type",
+                                     sjaracne_dir = system.file("extdata/demo_pbmc14k/SJARACNe", package = "scMINER"),
+                                     group_name = "trueLabel",
                                      driver_type = "TF_SIG",
                                      activity_method = "mean",
                                      do.z_normalization = TRUE)
 
-## 2. when tag (e.g. "bs_100" ) was used: the nework file folder ("sjaracne_workflow-*") is directly under a subfolder "bs_100" of the TF/SIG folder of each group.
+## 2. when tag (e.g. "bt100_pc001" ) was used: the network file folder ("sjaracne_workflow-*") is directly under a subfolder "bs_100" of the TF/SIG folder of each group.
 activity.eset <- getActivity_inBatch(input_eset = pbmc14k_expression.eset,
-                                     sjaracne_dir = "./SJARACNe",
-                                     group_name = "cell_type",
-                                     network_tag.tf = "bs_100",
-                                     network_tag.sig = "bs_100",
+                                     sjaracne_dir = system.file("extdata/demo_pbmc14k/SJARACNe", package = "scMINER"),
+                                     group_name = "trueLabel",
+                                     network_tag.tf = "bt100_pc001",
+                                     network_tag.sig = "bt100_pc001",
                                      driver_type = "TF_SIG",
                                      activity_method = "mean",
                                      do.z_normalization = TRUE)
 
 ## 3. to calculate the activities of TF only
 activity.eset <- getActivity_inBatch(input_eset = pbmc14k_expression.eset,
-                                     sjaracne_dir = "./SJARACNe",
-                                     group_name = "cell_type",
-                                     network_tag.tf = "bs_100",
-                                     network_tag.sig = "bs_100",
+                                     sjaracne_dir = system.file("extdata/demo_pbmc14k/SJARACNe", package = "scMINER"),
+                                     group_name = "trueLabel",
+                                     network_tag.tf = "bt100_pc001",
+                                     network_tag.sig = "bt100_pc001",
                                      driver_type = "TF",
                                      activity_method = "mean",
                                      do.z_normalization = TRUE)
 
 ## 4. to exclude some groups in the activity calculation (e.g. "NK" and "Monocyte")
 activity.eset <- getActivity_inBatch(input_eset = pbmc14k_expression.eset,
-                                     sjaracne_dir = "./SJARACNe",
-                                     group_name = "cell_type",
+                                     sjaracne_dir = system.file("extdata/demo_pbmc14k/SJARACNe", package = "scMINER"),
+                                     group_name = "trueLabel",
                                      group_exclude = c("NK", "Monocyte"),
-                                     network_tag.tf = "bs_100",
-                                     network_tag.sig = "bs_100",
+                                     network_tag.tf = "bt100_pc001",
+                                     network_tag.sig = "bt100_pc001",
                                      driver_type = "TF",
                                      activity_method = "mean",
                                      do.z_normalization = TRUE)
 
 ## 5. when calculate the activities from the gene expression values scaled by other methods (e.g. ScaleData() from Seurat package)
 activity.eset <- getActivity_inBatch(input_eset = pbmc14k_expression.eset,
-                                     sjaracne_dir = "./SJARACNe",
-                                     group_name = "cell_type",
-                                     network_tag.tf = "bs_100",
-                                     network_tag.sig = "bs_100",
+                                     sjaracne_dir = system.file("extdata/demo_pbmc14k/SJARACNe", package = "scMINER"),
+                                     group_name = "trueLabel",
+                                     network_tag.tf = "bt100_pc001",
+                                     network_tag.sig = "bt100_pc001",
                                      driver_type = "TF_SIG",
                                      activity_method = "mean",
                                      do.z_normalization = FALSE)
+
 }

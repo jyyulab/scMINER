@@ -50,11 +50,12 @@ data(pbmc14k_expression.eset)
 ## 1. bar plot grouped by clusters ("clusterID") and colored by true labels ("true_label)
 draw_barplot(input_eset = pbmc14k_expression.eset,
              group_by = "clusterID",
-             color_by = "true_label")
+             color_by = "trueLabel")
 
 ## 2. customize the colors
 draw_barplot(input_eset = pbmc14k_expression.eset,
              group_by = "clusterID",
-             color_by = "true_label",
+             color_by = "trueLabel",
              colors = c("green", "red", "blue", "grey", "orange", "purple", "yellow"))
+
 }

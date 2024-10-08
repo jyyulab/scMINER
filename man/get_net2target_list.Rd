@@ -17,6 +17,9 @@ This function is used to convert a data frame generated from the SJARACNe networ
 a data frame of target information of each source gene. This is an Iinternal function for \code{cal_Activity()}, \code{getActivity_individual()}, \code{getActivity_inBatch()}.
 }
 \examples{
-net_data <-  read.table("./consensus_network_ncol_.txt", header = T, sep = "\t", stringsAsFactors = F, quote = "")
+net_data <-  read.table(system.file("extdata/demo_pbmc14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
+                        header = TRUE, sep = "\t", stringsAsFactors = FALSE, quote = "",
+                        colClasses = c("character", "character", "character", "character", "numeric", "numeric", "numeric", "numeric", "numeric"))
 target_list <- get_net2target_list(net_data)
+
 }

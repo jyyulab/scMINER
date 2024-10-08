@@ -59,8 +59,11 @@ features would be removed under the default cutoffs of each metrics.
 }
 }
 \examples{
+data("pbmc14k_rawCount")
+pbmc14k_raw.eset <- createSparseEset(input_matrix = pbmc14k_rawCount, projectID = "PBMC14k", addMetaData = TRUE)
+
 ## 1. using the cutoffs automatically calculated by scMINER
-pbmc14k_filtered.eset <- filterSparseEset(pbmc14k_raw.eset, filter_mode = "auto", filter_type = "both")
+pbmc14k_filtered_auto.eset <- filterSparseEset(pbmc14k_raw.eset, filter_mode = "auto", filter_type = "both")
 
 ## 2. using the cutoffs manually specified
 pbmc14k_filtered_manual.eset <- filterSparseEset(pbmc14k_raw.eset, filter_mode = "manual", filter_type = "both",

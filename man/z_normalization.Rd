@@ -16,5 +16,5 @@ a vector of numbers with z-normalized
 This function is used to scale a numeric vector using Z-normalization. \code{NA} would be ignored. This is an internal function for \code{cal_Activity()}, \code{getActivity_individual()}, \code{getActivity_inBatch()}.
 }
 \examples{
-do.std(c(1,2,3,4,5,NA,6,7,8,9))
+z_normalization(c(1,2,3,4,5,NA,6,7,8,9))
 }

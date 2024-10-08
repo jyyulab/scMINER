@@ -25,7 +25,10 @@ This function is used to calculate the combined P value and Z score from multipl
 ## 1. combine P values from a vector
 combinePvalVector(c(0.1,1e-3,1e-5), method = 'Stouffer')
 
+\dontrun{
 ## 2. combine P values from a table
 df_Pcombined <- sapply(df$Pval*sign(df$log2FC), function(x) {combinePvalVector(x, twosided = TRUE)[2]})
 df_Zscore <- sapply(df$Pval*sign(df$log2FC), function(x) {combinePvalVector(x, twosided = TRUE)[1]})
+}
+
 }
