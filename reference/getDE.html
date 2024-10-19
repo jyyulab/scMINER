@@ -79,6 +79,7 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">pbmc14k_expression.eset</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 1. To perform differential expression analysis in a 1-vs-rest manner for all groups in "clusterID" column</span></span></span>
 <span class="r-in"><span><span class="va">de_res</span> <span class="op">&lt;-</span> <span class="fu">getDE</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_expression.eset</span>,</span></span>
 <span class="r-in"><span>                group_by <span class="op">=</span> <span class="st">"clusterID"</span>,</span></span>
@@ -140,6 +141,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	 634 cells were found for g1.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	 508 cells were found for g0.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Zero sample variances detected, have been offset away from zero</span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
