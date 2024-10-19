@@ -617,6 +617,7 @@ drawNetworkQC <- function(network_file = NULL,
 #' @param x a vector of numbers for z-normalization
 #'
 #' @return a vector of numbers with z-normalized
+#' @export
 #'
 #' @examples z_normalization(c(1,2,3,4,5,NA,6,7,8,9))
 z_normalization <- function(x) {
@@ -634,6 +635,7 @@ z_normalization <- function(x) {
 #' @param net_dat a data frame generated from SJARANCe network file. These columns are needed: "`source`", "`target`", "`MI`" and "`spearman`".
 #'
 #' @return A list of source genes, for each source gene, the value is a data frame with "`target`", "`MI`" and "`spearman`" as the columns
+#' @export
 #'
 #' @examples
 #' net_data <-  read.table(system.file("extdata/demo_pbmc14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
@@ -676,6 +678,7 @@ get_net2target_list <- function(net_dat = NULL) {
 #'
 #' @return If "`weightedmean`" is given, it returns a matrix of signed (by Spearman correlation coefficient) mutual information, the sign of which will be used for activity calculation. For
 #' all the other methods ("`mean`", "`absmean`" or "`maxmean`"), it returns a matrix of 1.
+#' @export
 #'
 #' @examples
 #' net_data <-  read.table(system.file("extdata/demo_pbmc14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),
@@ -710,6 +713,7 @@ get_target_list2matrix <- function(target_list = NULL, activity_method = 'mean')
 #' @param do.std Logical, whether to do the z-normalization on the gene expression values in each sample. Default: `TRUE`.
 #'
 #' @return a matrix of activities, drivers by cells
+#' @export
 #'
 #' @examples
 #' net_data <-  read.table(system.file("extdata/demo_pbmc14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt", package = "scMINER"),

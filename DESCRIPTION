@@ -17,6 +17,7 @@ Description: scMINER is a mutual information-based framework for single-cell/nuc
 License: Apache License (>= 2)
 Encoding: UTF-8
 LazyData: TRUE
+LazyDataCompression:xz
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Depends: 
@@ -36,7 +37,8 @@ Imports:
     pheatmap (>= 1.0.12),
     reshape2 (>= 1.4.4),
     rmarkdown (>= 2.8),
-    sessioninfo (>= 1.2.2)
+    sessioninfo (>= 1.2.2),
+    RColorBrewer
 Suggests: 
     knitr,
     kableExtra,

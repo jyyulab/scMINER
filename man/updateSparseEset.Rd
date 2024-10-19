@@ -36,7 +36,7 @@ data("pbmc14k_expression.eset")
 pbmc14k_raw.eset <- updateSparseEset(input_eset = pbmc14k_expression.eset, addMetaData = TRUE)
 
 ## 2. Update the meta data of cells: with this, the user can add more information of cells, like clustering results, cell type.
-true_label <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k_trueLabel.txt.gz", package = "scMINER"), header = T, row.names = 1, sep = "\t", quote = "", stringsAsFactors = FALSE)
+true_label <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k_trueLabel.txt.gz", package = "scMINER"), header = TRUE, row.names = 1, sep = "\t", quote = "", stringsAsFactors = FALSE)
 pbmc14k_raw.eset <- updateSparseEset(input_eset = pbmc14k_expression.eset, cellData = true_label, addMetaData = TRUE)
 
 }

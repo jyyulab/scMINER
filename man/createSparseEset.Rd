@@ -53,7 +53,7 @@ pbmc14k_raw.eset <- createSparseEset(input_matrix = pbmc14k_rawCount,
 
 ## 2. Create SparseEset with customized meta data
 true_label <- read.table(system.file("extdata/demo_pbmc14k/PBMC14k_trueLabel.txt.gz", package = "scMINER"),
-                         header = T, row.names = 1, sep = "\t", quote = "", stringsAsFactors = FALSE)
+                         header = TRUE, row.names = 1, sep = "\t", quote = "", stringsAsFactors = FALSE)
 pbmc14k_raw.eset <- createSparseEset(input_matrix = pbmc14k_rawCount,
                                      cellData = true_label,
                                      featureData = NULL,

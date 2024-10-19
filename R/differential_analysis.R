@@ -10,6 +10,7 @@
 #' @param twosided Logical, whether the input P values are two-sided. If FALSE, the input P values will be treated as one-tailed. Default: `TRUE`.
 #'
 #' @return A vector containing "Z-statistics" and "P.Value".
+#' @export
 #'
 #' @examples
 #' ## 1. combine P values from a vector
@@ -99,6 +100,7 @@ combinePvalVector <- function(pvals,
 #'
 #' @return A data frame. Rows are genes/drivers, and columns are 11 statistics of differential analysis.
 #' @import limma
+#' @export
 #'
 #' @examples
 #' ## to call this function
