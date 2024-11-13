@@ -79,10 +79,18 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"pbmc14k_expression.eset"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">pbmc14k_raw.eset</span> <span class="op">&lt;-</span> <span class="fu">updateSparseEset</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_expression.eset</span>,</span></span>
-<span class="r-in"><span>                                     projectID <span class="op">=</span> <span class="st">"PBMC14k"</span>,</span></span>
-<span class="r-in"><span>                                     addMetaData <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in updateSparseEset(input_eset = pbmc14k_expression.eset, projectID = "PBMC14k",     addMetaData = TRUE):</span> unused argument (projectID = "PBMC14k")</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 1. Update the QC metrics: this will recalculate the 'nUMI', 'nFeature', 'pctMito', 'pctSpikeIn' and 'nCell'. This is very helpful when the SparseEset is subsetted or combined.</span></span></span>
+<span class="r-in"><span><span class="va">pbmc14k_raw.eset</span> <span class="op">&lt;-</span> <span class="fu">updateSparseEset</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_expression.eset</span>, addMetaData <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Updating meta data based on data matrix ...</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The data matrix might not be a raw count matrix, since non-integer values were found. The 'nUMI' column is only valid when the values in data matrix are raw UMI counts.</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## 2. Update the meta data of cells: with this, the user can add more information of cells, like clustering results, cell type.</span></span></span>
+<span class="r-in"><span><span class="va">true_label</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo_pbmc14k/PBMC14k_trueLabel.txt.gz"</span>, package <span class="op">=</span> <span class="st">"scMINER"</span><span class="op">)</span>, header <span class="op">=</span> <span class="cn">TRUE</span>, row.names <span class="op">=</span> <span class="fl">1</span>, sep <span class="op">=</span> <span class="st">"\t"</span>, quote <span class="op">=</span> <span class="st">""</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pbmc14k_raw.eset</span> <span class="op">&lt;-</span> <span class="fu">updateSparseEset</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_expression.eset</span>, cellData <span class="op">=</span> <span class="va">true_label</span>, addMetaData <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The cell information of input_eset has been updated!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Updating meta data based on data matrix ...</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The data matrix might not be a raw count matrix, since non-integer values were found. The 'nUMI' column is only valid when the values in data matrix are raw UMI counts.</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -95,7 +103,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

@@ -108,15 +108,16 @@
 <span class="r-in"><span><span class="co">## 1. bar plot grouped by clusters ("clusterID") and colored by true labels ("true_label)</span></span></span>
 <span class="r-in"><span><span class="fu">draw_barplot</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_expression.eset</span>,</span></span>
 <span class="r-in"><span>             group_by <span class="op">=</span> <span class="st">"clusterID"</span>,</span></span>
-<span class="r-in"><span>             color_by <span class="op">=</span> <span class="st">"true_label"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in draw_barplot(input_eset = pbmc14k_expression.eset, group_by = "clusterID",     color_by = "true_label"):</span> The color_by column,true_label, was not found in the input set. Please check and re-try.</span>
+<span class="r-in"><span>             color_by <span class="op">=</span> <span class="st">"trueLabel"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="draw_barplot-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 2. customize the colors</span></span></span>
 <span class="r-in"><span><span class="fu">draw_barplot</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_expression.eset</span>,</span></span>
 <span class="r-in"><span>             group_by <span class="op">=</span> <span class="st">"clusterID"</span>,</span></span>
-<span class="r-in"><span>             color_by <span class="op">=</span> <span class="st">"true_label"</span>,</span></span>
+<span class="r-in"><span>             color_by <span class="op">=</span> <span class="st">"trueLabel"</span>,</span></span>
 <span class="r-in"><span>             colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"green"</span>, <span class="st">"red"</span>, <span class="st">"blue"</span>, <span class="st">"grey"</span>, <span class="st">"orange"</span>, <span class="st">"purple"</span>, <span class="st">"yellow"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in draw_barplot(input_eset = pbmc14k_expression.eset, group_by = "clusterID",     color_by = "true_label", colors = c("green", "red", "blue",         "grey", "orange", "purple", "yellow")):</span> The color_by column,true_label, was not found in the input set. Please check and re-try.</span>
+<span class="r-plt img"><img src="draw_barplot-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -128,7 +129,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

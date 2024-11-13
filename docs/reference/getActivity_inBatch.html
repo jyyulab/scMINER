@@ -100,59 +100,229 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">pbmc14k_expression.eset</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## 1. when no tag was used in runing SJARACNE: the network file folder ("sjaracne_workflow-*") is directly under TF/SIG folder of each group.</span></span></span>
+<span class="r-in"><span><span class="co">## 1. when no tag was used in running SJARACNE: the network file folder ("sjaracne_workflow-*") is directly under TF/SIG folder of each group.</span></span></span>
 <span class="r-in"><span><span class="va">activity.eset</span> <span class="op">&lt;-</span> <span class="fu">getActivity_inBatch</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_expression.eset</span>,</span></span>
-<span class="r-in"><span>                                     sjaracne_dir <span class="op">=</span> <span class="st">"./SJARACNe"</span>,</span></span>
-<span class="r-in"><span>                                     group_name <span class="op">=</span> <span class="st">"cell_type"</span>,</span></span>
+<span class="r-in"><span>                                     sjaracne_dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo_pbmc14k/SJARACNe"</span>, package <span class="op">=</span> <span class="st">"scMINER"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                     group_name <span class="op">=</span> <span class="st">"trueLabel"</span>,</span></span>
 <span class="r-in"><span>                                     driver_type <span class="op">=</span> <span class="st">"TF_SIG"</span>,</span></span>
 <span class="r-in"><span>                                     activity_method <span class="op">=</span> <span class="st">"mean"</span>,</span></span>
 <span class="r-in"><span>                                     do.z_normalization <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in getActivity_inBatch(input_eset = pbmc14k_expression.eset, sjaracne_dir = "./SJARACNe",     group_name = "cell_type", driver_type = "TF_SIG", activity_method = "mean",     do.z_normalization = TRUE):</span> cell_type was found in the input_eset.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 groups were found in trueLabel ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Checking network files for each group ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 1 / 7 : B ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 2 / 7 : CD4TCM ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 3 / 7 : CD4TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 4 / 7 : CD4Treg ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 5 / 7 : CD8TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 6 / 7 : Monocyte ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 7 / 7 : NK ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Calculating activity for each group ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 1 / 7 : B ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 2 / 7 : CD4TCM ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 3 / 7 : CD4TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 4 / 7 : CD4Treg ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 5 / 7 : CD8TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 6 / 7 : Monocyte ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 7 / 7 : NK ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NAs were found in the activity matrix and have been replaced by the minimum value:  -0.3879122 .</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## 2. when tag (e.g. "bs_100" ) was used: the nework file folder ("sjaracne_workflow-*") is directly under a subfolder "bs_100" of the TF/SIG folder of each group.</span></span></span>
+<span class="r-in"><span><span class="co">## 2. when tag (e.g. "bt100_pc001" ) was used: the network file folder ("sjaracne_workflow-*") is directly under a subfolder "bs_100" of the TF/SIG folder of each group.</span></span></span>
 <span class="r-in"><span><span class="va">activity.eset</span> <span class="op">&lt;-</span> <span class="fu">getActivity_inBatch</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_expression.eset</span>,</span></span>
-<span class="r-in"><span>                                     sjaracne_dir <span class="op">=</span> <span class="st">"./SJARACNe"</span>,</span></span>
-<span class="r-in"><span>                                     group_name <span class="op">=</span> <span class="st">"cell_type"</span>,</span></span>
-<span class="r-in"><span>                                     network_tag.tf <span class="op">=</span> <span class="st">"bs_100"</span>,</span></span>
-<span class="r-in"><span>                                     network_tag.sig <span class="op">=</span> <span class="st">"bs_100"</span>,</span></span>
+<span class="r-in"><span>                                     sjaracne_dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo_pbmc14k/SJARACNe"</span>, package <span class="op">=</span> <span class="st">"scMINER"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                     group_name <span class="op">=</span> <span class="st">"trueLabel"</span>,</span></span>
+<span class="r-in"><span>                                     network_tag.tf <span class="op">=</span> <span class="st">"bt100_pc001"</span>,</span></span>
+<span class="r-in"><span>                                     network_tag.sig <span class="op">=</span> <span class="st">"bt100_pc001"</span>,</span></span>
 <span class="r-in"><span>                                     driver_type <span class="op">=</span> <span class="st">"TF_SIG"</span>,</span></span>
 <span class="r-in"><span>                                     activity_method <span class="op">=</span> <span class="st">"mean"</span>,</span></span>
 <span class="r-in"><span>                                     do.z_normalization <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in getActivity_inBatch(input_eset = pbmc14k_expression.eset, sjaracne_dir = "./SJARACNe",     group_name = "cell_type", network_tag.tf = "bs_100", network_tag.sig = "bs_100",     driver_type = "TF_SIG", activity_method = "mean", do.z_normalization = TRUE):</span> cell_type was found in the input_eset.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 groups were found in trueLabel ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Checking network files for each group ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 1 / 7 : B ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 2 / 7 : CD4TCM ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 3 / 7 : CD4TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 4 / 7 : CD4Treg ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 5 / 7 : CD8TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 6 / 7 : Monocyte ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 7 / 7 : NK ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Calculating activity for each group ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 1 / 7 : B ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 2 / 7 : CD4TCM ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 3 / 7 : CD4TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 4 / 7 : CD4Treg ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 5 / 7 : CD8TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 6 / 7 : Monocyte ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 7 / 7 : NK ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NAs were found in the activity matrix and have been replaced by the minimum value:  -0.3879122 .</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 3. to calculate the activities of TF only</span></span></span>
 <span class="r-in"><span><span class="va">activity.eset</span> <span class="op">&lt;-</span> <span class="fu">getActivity_inBatch</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_expression.eset</span>,</span></span>
-<span class="r-in"><span>                                     sjaracne_dir <span class="op">=</span> <span class="st">"./SJARACNe"</span>,</span></span>
-<span class="r-in"><span>                                     group_name <span class="op">=</span> <span class="st">"cell_type"</span>,</span></span>
-<span class="r-in"><span>                                     network_tag.tf <span class="op">=</span> <span class="st">"bs_100"</span>,</span></span>
-<span class="r-in"><span>                                     network_tag.sig <span class="op">=</span> <span class="st">"bs_100"</span>,</span></span>
+<span class="r-in"><span>                                     sjaracne_dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo_pbmc14k/SJARACNe"</span>, package <span class="op">=</span> <span class="st">"scMINER"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                     group_name <span class="op">=</span> <span class="st">"trueLabel"</span>,</span></span>
+<span class="r-in"><span>                                     network_tag.tf <span class="op">=</span> <span class="st">"bt100_pc001"</span>,</span></span>
+<span class="r-in"><span>                                     network_tag.sig <span class="op">=</span> <span class="st">"bt100_pc001"</span>,</span></span>
 <span class="r-in"><span>                                     driver_type <span class="op">=</span> <span class="st">"TF"</span>,</span></span>
 <span class="r-in"><span>                                     activity_method <span class="op">=</span> <span class="st">"mean"</span>,</span></span>
 <span class="r-in"><span>                                     do.z_normalization <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in getActivity_inBatch(input_eset = pbmc14k_expression.eset, sjaracne_dir = "./SJARACNe",     group_name = "cell_type", network_tag.tf = "bs_100", network_tag.sig = "bs_100",     driver_type = "TF", activity_method = "mean", do.z_normalization = TRUE):</span> cell_type was found in the input_eset.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 groups were found in trueLabel ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Checking network files for each group ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 1 / 7 : B ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 2 / 7 : CD4TCM ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 3 / 7 : CD4TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 4 / 7 : CD4Treg ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 5 / 7 : CD8TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 6 / 7 : Monocyte ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 7 / 7 : NK ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Calculating activity for each group ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 1 / 7 : B ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 2 / 7 : CD4TCM ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 3 / 7 : CD4TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 4 / 7 : CD4Treg ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 5 / 7 : CD8TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 6 / 7 : Monocyte ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 7 / 7 : NK ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NAs were found in the activity matrix and have been replaced by the minimum value:  -0.3425395 .</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 4. to exclude some groups in the activity calculation (e.g. "NK" and "Monocyte")</span></span></span>
 <span class="r-in"><span><span class="va">activity.eset</span> <span class="op">&lt;-</span> <span class="fu">getActivity_inBatch</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_expression.eset</span>,</span></span>
-<span class="r-in"><span>                                     sjaracne_dir <span class="op">=</span> <span class="st">"./SJARACNe"</span>,</span></span>
-<span class="r-in"><span>                                     group_name <span class="op">=</span> <span class="st">"cell_type"</span>,</span></span>
+<span class="r-in"><span>                                     sjaracne_dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo_pbmc14k/SJARACNe"</span>, package <span class="op">=</span> <span class="st">"scMINER"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                     group_name <span class="op">=</span> <span class="st">"trueLabel"</span>,</span></span>
 <span class="r-in"><span>                                     group_exclude <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NK"</span>, <span class="st">"Monocyte"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                                     network_tag.tf <span class="op">=</span> <span class="st">"bs_100"</span>,</span></span>
-<span class="r-in"><span>                                     network_tag.sig <span class="op">=</span> <span class="st">"bs_100"</span>,</span></span>
+<span class="r-in"><span>                                     network_tag.tf <span class="op">=</span> <span class="st">"bt100_pc001"</span>,</span></span>
+<span class="r-in"><span>                                     network_tag.sig <span class="op">=</span> <span class="st">"bt100_pc001"</span>,</span></span>
 <span class="r-in"><span>                                     driver_type <span class="op">=</span> <span class="st">"TF"</span>,</span></span>
 <span class="r-in"><span>                                     activity_method <span class="op">=</span> <span class="st">"mean"</span>,</span></span>
 <span class="r-in"><span>                                     do.z_normalization <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in getActivity_inBatch(input_eset = pbmc14k_expression.eset, sjaracne_dir = "./SJARACNe",     group_name = "cell_type", group_exclude = c("NK", "Monocyte"),     network_tag.tf = "bs_100", network_tag.sig = "bs_100", driver_type = "TF",     activity_method = "mean", do.z_normalization = TRUE):</span> cell_type was found in the input_eset.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 groups were found in trueLabel ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 groups left after excluding the groups specified by group_exclude: B, CD4TCM, CD4TN, CD4Treg, CD8TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Checking network files for each group ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 1 / 5 : B ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 2 / 5 : CD4TCM ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 3 / 5 : CD4TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 4 / 5 : CD4Treg ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 5 / 5 : CD8TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Calculating activity for each group ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 1 / 5 : B ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 2 / 5 : CD4TCM ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 3 / 5 : CD4TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 4 / 5 : CD4Treg ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 5 / 5 : CD8TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NAs were found in the activity matrix and have been replaced by the minimum value:  -0.3425395 .</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## 5. when calculate the activities from the gene expression values scaled by other methods (e.g. ScaleData() from Seurat package)</span></span></span>
 <span class="r-in"><span><span class="va">activity.eset</span> <span class="op">&lt;-</span> <span class="fu">getActivity_inBatch</span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_expression.eset</span>,</span></span>
-<span class="r-in"><span>                                     sjaracne_dir <span class="op">=</span> <span class="st">"./SJARACNe"</span>,</span></span>
-<span class="r-in"><span>                                     group_name <span class="op">=</span> <span class="st">"cell_type"</span>,</span></span>
-<span class="r-in"><span>                                     network_tag.tf <span class="op">=</span> <span class="st">"bs_100"</span>,</span></span>
-<span class="r-in"><span>                                     network_tag.sig <span class="op">=</span> <span class="st">"bs_100"</span>,</span></span>
+<span class="r-in"><span>                                     sjaracne_dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo_pbmc14k/SJARACNe"</span>, package <span class="op">=</span> <span class="st">"scMINER"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                     group_name <span class="op">=</span> <span class="st">"trueLabel"</span>,</span></span>
+<span class="r-in"><span>                                     network_tag.tf <span class="op">=</span> <span class="st">"bt100_pc001"</span>,</span></span>
+<span class="r-in"><span>                                     network_tag.sig <span class="op">=</span> <span class="st">"bt100_pc001"</span>,</span></span>
 <span class="r-in"><span>                                     driver_type <span class="op">=</span> <span class="st">"TF_SIG"</span>,</span></span>
 <span class="r-in"><span>                                     activity_method <span class="op">=</span> <span class="st">"mean"</span>,</span></span>
 <span class="r-in"><span>                                     do.z_normalization <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in getActivity_inBatch(input_eset = pbmc14k_expression.eset, sjaracne_dir = "./SJARACNe",     group_name = "cell_type", network_tag.tf = "bs_100", network_tag.sig = "bs_100",     driver_type = "TF_SIG", activity_method = "mean", do.z_normalization = FALSE):</span> cell_type was found in the input_eset.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 groups were found in trueLabel ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Checking network files for each group ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 1 / 7 : B ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 2 / 7 : CD4TCM ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 3 / 7 : CD4TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 4 / 7 : CD4Treg ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 5 / 7 : CD8TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 6 / 7 : Monocyte ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 7 / 7 : NK ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		TF network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 		SIG network check passed!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Calculating activity for each group ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 1 / 7 : B ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 2 / 7 : CD4TCM ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 3 / 7 : CD4TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 4 / 7 : CD4Treg ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 5 / 7 : CD8TN ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 6 / 7 : Monocyte ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Group 7 / 7 : NK ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Activity calculation is completed successfully!</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NAs were found in the activity matrix and have been replaced by the minimum value:  0 .</span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -164,7 +334,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

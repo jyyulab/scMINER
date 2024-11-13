@@ -448,7 +448,7 @@ getTopFeatures <- function(input_table,
   for (i in 1:length(grps)) {
     table.sel <- input_table.sorted[input_table.sorted[, group_by] %in% c(grps[i]), , drop = FALSE]
     if (nrow(table.sel) >= number) {
-      if (i == 1) {table_res <- table.sel[c(1:number),]} else {table_res <- rbind(table_res, table.sel[number,])}
+      if (i == 1) {table_res <- table.sel[c(1:number),]} else {table_res <- rbind(table_res, table.sel[c(1:number),])}
     } else {
       if (i == 1) {table_res <- table.sel} else {table_res <- rbind(table_res, table.sel)}
     }
