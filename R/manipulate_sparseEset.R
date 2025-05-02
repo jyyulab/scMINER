@@ -523,7 +523,7 @@ filterSparseEset <- function(input_eset,
                   (ncol(input_eset)-length(cell_qualified.pctSpikeIn)), ((ncol(input_eset)-length(cell_qualified.pctSpikeIn))/ncol(input_eset)*100),
                   (ncol(input_eset)-length(cell_qualified.combined)), ((ncol(input_eset)-length(cell_qualified.combined))/ncol(input_eset)*100))
 
-  eset_filtered <- input_eset[gene_qualified, cell_qualified]
+  eset_filtered <- input_eset[row.names(input_eset) %in% gene_qualified, colnames(input_eset) %in% cell_qualified]
   cat("Filtration is done!\n")
 
   message("Filtration Summary:")
