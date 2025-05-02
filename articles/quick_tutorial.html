@@ -8,8 +8,8 @@
 <title>A quick tutorial to run scMINER • scMINER</title>
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="A quick tutorial to run scMINER">
 </head>
 <body>
@@ -49,9 +49,10 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>A quick tutorial to run scMINER</h1>
-                        <h4 data-toc-skip class="author">Qingfei Pan</h4>
+                        <h4 data-toc-skip class="author">Qingfei
+Pan</h4>
             
-            <h4 data-toc-skip class="date">2024-11-13</h4>
+            <h4 data-toc-skip class="date">2025-05-02</h4>
       
 
       <div class="d-none name"><code>quick_tutorial.Rmd</code></div>
@@ -59,7 +60,14 @@
 
     
     
-<p>Welcome to the <strong>quick</strong> tutorial of scMINER! This tutorial aims to provide <strong>immediate and practical guidance</strong> on running scMINER with your own data. For full functionality and detailed documentation of scMINER, please refer to the <a href="https://qingfeipan.github.io/scMINER_qpan/bookdown/index.html" class="external-link">Full Documentation</a>. In this tutorial, we will walk through the core analysis of scMINER step-by-step using a ground truth dataset called <strong>PBMC14k</strong>.</p>
+<p>Welcome to the <strong>quick</strong> tutorial of scMINER! This
+tutorial aims to provide <strong>immediate and practical
+guidance</strong> on running scMINER with your own data. For full
+functionality and detailed documentation of scMINER, please refer to the
+<a href="https://qingfeipan.github.io/scMINER_qpan/bookdown/index.html" class="external-link">Full
+Documentation</a>. In this tutorial, we will walk through the core
+analysis of scMINER step-by-step using a ground truth dataset called
+<strong>PBMC14k</strong>.</p>
 <div class="section level2">
 <h2 id="get-started">Get started<a class="anchor" aria-label="anchor" href="#get-started"></a>
 </h2>
@@ -76,25 +84,35 @@
 <div class="section level3">
 <h3 id="create-project-space">Create project space<a class="anchor" aria-label="anchor" href="#create-project-space"></a>
 </h3>
-<p>The <em>project space</em> created by scMINER is a folder that can not only keep your data centralized and organized but also make the scMINER pipeline more smooth and robust. We encourge you to create a project space for each of your studies.</p>
+<p>The <em>project space</em> created by scMINER is a folder that can
+not only keep your data centralized and organized but also make the
+scMINER pipeline more smooth and robust. We encourge you to create a
+project space for each of your studies.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scminer_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createProjectSpace.html">createProjectSpace</a></span><span class="op">(</span>project_dir <span class="op">=</span> <span class="st">"/your-path"</span>, project_name <span class="op">=</span> <span class="st">"PBMC14k"</span><span class="op">)</span></span></code></pre></div>
-<p>This creates a folder named <strong><code>PBMC14k</code></strong> in the directory of <strong><code>/your-path</code></strong>, and creates four subfolders in it:</p>
+<p>This creates a folder named <strong><code>PBMC14k</code></strong> in
+the directory of <strong><code>/your-path</code></strong>, and creates
+four subfolders in it:</p>
 <ul>
 <li>
-<strong><code>DATA</code></strong>: to save the sparse eSet objects and other files;</li>
+<strong><code>DATA</code></strong>: to save the sparse eSet objects
+and other files;</li>
 <li>
-<strong><code>MICA</code></strong>: to save the inputs and outputs of mutual information-based clustering analysis;</li>
+<strong><code>MICA</code></strong>: to save the inputs and outputs
+of mutual information-based clustering analysis;</li>
 <li>
-<strong><code>SJARACNe</code></strong>: to save the inputs and outputs of network inference and quality control;</li>
+<strong><code>SJARACNe</code></strong>: to save the inputs and
+outputs of network inference and quality control;</li>
 <li>
-<strong><code>PLOT</code></strong>: to save the files of data visualization.</li>
+<strong><code>PLOT</code></strong>: to save the files of data
+visualization.</li>
 </ul>
 </div>
 <div class="section level3">
 <h3 id="generate-gene-expression-matrix">Generate gene expression matrix<a class="anchor" aria-label="anchor" href="#generate-gene-expression-matrix"></a>
 </h3>
-<p>scMINER provides four functions to generate gene expression matrix from multiple-format inputs:</p>
+<p>scMINER provides four functions to generate gene expression matrix
+from multiple-format inputs:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Input type 1: Data directory by 10x Genomics, containing matrix.mtx, barcodes.tsv and features.tsv (or genes.tsv)</span></span>
 <span><span class="va">demo1_mtx</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readInput_10x.dir.html">readInput_10x.dir</a></span><span class="op">(</span>input_dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo_inputs/cell_matrix_10x"</span>, package <span class="op">=</span> <span class="st">"scMINER"</span><span class="op">)</span>,</span>
@@ -112,7 +130,8 @@
 <span><span class="co">## Input type 4: H5AD file</span></span>
 <span><span class="va">demo4_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readInput_h5ad.html">readInput_h5ad</a></span><span class="op">(</span>h5ad_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo_inputs/h5ad_file/demoData4.h5ad"</span>, package <span class="op">=</span> <span class="st">"scMINER"</span><span class="op">)</span>,</span>
 <span>                            removeSuffix <span class="op">=</span> <span class="cn">TRUE</span>, addPrefix <span class="op">=</span> <span class="st">"demo4"</span><span class="op">)</span></span></code></pre></div>
-<p>The raw count matrix of PBMC14k dataset is embedded in scMINER and can be easily fetched by:</p>
+<p>The raw count matrix of PBMC14k dataset is embedded in scMINER and
+can be easily fetched by:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## load the raw count matrix of PBMC14k dataset</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"pbmc14k_rawCount"</span><span class="op">)</span></span>
@@ -130,12 +149,26 @@
 <div class="section level3">
 <h3 id="create-sparseeset-object">Create SparseEset object<a class="anchor" aria-label="anchor" href="#create-sparseeset-object"></a>
 </h3>
-<p>The <strong><code>SparseExpressionSet</code></strong> (or <strong><code>SparseEset</code></strong> for short) is a new class created by scMINER to handle the sparsity in scRNA-seq data. It is derived from <a href="https://www.bioconductor.org/packages/release/bioc/vignettes/Biobase/inst/doc/ExpressionSetIntroduction.pdf" class="external-link">ExpressionSet</a>, and enables to compress, store and access efficiently and conveniently. The SparseEset object is the <strong>center</strong> of scRNA-seq data analysis by scMINER.</p>
-<p>The SparseEset object can be easily created from the gene expression matrix:</p>
+<p>The <strong><code>SparseExpressionSet</code></strong> (or
+<strong><code>SparseEset</code></strong> for short) is a new class
+created by scMINER to handle the sparsity in scRNA-seq data. It is
+derived from <a href="https://www.bioconductor.org/packages/release/bioc/vignettes/Biobase/inst/doc/ExpressionSetIntroduction.pdf" class="external-link">ExpressionSet</a>,
+and enables to compress, store and access efficiently and conveniently.
+The SparseEset object is the <strong>center</strong> of scRNA-seq data
+analysis by scMINER.</p>
+<p>The SparseEset object can be easily created from the gene expression
+matrix:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Create SparseEset object solely from gene expression matrix, meta data is automatically added</span></span>
 <span><span class="va">pbmc14k_raw.eset</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createSparseEset.html">createSparseEset</a></span><span class="op">(</span>input_matrix <span class="op">=</span> <span class="va">pbmc14k_rawCount</span>, projectID <span class="op">=</span> <span class="st">"PBMC14k"</span>, addMetaData <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><code><a href="../reference/createSparseEset.html">createSparseEset()</a></code> offers an argument, <code>addMetaData</code>, to automatically generate and add 5 meta data statistics for cells and genes into the SparseEset object. It also provides another two arguments, <code>cellData</code> and <code>featureData</code>, to allow you add your customized <code>phenoData</code> or <code>featureData</code>. In this case, we have the true labels of cell types and would like to add them to the SparseEset object:</p>
+<p><code><a href="../reference/createSparseEset.html">createSparseEset()</a></code> offers an argument,
+<code>addMetaData</code>, to automatically generate and add 5 meta data
+statistics for cells and genes into the SparseEset object. It also
+provides another two arguments, <code>cellData</code> and
+<code>featureData</code>, to allow you add your customized
+<code>phenoData</code> or <code>featureData</code>. In this case, we
+have the true labels of cell types and would like to add them to the
+SparseEset object:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Read the true lables of cell types embedded in scMINER R package</span></span>
 <span><span class="va">true_label</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo_pbmc14k/PBMC14k_trueLabel.txt.gz"</span>, package <span class="op">=</span> <span class="st">"scMINER"</span><span class="op">)</span>, header <span class="op">=</span> <span class="cn">T</span>, row.names <span class="op">=</span> <span class="fl">1</span>, sep <span class="op">=</span> <span class="st">"\t"</span>, quote <span class="op">=</span> <span class="st">""</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -171,7 +204,9 @@
 <span><span class="co">#&gt;                         2000                         2000 </span></span>
 <span><span class="co">#&gt; CD8+/CD45RA+ Naive Cytotoxic </span></span>
 <span><span class="co">#&gt;                         2000</span></span></code></pre></div>
-<p>If you have <strong>multiple samples for one project</strong>, please create one SparseEset object for each of the samples and combined these SparseEset objects into one:</p>
+<p>If you have <strong>multiple samples for one project</strong>, please
+create one SparseEset object for each of the samples and combined these
+SparseEset objects into one:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Create SparseEset from multiple samples</span></span>
 <span><span class="co"># Step 1: create an SparseEset for each sample</span></span>
@@ -192,43 +227,69 @@
 <div class="section level3">
 <h3 id="filter-sparseeset-object">Filter SparseEset object<a class="anchor" aria-label="anchor" href="#filter-sparseeset-object"></a>
 </h3>
-<p>As we mentioned before, scMINER can automatically generate and add 5 meta data statistics to SparseEset object. These 5 meta data statistics are the metrics scMINER uses to assess the quality of cells and features:</p>
+<p>As we mentioned before, scMINER can automatically generate and add 5
+meta data statistics to SparseEset object. These 5 meta data statistics
+are the metrics scMINER uses to assess the quality of cells and
+features:</p>
 <ul>
-<li>For cell quality assessment, scMINER provides 4 metrics that <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4758103/" class="external-link">commonly used by the community</a>:
+<li>For cell quality assessment, scMINER provides 4 metrics that <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4758103/" class="external-link">commonly
+used by the community</a>:
 <ul>
 <li>
-<strong>nUMI</strong>: number of total UMIs in each cell. Cells with abnormally high nUMI usually indicate doublets, while those with abnormally low nUMI usually indicate poorly sequenced cells or empty droplets.</li>
+<strong>nUMI</strong>: number of total UMIs in each cell. Cells with
+abnormally high nUMI usually indicate doublets, while those with
+abnormally low nUMI usually indicate poorly sequenced cells or empty
+droplets.</li>
 <li>
-<strong>nFeature</strong>: number of expressed features/genes in each cell. Similar to nUMI.</li>
+<strong>nFeature</strong>: number of expressed features/genes in
+each cell. Similar to nUMI.</li>
 <li>
-<strong>pctMito</strong>: percentage of UMIs of mitochondrial genes (defined by “<sup>mt-|</sup>MT-”) in each cell. Cells with aberrantly high pctMito usually indicate dying cells.</li>
+<strong>pctMito</strong>: percentage of UMIs of mitochondrial genes
+(defined by “<sup>mt-|</sup>MT-”) in each cell. Cells with aberrantly
+high pctMito usually indicate dying cells.</li>
 <li>
-<strong>pctSpikeIn</strong>: percentage of UMIs of spike-in RNAs (defined by “<sup>ERCC-|</sup>Ercc-”)) in each cell. This is used to estimate the normalization factor. Cells with extremely high or low pctSpikeIn need to be removed.</li>
+<strong>pctSpikeIn</strong>: percentage of UMIs of spike-in RNAs
+(defined by “<sup>ERCC-|</sup>Ercc-”)) in each cell. This is used to
+estimate the normalization factor. Cells with extremely high or low
+pctSpikeIn need to be removed.</li>
 </ul>
 </li>
 <li>For feature quality assessment, scMINER provides one metrics:
 <ul>
 <li>
-<strong>nCell</strong>: number of cells expressing the features/genes. Genes with extremely low nCell are poorly sequenced and are usually of low variance.</li>
+<strong>nCell</strong>: number of cells expressing the
+features/genes. Genes with extremely low nCell are poorly sequenced and
+are usually of low variance.</li>
 </ul>
 </li>
 </ul>
-<p>To help assess the data quality and determine the cutoffs used for filtration, scMINER can generate a html-format QC report:</p>
+<p>To help assess the data quality and determine the cutoffs used for
+filtration, scMINER can generate a html-format QC report:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## To generate QC report from SparseEset object</span></span>
 <span><span class="fu"><a href="../reference/drawSparseEsetQC.html">drawSparseEsetQC</a></span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_raw.eset</span>, output_html_file <span class="op">=</span> <span class="st">"/your-path/PBMC14k/PLOT/pbmc14k_rawCount.html"</span>, overwrite <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## scMINER also supports group-specific QC highlights</span></span>
 <span><span class="fu"><a href="../reference/drawSparseEsetQC.html">drawSparseEsetQC</a></span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_raw.eset</span>, output_html_file <span class="op">=</span> <span class="st">"/your-path/PBMC14k/PLOT/pbmc14k_rawCount.html"</span>, overwrite <span class="op">=</span> <span class="cn">FALSE</span>, group_by <span class="op">=</span> <span class="st">"trueLabel"</span><span class="op">)</span></span></code></pre></div>
-<p>This QC report contains a variety of tables and plot of the key statistics of your data that can help you get a better sense about data quality and determine the cutoffs for filtration.</p>
-<p>scMINER provides two modes to perform SparseEset object filtration:</p>
+<p>This QC report contains a variety of tables and plot of the key
+statistics of your data that can help you get a better sense about data
+quality and determine the cutoffs for filtration.</p>
+<p>scMINER provides two modes to perform SparseEset object
+filtration:</p>
 <ul>
 <li>
-<strong><code>auto</code></strong>: in this mode, the filtration cutoffs are <strong>automatically</strong> generated by scMINER in <code>Median ± 3*MAD</code> (maximum absolute deviation) method. This mode works well in the majority of our test datasets.</li>
+<strong><code>auto</code></strong>: in this mode, the filtration
+cutoffs are <strong>automatically</strong> generated by scMINER in
+<code>Median ± 3*MAD</code> (maximum absolute deviation) method. This
+mode works well in the majority of our test datasets.</li>
 <li>
-<strong><code>manual</code></strong>: in this mode, you can <strong>manually</strong> specify the cutoffs, both low and high, of all 5 metrics. <strong>No cells or features would be removed under the default cutoffs of each metrics</strong>.</li>
+<strong><code>manual</code></strong>: in this mode, you can
+<strong>manually</strong> specify the cutoffs, both low and high, of all
+5 metrics. <strong>No cells or features would be removed under the
+default cutoffs of each metrics</strong>.</li>
 </ul>
-<p>To apply the <strong><code>auto</code></strong> mode in SparseEset filtration:</p>
+<p>To apply the <strong><code>auto</code></strong> mode in SparseEset
+filtration:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Filter SparseEset object with the cutoffs automatically generated by scMINER</span></span>
 <span><span class="va">pbmc14k_filtered.eset</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterSparseEset.html">filterSparseEset</a></span><span class="op">(</span><span class="va">pbmc14k_raw.eset</span>, filter_mode <span class="op">=</span> <span class="st">"auto"</span>, filter_type <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span></span>
@@ -255,12 +316,21 @@
 <span><span class="co">#&gt;      Cell_total  14000       14000       14000       14000       14000</span></span>
 <span><span class="co">#&gt;      Cell_passed 13826(98.76%)   14000(100.00%)  13778(98.41%)   14000(100.00%)  13605(97.18%)</span></span>
 <span><span class="co">#&gt;      Cell_failed 174(1.24%)  0(0.00%)    222(1.59%)  0(0.00%)    395(2.82%)</span></span></code></pre></div>
-<p>This command generates a filtered SparseEset object <code>pbmc14k_filtered.eset</code> and returns a summary table with detailed information of filtration statistics. You can refer to it and adjust the cutoffs accordingly.</p>
-<p>In some cases, you may find that most of the cutoffs generated by the auto mode are good, except one or two. Though there is no ‘hybrid’ mode, scMINER does allow you to customize some of the cutoffs generated by the auto mode. This can be easily done by adding the cutoffs you would customize under the auto mode:</p>
+<p>This command generates a filtered SparseEset object
+<code>pbmc14k_filtered.eset</code> and returns a summary table with
+detailed information of filtration statistics. You can refer to it and
+adjust the cutoffs accordingly.</p>
+<p>In some cases, you may find that most of the cutoffs generated by the
+auto mode are good, except one or two. Though there is no ‘hybrid’ mode,
+scMINER does allow you to customize some of the cutoffs generated by the
+auto mode. This can be easily done by adding the cutoffs you would
+customize under the auto mode:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Filter eSet under the auto mode, with customized values</span></span>
 <span><span class="va">pbmc14k_filtered.eset</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterSparseEset.html">filterSparseEset</a></span><span class="op">(</span><span class="va">pbmc14k_raw.eset</span>, filter_mode <span class="op">=</span> <span class="st">"auto"</span>, filter_type <span class="op">=</span> <span class="st">"both"</span>, gene.nCell_min <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
-<p>If the cutoffs generated in auto model do not work well in your case and you would like to go with self-customized cutoffs, you can easily apply them by:</p>
+<p>If the cutoffs generated in auto model do not work well in your case
+and you would like to go with self-customized cutoffs, you can easily
+apply them by:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Filter SparseEset object with self-customized cutoffs</span></span>
 <span><span class="va">pbmc14k_filtered.eset</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterSparseEset.html">filterSparseEset</a></span><span class="op">(</span><span class="va">pbmc14k_raw.eset</span>, filter_mode <span class="op">=</span> <span class="st">"manual"</span>, filter_type <span class="op">=</span> <span class="st">"both"</span>, gene.nCell_min <span class="op">=</span> <span class="fl">10</span>, cell.nUMI_min <span class="op">=</span> <span class="fl">500</span>, cell.nUMI_max <span class="op">=</span> <span class="fl">6500</span>, cell.nFeature_min <span class="op">=</span> <span class="fl">200</span>, cell.nFeature_max <span class="op">=</span> <span class="fl">2500</span>, cell.pctMito_max <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></code></pre></div>
@@ -268,12 +338,17 @@
 <div class="section level3">
 <h3 id="normalize-sparseeset-object">Normalize SparseEset object<a class="anchor" aria-label="anchor" href="#normalize-sparseeset-object"></a>
 </h3>
-<p>scMINER recommends the <strong><code>log2CPM</code></strong> method for normalization: the raw counts in each cell are normalized to a library size of 1 million, followed by log2 transformation.</p>
+<p>scMINER recommends the <strong><code>log2CPM</code></strong> method
+for normalization: the raw counts in each cell are normalized to a
+library size of 1 million, followed by log2 transformation.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pbmc14k_log2cpm.eset</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeSparseEset.html">normalizeSparseEset</a></span><span class="op">(</span><span class="va">pbmc14k_filtered.eset</span>, scale_factor <span class="op">=</span> <span class="fl">1000000</span>, log_base <span class="op">=</span> <span class="fl">2</span>, log_pseudoCount <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Done! The data matrix of eset has been normalized and log-transformed!</span></span>
 <span><span class="co">#&gt; The returned eset contains: 8846 genes, 13605 cells.</span></span></code></pre></div>
-<p>This normalized and log-transformed SparseEset object can be directly used for Mutual Information-based clustering, network inference and other downstream analysis. And it’s recommended to save it into the project space.</p>
+<p>This normalized and log-transformed SparseEset object can be directly
+used for Mutual Information-based clustering, network inference and
+other downstream analysis. And it’s recommended to save it into the
+project space.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">pbmc14k_log2cpm.eset</span>, file <span class="op">=</span> <span class="st">"/your-path/PBMC14k/DATA/pbmc14k_log2cpm.rds"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -281,13 +356,24 @@
 <div class="section level2">
 <h2 id="mi-based-clustering-analysis">MI-based clustering analysis<a class="anchor" aria-label="anchor" href="#mi-based-clustering-analysis"></a>
 </h2>
-<p><strong>MICA</strong> (<strong>M</strong>utual <strong>I</strong>nformation-based <strong>C</strong>lustering <strong>A</strong>nalysis) is a clustering tool designed for scRNA-seq data. It is developed with Python to take it’s strengths in calculation speed and memory consumption. As a component of scMINER framework, MICA works seamlessly with the scMINER R package and SparseEset object.</p>
+<p><strong>MICA</strong> (<strong>M</strong>utual
+<strong>I</strong>nformation-based <strong>C</strong>lustering
+<strong>A</strong>nalysis) is a clustering tool designed for scRNA-seq
+data. It is developed with Python to take it’s strengths in calculation
+speed and memory consumption. As a component of scMINER framework, MICA
+works seamlessly with the scMINER R package and SparseEset object.</p>
 <div class="section level3">
 <h3 id="generate-mica-input">Generate MICA input<a class="anchor" aria-label="anchor" href="#generate-mica-input"></a>
 </h3>
-<p>The standard input of MICA is <strong>a normalized and log-transformed gene expression matrix</strong>. scMINER can generate this matrix from SparseEset object and save it into a file that can be directly read by MICA.</p>
-<p>scMINER uses <strong><code>.txt</code></strong> as the default input file format. It can by generated by:</p>
-<p>MICA accepts <code>.h5ad</code> or <code>.txt</code> format as the input file, which can be easily generated by embedded function <code><a href="../reference/generateMICAinput.html">generateMICAinput()</a></code>:</p>
+<p>The standard input of MICA is <strong>a normalized and
+log-transformed gene expression matrix</strong>. scMINER can generate
+this matrix from SparseEset object and save it into a file that can be
+directly read by MICA.</p>
+<p>scMINER uses <strong><code>.txt</code></strong> as the default input
+file format. It can by generated by:</p>
+<p>MICA accepts <code>.h5ad</code> or <code>.txt</code> format as the
+input file, which can be easily generated by embedded function
+<code><a href="../reference/generateMICAinput.html">generateMICAinput()</a></code>:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Generate MICA input in txt format</span></span>
 <span><span class="fu"><a href="../reference/generateMICAinput.html">generateMICAinput</a></span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_log2cpm.eset</span>, output_file <span class="op">=</span> <span class="st">"/your-path/PBMC14k/MICA/micaInput.txt"</span>, overwrite <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -295,33 +381,58 @@
 <span><span class="co">## Check the format of MICA input</span></span>
 <span><span class="va">mica_input</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.delim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo_pbmc14k/MICA/micaInput.txt"</span>, package <span class="op">=</span> <span class="st">"scMINER"</span><span class="op">)</span>, header <span class="op">=</span> <span class="cn">T</span>, sep <span class="op">=</span> <span class="st">"\t"</span>, row.names <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">mica_input</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span></code></pre></div>
-<p>scMINER also supports <strong><code>.h5ad</code></strong> as the input file format which is getting more popular in scRNA-seq data storage and sharing. It can by generated by:</p>
+<p>scMINER also supports <strong><code>.h5ad</code></strong> as the
+input file format which is getting more popular in scRNA-seq data
+storage and sharing. It can by generated by:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Generate MICA input in h5ad format</span></span>
 <span><span class="fu"><a href="../reference/generateMICAinput.html">generateMICAinput</a></span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_log2cpm.eset</span>, output_file <span class="op">=</span> <span class="st">"/your-path/PBMC14k/MICA/micaInput.h5ad"</span>, overwrite <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p>In addition to generating the standard MICA input file, <code><a href="../reference/generateMICAinput.html">generateMICAinput()</a></code> also returns the recommended commands of running MICA. You can copy the commands, modify accordingly and run.</p>
+<p>In addition to generating the standard MICA input file,
+<code><a href="../reference/generateMICAinput.html">generateMICAinput()</a></code> also returns the recommended commands
+of running MICA. You can copy the commands, modify accordingly and
+run.</p>
 </div>
 <div class="section level3">
 <h3 id="run-mica">Run MICA<a class="anchor" aria-label="anchor" href="#run-mica"></a>
 </h3>
-<p>MICA features two different modes named by their different dimension reduction techniques:</p>
+<p>MICA features two different modes named by their different dimension
+reduction techniques:</p>
 <ul>
 <li>
-<strong>Multi-Dimensional Scaling (MDS)</strong> mode: this mode is more accurate and robust for small datasets (less than 5,000 cells, be default) due to its global dimension reduction nature;</li>
+<strong>Multi-Dimensional Scaling (MDS)</strong> mode: this mode is
+more accurate and robust for small datasets (less than 5,000 cells, be
+default) due to its global dimension reduction nature;</li>
 <li>
-<strong>Graph Embedding (GE)</strong> mode: this mode works better with large datasets (more than 5,000 cells, by default) using a graph embedding approach to explore distant neighbor cells.</li>
+<strong>Graph Embedding (GE)</strong> mode: this mode works better
+with large datasets (more than 5,000 cells, by default) using a graph
+embedding approach to explore distant neighbor cells.</li>
 </ul>
 <p>To run <strong><code>MDS</code></strong> model:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a><span class="ex">mica</span> mds -i /your-path/PBMC14k/MICA/micaInput.txt -o /your-path/PBMC14k/MICA/MDS -nck 5 6 7 8 9 10</span></code></pre></div>
-<p>The MDS model uses <strong><code>K-Means</code></strong> by default for clustering. The argument <code>-nck</code> above specifies the number of cluster for K-Means.</p>
-<p>In this case, since there are 13,605 cells, we will use the <strong><code>GE</code></strong> mode for the clustering:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true"></a><span class="ex">mica</span> ge -i /your-path/PBMC14k/MICA/micaInput.txt -o /your-path/PBMC14k/MICA/GE -minr 0.1 -maxr 9.0 -ss 0.05 -nw 40</span></code></pre></div>
-<p>The GE mode uses <strong><code>Louvain</code></strong> for clustering. The command above will generate the clustering results of multiple resolutions, from 0.1 to 9.0, with a step size of 0.05.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="ex">mica</span> mds <span class="at">-i</span> /your-path/PBMC14k/MICA/micaInput.txt <span class="at">-o</span> /your-path/PBMC14k/MICA/MDS <span class="at">-nck</span> 5 6 7 8 9 10</span></code></pre></div>
+<p>The MDS model uses <strong><code>K-Means</code></strong> by default
+for clustering. The argument <code>-nck</code> above specifies the
+number of cluster for K-Means.</p>
+<p>In this case, since there are 13,605 cells, we will use the
+<strong><code>GE</code></strong> mode for the clustering:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="ex">mica</span> ge <span class="at">-i</span> /your-path/PBMC14k/MICA/micaInput.txt <span class="at">-o</span> /your-path/PBMC14k/MICA/GE <span class="at">-minr</span> 0.1 <span class="at">-maxr</span> 9.0 <span class="at">-ss</span> 0.05 <span class="at">-nw</span> 40</span></code></pre></div>
+<p>The GE mode uses <strong><code>Louvain</code></strong> for
+clustering. The command above will generate the clustering results of
+multiple resolutions, from 0.1 to 9.0, with a step size of 0.05.</p>
 </div>
 <div class="section level3">
 <h3 id="add-mica-output-to-sparseeset-object">Add MICA output to SparseEset object<a class="anchor" aria-label="anchor" href="#add-mica-output-to-sparseeset-object"></a>
 </h3>
-<p>MICA generates several files and save all of them in the output directory specified by the user with <code>-o</code> argument. The core, and only, output file we need for subsequent analysis is the clustering label file named in the format of <code>ProjectName_clustering_VisualizeMethod_euclidean_NumberOfDimensions_Resolution.txt</code>. In this case, since we used a range of resolutions, there are several clustering label files generated, one for each resolution. Based on the knowledge about PBMC14k dataset, we compared the results of different resolutions and picked <code>clustering_UMAP_euclidean_20_2.05.txt</code> for subsequent analysis.</p>
+<p>MICA generates several files and save all of them in the output
+directory specified by the user with <code>-o</code> argument. The core,
+and only, output file we need for subsequent analysis is the clustering
+label file named in the format of
+<code>ProjectName_clustering_VisualizeMethod_euclidean_NumberOfDimensions_Resolution.txt</code>.
+In this case, since we used a range of resolutions, there are several
+clustering label files generated, one for each resolution. Based on the
+knowledge about PBMC14k dataset, we compared the results of different
+resolutions and picked
+<code>clustering_UMAP_euclidean_20_2.05.txt</code> for subsequent
+analysis.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Read the selected MICA output file</span></span>
 <span><span class="va">micaOutput</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo_pbmc14k/MICA/clustering_UMAP_euclidean_20_2.05.txt"</span>, package <span class="op">=</span> <span class="st">"scMINER"</span><span class="op">)</span>, header <span class="op">=</span> <span class="cn">TRUE</span>, sep <span class="op">=</span> <span class="st">"\t"</span>, quote <span class="op">=</span> <span class="st">""</span>, stringsAsFactors <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
@@ -338,13 +449,17 @@
 <li>
 <strong><code>ID</code></strong>: cell barcodes;</li>
 <li>
-<strong><code>X</code></strong>: coordinates of UMAP_1 or tSNE_1;</li>
+<strong><code>X</code></strong>: coordinates of UMAP_1 or
+tSNE_1;</li>
 <li>
-<strong><code>Y</code></strong>: coordinates of UMAP_2 or tSNE_2;</li>
+<strong><code>Y</code></strong>: coordinates of UMAP_2 or
+tSNE_2;</li>
 <li>
-<strong><code>label</code></strong>: labels of predicted clusters.</li>
+<strong><code>label</code></strong>: labels of predicted
+clusters.</li>
 </ul>
-<p>The clustering result can be easily easily added to the SparseEset object by <code><a href="../reference/addMICAoutput.html">addMICAoutput()</a></code>:</p>
+<p>The clustering result can be easily easily added to the SparseEset
+object by <code><a href="../reference/addMICAoutput.html">addMICAoutput()</a></code>:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Add MICA output into SparseEset object</span></span>
 <span><span class="va">pbmc14k_clustered.eset</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/addMICAoutput.html">addMICAoutput</a></span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_log2cpm.eset</span>,</span>
@@ -365,14 +480,19 @@
 <span><span class="co">#&gt; GCATGTGATTCTGT          0 GCATGTGATTCTGT 14.12546 13.36319         6</span></span>
 <span><span class="co">#&gt; TAGAATACGTATCG          0 TAGAATACGTATCG 14.91227 11.19407         6</span></span>
 <span><span class="co">#&gt; CAAGAAGACCCTCA          0 CAAGAAGACCCTCA 15.34154 12.25821         6</span></span></code></pre></div>
-<p>It’s optional but recommend to save the SparseEset object with clustering resluts added:</p>
+<p>It’s optional but recommend to save the SparseEset object with
+clustering resluts added:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">pbmc14k_clustered.eset</span>, file <span class="op">=</span> <span class="st">"/your-path/PBMC14k/DATA/pbmc14k_clustered.eset"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="visulize-mica-output">Visulize MICA output<a class="anchor" aria-label="anchor" href="#visulize-mica-output"></a>
 </h3>
-<p>scMINER provides a function, <code><a href="../reference/MICAplot.html">MICAplot()</a></code> to easily visualize the clustering results on a 2D plot, UMAP or tSNE. And it can be colored by multiple variables, including <strong>cluster label</strong>, <strong>sample source</strong>, <strong>nUMI</strong>, <strong>nFeature</strong>, <strong>pctMito</strong> and more.</p>
+<p>scMINER provides a function, <code><a href="../reference/MICAplot.html">MICAplot()</a></code> to easily
+visualize the clustering results on a 2D plot, UMAP or tSNE. And it can
+be colored by multiple variables, including <strong>cluster
+label</strong>, <strong>sample source</strong>, <strong>nUMI</strong>,
+<strong>nFeature</strong>, <strong>pctMito</strong> and more.</p>
 <p>To visualize the clustering results:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/MICAplot.html">MICAplot</a></span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_clustered.eset</span>, color_by <span class="op">=</span> <span class="st">"clusterID"</span>, X <span class="op">=</span> <span class="st">"UMAP_1"</span>, Y <span class="op">=</span> <span class="st">"UMAP_2"</span>, point.size <span class="op">=</span> <span class="fl">0.1</span>, fontsize.cluster_label <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></code></pre></div>
@@ -381,12 +501,15 @@
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/MICAplot.html">MICAplot</a></span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_clustered.eset</span>, color_by <span class="op">=</span> <span class="st">"trueLabel"</span>, X <span class="op">=</span> <span class="st">"UMAP_1"</span>, Y <span class="op">=</span> <span class="st">"UMAP_2"</span>, point.size <span class="op">=</span> <span class="fl">0.1</span>, fontsize.cluster_label <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
 <p><img src="quick_tutorial_files/figure-html/visualize-mica-output-truelabel-1.png" width="624" style="display: block; margin: auto;"></p>
-<p>To visualize the <strong><code>nUMI</code></strong> on UMAP/t-SNE plot:</p>
+<p>To visualize the <strong><code>nUMI</code></strong> on UMAP/t-SNE
+plot:</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/MICAplot.html">MICAplot</a></span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_clustered.eset</span>, color_by <span class="op">=</span> <span class="st">"nUMI"</span>, do.logTransform <span class="op">=</span> <span class="cn">TRUE</span>, point.size <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; The values in "nUMI" have been transformed by log2(value + 1). To turn transformation off, set do.logTransform = FALSE.</span></span></code></pre></div>
 <p><img src="quick_tutorial_files/figure-html/visualize-mica-output-numi-1.png" width="624" style="display: block; margin: auto;"></p>
-<p>You can also visualize the <strong><code>nFeature</code></strong> <strong><code>pctMito</code></strong> and <strong><code>pctSpikeIn</code></strong>:</p>
+<p>You can also visualize the <strong><code>nFeature</code></strong>
+<strong><code>pctMito</code></strong> and
+<strong><code>pctSpikeIn</code></strong>:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/MICAplot.html">MICAplot</a></span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_clustered.eset</span>, color_by <span class="op">=</span> <span class="st">"nFeature"</span>, do.logTransform <span class="op">=</span> <span class="cn">TRUE</span>, point.size <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; The values in "nFeature" have been transformed by log2(value + 1). To turn transformation off, set do.logTransform = FALSE.</span></span></code></pre></div>
@@ -402,22 +525,37 @@
 <div class="section level2">
 <h2 id="cell-type-annotation">Cell type annotation<a class="anchor" aria-label="anchor" href="#cell-type-annotation"></a>
 </h2>
-<p>Currently, there are two types of strategies to annotate the clusters: <strong>supervised</strong> and <strong>unsupervised</strong>. The <strong>supervised</strong> methods use a list of known markers of potential cell types curated from some existing studies of the same/similar contexts. While in contrast, the <strong>unsupervised</strong> methods are usually based on the differentially expressed genes. scMINER provides several useful functions to support both types of strategies.</p>
+<p>Currently, there are two types of strategies to annotate the
+clusters: <strong>supervised</strong> and <strong>unsupervised</strong>.
+The <strong>supervised</strong> methods use a list of known markers of
+potential cell types curated from some existing studies of the
+same/similar contexts. While in contrast, the
+<strong>unsupervised</strong> methods are usually based on the
+differentially expressed genes. scMINER provides several useful
+functions to support both types of strategies.</p>
 <div class="section level3">
 <h3 id="supervised-cell-type-annotation">Supervised cell type annotation<a class="anchor" aria-label="anchor" href="#supervised-cell-type-annotation"></a>
 </h3>
-<p>In this showcase, we know the 7 cell types involved in the PBMC14k dataset, and curated a marker list from some existing PBMCs studies.</p>
+<p>In this showcase, we know the 7 cell types involved in the PBMC14k
+dataset, and curated a marker list from some existing PBMCs studies.</p>
 <div class="section level4">
 <h4 id="using-signature-scores">Using signature scores<a class="anchor" aria-label="anchor" href="#using-signature-scores"></a>
 </h4>
-<p>Given a marker list of candidate cell types, scMINER can estimate a <strong>signature score</strong>, which is mathematically <code>the weighted mean of the expression of marker genes involved</code>, for each candidate cell type across all cell cluster. To do so, you will need to generate a signature table with three columns:</p>
+<p>Given a marker list of candidate cell types, scMINER can estimate a
+<strong>signature score</strong>, which is mathematically
+<code>the weighted mean of the expression of marker genes involved</code>,
+for each candidate cell type across all cell cluster. To do so, you will
+need to generate a signature table with three columns:</p>
 <ul>
 <li>
 <code>signature_name</code>: name of cell types/signatures;</li>
 <li>
-<code>signature_feature</code>: markers genes/features of corresponding cell type/signature;</li>
+<code>signature_feature</code>: markers genes/features of
+corresponding cell type/signature;</li>
 <li>
-<code>weight</code>: weight of corresponding maker/feature in corresponding cell type/signature. It ranges from -1 to 1, so both positive and negative markers are supported.</li>
+<code>weight</code>: weight of corresponding maker/feature in
+corresponding cell type/signature. It ranges from -1 to 1, so both
+positive and negative markers are supported.</li>
 </ul>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Signature table of PBMC14k dataset</span></span>
@@ -430,18 +568,23 @@
 <span><span class="co">#&gt; 4       Monocyte            S100A9      1</span></span>
 <span><span class="co">#&gt; 5       Monocyte           S100A12      1</span></span>
 <span><span class="co">#&gt; 6             NK            FCGR3A      1</span></span></code></pre></div>
-<p>With this signature table, <code><a href="../reference/draw_bubbleplot.html">draw_bubbleplot()</a></code> can estimate the signature scores and visualize them using bubble plot:</p>
+<p>With this signature table, <code><a href="../reference/draw_bubbleplot.html">draw_bubbleplot()</a></code> can
+estimate the signature scores and visualize them using bubble plot:</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Bubble plot of signature scores across clusters</span></span>
 <span><span class="fu"><a href="../reference/draw_bubbleplot.html">draw_bubbleplot</a></span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_clustered.eset</span>, signature_table <span class="op">=</span> <span class="va">signature_table</span>, group_by <span class="op">=</span> <span class="st">"clusterID"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 31 features of 7 signatures were found in the input eset and will be used in calculation.</span></span></code></pre></div>
 <p><img src="quick_tutorial_files/figure-html/signature-bubble-1.png" width="672" style="display: block; margin: auto;"></p>
-<p>In the bubble plot above, the color of the bubbles is proportional to the mean of signature scores, and the size of the bubbles is proportional to the percentage of cells with higher signature score than mean.</p>
+<p>In the bubble plot above, the color of the bubbles is proportional to
+the mean of signature scores, and the size of the bubbles is
+proportional to the percentage of cells with higher signature score than
+mean.</p>
 </div>
 <div class="section level4">
 <h4 id="using-individual-marker-genes">Using individual marker genes<a class="anchor" aria-label="anchor" href="#using-individual-marker-genes"></a>
 </h4>
-<p>scMINER also provides a variety of functions to visualize the selected features:</p>
+<p>scMINER also provides a variety of functions to visualize the
+selected features:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## For the demonstration purposes, we picked two well known markers for each of the 7 known cell types, plus "CD3D" and "CD4".</span></span>
 <span><span class="va">genes_of_interest</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD14"</span>, <span class="st">"LYZ"</span>, <span class="st">"GZMB"</span>, <span class="st">"NKG7"</span>, <span class="st">"CD19"</span>, <span class="st">"MS4A1"</span>, <span class="st">"CD8A"</span>, <span class="st">"CD8B"</span>, <span class="st">"SELL"</span>, <span class="st">"CCR7"</span>, <span class="st">"IL2RA"</span>, <span class="st">"FOXP3"</span>, <span class="st">"IL7R"</span>, <span class="st">"S100A4"</span>, <span class="st">"CD3D"</span>, <span class="st">"CD4"</span><span class="op">)</span></span></code></pre></div>
@@ -490,7 +633,13 @@
 <div class="section level3">
 <h3 id="unsupervised-cell-type-annotation">Unsupervised cell type annotation<a class="anchor" aria-label="anchor" href="#unsupervised-cell-type-annotation"></a>
 </h3>
-<p>scMINER provides a function, <code><a href="../reference/getDE.html">getDE()</a></code>, to perform the differential expression analysis and identify the markers of each cluster. The <code><a href="../reference/getDE.html">getDE()</a></code> function supports three different methods to perform the differential expression analysis, <code>limma</code>, <code>wilcoxon</code> and <code>t.test</code>. And it allows the users to define the groups to compare in a highly flexible way:</p>
+<p>scMINER provides a function, <code><a href="../reference/getDE.html">getDE()</a></code>, to perform the
+differential expression analysis and identify the markers of each
+cluster. The <code><a href="../reference/getDE.html">getDE()</a></code> function supports three different
+methods to perform the differential expression analysis,
+<code>limma</code>, <code>wilcoxon</code> and <code>t.test</code>. And
+it allows the users to define the groups to compare in a highly flexible
+way:</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## 1. To perform differential expression analysis in a 1-vs-rest manner for all groups</span></span>
 <span><span class="va">de_res1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getDE.html">getDE</a></span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_clustered.eset</span>, group_by <span class="op">=</span> <span class="st">"clusterID"</span>, use_method <span class="op">=</span> <span class="st">"limma"</span><span class="op">)</span></span>
@@ -532,30 +681,39 @@
 <span><span class="co">#&gt; 1250 3.193659e-174 1.130044e-171 28.13981</span></span>
 <span><span class="co">#&gt; 1235 7.997857e-219 4.716603e-216 31.57555</span></span>
 <span><span class="co">#&gt; 3992 5.621459e-159 1.841756e-156 26.86509</span></span></code></pre></div>
-<p>Here is an brief introduction to the results of <code><a href="../reference/getDE.html">getDE()</a></code>:</p>
+<p>Here is an brief introduction to the results of
+<code><a href="../reference/getDE.html">getDE()</a></code>:</p>
 <ul>
 <li>
 <strong>feature</strong>: feature name;</li>
 <li>
-<strong>g1_tag</strong>: a vector of clusters or subgroups involved in g1, the fore-ground group;</li>
+<strong>g1_tag</strong>: a vector of clusters or subgroups involved
+in g1, the fore-ground group;</li>
 <li>
-<strong>g0_tag</strong>: a vector of clusters or subgroups involved in g0, the back-ground group;</li>
+<strong>g0_tag</strong>: a vector of clusters or subgroups involved
+in g0, the back-ground group;</li>
 <li>
-<strong>g1_avg</strong>: mean of gene expression of cells in g1;</li>
+<strong>g1_avg</strong>: mean of gene expression of cells in
+g1;</li>
 <li>
-<strong>g0_tag</strong>: mean of gene expression of cells in g0;</li>
+<strong>g0_tag</strong>: mean of gene expression of cells in
+g0;</li>
 <li>
-<strong>g1_pct</strong>: percentage of cells expressing the corresponding genes in group 1;</li>
+<strong>g1_pct</strong>: percentage of cells expressing the
+corresponding genes in group 1;</li>
 <li>
-<strong>g0_pct</strong>: percentage of cells expressing the corresponding genes in group 0;</li>
+<strong>g0_pct</strong>: percentage of cells expressing the
+corresponding genes in group 0;</li>
 <li>
-<strong>log2FC</strong>: log2Fold change of gene expression between g1 and g0;</li>
+<strong>log2FC</strong>: log2Fold change of gene expression between
+g1 and g0;</li>
 <li>
 <strong>Pval</strong>: P values of g1-g0 comparison;</li>
 <li>
 <strong>FDR</strong>: FDR of g1-g0 comparison;</li>
 <li>
-<strong>Zscore</strong>: Z score of g1-g0 comparison, signed by <code>log2FC</code>;</li>
+<strong>Zscore</strong>: Z score of g1-g0 comparison, signed by
+<code>log2FC</code>;</li>
 </ul>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## 2. To perform differential expression analysis in a 1-vs-rest manner for one specific group</span></span>
@@ -566,7 +724,9 @@
 <span></span>
 <span><span class="co">## 4. To perform differential expression analysis in a 1-vs-1 manner for any two groups</span></span>
 <span><span class="va">de_res4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getDE.html">getDE</a></span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_clustered.eset</span>, group_by <span class="op">=</span> <span class="st">"clusterID"</span>, g1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1"</span>, <span class="st">"4"</span><span class="op">)</span>, g0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"3"</span>,<span class="st">"5"</span><span class="op">)</span>, use_method <span class="op">=</span> <span class="st">"limma"</span><span class="op">)</span></span></code></pre></div>
-<p>scMINER also provides a function, <code><a href="../reference/getTopFeatures.html">getTopFeatures()</a></code>, to easily extract the group-specific markers from the differential expression result:</p>
+<p>scMINER also provides a function, <code><a href="../reference/getTopFeatures.html">getTopFeatures()</a></code>, to
+easily extract the group-specific markers from the differential
+expression result:</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cluster_markers</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTopFeatures.html">getTopFeatures</a></span><span class="op">(</span>input_table <span class="op">=</span> <span class="va">de_res1</span>, number <span class="op">=</span> <span class="fl">10</span>, group_by <span class="op">=</span> <span class="st">"g1_tag"</span>, sort_by <span class="op">=</span> <span class="st">"log2FC"</span>, sort_decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">cluster_markers</span><span class="op">)</span></span>
@@ -590,7 +750,9 @@
 <div class="section level3">
 <h3 id="add-cell-type-annotation-to-sparseeset-object">Add cell type annotation to SparseEset object<a class="anchor" aria-label="anchor" href="#add-cell-type-annotation-to-sparseeset-object"></a>
 </h3>
-<p>Based on the supervised and unsupervised methods, we have annotated the cell types for each cluster. To add the cell type annotation information into the SparseEset object:</p>
+<p>Based on the supervised and unsupervised methods, we have annotated
+the cell types for each cluster. To add the cell type annotation
+information into the SparseEset object:</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Add cell type annotation to SparseEset object</span></span>
 <span><span class="va">pbmc14k_log2cpm_annotated.eset</span> <span class="op">&lt;-</span> <span class="va">pbmc14k_clustered.eset</span></span>
@@ -611,12 +773,15 @@
 <span><span class="co">#&gt; GCATGTGATTCTGT          0 GCATGTGATTCTGT 14.12546 13.36319         6  Monocyte</span></span>
 <span><span class="co">#&gt; TAGAATACGTATCG          0 TAGAATACGTATCG 14.91227 11.19407         6  Monocyte</span></span>
 <span><span class="co">#&gt; CAAGAAGACCCTCA          0 CAAGAAGACCCTCA 15.34154 12.25821         6  Monocyte</span></span></code></pre></div>
-<p>The <code><a href="../reference/draw_barplot.html">draw_barplot()</a></code> function can visualize the cell composition of self-defined groups. We can use it to show the purity of MICA clusters:</p>
+<p>The <code><a href="../reference/draw_barplot.html">draw_barplot()</a></code> function can visualize the cell
+composition of self-defined groups. We can use it to show the purity of
+MICA clusters:</p>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Show the composition of true labels of cell types among the annotated cell types</span></span>
 <span><span class="fu"><a href="../reference/draw_barplot.html">draw_barplot</a></span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_log2cpm_annotated.eset</span>, group_by <span class="op">=</span> <span class="st">"cell_type"</span>, color_by <span class="op">=</span> <span class="st">"trueLabel_full"</span>, xlabel.angle <span class="op">=</span> <span class="fl">45</span><span class="op">)</span></span></code></pre></div>
 <p><img src="quick_tutorial_files/figure-html/group-barplot-1.png" width="576" style="display: block; margin: auto;"></p>
-<p>Don’t forget to save the SparseEset object after the cell type annotation is added.</p>
+<p>Don’t forget to save the SparseEset object after the cell type
+annotation is added.</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">pbmc14k_log2cpm_annotated.eset</span>, file <span class="op">=</span> <span class="st">"/your-path/PBMC14k/DATA/pbmc14k_log2cpm_annotated.eset"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -624,63 +789,109 @@
 <div class="section level2">
 <h2 id="network-inference">Network inference<a class="anchor" aria-label="anchor" href="#network-inference"></a>
 </h2>
-<p>scMINER constructs the cellular networks using <a href="https://academic.oup.com/bioinformatics/article/35/12/2165/5156064" class="external-link">SJARACNe</a>, a scalable software tool for gene network reverse engineering from big data. Similar to MICA, SJARACNe is also a component of scMINER framework, and can work seamlessly with scMINER R package and SparseEset object.</p>
+<p>scMINER constructs the cellular networks using <a href="https://academic.oup.com/bioinformatics/article/35/12/2165/5156064" class="external-link">SJARACNe</a>,
+a scalable software tool for gene network reverse engineering from big
+data. Similar to MICA, SJARACNe is also a component of scMINER
+framework, and can work seamlessly with scMINER R package and SparseEset
+object.</p>
 <div class="section level3">
 <h3 id="generate-sjaracne-inputs">Generate SJARACNe inputs<a class="anchor" aria-label="anchor" href="#generate-sjaracne-inputs"></a>
 </h3>
-<p>Network inference should be performed on groups of homogeneous cells. Usually it’s in a <strong>cluster-</strong> or <strong>cell type-specific</strong> basis. In this showcase, we know the true labels of cell types and would like to use them for grouping:</p>
+<p>Network inference should be performed on groups of homogeneous cells.
+Usually it’s in a <strong>cluster-</strong> or <strong>cell
+type-specific</strong> basis. In this showcase, we know the true labels
+of cell types and would like to use them for grouping:</p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Columns with any illegal characters can not be used for groupping</span></span>
 <span><span class="fu"><a href="../reference/generateSJARACNeInput.html">generateSJARACNeInput</a></span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_log2cpm_annotated.eset</span>, group_name <span class="op">=</span> <span class="st">"trueLabel"</span>, sjaracne_dir <span class="op">=</span> <span class="st">"/your-path/PBMC14k/SJARACNe"</span>, species_type <span class="op">=</span> <span class="st">"hg"</span>, driver_type <span class="op">=</span> <span class="st">"TF_SIG"</span>, downSample_N <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
-<p><strong><em>IMPORTANT NOTE</em></strong>: Any <strong>illegal characters in path</strong> in group labels may cause issues in subsequent analysis. To avoid it, scMINER only accepts letters(A-Za-z), numbers(0-9), underscores(’_‘) and periods(’.’).</p>
-<p>For big datasets, <code><a href="../reference/generateSJARACNeInput.html">generateSJARACNeInput()</a></code> provides an argument, <code>downSample_N</code>, to allow you to down sample size of each group. The default value of <code>downSample_N</code> is 1,000, any group with &gt;= 1,000 cells will be down-sampled to 1,000.</p>
-<p><code><a href="../reference/generateSJARACNeInput.html">generateSJARACNeInput()</a></code> creates a folder for each of the groups availble in <strong><code>trueLabel</code></strong> column, and generates the standard input files inside of it:</p>
+<p><strong><em>IMPORTANT NOTE</em></strong>: Any <strong>illegal
+characters in path</strong> in group labels may cause issues in
+subsequent analysis. To avoid it, scMINER only accepts letters(A-Za-z),
+numbers(0-9), underscores(’_‘) and periods(’.’).</p>
+<p>For big datasets, <code><a href="../reference/generateSJARACNeInput.html">generateSJARACNeInput()</a></code> provides an
+argument, <code>downSample_N</code>, to allow you to down sample size of
+each group. The default value of <code>downSample_N</code> is 1,000, any
+group with &gt;= 1,000 cells will be down-sampled to 1,000.</p>
+<p><code><a href="../reference/generateSJARACNeInput.html">generateSJARACNeInput()</a></code> creates a folder for each of the
+groups availble in <strong><code>trueLabel</code></strong> column, and
+generates the standard input files inside of it:</p>
 <ul>
-<li>a “<strong><code>.exp.txt</code></strong>” file: a tab-separated genes/transcripts/proteins by cells/samples expression matrix with the first two columns being ID and symbol.</li>
-<li>a “<strong><code>TF</code></strong>” folder containing a “<strong><code>.tf.txt</code></strong>” file: a list of significant gene/transcript/protein IDs of TF drivers.</li>
-<li>a “<strong><code>SIG</code></strong>” folder containing a “<strong><code>.sig.txt</code></strong>” file: a list of significant gene/transcript/protein IDs of SIG drivers.</li>
-<li>a bash script (<strong><code>runSJARACNe.sh</code></strong>) to run SJARACNe. Further modification is needed to run it.</li>
-<li>a json file (<strong><code>config_cwlexec.json</code></strong>) containing parameters to run SJARACNe.</li>
+<li>a “<strong><code>.exp.txt</code></strong>” file: a tab-separated
+genes/transcripts/proteins by cells/samples expression matrix with the
+first two columns being ID and symbol.</li>
+<li>a “<strong><code>TF</code></strong>” folder containing a
+“<strong><code>.tf.txt</code></strong>” file: a list of significant
+gene/transcript/protein IDs of TF drivers.</li>
+<li>a “<strong><code>SIG</code></strong>” folder containing a
+“<strong><code>.sig.txt</code></strong>” file: a list of significant
+gene/transcript/protein IDs of SIG drivers.</li>
+<li>a bash script (<strong><code>runSJARACNe.sh</code></strong>) to run
+SJARACNe. Further modification is needed to run it.</li>
+<li>a json file (<strong><code>config_cwlexec.json</code></strong>)
+containing parameters to run SJARACNe.</li>
 </ul>
 </div>
 <div class="section level3">
 <h3 id="run-sjaracne">Run SJARACNe<a class="anchor" aria-label="anchor" href="#run-sjaracne"></a>
 </h3>
-<p>As mentioned above, <code><a href="../reference/generateSJARACNeInput.html">generateSJARACNeInput()</a></code> generates a <code>runSJARACNe.sh</code> file in the folder of each group. You will need to make some modifications before you can run it:</p>
+<p>As mentioned above, <code><a href="../reference/generateSJARACNeInput.html">generateSJARACNeInput()</a></code> generates a
+<code>runSJARACNe.sh</code> file in the folder of each group. You will
+need to make some modifications before you can run it:</p>
 <ul>
-<li><p><strong>remove unneeded lines</strong>: there are usually 4 lines in this file: the lines starting with <strong><code>sjaracne lsf</code></strong> are the command lines to run on IBM LSF cluster, while those starting with <strong><code>sjaracne local</code></strong> are the command lines running on a local machine (Linux/OSX). Please select the lines based on your situation and remove the others.</p></li>
+<li><p><strong>remove unneeded lines</strong>: there are usually 4 lines
+in this file: the lines starting with
+<strong><code>sjaracne lsf</code></strong> are the command lines to run
+on IBM LSF cluster, while those starting with
+<strong><code>sjaracne local</code></strong> are the command lines
+running on a local machine (Linux/OSX). Please select the lines based on
+your situation and remove the others.</p></li>
 <li>
 <p><strong>modify some key parameters</strong>:</p>
 <ul>
 <li>
-<strong>-n</strong>: number of bootstrap networks to generate. Default: 100.</li>
+<strong>-n</strong>: number of bootstrap networks to generate.
+Default: 100.</li>
 <li>
-<strong>-pc</strong>: p value threshold to select edges in building consensus network. Default: <code>e-2</code> for single-cell data, <code>e-3</code> for meta-cell data, and <code>e-5</code> for bulk sample data.</li>
+<strong>-pc</strong>: p value threshold to select edges in building
+consensus network. Default: <code>e-2</code> for single-cell data,
+<code>e-3</code> for meta-cell data, and <code>e-5</code> for bulk
+sample data.</li>
 </ul>
 </li>
 </ul>
-<p>Please use <strong><code>sjaracne lsf -h</code></strong> or <strong><code>sjaracne local -h</code></strong> to check more details of arguments available in SJARACNe.</p>
-<p>There is another file, <code>config_cwlexec.json</code>, available in the folder. It contains the information (e.g. memory request for each step of SJARACNe run) used for LSF job submission. This file is only needed for LSF runs and the default values works well in most cases. If you are running SJARACNe on a big dataset, you may need to request more memory from it.</p>
+<p>Please use <strong><code>sjaracne lsf -h</code></strong> or
+<strong><code>sjaracne local -h</code></strong> to check more details of
+arguments available in SJARACNe.</p>
+<p>There is another file, <code>config_cwlexec.json</code>, available in
+the folder. It contains the information (e.g. memory request for each
+step of SJARACNe run) used for LSF job submission. This file is only
+needed for LSF runs and the default values works well in most cases. If
+you are running SJARACNe on a big dataset, you may need to request more
+memory from it.</p>
 <p>In this case, we use LSF to run the SJARACNe:</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true"></a><span class="co">## Let's use B cell as an example</span></span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true"></a><span class="co"># For TF</span></span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true"></a><span class="ex">sjaracne</span> lsf -e /your-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt -g /your-path/PBMC14k/SJARACNe/B/TF/B.835_1902.tf.txt -o /your-path/PBMC14k/SJARACNe/B/TF/bt100_pc001 -n 100 -pc 0.01 -j /your-path/PBMC14k/SJARACNe/B/config_cwlexec.json</span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true"></a></span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true"></a><span class="co"># For SIG</span></span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true"></a><span class="ex">sjaracne</span> lsf -e /your-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt -g /your-path/PBMC14k/SJARACNe/B/SIG/B.4148_1902.sig.txt -o /your-path/PBMC14k/SJARACNe/B/SIG/bt100_pc001 -n 100 -pc 0.01 -j /work-path/PBMC14k/SJARACNe/B/config_cwlexec.json</span></code></pre></div>
-<p>We manually created a folder named “<strong>bt100_pc001</strong>” in both TF and SIG folders of each group, to save the networks generated under <strong>100 bootstraps</strong> (<code>-n 100</code>) and <strong>0.01 consensus p value</strong> (<code>-pc 0.01</code>).</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a><span class="co">## Let's use B cell as an example</span></span>
+<span id="cb42-2"><a href="#cb42-2" tabindex="-1"></a><span class="co"># For TF</span></span>
+<span id="cb42-3"><a href="#cb42-3" tabindex="-1"></a><span class="ex">sjaracne</span> lsf <span class="at">-e</span> /your-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt <span class="at">-g</span> /your-path/PBMC14k/SJARACNe/B/TF/B.835_1902.tf.txt <span class="at">-o</span> /your-path/PBMC14k/SJARACNe/B/TF/bt100_pc001 <span class="at">-n</span> 100 <span class="at">-pc</span> 0.01 <span class="at">-j</span> /your-path/PBMC14k/SJARACNe/B/config_cwlexec.json</span>
+<span id="cb42-4"><a href="#cb42-4" tabindex="-1"></a></span>
+<span id="cb42-5"><a href="#cb42-5" tabindex="-1"></a><span class="co"># For SIG</span></span>
+<span id="cb42-6"><a href="#cb42-6" tabindex="-1"></a><span class="ex">sjaracne</span> lsf <span class="at">-e</span> /your-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt <span class="at">-g</span> /your-path/PBMC14k/SJARACNe/B/SIG/B.4148_1902.sig.txt <span class="at">-o</span> /your-path/PBMC14k/SJARACNe/B/SIG/bt100_pc001 <span class="at">-n</span> 100 <span class="at">-pc</span> 0.01 <span class="at">-j</span> /work-path/PBMC14k/SJARACNe/B/config_cwlexec.json</span></code></pre></div>
+<p>We manually created a folder named “<strong>bt100_pc001</strong>” in
+both TF and SIG folders of each group, to save the networks generated
+under <strong>100 bootstraps</strong> (<code>-n 100</code>) and
+<strong>0.01 consensus p value</strong> (<code>-pc 0.01</code>).</p>
 <p>To run SJARACNe on a local machine:</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true"></a><span class="co">## Let's use B cell as an example</span></span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true"></a><span class="co"># For TF</span></span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true"></a><span class="ex">sjaracne</span> local -e /your-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt -g /your-path/PBMC14k/SJARACNe/B/TF/B.835_1902.tf.txt -o /your-path/PBMC14k/SJARACNe/B/TF/bt100_pc001 -n 100 -pc 0.01</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true"></a></span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true"></a><span class="co"># For SIG</span></span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true"></a><span class="ex">sjaracne</span> local -e /your-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt -g /your-path/PBMC14k/SJARACNe/B/SIG/B.4148_1902.sig.txt -o /your-path/PBMC14k/SJARACNe/B/SIG/bt100_pc001 -n 100 -pc 0.01</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1" tabindex="-1"></a><span class="co">## Let's use B cell as an example</span></span>
+<span id="cb43-2"><a href="#cb43-2" tabindex="-1"></a><span class="co"># For TF</span></span>
+<span id="cb43-3"><a href="#cb43-3" tabindex="-1"></a><span class="ex">sjaracne</span> local <span class="at">-e</span> /your-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt <span class="at">-g</span> /your-path/PBMC14k/SJARACNe/B/TF/B.835_1902.tf.txt <span class="at">-o</span> /your-path/PBMC14k/SJARACNe/B/TF/bt100_pc001 <span class="at">-n</span> 100 <span class="at">-pc</span> 0.01</span>
+<span id="cb43-4"><a href="#cb43-4" tabindex="-1"></a></span>
+<span id="cb43-5"><a href="#cb43-5" tabindex="-1"></a><span class="co"># For SIG</span></span>
+<span id="cb43-6"><a href="#cb43-6" tabindex="-1"></a><span class="ex">sjaracne</span> local <span class="at">-e</span> /your-path/PBMC14k/SJARACNe/B/B.8572_1902.exp.txt <span class="at">-g</span> /your-path/PBMC14k/SJARACNe/B/SIG/B.4148_1902.sig.txt <span class="at">-o</span> /your-path/PBMC14k/SJARACNe/B/SIG/bt100_pc001 <span class="at">-n</span> 100 <span class="at">-pc</span> 0.01</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="quality-control-of-networks">Quality control of networks<a class="anchor" aria-label="anchor" href="#quality-control-of-networks"></a>
 </h3>
-<p>The core output of SJARACNe is the network file named <code>consensus_network_ncol_.txt</code>.</p>
+<p>The core output of SJARACNe is the network file named
+<code>consensus_network_ncol_.txt</code>.</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">network_format</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo_pbmc14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt"</span>, package <span class="op">=</span> <span class="st">"scMINER"</span><span class="op">)</span>,</span>
 <span>                             header <span class="op">=</span> <span class="cn">T</span>, sep <span class="op">=</span> <span class="st">"\t"</span>, quote <span class="op">=</span> <span class="st">""</span>, stringsAsFactors <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
@@ -702,9 +913,11 @@
 <p>As shown above, it contains 9 columns:</p>
 <ul>
 <li>
-<strong>source</strong>: ID of the source gene, can be the gene symbol;</li>
+<strong>source</strong>: ID of the source gene, can be the gene
+symbol;</li>
 <li>
-<strong>target</strong>: ID of the target gene, can be the gene symbol;</li>
+<strong>target</strong>: ID of the target gene, can be the gene
+symbol;</li>
 <li>
 <strong>source.symbol</strong>: symbol of the source gene;</li>
 <li>
@@ -712,16 +925,22 @@
 <li>
 <strong>MI</strong>: mutual information of source-gene pair;</li>
 <li>
-<strong>pearson</strong>: Pearson correlation coefficient, [-1,1]</li>
+<strong>pearson</strong>: Pearson correlation coefficient,
+[-1,1]</li>
 <li>
-<strong>pearson</strong>: Spearman correlation coefficient, [-1,1]</li>
+<strong>pearson</strong>: Spearman correlation coefficient,
+[-1,1]</li>
 <li>
-<strong>slope</strong>: slop of the regression line, returned by <code>stats.linregression()</code>
+<strong>slope</strong>: slop of the regression line, returned by
+<code>stats.linregression()</code>
 </li>
 <li>
-<strong>p.value</strong>: p-value for a hypothesis test whose null hypothesis is that the slope is zero, using Wald Test with t-distribution of the test statistic</li>
+<strong>p.value</strong>: p-value for a hypothesis test whose null
+hypothesis is that the slope is zero, using Wald Test with
+t-distribution of the test statistic</li>
 </ul>
-<p>To help assess the quality of SJARACNe networks, scMINER provides a function <code><a href="../reference/drawNetworkQC.html">drawNetworkQC()</a></code>:</p>
+<p>To help assess the quality of SJARACNe networks, scMINER provides a
+function <code><a href="../reference/drawNetworkQC.html">drawNetworkQC()</a></code>:</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Network QC on single network file</span></span>
 <span><span class="va">network_stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/drawNetworkQC.html">drawNetworkQC</a></span><span class="op">(</span>network_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo_pbmc14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt"</span>, package <span class="op">=</span> <span class="st">"scMINER"</span><span class="op">)</span>, generate_html <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -753,27 +972,56 @@
 <span><span class="co">#&gt; 4  /Volumes/projects/scRNASeq/yu3grp/scMINER/NG_Revision/QPan/scminer_R/Datasets/PBMC14K/SJARACNe/CD4TCM/TF/bt100_pc001/sjaracne_workflow-52b3cdf5-5914-4c8c-a77a-05f17c755d83/consensus_network_ncol_.txt</span></span>
 <span><span class="co">#&gt; 5  /Volumes/projects/scRNASeq/yu3grp/scMINER/NG_Revision/QPan/scminer_R/Datasets/PBMC14K/SJARACNe/CD4TN/SIG/bt100_pc001/sjaracne_workflow-7b5bb68e-1de5-4d0e-80ec-8d8aa037866f/consensus_network_ncol_.txt</span></span>
 <span><span class="co">#&gt; 6   /Volumes/projects/scRNASeq/yu3grp/scMINER/NG_Revision/QPan/scminer_R/Datasets/PBMC14K/SJARACNe/CD4TN/TF/bt100_pc001/sjaracne_workflow-89716541-eb53-435c-8a45-bab63d6b5198/consensus_network_ncol_.txt</span></span></code></pre></div>
-<p><code><a href="../reference/drawNetworkQC.html">drawNetworkQC()</a></code> returns a summary table of key statistics of SJARACNe networks. Empirically, a network with <strong>50-300</strong> target size is good.</p>
+<p><code><a href="../reference/drawNetworkQC.html">drawNetworkQC()</a></code> returns a summary table of key
+statistics of SJARACNe networks. Empirically, a network with
+<strong>50-300</strong> target size is good.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="activity-related-analysis">Activity-related analysis<a class="anchor" aria-label="anchor" href="#activity-related-analysis"></a>
 </h2>
-<p>There are many signaling proteins (e.g., kinases), transcription factors, and other factors that are crucial drivers of phenotypes. These factors are not genetically or epigenetically altered, nor are they differentially expressed at the mRNA or protein level. Instead, they are altered by post-translational or other modifications, and are therefore termed <strong><em>hidden drivers</em></strong>. The gene activity-based analysis is proved to be an effective way to expose these hidden driver.</p>
-<p>scMINER aims to expose the cell type-specific hidden drivers of various biological activities and provides a few useful functions to effortlessly calculate driver activities, identify the hidden drivers and visualize them in multiple ways.</p>
+<p>There are many signaling proteins (e.g., kinases), transcription
+factors, and other factors that are crucial drivers of phenotypes. These
+factors are not genetically or epigenetically altered, nor are they
+differentially expressed at the mRNA or protein level. Instead, they are
+altered by post-translational or other modifications, and are therefore
+termed <strong><em>hidden drivers</em></strong>. The gene activity-based
+analysis is proved to be an effective way to expose these hidden
+driver.</p>
+<p>scMINER aims to expose the cell type-specific hidden drivers of
+various biological activities and provides a few useful functions to
+effortlessly calculate driver activities, identify the hidden drivers
+and visualize them in multiple ways.</p>
 <div class="section level3">
 <h3 id="calculate-driver-activities">Calculate driver activities<a class="anchor" aria-label="anchor" href="#calculate-driver-activities"></a>
 </h3>
-<p>The <strong>driver activity estimation</strong> is one of the most important features of scMINER. <strong>Mathematically</strong>, the activity of one driver is a type of mean of the expressions of its targets. And <strong>biologically</strong>, the activity can be interpreted as a measure that describes how actively the driver functions, like the enzymes in digesting their subtracts, kinase in activating their downstream genes. Given the gene expression profiles and networks, scMINER can estimate the activities of some predefined drivers, including not only transcription factors (TFs) but also signaling genes (SIGs).</p>
-<p>scMINER provides two functions, <code><a href="../reference/getActivity_individual.html">getActivity_individual()</a></code> and <code><a href="../reference/getActivity_inBatch.html">getActivity_inBatch()</a></code>, to calculate the driver activities individually or in batch:</p>
-<p><code><a href="../reference/getActivity_individual.html">getActivity_individual()</a></code> is designed to calculate the driver activities for individual group. It takes the <strong>SparseEset</strong> and <strong>network files</strong> of group-to-calculate as the inputs:</p>
+<p>The <strong>driver activity estimation</strong> is one of the most
+important features of scMINER. <strong>Mathematically</strong>, the
+activity of one driver is a type of mean of the expressions of its
+targets. And <strong>biologically</strong>, the activity can be
+interpreted as a measure that describes how actively the driver
+functions, like the enzymes in digesting their subtracts, kinase in
+activating their downstream genes. Given the gene expression profiles
+and networks, scMINER can estimate the activities of some predefined
+drivers, including not only transcription factors (TFs) but also
+signaling genes (SIGs).</p>
+<p>scMINER provides two functions, <code><a href="../reference/getActivity_individual.html">getActivity_individual()</a></code>
+and <code><a href="../reference/getActivity_inBatch.html">getActivity_inBatch()</a></code>, to calculate the driver
+activities individually or in batch:</p>
+<p><code><a href="../reference/getActivity_individual.html">getActivity_individual()</a></code> is designed to calculate the
+driver activities for individual group. It takes the
+<strong>SparseEset</strong> and <strong>network files</strong> of
+group-to-calculate as the inputs:</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Let's use B cell as an example</span></span>
 <span><span class="va">activity_B.eset</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getActivity_individual.html">getActivity_individual</a></span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_log2cpm_annotated.eset</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/phenoData.html" class="external-link">pData</a></span><span class="op">(</span><span class="va">pbmc14k_log2cpm_annotated.eset</span><span class="op">)</span><span class="op">$</span><span class="va">trueLabel</span> <span class="op">==</span> <span class="st">"B"</span><span class="op">]</span>,</span>
 <span>                                          network_file.tf <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo_pbmc14k/SJARACNe/B/TF/bt100_pc001/consensus_network_ncol_.txt"</span>, package <span class="op">=</span> <span class="st">"scMINER"</span><span class="op">)</span>,</span>
 <span>                                          network_file.sig <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/demo_pbmc14k/SJARACNe/B/SIG/bt100_pc001/consensus_network_ncol_.txt"</span>, package <span class="op">=</span> <span class="st">"scMINER"</span><span class="op">)</span>,</span>
 <span>                                          driver_type <span class="op">=</span> <span class="st">"TF_SIG"</span><span class="op">)</span></span></code></pre></div>
-<p>While <code><a href="../reference/getActivity_inBatch.html">getActivity_inBatch()</a></code> is designed to calculate the driver activities in batch. Instead of networks files, it takes the directory that contains the network files of multiples groups and automatically retrieve them for activity estimation:</p>
+<p>While <code><a href="../reference/getActivity_inBatch.html">getActivity_inBatch()</a></code> is designed to calculate the
+driver activities in batch. Instead of networks files, it takes the
+directory that contains the network files of multiples groups and
+automatically retrieve them for activity estimation:</p>
 <div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## let's use B cell as an example</span></span>
 <span><span class="va">activity.eset</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getActivity_inBatch.html">getActivity_inBatch</a></span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">pbmc14k_log2cpm_annotated.eset</span>,</span>
@@ -818,7 +1066,10 @@
 <span><span class="co">#&gt;  Group 7 / 7 : CD8TN ...</span></span>
 <span><span class="co">#&gt;  Activity calculation is completed successfully!</span></span>
 <span><span class="co">#&gt; NAs were found in the activity matrix and have been replaced by the minimum value:  -0.3968794 .</span></span></code></pre></div>
-<p>Both functions return an eSet object of driver activities. The full <code>phenoData</code> and part of <code>featureData</code> of the activity eSet object is inherited from <code>SparseEset</code> object.</p>
+<p>Both functions return an eSet object of driver activities. The full
+<code>phenoData</code> and part of <code>featureData</code> of the
+activity eSet object is inherited from <code>SparseEset</code>
+object.</p>
 <p>Don’t forget to save the activity eSet object.</p>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Save activity eSet object</span></span>
@@ -827,7 +1078,10 @@
 <div class="section level3">
 <h3 id="differential-activity-analysis">Differential activity analysis<a class="anchor" aria-label="anchor" href="#differential-activity-analysis"></a>
 </h3>
-<p>scMINER provides a function, <code><a href="../reference/getDA.html">getDA()</a></code>, to perform the differential activity analysis and identify the cell type-specific drivers. Similar to <code><a href="../reference/getDE.html">getDE()</a></code>, <code><a href="../reference/getDA.html">getDA()</a></code> also allows you to compare different groups in a highly flexible way:</p>
+<p>scMINER provides a function, <code><a href="../reference/getDA.html">getDA()</a></code>, to perform the
+differential activity analysis and identify the cell type-specific
+drivers. Similar to <code><a href="../reference/getDE.html">getDE()</a></code>, <code><a href="../reference/getDA.html">getDA()</a></code> also
+allows you to compare different groups in a highly flexible way:</p>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## 1. To perform differential expression analysis in a 1-vs-rest manner for all groups</span></span>
 <span><span class="va">da_res1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getDA.html">getDA</a></span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">activity.eset</span>, group_by <span class="op">=</span> <span class="st">"cell_type"</span>, use_method <span class="op">=</span> <span class="st">"t.test"</span><span class="op">)</span></span>
@@ -885,7 +1139,9 @@
 <span></span>
 <span><span class="co">## 4. To perform differential expression analysis in a 1-vs-1 manner for any two groups</span></span>
 <span><span class="va">da_res4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getDA.html">getDA</a></span><span class="op">(</span>input_eset <span class="op">=</span> <span class="va">activity.eset</span>, group_by <span class="op">=</span> <span class="st">"cell_type"</span>, g1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4Treg"</span><span class="op">)</span>, g0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CD4TCM"</span><span class="op">)</span>, use_method <span class="op">=</span> <span class="st">"t.test"</span><span class="op">)</span></span></code></pre></div>
-<p>The <code><a href="../reference/getTopFeatures.html">getTopFeatures()</a></code> function can also be used to effortlessly highlight the cell type-specific drivers from the differential activity analysis results:</p>
+<p>The <code><a href="../reference/getTopFeatures.html">getTopFeatures()</a></code> function can also be used to
+effortlessly highlight the cell type-specific drivers from the
+differential activity analysis results:</p>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">top_drivers</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTopFeatures.html">getTopFeatures</a></span><span class="op">(</span>input_table <span class="op">=</span> <span class="va">da_res1</span>, number <span class="op">=</span> <span class="fl">10</span>, group_by <span class="op">=</span> <span class="st">"g1_tag"</span>, sort_by <span class="op">=</span> <span class="st">"log2FC"</span>, sort_decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">top_drivers</span><span class="op">)</span></span>
@@ -912,95 +1168,93 @@
 <span><span class="co">#&gt; 8  16.11775</span></span>
 <span><span class="co">#&gt; 10 10.72137</span></span>
 <span><span class="co">#&gt; 3  -2.03216</span></span></code></pre></div>
-<details><p><summary><strong>Session info</strong></summary></p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">sessioninfo</span><span class="fu">::</span><span class="fu"><a href="https://r-lib.github.io/sessioninfo/reference/session_info.html" class="external-link">session_info</a></span><span class="op">(</span><span class="op">)</span></span>
+<details><summary><strong>Session info</strong>
+</summary><div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">sessioninfo</span><span class="fu">::</span><span class="fu"><a href="https://sessioninfo.r-lib.org/reference/session_info.html" class="external-link">session_info</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Session info ───────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">setting </span> <span style="color: #555555; font-style: italic;">value</span></span></span>
-<span><span class="co">#&gt;  version  R version 4.4.2 (2024-10-31)</span></span>
-<span><span class="co">#&gt;  os       Ubuntu 22.04.5 LTS</span></span>
+<span><span class="co">#&gt;  version  R version 4.5.0 (2025-04-11)</span></span>
+<span><span class="co">#&gt;  os       Ubuntu 24.04.2 LTS</span></span>
 <span><span class="co">#&gt;  system   x86_64, linux-gnu</span></span>
 <span><span class="co">#&gt;  ui       X11</span></span>
 <span><span class="co">#&gt;  language en</span></span>
 <span><span class="co">#&gt;  collate  C.UTF-8</span></span>
 <span><span class="co">#&gt;  ctype    C.UTF-8</span></span>
 <span><span class="co">#&gt;  tz       UTC</span></span>
-<span><span class="co">#&gt;  date     2024-11-13</span></span>
-<span><span class="co">#&gt;  pandoc   2.9.2.1 @ /usr/bin/ (via rmarkdown)</span></span>
+<span><span class="co">#&gt;  date     2025-05-02</span></span>
+<span><span class="co">#&gt;  pandoc   3.1.11 @ /opt/hostedtoolcache/pandoc/3.1.11/x64/ (via rmarkdown)</span></span>
+<span><span class="co">#&gt;  quarto   NA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">─ Packages ───────────────────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">package     </span> <span style="color: #555555; font-style: italic;">*</span> <span style="color: #555555; font-style: italic;">version </span> <span style="color: #555555; font-style: italic;">date (UTC)</span> <span style="color: #555555; font-style: italic;">lib</span> <span style="color: #555555; font-style: italic;">source</span></span></span>
-<span><span class="co">#&gt;  anndata      * 0.7.5.6  <span style="color: #555555;">2023-03-17</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  assertthat     0.2.1    <span style="color: #555555;">2019-03-21</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  Biobase      * 2.66.0   <span style="color: #555555;">2024-10-29</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">Bioconduc~</span></span></span>
-<span><span class="co">#&gt;  BiocGenerics * 0.52.0   <span style="color: #555555;">2024-10-29</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">Bioconduc~</span></span></span>
-<span><span class="co">#&gt;  bit            4.5.0    <span style="color: #555555;">2024-09-20</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  bit64          4.5.2    <span style="color: #555555;">2024-09-22</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  bslib          0.8.0    <span style="color: #555555;">2024-07-29</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  cachem         1.1.0    <span style="color: #555555;">2024-05-16</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  cli            3.6.3    <span style="color: #555555;">2024-06-21</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  colorspace     2.1-1    <span style="color: #555555;">2024-07-26</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  desc           1.4.3    <span style="color: #555555;">2023-12-10</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  digest         0.6.37   <span style="color: #555555;">2024-08-19</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  dplyr        * 1.1.4    <span style="color: #555555;">2023-11-17</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  evaluate       1.0.1    <span style="color: #555555;">2024-10-10</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  fansi          1.0.6    <span style="color: #555555;">2023-12-08</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  farver         2.1.2    <span style="color: #555555;">2024-05-13</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  fastmap        1.2.0    <span style="color: #555555;">2024-05-15</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  fs             1.6.5    <span style="color: #555555;">2024-10-30</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  generics       0.1.3    <span style="color: #555555;">2022-07-05</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  ggplot2      * 3.5.1    <span style="color: #555555;">2024-04-23</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  glue           1.8.0    <span style="color: #555555;">2024-09-30</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  gridExtra      2.3      <span style="color: #555555;">2017-09-09</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  gtable         0.3.6    <span style="color: #555555;">2024-10-25</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  hdf5r        * 1.3.11   <span style="color: #555555;">2024-07-07</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  htmltools      0.5.8.1  <span style="color: #555555;">2024-04-04</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  htmlwidgets    1.6.4    <span style="color: #555555;">2023-12-06</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  igraph         2.1.1    <span style="color: #555555;">2024-10-19</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  jquerylib      0.1.4    <span style="color: #555555;">2021-04-26</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  jsonlite       1.8.9    <span style="color: #555555;">2024-09-20</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  knitr          1.49     <span style="color: #555555;">2024-11-08</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  labeling       0.4.3    <span style="color: #555555;">2023-08-29</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  lattice        0.22-6   <span style="color: #555555;">2024-03-20</span> <span style="color: #555555;">[3]</span> <span style="color: #555555;">CRAN (R 4.4.2)</span></span></span>
-<span><span class="co">#&gt;  lifecycle      1.0.4    <span style="color: #555555;">2023-11-07</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  limma          3.62.1   <span style="color: #555555;">2024-11-03</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">Bioconduc~</span></span></span>
-<span><span class="co">#&gt;  magrittr       2.0.3    <span style="color: #555555;">2022-03-30</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  Matrix       * 1.7-1    <span style="color: #555555;">2024-10-18</span> <span style="color: #555555;">[3]</span> <span style="color: #555555;">CRAN (R 4.4.2)</span></span></span>
-<span><span class="co">#&gt;  munsell        0.5.1    <span style="color: #555555;">2024-04-01</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  pheatmap       1.0.12   <span style="color: #555555;">2019-01-04</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  pillar         1.9.0    <span style="color: #555555;">2023-03-22</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  pkgconfig      2.0.3    <span style="color: #555555;">2019-09-22</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  pkgdown        2.1.1    <span style="color: #555555;">2024-09-17</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">any (@2.1.1)</span></span></span>
-<span><span class="co">#&gt;  plyr           1.8.9    <span style="color: #555555;">2023-10-02</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  png            0.1-8    <span style="color: #555555;">2022-11-29</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  R6             2.5.1    <span style="color: #555555;">2021-08-19</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  ragg           1.3.3    <span style="color: #555555;">2024-09-11</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  RColorBrewer   1.1-3    <span style="color: #555555;">2022-04-03</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  Rcpp           1.0.13-1 <span style="color: #555555;">2024-11-02</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  reshape2       1.4.4    <span style="color: #555555;">2020-04-09</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  reticulate     1.39.0   <span style="color: #555555;">2024-09-05</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  rlang          1.1.4    <span style="color: #555555;">2024-06-04</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  rmarkdown      2.29     <span style="color: #555555;">2024-11-04</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  sass           0.4.9    <span style="color: #555555;">2024-03-15</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  scales         1.3.0    <span style="color: #555555;">2023-11-28</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  scMINER      * 1.1.0    <span style="color: #555555;">2024-11-13</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
-<span><span class="co">#&gt;  sessioninfo    1.2.2    <span style="color: #555555;">2021-12-06</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  statmod        1.5.0    <span style="color: #555555;">2023-01-06</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  stringi        1.8.4    <span style="color: #555555;">2024-05-06</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  stringr        1.5.1    <span style="color: #555555;">2023-11-14</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  systemfonts    1.1.0    <span style="color: #555555;">2024-05-15</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  textshaping    0.4.0    <span style="color: #555555;">2024-05-24</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  tibble         3.2.1    <span style="color: #555555;">2023-03-20</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  tidyselect     1.2.1    <span style="color: #555555;">2024-03-11</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  utf8           1.2.4    <span style="color: #555555;">2023-10-22</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  vctrs          0.6.5    <span style="color: #555555;">2023-12-01</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  withr          3.0.2    <span style="color: #555555;">2024-10-28</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  xfun           0.49     <span style="color: #555555;">2024-10-31</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
-<span><span class="co">#&gt;  yaml           2.3.10   <span style="color: #555555;">2024-07-26</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  <span style="color: #555555; font-style: italic;">package     </span> <span style="color: #555555; font-style: italic;">*</span> <span style="color: #555555; font-style: italic;">version</span> <span style="color: #555555; font-style: italic;">date (UTC)</span> <span style="color: #555555; font-style: italic;">lib</span> <span style="color: #555555; font-style: italic;">source</span></span></span>
+<span><span class="co">#&gt;  anndata      * 0.7.5.6 <span style="color: #555555;">2023-03-17</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  assertthat     0.2.1   <span style="color: #555555;">2019-03-21</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  Biobase      * 2.68.0  <span style="color: #555555;">2025-04-15</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">Bioconduc~</span></span></span>
+<span><span class="co">#&gt;  BiocGenerics * 0.54.0  <span style="color: #555555;">2025-04-15</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">Bioconduc~</span></span></span>
+<span><span class="co">#&gt;  bit            4.6.0   <span style="color: #555555;">2025-03-06</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  bit64          4.6.0-1 <span style="color: #555555;">2025-01-16</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  bslib          0.9.0   <span style="color: #555555;">2025-01-30</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  cachem         1.1.0   <span style="color: #555555;">2024-05-16</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  cli            3.6.5   <span style="color: #555555;">2025-04-23</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  desc           1.4.3   <span style="color: #555555;">2023-12-10</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  digest         0.6.37  <span style="color: #555555;">2024-08-19</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  dplyr        * 1.1.4   <span style="color: #555555;">2023-11-17</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  evaluate       1.0.3   <span style="color: #555555;">2025-01-10</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  farver         2.1.2   <span style="color: #555555;">2024-05-13</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  fastmap        1.2.0   <span style="color: #555555;">2024-05-15</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  fs             1.6.6   <span style="color: #555555;">2025-04-12</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  generics     * 0.1.3   <span style="color: #555555;">2022-07-05</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  ggplot2      * 3.5.2   <span style="color: #555555;">2025-04-09</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  glue           1.8.0   <span style="color: #555555;">2024-09-30</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  gridExtra      2.3     <span style="color: #555555;">2017-09-09</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  gtable         0.3.6   <span style="color: #555555;">2024-10-25</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  hdf5r        * 1.3.12  <span style="color: #555555;">2025-01-20</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  htmltools      0.5.8.1 <span style="color: #555555;">2024-04-04</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  htmlwidgets    1.6.4   <span style="color: #555555;">2023-12-06</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  igraph         2.1.4   <span style="color: #555555;">2025-01-23</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  jquerylib      0.1.4   <span style="color: #555555;">2021-04-26</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  jsonlite       2.0.0   <span style="color: #555555;">2025-03-27</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  knitr          1.50    <span style="color: #555555;">2025-03-16</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  labeling       0.4.3   <span style="color: #555555;">2023-08-29</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  lattice        0.22-6  <span style="color: #555555;">2024-03-20</span> <span style="color: #555555;">[3]</span> <span style="color: #555555;">CRAN (R 4.5.0)</span></span></span>
+<span><span class="co">#&gt;  lifecycle      1.0.4   <span style="color: #555555;">2023-11-07</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  limma          3.64.0  <span style="color: #555555;">2025-04-15</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">Bioconduc~</span></span></span>
+<span><span class="co">#&gt;  magrittr       2.0.3   <span style="color: #555555;">2022-03-30</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  Matrix       * 1.7-3   <span style="color: #555555;">2025-03-11</span> <span style="color: #555555;">[3]</span> <span style="color: #555555;">CRAN (R 4.5.0)</span></span></span>
+<span><span class="co">#&gt;  pheatmap       1.0.12  <span style="color: #555555;">2019-01-04</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  pillar         1.10.2  <span style="color: #555555;">2025-04-05</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  pkgconfig      2.0.3   <span style="color: #555555;">2019-09-22</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  pkgdown        2.1.2   <span style="color: #555555;">2025-04-28</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">any (@2.1.2)</span></span></span>
+<span><span class="co">#&gt;  plyr           1.8.9   <span style="color: #555555;">2023-10-02</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  png            0.1-8   <span style="color: #555555;">2022-11-29</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  R6             2.6.1   <span style="color: #555555;">2025-02-15</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  ragg           1.4.0   <span style="color: #555555;">2025-04-10</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  RColorBrewer   1.1-3   <span style="color: #555555;">2022-04-03</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  Rcpp           1.0.14  <span style="color: #555555;">2025-01-12</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  reshape2       1.4.4   <span style="color: #555555;">2020-04-09</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  reticulate     1.42.0  <span style="color: #555555;">2025-03-25</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  rlang          1.1.6   <span style="color: #555555;">2025-04-11</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  rmarkdown      2.29    <span style="color: #555555;">2024-11-04</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  sass           0.4.10  <span style="color: #555555;">2025-04-11</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  scales         1.4.0   <span style="color: #555555;">2025-04-24</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  scMINER      * 1.1.0   <span style="color: #555555;">2025-05-02</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">local</span></span></span>
+<span><span class="co">#&gt;  sessioninfo    1.2.3   <span style="color: #555555;">2025-02-05</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  statmod        1.5.0   <span style="color: #555555;">2023-01-06</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  stringi        1.8.7   <span style="color: #555555;">2025-03-27</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  stringr        1.5.1   <span style="color: #555555;">2023-11-14</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  systemfonts    1.2.3   <span style="color: #555555;">2025-04-30</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  textshaping    1.0.1   <span style="color: #555555;">2025-05-01</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  tibble         3.2.1   <span style="color: #555555;">2023-03-20</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  tidyselect     1.2.1   <span style="color: #555555;">2024-03-11</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  vctrs          0.6.5   <span style="color: #555555;">2023-12-01</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  withr          3.0.2   <span style="color: #555555;">2024-10-28</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  xfun           0.52    <span style="color: #555555;">2025-04-02</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
+<span><span class="co">#&gt;  yaml           2.3.10  <span style="color: #555555;">2024-07-26</span> <span style="color: #555555;">[1]</span> <span style="color: #BB00BB; font-weight: bold;">RSPM</span></span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #555555;"> [1] /home/runner/work/_temp/Library</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;"> [2] /opt/R/4.4.2/lib/R/site-library</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;"> [3] /opt/R/4.4.2/lib/R/library</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;"> [2] /opt/R/4.5.0/lib/R/site-library</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;"> [3] /opt/R/4.5.0/lib/R/library</span></span></span>
+<span><span class="co">#&gt;  <span style="color: #BBBBBB; background-color: #BB0000;">*</span> ── Packages attached to the search path.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB; font-weight: bold;">──────────────────────────────────────────────────────────────────────────────</span></span></span></code></pre></div>
 </details><p><br></p>
@@ -1017,7 +1271,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer>
