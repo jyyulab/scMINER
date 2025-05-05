@@ -176,63 +176,77 @@ combineSparseEset <- function(eset_list,
                               imputeNA = TRUE)
 {
   l_eset <- eset_list
-  if (length(l_eset) <= 1) {stop("At least 2 esets are required for eset_list")}
+  if (length(l_eset) <= 1) {stop("At least 2 esets are required for 'eset_list'.")}
 
   if (is.null(projectID) == FALSE) {
-    if (length(projectID) != length(l_eset)) {stop("The length of projectID is different from eset_list")}
+    if (length(projectID) != length(l_eset)) {stop("The length of 'projectID' is different from 'eset_list'.")}
   }
 
-  ## add cellPrefix and/or cellSurfix
   if (is.null(addPrefix) == FALSE) {
-    if (length(addPrefix) == length(l_eset)) {
-      for (i in 1:length(l_eset)) {
-        colnames(l_eset[[i]]) <- paste0(addPrefix[i], "_", colnames(l_eset[[i]]))
-      }
-    } else {
-      stop("The length of addPrefix is different from eset_list")
-    }
+    if (length(addPrefix) != length(l_eset)) {stop("The length of 'addPrefix' is different from 'eset_list'.")}
   }
 
   if (is.null(addSurfix) == FALSE) {
-    if (length(addSurfix) == length(l_eset)) {
-      for (i in 1:length(l_eset)) {
-        colnames(l_eset[[i]]) <- paste0(colnames(l_eset[[i]]), "_", addSurfix[i])
-      }
-    } else {
-      stop("The length of addSurfix is different from eset_list")
+    if (length(addSurfix) != length(l_eset)) {stop("The length of 'addSurfix' is different from 'eset_list'.")}
+  }
+
+  ## examine the combined cell barcodes
+  barcodes_combined <- ""
+  for (i in 1:length(l_eset)) {
+    barcodes_tmp <- colnames(l_eset[[i]])
+
+    if (is.null(addPrefix) == FALSE) {
+      barcodes_tmp <- paste0(addPrefix[i], "_", barcodes_tmp)
     }
+
+    if (is.null(addSurfix) == FALSE) {
+      barcodes_tmp <- paste0(barcodes_tmp, "_", addSurfix[i])
+    }
+
+    if (i == 1) {
+      barcodes_combined <- barcodes_tmp
+    } else {
+      barcodes_combined <- c(barcodes_combined, barcodes_tmp)
+    }
+  }
+
+  if_duplicatedBarcodes <- any(duplicated(barcodes_combined))
+  if (if_duplicatedBarcodes == TRUE) {
+    stop("Duplicated barcode IDs were found among the esets. It's highly recommended to use 'addPrefix' and/or 'addSurfix' to avoid duplicated barcodes.")
   }
 
   cat("Combining the input sparse eSets ...\n")
   ## merge matrix, barcodes, features
-  if_duplicatedBarcodes <- lapply(l_eset, colnames) %>% unlist() %>% duplicated() %>% any()
-  if (if_duplicatedBarcodes == TRUE) {
-    stop("Duplicated barcode IDs were found among the esets. It's highly recommended to use addPrefix and/or addSurfix to avoid duplicated barcodes.")
-  } else {
-    for (i in 1:length(l_eset)) {
-      suppressWarnings(exp_tmp <- as.matrix(exprs(l_eset[[i]])))
-      pd_tmp <- pData(l_eset[[i]])
+  for (i in 1:length(l_eset)) {
+    # extract d
+    suppressWarnings(exp_tmp <- as.matrix(exprs(l_eset[[i]])))
 
-      if (is.null(projectID) == FALSE) {pd_tmp$projectID <- projectID[i]}
+    # extract pd
+    pd_tmp <- pData(l_eset[[i]])
+    if (is.null(projectID) == FALSE) {pd_tmp$projectID <- projectID[i]}
 
-      if (i == 1) {
-        exp_merged <- exp_tmp
-        pd_merged <- pd_tmp
-      } else {
-        exp_merged <- base::merge(exp_merged, exp_tmp, by = "row.names", all = T)
-        row.names(exp_merged) <- exp_merged[,1]
-        exp_merged <- exp_merged[,-1]
+    # combine d and pd
+    if (i == 1) {
+      exp_merged <- exp_tmp
+      pd_merged <- pd_tmp
+    } else {
+      exp_merged <- base::merge(exp_merged, exp_tmp, by = "row.names", all = T)
+      row.names(exp_merged) <- exp_merged[,1]
+      exp_merged <- exp_merged[,-1]
 
-        colnames_shared <- intersect(colnames(pd_merged), colnames(pd_tmp))
-        if (length(colnames_shared) < length(colnames(pd_merged)) | length(colnames_shared) < length(colnames(pd_tmp))) {
-          cat("Different colnames of phenotype data were found. Only the shared ones were kept.\n")
-        }
-        pd_merged <- pd_merged[, colnames_shared]
-        pd_tmp <- pd_tmp[, colnames_shared]
-        pd_merged <- rbind(pd_merged, pd_tmp)
+      colnames_shared <- intersect(colnames(pd_merged), colnames(pd_tmp))
+      if (length(colnames_shared) < length(colnames(pd_merged)) | length(colnames_shared) < length(colnames(pd_tmp))) {
+        cat("Different colnames of phenotype data were found. Only the shared ones were kept.\n")
       }
+      pd_merged <- pd_merged[, colnames_shared]
+      pd_tmp <- pd_tmp[, colnames_shared]
+      pd_merged <- rbind(pd_merged, pd_tmp)
     }
   }
+
+  # assign the new barcodes
+  colnames(exp_merged) <- barcodes_combined
+  row.names(pd_merged) <- barcodes_combined
 
   fd_merged <- data.frame(row.names = row.names(exp_merged), geneSymbol = row.names(exp_merged), nCell = Matrix::rowSums(exp_merged != 0))
 
