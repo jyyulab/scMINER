@@ -230,7 +230,7 @@ combineSparseEset <- function(eset_list,
       exp_merged <- exp_tmp
       pd_merged <- pd_tmp
     } else {
-      exp_merged <- base::merge(exp_merged, exp_tmp, by = "row.names", all = T)
+      suppressWarnings(exp_merged <- base::merge(exp_merged, exp_tmp, by = "row.names", all = T))
       row.names(exp_merged) <- exp_merged[,1]
       exp_merged <- exp_merged[,-1]
 
