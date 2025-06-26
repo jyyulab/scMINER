@@ -194,8 +194,10 @@ feature_boxplot <- function(input_eset,
 
   ## prepare the master table for visualization
   exp_mat <- as.matrix(Biobase::exprs(input_eset))
-  master <- data.frame(groups = as.factor(Biobase::pData(input_eset)[, group_by]), t(exp_mat[features_in, , drop = FALSE]))
+  #master <- data.frame(groups = as.factor(Biobase::pData(input_eset)[, group_by]), t(exp_mat[features_in, , drop = FALSE]))
+  master <- cbind(groups = Biobase::pData(input_eset)[, group_by], t(exp_mat[features_in, , drop = FALSE]))
   master_melt <- reshape2::melt(master, id.vars = c("groups"))
+  master_melt$groups <- as.factor(master_melt$groups)
 
   ## visualize
   p <- ggplot(master_melt, aes(x = groups, y = value, fill = groups)) +
@@ -294,7 +296,7 @@ feature_scatterplot <- function(input_eset,
 
   ## prepare the master table for visualization
   exp_mat <- as.matrix(Biobase::exprs(input_eset))
-  master <- data.frame(Biobase::pData(input_eset)[, c(location_x, location_y)], t(exp_mat[features_in, , drop = FALSE]))
+  master <- cbind(Biobase::pData(input_eset)[, c(location_x, location_y)], t(exp_mat[features_in, , drop = FALSE]))
   master_melt <- reshape2::melt(master, id.vars = c(location_x, location_y))
 
   ps <- list()
@@ -817,13 +819,18 @@ generatePortalInputs <- function(input_expression.eset = NULL,
 
       # expression matrix
       cat("\tChecking the normalized expression matrix...\n")
-      if (all(input_expression.seuratObj[['RNA']]@counts@x == input_expression.seuratObj[['RNA']]@data@x)) {
+      if (all(input_expression.seuratObj[['RNA']]$counts == input_expression.seuratObj[['RNA']]$data)) {
         cat("\tThe data matrix in input_expression.seuratObj@assays$RNA@data is not normalized. scMINER will normalize and log-transforme it...")
-        expression.eset <- createSparseEset(input_matrix = input_expression.seuratObj[['RNA']]@counts, cellData = merge(seurat_metadata, seurat_reductions, by = "CellID"), addMetaData = FALSE)
+        expression.eset <- createSparseEset(input_matrix = input_expression.seuratObj[['RNA']]$counts, cellData = merge(seurat_metadata, seurat_reductions, by = "CellID"), addMetaData = FALSE)
         expression.eset <- normalizeSparseEset(input_eset = expression.eset)
         cat("\t\tDone! The data matrix has been normalized.\n")
         saveRDS(expression.eset, file = paste0(output_dir, "/expression.eset"))
         cat("The expression data for scMINER Portal has been generated:", paste0(output_dir, "/expression.eset"),".\n")
+      } else {
+        cellData = merge(seurat_metadata, seurat_reductions, by = "CellID"); row.names(cellData) <- cellData$CellID
+        expression.eset <- createSparseEset(input_matrix = input_expression.seuratObj[["RNA"]]$data, cellData = cellData, addMetaData = FALSE)
+        saveRDS(expression.eset, file = paste0(output_dir, "/expression.eset"))
+        cat("The expression data for scMINER Portal has been generated:", paste0(output_dir, "/expression.eset"), ".\n")
       }
     }
   } else {
