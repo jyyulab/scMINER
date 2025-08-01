@@ -1,5 +1,5 @@
 {
-    "queue": "compbio",
+    "queue": "standard",
     "rerunnable": true,
     "project": "SJARACNe",
     "steps": {
