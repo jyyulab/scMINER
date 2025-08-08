@@ -195,7 +195,7 @@ feature_boxplot <- function(input_eset,
   ## prepare the master table for visualization
   exp_mat <- as.matrix(Biobase::exprs(input_eset))
   #master <- data.frame(groups = as.factor(Biobase::pData(input_eset)[, group_by]), t(exp_mat[features_in, , drop = FALSE]))
-  master <- cbind(groups = Biobase::pData(input_eset)[, group_by], t(exp_mat[features_in, , drop = FALSE]))
+  master <- data.frame(cbind(groups = Biobase::pData(input_eset)[, group_by], t(exp_mat[features_in, , drop = FALSE])))
   master_melt <- reshape2::melt(master, id.vars = c("groups"))
   master_melt$groups <- as.factor(master_melt$groups)
 
@@ -296,7 +296,7 @@ feature_scatterplot <- function(input_eset,
 
   ## prepare the master table for visualization
   exp_mat <- as.matrix(Biobase::exprs(input_eset))
-  master <- cbind(Biobase::pData(input_eset)[, c(location_x, location_y)], t(exp_mat[features_in, , drop = FALSE]))
+  master <- data.frame(cbind(Biobase::pData(input_eset)[, c(location_x, location_y)], t(exp_mat[features_in, , drop = FALSE])))
   master_melt <- reshape2::melt(master, id.vars = c(location_x, location_y))
 
   ps <- list()
