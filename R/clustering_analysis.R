@@ -226,7 +226,7 @@ MICAplot <- function(input_eset,
                      fontsize.axis_title = 10, fontsize.axis_text = 8)
 {
   input <- Biobase::pData(input_eset)
-  if ((color_by %in% colnames(input)) == FALSE) {stop('The column', colore_by, 'was not found in the input eset.')}
+  if ((color_by %in% colnames(input)) == FALSE) {stop('The column', color_by, 'was not found in the input eset.')}
   if ((X %in% colnames(input)) == FALSE) {stop('The column', X, 'was not found in the input eset.')}
   if ((Y %in% colnames(input)) == FALSE) {stop('The column', Y, 'was not found in the input eset.')}
 
